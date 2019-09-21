@@ -3,12 +3,12 @@
 #include "Application.h"
 #include "GLRenderer3D.h"
 
-#include "SDL/include/SDL_opengl.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
-
+//#include "SDL/include/SDL_opengl.h"
+// #include <gl/GL.h>
+//#include <gl/GLU.h>
+#include <glad/glad.h>
 //#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
-#pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
+//#pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
 namespace Cronos {
 
@@ -28,6 +28,7 @@ namespace Cronos {
 
 		//Create context
 		context = SDL_GL_CreateContext(App->window->window);
+		gladLoadGL();
 		if (context == NULL)
 		{
 			LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -48,7 +49,8 @@ namespace Cronos {
 			GLenum error = glGetError();
 			if (error != GL_NO_ERROR)
 			{
-				LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+				
+				LOG("Error initializing OpenGL! %s\n", error);
 				ret = false;
 			}
 
@@ -60,7 +62,7 @@ namespace Cronos {
 			error = glGetError();
 			if (error != GL_NO_ERROR)
 			{
-				LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+				LOG("Error initializing OpenGL! %s\n", error);
 				ret = false;
 			}
 
@@ -74,7 +76,7 @@ namespace Cronos {
 			error = glGetError();
 			if (error != GL_NO_ERROR)
 			{
-				LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+				LOG("Error initializing OpenGL! %s\n", error);
 				ret = false;
 			}
 

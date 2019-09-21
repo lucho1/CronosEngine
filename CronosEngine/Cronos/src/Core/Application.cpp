@@ -11,6 +11,7 @@ namespace Cronos {
 		scene = new Scene(this);
 		renderer3D = new GLRenderer3D(this);
 		camera = new Camera3D(this);
+		EditorGUI = new ImGuiLayer(this);
 
 		// The order of calls is very important!
 		// Modules will Init() Start() and Update in this order
@@ -22,6 +23,7 @@ namespace Cronos {
 		AddModule(camera);
 		AddModule(input);
 		AddModule(audio);
+		AddModule(EditorGUI);
 
 		// Scenes
 		AddModule(scene);
@@ -41,6 +43,7 @@ namespace Cronos {
 	bool Application::OnInit()
 	{
 		bool ret = true;
+
 
 		for (auto& element : m_ModulesList)
 			if (ret)

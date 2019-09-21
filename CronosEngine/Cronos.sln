@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Cronos", "Cronos\Cronos.vcxproj", "{195176AC-05F3-A082-EEAD-B4D6DAEE27D3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glad", "Cronos\vendor\Glad\Glad.vcxproj", "{BDD6857C-A90D-870D-52FA-6C103E10030F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Cronos\vendor\imgui\ImGui.vcxproj", "{C0FF640D-2C14-8DBE-F595-301E616989EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +17,14 @@ Global
 		{195176AC-05F3-A082-EEAD-B4D6DAEE27D3}.Debug|Win32.Build.0 = Debug|Win32
 		{195176AC-05F3-A082-EEAD-B4D6DAEE27D3}.Release|Win32.ActiveCfg = Release|Win32
 		{195176AC-05F3-A082-EEAD-B4D6DAEE27D3}.Release|Win32.Build.0 = Release|Win32
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Debug|Win32.Build.0 = Debug|Win32
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|Win32.ActiveCfg = Release|Win32
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|Win32.Build.0 = Release|Win32
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|Win32.Build.0 = Debug|Win32
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|Win32.ActiveCfg = Release|Win32
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

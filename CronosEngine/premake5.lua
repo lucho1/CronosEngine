@@ -21,6 +21,11 @@ IncludeDir["Glut"] = "Cronos/vendor/glut"
 IncludeDir["SDL"] = "Cronos/vendor/SDL/include"
 IncludeDir["SDL_Mixer"] = "Cronos/vendor/SDL_mixer/include"
 IncludeDir["dlls"] = "Cronos/dll_files"
+IncludeDir["Glad"] = "Cronos/vendor/Glad/include"
+IncludeDir["ImGui"] = "Cronos/vendor/imgui"
+
+include "Cronos/vendor/Glad"
+include "Cronos/vendor/imgui"
 
 
 --PATH=%PATH%;$(ProjectDir)\dll_files
@@ -44,10 +49,11 @@ project "Cronos"
 		"%{prj.name}/src/**.cpp"
 	}
 
-	--defines
-	--{
+	defines
+	{
 	--	"_CRT_SECURE_NO_WARNINGS"
-	--}
+	--IMGUI_IMPL_OPENGL_LOADER_GLAD
+	}
 
 	includedirs
 	{
@@ -57,6 +63,8 @@ project "Cronos"
 		"%{prj.name}/dll_files",
 		"%{prj.name}/src/Core",
 		"%{prj.name}/src/Helpers",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.Glad}"
 
 		--"%{IncludeDir.Glad}"
 	}
@@ -72,7 +80,9 @@ project "Cronos"
 		"opengl32.lib",
 		"SDL2_mixer.lib",
 		"SDL2.lib",
-		"SDL2main.lib"
+		"SDL2main.lib",
+		"ImGui",
+		"Glad"
 	}
 
 	filter "system:windows"

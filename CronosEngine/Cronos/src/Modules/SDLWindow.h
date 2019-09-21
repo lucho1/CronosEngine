@@ -29,9 +29,22 @@ namespace Cronos {
 
 		//The surface contained by the window
 		SDL_Surface* screen_surface;
+		
+		inline uint GetWidth() const { return m_Data.Width; }
+		inline uint GetHeight() const { return m_Data.Height; }
+
 
 	private:
 
+		struct WindowData {
+
+			std::string Title;
+			uint  Width, Height;
+			bool VSync;
+
+		};
+
+		WindowData m_Data;
 		int Mv = 4, mv = 3; //Open GL Major and Minor version
 	};
 

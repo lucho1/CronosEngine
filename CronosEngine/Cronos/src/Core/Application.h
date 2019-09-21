@@ -10,6 +10,7 @@
 #include "Modules/Camera3D.h"
 
 #include "Renderer/GLRenderer3D.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Cronos {
 
@@ -23,6 +24,7 @@ namespace Cronos {
 		Scene* scene;
 		GLRenderer3D* renderer3D;
 		Camera3D* camera;
+		ImGuiLayer* EditorGUI;
 
 	private:
 
