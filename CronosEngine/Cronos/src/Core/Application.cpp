@@ -83,7 +83,7 @@ namespace Cronos {
 		//|| Frames in last update (current_framecount - last_frame count), probably you'll need to declare a new value or something
 
 		uint32 LastFrameMS = mt_LastFrameTime.Read();
-		if (m_CappedMS > 0 && LastFrameMS < m_CappedMS)
+		if (m_CappedMS > 0 && (int)LastFrameMS < m_CappedMS)
 			SDL_Delay(m_CappedMS - LastFrameMS);
 
 	}

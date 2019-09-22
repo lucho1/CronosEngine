@@ -47,12 +47,12 @@ namespace Cronos {
 
 		PFNGLDEBUGMESSAGECALLBACKAMDPROC(&ErrorCallback()); //Equals to glDebugMessageCallback(ErrorCallback, 0);??
 
-	//	glDebugMessageCallback(ErrorCallback, 0);
+		//glDebugMessageCallback(ErrorCallback, 0);
 		//glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
 		//__debugbreak();
 		// To Output a Message: glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Vary dangerous error");
 
-		std::cout << "-- Registering OpenGL debug Callback - Error Handler --" << std::endl << "	Error Handler Running Successfully" << std::endl;
+		std::cout << "---- Registering OpenGL debug Callback - Error Handler ----" << std::endl << "	Error Handler Running Successfully" << std::endl;
 		std::cout << "	Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
 	}
 

@@ -254,7 +254,7 @@ namespace Cronos {
 	void Audio::SetSFXChunkVolume(uint vol, int id)
 	{
 
-		if (id > 0 && id < m_FXList.size()) {
+		if (id > 0 && id < (int)m_FXList.size()) {
 
 			if (vol > 100)
 				vol = 100;
