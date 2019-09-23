@@ -84,6 +84,7 @@
     <ClInclude Include="src\Renderer\Primitive.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -143,5 +144,6 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
   </ItemGroup>
 </Project>

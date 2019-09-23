@@ -23,10 +23,11 @@ namespace Cronos {
 		AddModule(camera);
 		AddModule(input);
 		AddModule(audio);
-		AddModule(EditorGUI);
+
 
 		// Scenes
 		AddModule(scene);
+		AddModule(EditorGUI);
 
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;

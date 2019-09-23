@@ -41,7 +41,7 @@ namespace Cronos {
 			std::string Title;
 			uint  Width, Height;
 			bool VSync;
-
+			
 		};
 
 		WindowData m_Data;
