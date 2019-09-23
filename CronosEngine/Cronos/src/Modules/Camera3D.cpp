@@ -37,25 +37,31 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status Camera3D::OnUpdate(float dt)
 	{
-		// OnKeys WASD keys -----------------------------------
-		vec3 newPos(0.0f, 0.0f, 0.0f);
-		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
+		// OnKeys WASD + Right Click keys ------------------------------
+		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
-		// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Z * m_CameraMoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += m_Z * m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
+				m_CameraMoveSpeed *= 2.0f;
+			else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
+				m_CameraMoveSpeed /= 2.0f;
 
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= m_X * m_CameraMoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += m_X * m_CameraMoveSpeed * dt;
+			vec3 newPos(0.0f, 0.0f, 0.0f);
+			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
 
-		m_Position += newPos;
-		m_Reference += newPos;
+			// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
+			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Z * m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += m_Z * m_CameraMoveSpeed * dt;
 
-		// Mouse motion ----------------
-		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
-		{
-			//You have another way to do it in Physics handout 1
+			if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= m_X * m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += m_X * m_CameraMoveSpeed * dt;
+
+			m_Position += newPos;
+			m_Reference += newPos;
+
+
+			// Mouse motion ---------------- 
+			// There is another way to do it in Physics handout 1
 			// Applying horizontal orbit
 			vec3 ref_pos = m_Position - m_Reference;
 			ref_pos = rotate(ref_pos, -App->input->GetMouseXMotion() * 0.5f, vec3(0.0f, 1.0f, 0.0f));
@@ -73,7 +79,11 @@ namespace Cronos {
 
 			// Finally, we look to the reference
 			LookAt(m_Reference);
+
 		}
+
+		if(App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+			LookAt(vec3(0.0f, 0.0f, 0.0f));
 
 		// Recalculate matrix -------------
 		CalculateViewMatrix();

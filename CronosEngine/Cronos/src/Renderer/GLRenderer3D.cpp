@@ -68,7 +68,7 @@ namespace Cronos {
 			glClearDepth(1.0f);
 
 			//Initialize clear color
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 			//Check for error
 			error = glGetError();

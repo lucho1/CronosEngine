@@ -43,7 +43,7 @@ namespace Cronos {
 	private:
 
 		mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
-		float m_CameraMoveSpeed = 2.0f;
+		float m_CameraMoveSpeed = 5.0f;
 	};
 
 }
