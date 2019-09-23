@@ -37,14 +37,16 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status Camera3D::OnUpdate(float dt)
 	{
-		// OnKeys WASD + Right Click keys ------------------------------
+		
 		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
+			//Aplying extra impulse if LShift is pressed
 			if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
 				m_CameraMoveSpeed *= 2.0f;
 			else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
 				m_CameraMoveSpeed /= 2.0f;
 
+			// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
 			vec3 newPos(0.0f, 0.0f, 0.0f);
 			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
 			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
@@ -59,31 +61,22 @@ namespace Cronos {
 			m_Position += newPos;
 			m_Reference += newPos;
 
-
-			// Mouse motion ---------------- 
-			// There is another way to do it in Physics handout 1
-			// Applying horizontal orbit
-			vec3 ref_pos = m_Position - m_Reference;
-			ref_pos = rotate(ref_pos, -App->input->GetMouseXMotion() * 0.5f, vec3(0.0f, 1.0f, 0.0f));
-
-			// Applying vertical orbit
-			vec3 ref_pos_dy = rotate(ref_pos, -App->input->GetMouseYMotion() * 0.5f, m_X);
-
-			// We check the vertical orbit to not do a complete orbit
-			float dotProd = dot(normalize(ref_pos_dy), vec3(0.0f, 1.0f, 0.0f));
-			if (dotProd > -0.95f && dotProd < 0.95f)
-				ref_pos = ref_pos_dy;
-
 			// Moving camera position orbiting
-			m_Position = m_Reference + ref_pos;
+			m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
 
 			// Finally, we look to the reference
 			LookAt(m_Reference);
+		}
 
+		if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+
+			// Orbiting around center --- CalculateMouseRotation() is the reference postion
+			m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
+			OrbitAroundReference(vec3(0, 0, 0));
 		}
 
 		if(App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-			LookAt(vec3(0.0f, 0.0f, 0.0f));
+			LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
 
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
@@ -92,6 +85,37 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
+	const vec3 Camera3D::CalculateMouseRotation(const vec3& pos, const vec3& ref)
+	{
+		// Mouse motion ----------------
+		// There is another way to do it in Physics handout 1
+		// Applying horizontal orbit
+		vec3 ref_pos = pos - ref;
+		ref_pos = rotate(ref_pos, -App->input->GetMouseXMotion() * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+
+		// Applying vertical orbit
+		vec3 ref_pos_dy = rotate(ref_pos, -App->input->GetMouseYMotion() * 0.5f, m_X);
+
+		// We check the vertical orbit to not do a complete orbit
+		float dotProd = dot(normalize(ref_pos_dy), vec3(0.0f, 1.0f, 0.0f));
+		if (dotProd > -0.95f && dotProd < 0.95f)
+			ref_pos = ref_pos_dy;
+
+		return ref_pos;
+	}
+
+	// -----------------------------------------------------------------
+	void Camera3D::OrbitAroundReference(const vec3 &Reference)
+	{
+		this->m_Reference = Reference;
+
+		m_Z = normalize(m_Position - Reference);
+		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
+		m_Y = cross(m_Z, m_X);
+
+		CalculateViewMatrix();
+	}
+
 	void Camera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
 	{
 		this->m_Position = Position;

@@ -19,6 +19,8 @@ namespace Cronos {
 		virtual bool OnCleanUp() override;
 
 		void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
+		void OrbitAroundReference(const vec3& Reference);
+
 		void LookAt(const vec3 &Spot);
 		void Move(const vec3 &Movement);
 
@@ -35,6 +37,7 @@ namespace Cronos {
 	private:
 
 		void CalculateViewMatrix();
+		const vec3 CalculateMouseRotation(const vec3& pos, const vec3& ref);
 
 	public:
 
