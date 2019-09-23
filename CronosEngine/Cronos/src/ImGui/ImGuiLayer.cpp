@@ -2,14 +2,17 @@
 #include "cnpch.h"
 
 #include "ImGuiLayer.h"
-#include "OpenGL/imgui_impl_opengl3.h"
+
+#include "imgui.h"
 #include "OpenGL/imgui_impl_sdl.h"
+#include "OpenGL/imgui_impl_opengl3.h"
+
 
 #include "imnodes.h"
-#include "imgui.h"
+
 
 #include "Core/Application.h"
-#include "SDL/include/SDL.h"
+//#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -524,7 +527,7 @@ inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
 		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;*/
 
-		ImGui_ImplOpenGL3_Init("#version 410 core");
+		//ImGui_ImplOpenGL3_Init("#version 410 core");
 
 		return true;
 	}

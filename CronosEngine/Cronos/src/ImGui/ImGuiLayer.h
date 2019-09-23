@@ -15,7 +15,7 @@ namespace Cronos {
 		
 		bool OnStart() override;
 		//void OnUpdate();
-		void OnAttach();
+		//void OnAttach();
 		void OnDetach();
 		void setDocking();
 		void UpdateDocking();
