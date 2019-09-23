@@ -71,11 +71,16 @@ inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 		static bool show = true;
 
 		UpdateDocking();
+		ImGui::SetNextWindowBgAlpha(0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &show, window_flags);
+		ImGui::PopStyleVar();
+
 		// DockSpace
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
@@ -438,7 +443,7 @@ inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 
 		static bool opt_fullscreen_persistant = true;
 		bool opt_fullscreen = opt_fullscreen_persistant;
-		dockspace_flags = ImGuiDockNodeFlags_None;
+		dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
@@ -451,8 +456,9 @@ inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 			ImGui::SetNextWindowViewport(viewport->ID);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove ;
 			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			
 		}
 
 		//window_flags |= ImGuiWindowFlags_NoBackground;
@@ -460,10 +466,14 @@ inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 
 	bool ImGuiLayer::OnStart()
 	{
-		
+
 		ImGui::CreateContext();
 		ImGui::StyleColorsCustom();
 		imnodes::Initialize();
+
+		ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
+		ImGui_ImplOpenGL3_Init();
+
 		current_id_ = 0;
 		//ImGui::StyleColorsDark();
 
