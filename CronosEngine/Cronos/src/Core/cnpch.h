@@ -2,22 +2,27 @@
 #define _CNPCH_H_
 
 #include <vector>
+
 #include <stdio.h>
 #include <cstdio>
-#include <iostream>
-
 #include <stdlib.h>
 
-
+#include <iostream>
 #include <fstream>
-#include <string>
 #include <sstream>
+#include <string>
 
-#include <algorithm>
+#include <utility>
+#include <functional>
 
 #include <math.h>
+#include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
+
 
 #include <windows.h>
+
 
 #include "Timers/Timer.h"
 #include "Timers/PerfTimer.h"

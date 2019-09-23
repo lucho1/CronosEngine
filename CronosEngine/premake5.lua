@@ -21,6 +21,7 @@ IncludeDir["Glut"] = "Cronos/vendor/glut"
 IncludeDir["SDL"] = "Cronos/vendor/SDL/include"
 IncludeDir["SDL_Mixer"] = "Cronos/vendor/SDL_mixer/include"
 IncludeDir["dlls"] = "Cronos/dll_files"
+IncludeDir["glm"] = "Hazel/vendor/glm"
 
 
 --PATH=%PATH%;$(ProjectDir)\dll_files
@@ -41,7 +42,9 @@ project "Cronos"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	--defines
@@ -57,8 +60,7 @@ project "Cronos"
 		"%{prj.name}/dll_files",
 		"%{prj.name}/src/Core",
 		"%{prj.name}/src/Helpers",
-
-		--"%{IncludeDir.Glad}"
+		"%{IncludeDir.glm}"
 	}
 	libdirs
 	{

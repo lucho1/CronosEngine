@@ -3,8 +3,6 @@
 #include "cnpch.h"
 #include "Globals.h"
 #include "Application.h"
-
-
 #include "psapi.h"
 
 
@@ -25,6 +23,7 @@ namespace Cronos {
 		OutputDebugStringA(tmp_string2);
 
 	}
+
 
 	const std::string GetCppVersion(long int value) {
 
@@ -51,17 +50,60 @@ namespace Cronos {
 		return cppVersion;
 	}
 
+
+	const std::string WindowsVersion() {
+
+		OSVERSIONINFOEX OS;
+		ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
+		OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+		GetVersionEx(&(OSVERSIONINFO&)OS);
+		
+		std::string ret = "Windows ";
+
+		if (OS.dwMajorVersion == 10)
+			ret += "10";
+		else if (OS.dwMajorVersion == 6) {
+
+			if (OS.dwMinorVersion == 3)
+				ret += "8.1";
+			else if (OS.dwMinorVersion == 2)
+				ret += "8";
+			else if (OS.dwMinorVersion == 1)
+				ret += "7";
+			else
+				ret += "Vista";
+		}
+		else if (OS.dwMajorVersion == 5) {
+
+			if (OS.dwMinorVersion == 2)
+				ret += "XP SP2";
+			else if (OS.dwMinorVersion == 1)
+				ret += "XP";
+			else if (OS.dwMinorVersion == 0)
+				ret += "2000";
+		}
+		else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
+			ret += "WinNT";
+		else
+			ret = "WINDOWS VERSION NOT FOUND";
+
+		return ret;
+	}
+
+
 	void LogCompilationFirstMessage()
 	{
 		std::cout <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
 						"	Compilation at Date "			<<		__DATE__			<<
 						" and Time "						<<		__TIME__			<<
-						std::endl;
+		std::endl;
 
 		//Checking and printing C++ version used by compiler
 		std::string cppVersion = GetCppVersion(__cplusplus);
-		std::cout <<	"	Standard C++ Version Implemented by Compiler: "		<< __cplusplus	<< " ("			<< cppVersion << ")" << std::endl <<	   
-						"	OS Found = " << (__STDC_HOSTED__ ? "Yes" : "No")	<< std::endl	<< std::endl	<< std::endl; //Print if found (or not) an OS
+		std::cout <<	"	Standard C++ Version Implemented by Compiler: "		<< __cplusplus							<< " ("			<< cppVersion << ")" << std::endl <<	   
+						"	OS Found: "											<< (__STDC_HOSTED__ ? "Yes" : "No")		<< std::endl	<<
+						"	OS Version: "										<< WindowsVersion() << std::endl		<< std::endl
+		<< std::endl; 
 
 		//__cplusplus returning values:
 		//199711L (C++98 or C++03)
@@ -70,13 +112,20 @@ namespace Cronos {
 		//201703L (C++17)
 
 		//OpenGL and GPU Info Print
+		GLint GPU_TotalMem = 0;
+		GLint GPU_CurrentMem = 0;
+		glGetIntegerv(0x9048, &GPU_TotalMem);
+		glGetIntegerv(0x9049, &GPU_CurrentMem);
+
 		std::cout << std::endl << std::endl << "---- GPU HARDWARE & OPEN GL INFO LOG -----------" << std::endl << std::endl;
 		std::cout <<		
-					 "	OpenGL Version: "	<<	glGetString(GL_VERSION)		<< std::endl								<<
-					 "	GPU Benchmark: "	<<	glGetString(GL_VENDOR)		<< std::endl								<<
-					 "		  GPU: "		<<	glGetString(GL_RENDERER)	<< std::endl	<<		std::endl			<<
-					 "	OpenGL Shading Language Version: "					<< glGetString(GL_SHADING_LANGUAGE_VERSION)	<< std::endl <<
-
+					"	GPU Benchmark: "							<< glGetString(GL_VENDOR)						<< std::endl						<<
+					"	GPU Model:     "							<< glGetString(GL_RENDERER)						<< std::endl						<<
+					"	GPU Total VRAM Memory: "					<< GPU_TotalMem									<< "KB (ONLY FOR NVIDIA GPUs!)"		<< std::endl <<
+					"	GPU Current Availale VRAM Memory: "			<< GPU_CurrentMem								<< "KB (ONLY FOR NVIDIA GPUs!)"		<< std::endl << std::endl <<
+					"	OpenGL Shading Language Version: "			<< glGetString(GL_SHADING_LANGUAGE_VERSION)		<< std::endl <<						//Version of GLSL supported
+					"	OpenGL Version: "							<< glGetString(GL_VERSION)						<< std::endl <<
+																														 
 		std::endl << "---- END OF GPU HARDWARE & OPEN GL INFO LOG ----" << std::endl << std::endl << std::endl;
 
 
@@ -91,49 +140,66 @@ namespace Cronos {
 					"	RDTSC Available: "		<<		(SDL_HasRDTSC() ? "Yes" : "No")				<<	std::endl		<<					// If RDTSC is (or not) available - (Read Time Stamp Counter - Records CPU cycles since reset)
 					"	VS Compiler Version: "	<<		_MSC_VER									<<	std::endl		<<					// Compiler Version
 					"	C++ Version Used: "		<<		_MSVC_LANG << " (" << cppVersion << ")"		<<	std::endl		<<					// C++ standard version targeted by compiler
-					"	Multithreaded Specified: "		<<				(_MT ? "Yes" : "No")		<<	std::endl		<<					// If multithreaded is specified (or not)
-
-		std::endl << "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
-
-
+					"	Multithreaded Specified: "		<<				(_MT ? "Yes" : "No")		<<	std::endl		<< std::endl;		// If multithreaded is specified (or not)
 
 		SYSTEM_INFO SystemInfo;
 		GetSystemInfo(&SystemInfo);
 
-		std::cout << "Number of Processors: " << SystemInfo.dwNumberOfProcessors << std::endl;
-
-		
-		SystemInfo.wProcessorArchitecture;
+		std::cout << "	Number of Processors: " << SystemInfo.dwNumberOfProcessors << std::endl;
 		std::string processorArch = "Unknown architecture";
 
 		switch (SystemInfo.wProcessorArchitecture) {
 
-		case(PROCESSOR_ARCHITECTURE_AMD64):
-			processorArch = "x64 (AMD or Intel)";
-			break;
-		case(PROCESSOR_ARCHITECTURE_ARM):
-			processorArch = "ARM";
-			break;
-		case(PROCESSOR_ARCHITECTURE_ARM64):
-			processorArch = "ARM64";
-			break;
-		case(PROCESSOR_ARCHITECTURE_IA64):
-			processorArch = "Intel Itanium-based";
-			break;
-		case(PROCESSOR_ARCHITECTURE_INTEL):
-			processorArch = "x86";
-			break;
-		case(PROCESSOR_ARCHITECTURE_UNKNOWN):
-			processorArch = "Unknown architecture";
-			break;
-		default:
-			processorArch = "Unknown architecture";
-			break;
-
+			case(PROCESSOR_ARCHITECTURE_AMD64):
+				processorArch = "x64 (AMD or Intel)";
+				break;
+			case(PROCESSOR_ARCHITECTURE_ARM):
+				processorArch = "ARM";
+				break;
+			case(PROCESSOR_ARCHITECTURE_ARM64):
+				processorArch = "ARM64";
+				break;
+			case(PROCESSOR_ARCHITECTURE_IA64):
+				processorArch = "Intel Itanium-based";
+				break;
+			case(PROCESSOR_ARCHITECTURE_INTEL):
+				processorArch = "x86";
+				break;
+			case(PROCESSOR_ARCHITECTURE_UNKNOWN):
+				processorArch = "Unknown architecture";
+				break;
+			default:
+				processorArch = "Unknown architecture";
+				break;
 		}
 
-		std::cout << "Processor Architecture: " << processorArch << std::endl;
-		std::cout << "Processor Revision: " << SystemInfo.wProcessorRevision << std::endl;
+		std::cout << "	Processor Architecture: "	<< processorArch					<< std::endl;
+		std::cout << "	Processor Revision: "		<< SystemInfo.wProcessorRevision	<< std::endl;
+
+		// Get extended ids.
+		int CPUInfo[4] = { -1 };
+		__cpuid(CPUInfo, 0x80000000);
+		unsigned int nExIds = CPUInfo[0];
+
+		// Get the information associated with each extended ID.
+		char CPUBrandString[0x40] = { 0 };
+		for (unsigned int i = 0x80000000; i <= nExIds; ++i)
+		{
+			__cpuid(CPUInfo, i);
+
+			// Interpret CPU brand string and cache information.
+			if (i == 0x80000002)
+				memcpy(CPUBrandString, CPUInfo, sizeof(CPUInfo));
+
+			else if (i == 0x80000003)
+				memcpy(CPUBrandString + 16, CPUInfo, sizeof(CPUInfo));
+
+			else if (i == 0x80000004)
+				memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
+		}
+
+		std::cout << "	CPU: " << CPUBrandString << std::endl;
+		std::cout << std::endl << "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
 
 		//Memory Info
 		MEMORYSTATUSEX MemoryInfo;
@@ -142,27 +208,32 @@ namespace Cronos {
 
 		float div = (1e+9);
 
+		std::cout << std::endl << std::endl << "---- MEMORY HARDWARE INFO LOG -----------"							<< std::endl << std::endl;
+
+		std::cout << "	Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad				<<	" %"	<< std::endl;
+		std::cout << "	Total physical memory: "			<<				 MemoryInfo.ullTotalPhys/div			<<	" GB"	<< std::endl;
+		std::cout << "	Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/div			<<	" GB"	<< std::endl;
+		std::cout << "	Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/div		<< " GB" << std::endl;
 		std::cout << std::endl;
-		std::cout << "Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad				<<	" %"	<< std::endl;
-		std::cout << "Total physical memory: "				<<				 MemoryInfo.ullTotalPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/div	<< " GB" << std::endl;
+		std::cout << "	Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/div			<<	" GB"	<< std::endl;
+		std::cout << "	Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/div			<<	" GB"	<< std::endl;
 		std::cout << std::endl;
-		std::cout << "Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << "Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << std::endl;
-		std::cout << "Free extended memory: "				<<				 MemoryInfo.ullAvailExtendedVirtual/div	<<	" GB"	<< std::endl;
-		std::cout << "Total Page File memory: "				<<				 MemoryInfo.ullTotalPageFile/div		<<	" GB"	<< std::endl;
-		std::cout << "Free Page File memory: "				<<				 MemoryInfo.ullAvailPageFile/div		<<	" GB"	<< std::endl;
+		std::cout << "	Free extended memory: "				<<				 MemoryInfo.ullAvailExtendedVirtual/div	<<	" GB"	<< std::endl;
+		std::cout << "	Total Page File memory: "			<<				 MemoryInfo.ullTotalPageFile/div		<<	" GB"	<< std::endl;
+		std::cout << "	Free Page File memory: "			<<				 MemoryInfo.ullAvailPageFile/div		<<	" GB"	<< std::endl;
 
 
 		PROCESS_MEMORY_COUNTERS pmc;
 		GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
 		SIZE_T virtualMemUsedByMe = pmc.PagefileUsage;
 		SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
-		std::cout << std::endl;
-		std::cout << "Virtual memory used by process: " << virtualMemUsedByMe/div << std::endl;
-		std::cout << "Physical memory used by process: " << physMemUsedByMe/div << std::endl;
 
+		std::cout << std::endl;
+		std::cout << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div << std::endl;
+		std::cout << "	Physical memory used by process: "	<< physMemUsedByMe/div << std::endl;
+
+		std::cout << std::endl << "---- END OF MEMORY HARDWARE INFO LOG ----" << std::endl;
+
+		std::cout << std::endl << std::endl;
 	}
 }
