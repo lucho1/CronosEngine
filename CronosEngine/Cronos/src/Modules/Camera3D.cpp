@@ -37,7 +37,29 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status Camera3D::OnUpdate(float dt)
 	{
-		
+
+		if (App->input->isMouseScrolling()) {
+
+			vec3 newPos(0.0f, 0.0f, 0.0f);
+
+			if(App->input->GetMouseZ()>0)
+				newPos -= m_CameraScrollSpeed * m_Z * dt;
+			else
+				newPos += m_CameraScrollSpeed * m_Z * dt;
+			
+			m_Position += newPos;
+		}
+
+		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT) 
+		{
+			vec3 newPos(0.0f, 0.0f, 0.0f);
+			newPos += m_X * App->input->GetMouseXMotion()/2.0f * dt;
+			newPos.y += -App->input->GetMouseYMotion()/2.0f * dt;
+
+			m_Position += newPos;
+			m_Reference += newPos;
+		}
+
 		if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
 			//Aplying extra impulse if LShift is pressed
@@ -48,8 +70,8 @@ namespace Cronos {
 
 			// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
 			vec3 newPos(0.0f, 0.0f, 0.0f);
-			if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
-			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
+			if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
 
 			// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
 			if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Z * m_CameraMoveSpeed * dt;
@@ -163,7 +185,6 @@ namespace Cronos {
 			m_X.y, m_Y.y, m_Z.y, 0.0f,
 			m_X.z, m_Y.z, m_Z.z, 0.0f,
 			-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
-
 
 		m_ViewMatrixInverse = inverse(m_ViewMatrix);
 	}

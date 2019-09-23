@@ -26,6 +26,7 @@ namespace Cronos {
 		virtual bool OnInit() override;
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
+	
 
 		KEY_STATE GetKey(int id) const
 		{
@@ -36,34 +37,37 @@ namespace Cronos {
 		{
 			return mouse_buttons[id];
 		}
-
-		int GetMouseX() const
+		inline bool isMouseScrolling() const
+		{
+			return m_MouseScroll;
+		}
+		inline int GetMouseX() const
 		{
 			return mouse_x;
 		}
 
-		int GetMouseY() const
+		inline int GetMouseY() const
 		{
 			return mouse_y;
 		}
 
-		int GetMouseZ() const
+		inline int GetMouseZ() const
 		{
 			return mouse_z;
 		}
 
-		int GetMouseXMotion() const
+		inline int GetMouseXMotion() const
 		{
 			return mouse_x_motion;
 		}
 
-		int GetMouseYMotion() const
+		inline int GetMouseYMotion() const
 		{
 			return mouse_y_motion;
 		}
 
 	private:
-
+		
 		KEY_STATE* keyboard;
 		KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
 		int mouse_x;
@@ -71,7 +75,8 @@ namespace Cronos {
 		int mouse_z;
 		int mouse_x_motion;
 		int mouse_y_motion;
-		//int mouse_z_motion;
+		bool m_MouseScroll;
+
 	};
 
 }

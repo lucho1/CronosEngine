@@ -85,6 +85,7 @@ namespace Cronos {
 		}
 
 		mouse_x_motion = mouse_y_motion = 0;
+		m_MouseScroll = false;
 
 		bool quit = false;
 		SDL_Event e;
@@ -93,6 +94,7 @@ namespace Cronos {
 			switch (e.type)
 			{
 			case SDL_MOUSEWHEEL:
+				m_MouseScroll = true;
 				mouse_z = e.wheel.y;
 				break;
 
@@ -115,7 +117,7 @@ namespace Cronos {
 			}
 			}
 		}
-
+		
 		if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
 			return UPDATE_STOP;
 

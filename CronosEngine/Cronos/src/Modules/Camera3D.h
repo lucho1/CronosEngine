@@ -47,6 +47,7 @@ namespace Cronos {
 
 		mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
 		float m_CameraMoveSpeed = 5.0f;
+		float m_CameraScrollSpeed = 20.0f;
 	};
 
 }

@@ -5,6 +5,8 @@
 #include "Application.h"
 #include "psapi.h"
 
+#define BTOGB (1073741824.0f)
+#define KBTOGB (1048576.0f)
 
 namespace Cronos {
 
@@ -116,15 +118,15 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		GLint GPU_TotalMem = 0;
 		GLint GPU_CurrentMem = 0;
-		glGetIntegerv(0x9048, &GPU_TotalMem);
-		glGetIntegerv(0x9049, &GPU_CurrentMem);
+		glGetIntegerv(0x9048, &GPU_TotalMem); //In KB!
+		glGetIntegerv(0x9049, &GPU_CurrentMem); //In KB!
 
 		std::cout << std::endl << std::endl << "---- GPU HARDWARE & OPEN GL INFO LOG -----------" << std::endl << std::endl;
 		std::cout <<		
 					"	GPU Benchmark: "							<< glGetString(GL_VENDOR)						<< std::endl						<<
 					"	GPU Model:     "							<< glGetString(GL_RENDERER)						<< std::endl						<<
-					"	GPU Total VRAM Memory: "					<< GPU_TotalMem									<< "KB (ONLY FOR NVIDIA GPUs!)"		<< std::endl <<
-					"	GPU Current Availale VRAM Memory: "			<< GPU_CurrentMem								<< "KB (ONLY FOR NVIDIA GPUs!)"		<< std::endl << std::endl <<
+					"	GPU Total VRAM Memory: "					<< GPU_TotalMem/KBTOGB							<< " GB (ONLY FOR NVIDIA GPUs!)"		<< std::endl <<
+					"	GPU Current Availale VRAM Memory: "			<< GPU_CurrentMem/KBTOGB						<< " GB (ONLY FOR NVIDIA GPUs!)"		<< std::endl << std::endl <<
 					"	OpenGL Shading Language Version: "			<< glGetString(GL_SHADING_LANGUAGE_VERSION)		<< std::endl <<						//Version of GLSL supported
 					"	OpenGL Version: "							<< glGetString(GL_VERSION)						<< std::endl <<
 																														 
@@ -138,7 +140,7 @@ namespace Cronos {
 		std::cout << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
 		std::cout <<
 
-					"	PC RAM Storage: "		<<		(float)SDL_GetSystemRAM() / (1024.0f)		<<	" GB"			<< std::endl <<		// GB of RAM memory
+					"	PC RAM Storage: "		<<		(float)SDL_GetSystemRAM()/(1024.0f)			<<	" GB"			<< std::endl <<		// GB of RAM memory
 					"	Avalable CPU Cores: "	<<		SDL_GetCPUCount()							<<	std::endl		<<					// Number of available cores in CPU
 					"	L1 Cache Line Size: "	<<		SDL_GetCPUCacheLineSize()					<<	" Bytes"		<< std::endl <<		// Size of the L1 line (little but fast) of the cache memory
 					"	RDTSC Available: "		<<		(SDL_HasRDTSC() ? "Yes" : "No")				<<	std::endl		<<					// If RDTSC is (or not) available - (Read Time Stamp Counter - Records CPU cycles since reset)
@@ -177,8 +179,8 @@ namespace Cronos {
 				break;
 		}
 
-		std::cout << "	Processor Architecture: "	<< processorArch					<< std::endl;
-		std::cout << "	Processor Revision: "		<< SystemInfo.wProcessorRevision	<< std::endl;
+		std::cout <<	"	Processor Architecture: "	<< processorArch					<<
+						"	Processor Revision: "		<< SystemInfo.wProcessorRevision	<< std::endl;
 
 		// Get extended ids.
 		int CPUInfo[4] = { -1 };
@@ -213,22 +215,22 @@ namespace Cronos {
 		MemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
 		GlobalMemoryStatusEx(&MemoryInfo);
 
-		float div = (1e+9);
+		std::cout << std::endl << std::endl << "---- MEMORY HARDWARE INFO LOG -----------"									<< std::endl	<< std::endl <<
 
-		std::cout << std::endl << std::endl << "---- MEMORY HARDWARE INFO LOG -----------"							<< std::endl << std::endl;
+						"	Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad					<<	" %"		<< std::endl <<
+						"	Total physical memory: "			<<				 MemoryInfo.ullTotalPhys/BTOGB				<<	" GB"		<< std::endl <<
+						"	Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/BTOGB				<<	" GB"		<< std::endl <<
+						"	Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/BTOGB << " GB"		<<
+		std::endl;
 
-		std::cout << "	Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad				<<	" %"	<< std::endl;
-		std::cout << "	Total physical memory: "			<<				 MemoryInfo.ullTotalPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "	Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "	Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/div		<< " GB" << std::endl;
-		std::cout << std::endl;
-		std::cout << "	Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << "	Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << std::endl;
-		std::cout << "	Free extended memory: "				<<				 MemoryInfo.ullAvailExtendedVirtual/div	<<	" GB"	<< std::endl;
-		std::cout << "	Total Page File memory: "			<<				 MemoryInfo.ullTotalPageFile/div		<<	" GB"	<< std::endl;
-		std::cout << "	Free Page File memory: "			<<				 MemoryInfo.ullAvailPageFile/div		<<	" GB"	<< std::endl;
+		std::cout <<	"	Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/BTOGB			<<	" GB"		<< std::endl <<
+						"	Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/BTOGB			<<	" GB"		<<
+		std::endl;
 
+		std::cout <<	"	Free extended memory: "				<<			   MemoryInfo.ullAvailExtendedVirtual/BTOGB		<<	" GB"		<< std::endl <<
+						"	Total Page File memory: "			<<				 MemoryInfo.ullTotalPageFile/BTOGB			<<	" GB"		<< std::endl <<
+						"	Free Page File memory: "			<<				 MemoryInfo.ullAvailPageFile/BTOGB			<<	" GB"		<<
+		std::endl;
 
 		PROCESS_MEMORY_COUNTERS pmc;
 		GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
@@ -236,8 +238,8 @@ namespace Cronos {
 		SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
 		std::cout << std::endl;
-		std::cout << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div	<< " GB" << std::endl;
-		std::cout << "	Physical memory used by process: "	<< physMemUsedByMe/div		<< " GB" << std::endl;
+		std::cout <<	"	Virtual memory used by process: "	<< virtualMemUsedByMe/BTOGB	<< " GB" << std::endl <<
+						"	Physical memory used by process: "	<< physMemUsedByMe/BTOGB		<< " GB" << std::endl;
 		
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
