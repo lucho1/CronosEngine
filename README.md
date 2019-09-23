@@ -7,8 +7,8 @@
 ![Repo Size](https://img.shields.io/github/repo-size/lucho1/CronosEngine?color=green&label=Repo%20Size&style=plastic)
 ![GH Top Language](https://img.shields.io/github/languages/top/lucho1/CronosEngine?color=green&style=plastic)
 ![GH Total Languages](https://img.shields.io/github/languages/count/lucho1/CronosEngine?color=green)
-![Total Downloads](https://img.shields.io/github/downloads/lucho1/CronosEngine/total?color=yellow&label=Total%20Downloads&style=plastic)
 
+![Total Downloads](https://img.shields.io/github/downloads/lucho1/CronosEngine/total?color=green&label=Total%20Downloads&style=plastic)
 ![Watchers](https://img.shields.io/github/watchers/lucho1/CronosEngine?style=social)
 ![Forks](https://img.shields.io/github/forks/lucho1/CronosEngine?style=social)
 
