@@ -4149,8 +4149,8 @@ GLAPI void APIENTRY glVertexBlendARB (GLint count);
 typedef long GLsizeiptrARB;
 typedef long GLintptrARB;
 #else
-typedef ptrdiff_t GLsizeiptrARB;
-typedef ptrdiff_t GLintptrARB;
+//typedef ptrdiff_t GLsizeiptrARB;
+//typedef ptrdiff_t GLintptrARB;
 #endif
 #define GL_BUFFER_SIZE_ARB                0x8764
 #define GL_BUFFER_USAGE_ARB               0x8765

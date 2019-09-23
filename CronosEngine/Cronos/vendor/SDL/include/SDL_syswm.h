@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,25 +25,31 @@
  *  Include file for SDL custom system window manager hooks.
  */
 
-#ifndef SDL_syswm_h_
-#define SDL_syswm_h_
+#ifndef _SDL_syswm_h
+#define _SDL_syswm_h
 
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_video.h"
 #include "SDL_version.h"
 
+#include "begin_code.h"
+/* Set up for C function definitions, even when using C++ */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
- *  \brief SDL_syswm.h
+ *  \file SDL_syswm.h
  *
  *  Your application has access to a special type of event ::SDL_SYSWMEVENT,
  *  which contains window-manager specific information and arrives whenever
  *  an unhandled window event occurs.  This event is ignored by default, but
  *  you can enable it with SDL_EventState().
  */
+#ifdef SDL_PROTOTYPES_ONLY
 struct SDL_SysWMinfo;
-
-#if !defined(SDL_PROTOTYPES_ONLY)
+#else
 
 #if defined(SDL_VIDEO_DRIVER_WINDOWS)
 #ifndef WIN32_LEAN_AND_MEAN
@@ -100,19 +106,6 @@ typedef struct ANativeWindow ANativeWindow;
 typedef void *EGLSurface;
 #endif
 
-#if defined(SDL_VIDEO_DRIVER_VIVANTE)
-#include "SDL_egl.h"
-#endif
-#endif /* SDL_PROTOTYPES_ONLY */
-
-
-#include "begin_code.h"
-/* Set up for C function definitions, even when using C++ */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#if !defined(SDL_PROTOTYPES_ONLY)
 /**
  *  These are the various supported windowing subsystems
  */
@@ -125,11 +118,9 @@ typedef enum
     SDL_SYSWM_COCOA,
     SDL_SYSWM_UIKIT,
     SDL_SYSWM_WAYLAND,
-    SDL_SYSWM_MIR,  /* no longer available, left for API/ABI compatibility. Remove in 2.1! */
+    SDL_SYSWM_MIR,
     SDL_SYSWM_WINRT,
-    SDL_SYSWM_ANDROID,
-    SDL_SYSWM_VIVANTE,
-    SDL_SYSWM_OS2
+    SDL_SYSWM_ANDROID
 } SDL_SYSWM_TYPE;
 
 /**
@@ -176,13 +167,6 @@ struct SDL_SysWMmsg
             /* No UIKit window events yet */
         } uikit;
 #endif
-#if defined(SDL_VIDEO_DRIVER_VIVANTE)
-        struct
-        {
-            int dummy;
-            /* No Vivante window events yet */
-        } vivante;
-#endif
         /* Can't have an empty union */
         int dummy;
     } msg;
@@ -205,7 +189,6 @@ struct SDL_SysWMinfo
         {
             HWND window;                /**< The window handle */
             HDC hdc;                    /**< The window device context */
-            HINSTANCE hinstance;        /**< The instance handle */
         } win;
 #endif
 #if defined(SDL_VIDEO_DRIVER_WINRT)
@@ -233,9 +216,9 @@ struct SDL_SysWMinfo
         struct
         {
 #if defined(__OBJC__) && defined(__has_feature) && __has_feature(objc_arc)
-            NSWindow __unsafe_unretained *window; /**< The Cocoa window */
+            NSWindow __unsafe_unretained *window; /* The Cocoa window */
 #else
-            NSWindow *window;                     /**< The Cocoa window */
+            NSWindow *window;                     /* The Cocoa window */
 #endif
         } cocoa;
 #endif
@@ -243,13 +226,13 @@ struct SDL_SysWMinfo
         struct
         {
 #if defined(__OBJC__) && defined(__has_feature) && __has_feature(objc_arc)
-            UIWindow __unsafe_unretained *window; /**< The UIKit window */
+            UIWindow __unsafe_unretained *window; /* The UIKit window */
 #else
-            UIWindow *window;                     /**< The UIKit window */
+            UIWindow *window;                     /* The UIKit window */
 #endif
-            GLuint framebuffer; /**< The GL view's Framebuffer Object. It must be bound when rendering to the screen using GL. */
-            GLuint colorbuffer; /**< The GL view's color Renderbuffer Object. It must be bound when SDL_GL_SwapWindow is called. */
-            GLuint resolveFramebuffer; /**< The Framebuffer Object which holds the resolve color Renderbuffer, when MSAA is used. */
+            GLuint framebuffer; /* The GL view's Framebuffer Object. It must be bound when rendering to the screen using GL. */
+            GLuint colorbuffer; /* The GL view's color Renderbuffer Object. It must be bound when SDL_GL_SwapWindow is called. */
+            GLuint resolveFramebuffer; /* The Framebuffer Object which holds the resolve color Renderbuffer, when MSAA is used. */
         } uikit;
 #endif
 #if defined(SDL_VIDEO_DRIVER_WAYLAND)
@@ -260,11 +243,11 @@ struct SDL_SysWMinfo
             struct wl_shell_surface *shell_surface; /**< Wayland shell_surface (window manager handle) */
         } wl;
 #endif
-#if defined(SDL_VIDEO_DRIVER_MIR)  /* no longer available, left for API/ABI compatibility. Remove in 2.1! */
+#if defined(SDL_VIDEO_DRIVER_MIR)
         struct
         {
-            void *connection;  /**< Mir display server connection */
-            void *surface;  /**< Mir surface */
+            struct MirConnection *connection;  /**< Mir display server connection */
+            struct MirSurface *surface;  /**< Mir surface */
         } mir;
 #endif
 
@@ -276,17 +259,8 @@ struct SDL_SysWMinfo
         } android;
 #endif
 
-#if defined(SDL_VIDEO_DRIVER_VIVANTE)
-        struct
-        {
-            EGLNativeDisplayType display;
-            EGLNativeWindowType window;
-        } vivante;
-#endif
-
-        /* Make sure this union is always 64 bytes (8 64-bit pointers). */
-        /* Be careful not to overflow this if you add a new target! */
-        Uint8 dummy[64];
+        /* Can't have an empty union */
+        int dummy;
     } info;
 };
 
@@ -322,6 +296,6 @@ extern DECLSPEC SDL_bool SDLCALL SDL_GetWindowWMInfo(SDL_Window * window,
 #endif
 #include "close_code.h"
 
-#endif /* SDL_syswm_h_ */
+#endif /* _SDL_syswm_h */
 
 /* vi: set ts=4 sw=4 expandtab: */

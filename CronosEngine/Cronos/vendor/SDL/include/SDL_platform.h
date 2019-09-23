@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,8 +25,8 @@
  *  Try to get a standard set of platform defines.
  */
 
-#ifndef SDL_platform_h_
-#define SDL_platform_h_
+#ifndef _SDL_platform_h
+#define _SDL_platform_h
 
 #if defined(_AIX)
 #undef __AIX__
@@ -70,22 +70,18 @@
 /* lets us know what version of Mac OS X we're compiling on */
 #include "AvailabilityMacros.h"
 #include "TargetConditionals.h"
-#if TARGET_OS_TV
-#undef __TVOS__
-#define __TVOS__ 1
-#endif
 #if TARGET_OS_IPHONE
-/* if compiling for iOS */
+/* if compiling for iPhone */
 #undef __IPHONEOS__
 #define __IPHONEOS__ 1
 #undef __MACOSX__
 #else
-/* if not compiling for iOS */
+/* if not compiling for iPhone */
 #undef __MACOSX__
 #define __MACOSX__  1
-#if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-# error SDL for Mac OS X only supports deploying on 10.6 and above.
-#endif /* MAC_OS_X_VERSION_MIN_REQUIRED < 1060 */
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1050
+# error SDL for Mac OS X only supports deploying on 10.5 and above.
+#endif /* MAC_OS_X_VERSION_MIN_REQUIRED < 1050 */
 #endif /* TARGET_OS_IPHONE */
 #endif /* defined(__APPLE__) */
 
@@ -97,7 +93,7 @@
 #undef __OPENBSD__
 #define __OPENBSD__ 1
 #endif
-#if defined(__OS2__) || defined(__EMX__)
+#if defined(__OS2__)
 #undef __OS2__
 #define __OS2__     1
 #endif
@@ -120,34 +116,21 @@
 
 #if defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
 /* Try to find out if we're compiling for WinRT or non-WinRT */
-#if defined(_MSC_VER) && defined(__has_include)
-#if __has_include(<winapifamily.h>)
-#define HAVE_WINAPIFAMILY_H 1
-#else
-#define HAVE_WINAPIFAMILY_H 0
-#endif
-
-/* If _USING_V110_SDK71_ is defined it means we are using the Windows XP toolset. */
-#elif defined(_MSC_VER) && (_MSC_VER >= 1700 && !_USING_V110_SDK71_)    /* _MSC_VER == 1700 for Visual Studio 2012 */
-#define HAVE_WINAPIFAMILY_H 1
-#else
-#define HAVE_WINAPIFAMILY_H 0
-#endif
-
-#if HAVE_WINAPIFAMILY_H
+/* If _USING_V110_SDK71_ is defined it means we are using the v110_xp or v120_xp toolset. */
+#if (defined(_MSC_VER) && (_MSC_VER >= 1700) && !_USING_V110_SDK71_)	/* _MSC_VER==1700 for MSVC 2012 */
 #include <winapifamily.h>
-#define WINAPI_FAMILY_WINRT (!WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP))
-#else
-#define WINAPI_FAMILY_WINRT 0
-#endif /* HAVE_WINAPIFAMILY_H */
-
-#if WINAPI_FAMILY_WINRT
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
+#undef __WINDOWS__
+#define __WINDOWS__   1
+/* See if we're compiling for WinRT: */
+#elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
 #undef __WINRT__
 #define __WINRT__ 1
+#endif
 #else
 #undef __WINDOWS__
-#define __WINDOWS__ 1
-#endif
+#define __WINDOWS__   1
+#endif /* _MSC_VER < 1700 */
 #endif /* defined(WIN32) || defined(_WIN32) || defined(__CYGWIN__) */
 
 #if defined(__WINDOWS__)
@@ -193,6 +176,6 @@ extern DECLSPEC const char * SDLCALL SDL_GetPlatform (void);
 #endif
 #include "close_code.h"
 
-#endif /* SDL_platform_h_ */
+#endif /* _SDL_platform_h */
 
 /* vi: set ts=4 sw=4 expandtab: */

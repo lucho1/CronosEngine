@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,11 +25,10 @@
  *  Header for the enumerated pixel format definitions.
  */
 
-#ifndef SDL_pixels_h_
-#define SDL_pixels_h_
+#ifndef _SDL_pixels_h
+#define _SDL_pixels_h
 
 #include "SDL_stdinc.h"
-#include "SDL_endian.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
@@ -168,7 +167,7 @@ enum
     ((format) && (SDL_PIXELFLAG(format) != 1))
 
 /* Note: If you modify this list, update SDL_GetPixelFormatName() */
-typedef enum
+enum
 {
     SDL_PIXELFORMAT_UNKNOWN,
     SDL_PIXELFORMAT_INDEX1LSB =
@@ -261,19 +260,6 @@ typedef enum
         SDL_DEFINE_PIXELFORMAT(SDL_PIXELTYPE_PACKED32, SDL_PACKEDORDER_ARGB,
                                SDL_PACKEDLAYOUT_2101010, 32, 4),
 
-    /* Aliases for RGBA byte arrays of color data, for the current platform */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_RGBA8888,
-    SDL_PIXELFORMAT_ARGB32 = SDL_PIXELFORMAT_ARGB8888,
-    SDL_PIXELFORMAT_BGRA32 = SDL_PIXELFORMAT_BGRA8888,
-    SDL_PIXELFORMAT_ABGR32 = SDL_PIXELFORMAT_ABGR8888,
-#else
-    SDL_PIXELFORMAT_RGBA32 = SDL_PIXELFORMAT_ABGR8888,
-    SDL_PIXELFORMAT_ARGB32 = SDL_PIXELFORMAT_BGRA8888,
-    SDL_PIXELFORMAT_BGRA32 = SDL_PIXELFORMAT_ARGB8888,
-    SDL_PIXELFORMAT_ABGR32 = SDL_PIXELFORMAT_RGBA8888,
-#endif
-
     SDL_PIXELFORMAT_YV12 =      /**< Planar mode: Y + V + U  (3 planes) */
         SDL_DEFINE_PIXELFOURCC('Y', 'V', '1', '2'),
     SDL_PIXELFORMAT_IYUV =      /**< Planar mode: Y + U + V  (3 planes) */
@@ -287,10 +273,8 @@ typedef enum
     SDL_PIXELFORMAT_NV12 =      /**< Planar mode: Y + U/V interleaved  (2 planes) */
         SDL_DEFINE_PIXELFOURCC('N', 'V', '1', '2'),
     SDL_PIXELFORMAT_NV21 =      /**< Planar mode: Y + V/U interleaved  (2 planes) */
-        SDL_DEFINE_PIXELFOURCC('N', 'V', '2', '1'),
-    SDL_PIXELFORMAT_EXTERNAL_OES =      /**< Android video texture format */
-        SDL_DEFINE_PIXELFOURCC('O', 'E', 'S', ' ')
-} SDL_PixelFormatEnum;
+        SDL_DEFINE_PIXELFOURCC('N', 'V', '2', '1')
+};
 
 typedef struct SDL_Color
 {
@@ -465,6 +449,6 @@ extern DECLSPEC void SDLCALL SDL_CalculateGammaRamp(float gamma, Uint16 * ramp);
 #endif
 #include "close_code.h"
 
-#endif /* SDL_pixels_h_ */
+#endif /* _SDL_pixels_h */
 
 /* vi: set ts=4 sw=4 expandtab: */
