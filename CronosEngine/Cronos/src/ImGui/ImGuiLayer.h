@@ -5,6 +5,7 @@
 
 namespace Cronos {
 
+
 	class ImGuiLayer : public Module
 	{
 	public:
@@ -17,13 +18,32 @@ namespace Cronos {
 		//void OnUpdate();
 		//void OnAttach();
 		void OnDetach();
+
+
+	private:
+
 		void setDocking();
 		void UpdateDocking();
-		
+
+		void GUIDrawMainBar();
+		void GUIDrawInspectorMenu();
+		void GUIDrawTransformPMenu();
+		void GUIDrawMaterialsMenu();
+		void GUIDrawHierarchyPanel();
+		void GUIDrawAssetPanel();
+		void GUIDrawNodeEditorPanel();
+
+
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
 		float m_Time = 0.0f;
+		bool ShowMainMenu = true;
+		bool ShowInspectorPanel = true;
+		bool ShowHierarchyMenu = true;
+		bool ShowAssetMenu = true;
+		bool ShowNodeEditorPanel = false;
+
 
 		struct Link
 		{
