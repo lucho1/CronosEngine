@@ -98,20 +98,22 @@ namespace Cronos {
 						" and Time "						<<		__TIME__			<<
 		std::endl;
 
-		//Checking and printing C++ version used by compiler
+		//---------------------------------- CHECKING AND PRINTING C++ VERSION USED BY COMPILER ---------------------------------------------
 		std::string cppVersion = GetCppVersion(__cplusplus);
 		std::cout <<	"	Standard C++ Version Implemented by Compiler: "		<< __cplusplus							<< " ("			<< cppVersion << ")" << std::endl <<	   
 						"	OS Found: "											<< (__STDC_HOSTED__ ? "Yes" : "No")		<< std::endl	<<
 						"	OS Version: "										<< WindowsVersion() << std::endl		<< std::endl
 		<< std::endl; 
 
-		//__cplusplus returning values:
-		//199711L (C++98 or C++03)
-		//201103L (C++11)
-		//201402L (C++14)
-		//201703L (C++17)
+		///__cplusplus returning values:
+		///199711L (C++98 or C++03)
+		///201103L (C++11)
+		///201402L (C++14)
+		///201703L (C++17)
 
-		//OpenGL and GPU Info Print
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//---------------------------------------------- OPENGL AND GPU INFO PRINT -----------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
 		GLint GPU_TotalMem = 0;
 		GLint GPU_CurrentMem = 0;
 		glGetIntegerv(0x9048, &GPU_TotalMem);
@@ -129,7 +131,9 @@ namespace Cronos {
 		std::endl << "---- END OF GPU HARDWARE & OPEN GL INFO LOG ----" << std::endl << std::endl << std::endl;
 
 
-		//CPU Info Print
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//---------------------------------------------------- CPU INFO PRINT ----------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
 		cppVersion = GetCppVersion(_MSVC_LANG);
 		std::cout << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
 		std::cout <<
@@ -201,7 +205,10 @@ namespace Cronos {
 		std::cout << "	CPU: " << CPUBrandString << std::endl;
 		std::cout << std::endl << "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
 
-		//Memory Info
+		
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//---------------------------------------------------- MEMORU INFO PRINT -------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
 		MEMORYSTATUSEX MemoryInfo;
 		MemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
 		GlobalMemoryStatusEx(&MemoryInfo);
@@ -229,11 +236,13 @@ namespace Cronos {
 		SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
 		std::cout << std::endl;
-		std::cout << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div << std::endl;
-		std::cout << "	Physical memory used by process: "	<< physMemUsedByMe/div << std::endl;
-
+		std::cout << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div	<< " GB" << std::endl;
+		std::cout << "	Physical memory used by process: "	<< physMemUsedByMe/div		<< " GB" << std::endl;
+		
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
 		std::cout << std::endl << "---- END OF MEMORY HARDWARE INFO LOG ----" << std::endl;
-
 		std::cout << std::endl << std::endl;
 	}
 }
