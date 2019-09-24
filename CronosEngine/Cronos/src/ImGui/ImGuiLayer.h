@@ -9,6 +9,7 @@ namespace Cronos {
 	public:
 		AssetItems(std::filesystem::path m_Path) { m_Elements = m_Path.filename().string(); };
 
+		
 		std::string m_Elements;
 	};
 
@@ -70,7 +71,7 @@ namespace Cronos {
 		bool ShowNodeEditorPanel = false;
 
 		Directories* AssetDirectories;
-		std::list <Directories*> DirectoriesArray;
+		std::vector <Directories*> DirectoriesArray;
 
 		struct Link
 		{

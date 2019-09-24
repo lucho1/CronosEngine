@@ -67,7 +67,7 @@ namespace Cronos {
 
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		setDocking();
-
+		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 
@@ -84,10 +84,33 @@ namespace Cronos {
 
 		return true;
 	}
+	static int iterations = 0;
 
+	static void testIterator(Directories a ) {
+		for (auto& c : a.childs) {
+
+			testIterator(*c);
+		}
+	}
+
+	static void AssetImguiIterator(Directories a) {
+		for (auto& c : a.childs) {
+			std::string temp = c->m_Directories.filename().string();
+			if (ImGui::TreeNode(temp.c_str())) {
+				AssetImguiIterator(*c);
+				ImGui::TreePop();
+			}
+		}
+	}
 
 	update_status ImGuiLayer::OnUpdate(float dt)
 	{
+		for (auto& a : AssetDirectories->childs) {
+			iterations++;
+			testIterator(*a);
+		}
+
+		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(App->window->GetWidth(), App->window->GetHeight());
@@ -418,83 +441,30 @@ namespace Cronos {
 				}
 				ImGui::EndMenuBar();
 			}
-
-			ImGui::BeginChild("left panel", ImVec2(150, 0), true);
-			struct func {
-				static void a(const char* directories, int id)
-				{
-					ImGui::PushID(id);
-					std::filesystem::path currentpath(directories);
-				};
-			};
-				//if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
-				//	// left
-				//	static int a = 0;
-				//	static int ID = 0;
-				//	static int currentDepth=0;
-
-				//	Directories* temp = new Directories(m_RootDirectory);
-				//	temp->m_ID = ID;
-				//	DirectoriesArray.push_back(temp);
-				//	Directories* currentDir = temp;
-				//	for (auto& p = std::filesystem::recursive_directory_iterator(m_RootDirectory); p != std::filesystem::recursive_directory_iterator(); ++p) {					
-				//
-				//		for (auto&j : p) {
-				//			if (j.is_directory()) {
-				//				ID++;
-				//				Directories* temp2 = new Directories(j.path());
-				//				temp2->m_ID = ID;
-				//				temp2->m_DepthID = p.depth();
-				//				int test = p.depth();
-				//				if (p.depth() <= a)		
-				//				{
-				//					int TestID = 0;
-				//					for (auto&co : DirectoriesArray) {
-				//						
-				//						if (p.depth() > 0 && co->m_DepthID == p.depth()-1) {
-				//							if (co->m_ID > TestID) {
-				//								TestID = co->m_ID;
-				//								currentDir = co;
-				//							}
-				//						}
-				//						else if (p.depth() == 0) {
-				//							currentDir = temp;
-				//							break;
-				//						}
-				//					}
-				//					currentDir->childs.push_back(temp2);
-				//					currentDir = temp2;
-				//				}
-				//				else if (p.depth() > a) {
-				//					currentDir->childs.push_back(temp2);
-				//					currentDir = temp2;
-				//				}
-
-				//				a = p.depth();
-				//				DirectoriesArray.push_back(temp2);
-				//			}
-
-				//		}
-				//	}
-				//	ImGui::TreePop();
-				//}
-				//ImGui::EndChild();
-
+			ImGuiIO& io = ImGui::GetIO();
+			ImGui::BeginChild("left panel", ImVec2(150, 0), io.ConfigWindowsResizeFromEdges);
+			//struct func {
+			//	static void a(const char* directories, int id)
+			//	{
+			//		ImGui::PushID(id);
+			//		std::filesystem::path currentpath(directories);
+			//	};
+			//};
 			
-			//if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
-			//	// left
-			//	for (auto& p : std::filesystem::recursive_directory_iterator(m_RootDirectory)) {
-			//		if (p.is_directory()) {
-			//			int ap = p.path().generic_string().size();
-			//			std::string Directory = p.path().filename().string();
-			//			if (ImGui::TreeNode(Directory.c_str())) {
-			//				ImGui::TreePop();
-			//				bool apen = true;
-			//			}
-			//		}
-			//	}
-			//	ImGui::TreePop();
-			//}
+			
+			if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
+			// left
+				for (auto& a : AssetDirectories->childs)
+				{
+					std::string	temp = a->m_Directories.filename().string();
+					if (ImGui::TreeNode(temp.c_str())){
+						AssetImguiIterator(*a);
+						ImGui::TreePop();
+					}		
+				}
+				ImGui::TreePop();
+			}
+
 			ImGui::EndChild();
 			const char* SceneLabel = "Scenes";
 			static int selected = 0;
