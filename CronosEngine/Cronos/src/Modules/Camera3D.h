@@ -39,6 +39,12 @@ namespace Cronos {
 		void CalculateViewMatrix();
 		const vec3 CalculateMouseRotation(const vec3& pos, const vec3& ref);
 
+
+		//TODO: Change the workflow of this:
+		void Zoom(/*int width, int height*/);
+		float nearPlane = 0.125f;
+		float farPlane = 0.512f;
+
 	public:
 
 		vec3 m_X, m_Y, m_Z, m_Position, m_Reference;

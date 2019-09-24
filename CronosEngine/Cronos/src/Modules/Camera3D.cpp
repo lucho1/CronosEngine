@@ -40,14 +40,7 @@ namespace Cronos {
 
 		if (App->input->isMouseScrolling()) {
 
-			vec3 newPos(0.0f, 0.0f, 0.0f);
-
-			if(App->input->GetMouseZ()>0)
-				newPos -= m_CameraScrollSpeed * m_Z * dt;
-			else
-				newPos += m_CameraScrollSpeed * m_Z * dt;
-			
-			m_Position += newPos;
+			Zoom();
 		}
 
 		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT) 
@@ -181,12 +174,55 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void Camera3D::CalculateViewMatrix()
 	{
-		m_ViewMatrix = mat4x4(m_X.x, m_Y.x, m_Z.x, 0.0f,
-			m_X.y, m_Y.y, m_Z.y, 0.0f,
-			m_X.z, m_Y.z, m_Z.z, 0.0f,
-			-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
+		m_ViewMatrix = mat4x4(	m_X.x, m_Y.x, m_Z.x, 0.0f,
+								m_X.y, m_Y.y, m_Z.y, 0.0f,
+								m_X.z, m_Y.z, m_Z.z, 0.0f,
+								-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
 
 		m_ViewMatrixInverse = inverse(m_ViewMatrix);
+	}
+
+
+	void Camera3D::Zoom(/*int width, int height*/) {
+
+		//vec3 newPos(0.0f, 0.0f, 0.0f);
+		//
+		//if (App->input->GetMouseZ() > 0)
+		//	newPos -= m_CameraScrollSpeed * m_Z * dt;
+		//else
+		//	newPos += m_CameraScrollSpeed * m_Z * dt;
+		//
+		//m_Position += newPos;
+		
+		glViewport(0, 0, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		float multiplier = (float)App->input->GetMouseZ() * 0.5f;
+
+		//nearPlane += multiplier;
+		//farPlane += multiplier;
+		float aspectRatio = ((float)App->window->GetWindowWidth() / (float)App->window->GetWindowHeight());
+		aspectRatio += multiplier;
+
+		App->renderer3D->ProjectionMatrix = perspective(60.0f, aspectRatio, nearPlane, farPlane);
+
+		mat4x4 res = App->renderer3D->ProjectionMatrix /** App->renderer3D->ViewMatrix*/;
+
+		glLoadMatrixf(&res);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		/*glViewport(0, 0, width, height);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
+		glLoadMatrixf(&ProjectionMatrix);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();*/
 	}
 
 }

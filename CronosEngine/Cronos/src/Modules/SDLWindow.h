@@ -23,6 +23,9 @@ namespace Cronos {
 
 		void SetTitle(const char* title);
 
+		inline const int GetWindowHeight() const { return (SCREEN_HEIGHT * SCREEN_SIZE); }
+		inline const int GetWindowWidth() const { return (SCREEN_WIDTH * SCREEN_SIZE); }
+
 	public:
 		//The window we'll be rendering to
 		SDL_Window* window;
