@@ -60,6 +60,9 @@
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h">
       <Filter>ImGui\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h">
+      <Filter>ImGui\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\ImGui\imnodes.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -84,7 +87,6 @@
     <ClInclude Include="src\Renderer\Primitive.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -120,6 +122,9 @@
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp">
       <Filter>ImGui\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp">
+      <Filter>ImGui\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\ImGui\imnodes.cpp">
       <Filter>ImGui</Filter>
     </ClCompile>
@@ -144,6 +149,5 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
   </ItemGroup>
 </Project>

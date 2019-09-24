@@ -32,10 +32,16 @@ namespace Cronos {
 #define TOTEX (void*)(intptr_t)
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
+	
+	
+	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
+	{
+		m_LabelDirectories = m_Directories.string();
+	}
 
 	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer")
 	{
-
+		
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -61,6 +67,11 @@ namespace Cronos {
 
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		setDocking();
+
+		m_RootDirectory = std::filesystem::current_path();
+		m_LabelRootDirectory = m_RootDirectory.filename().string();
+
+		AssetDirectories=LoadCurrentDirectories(m_RootDirectory);
 
 		//TEMPORARY
 
@@ -305,7 +316,7 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawHierarchyPanel()
 	{
 
-		ImGui::Begin("Hierarchy",&ShowHierarchyMenu);
+		ImGui::Begin("Hierarchy", &ShowHierarchyMenu);
 		{
 			if (ImGui::TreeNode("Tree"))
 			{
@@ -340,6 +351,60 @@ namespace Cronos {
 
 	}
 
+	Directories* ImGuiLayer::LoadCurrentDirectories(std::filesystem::path filepath) {
+
+		static int LastDepth = 0;
+		static int ID = 0;
+		static int currentDepth = 0;
+
+		Directories* SolutionDirTemp = new Directories(filepath);
+		SolutionDirTemp->m_ID = ID;
+		DirectoriesArray.push_back(SolutionDirTemp);
+		Directories* currentDir = SolutionDirTemp;
+		for (auto& p = std::filesystem::recursive_directory_iterator(SolutionDirTemp->m_Directories); p != std::filesystem::recursive_directory_iterator(); ++p) {
+
+			for (auto&path : p) {
+				if (path.is_directory()) {
+					ID++;
+					Directories* newPath = new Directories(path.path());
+					newPath->m_ID = ID;
+					newPath->m_DepthID = p.depth();
+					int test = p.depth();
+					if (p.depth() <= LastDepth)
+					{
+						int	NearID = 0;
+						for (auto&co : DirectoriesArray) {
+
+							if (p.depth() > 0 && co->m_DepthID == p.depth() - 1) {
+								if (co->m_ID > NearID) {
+									NearID = co->m_ID;
+									currentDir = co;
+								}
+							}
+							else if (p.depth() == 0) {
+								currentDir = SolutionDirTemp;
+								break;
+							}
+						}
+						currentDir->childs.push_back(newPath);
+						currentDir = newPath;
+					}
+					else if (p.depth() > LastDepth) {
+						currentDir->childs.push_back(newPath);
+						currentDir = newPath;
+					}
+
+					LastDepth = p.depth();
+					DirectoriesArray.push_back(newPath);
+				}
+				else {
+					currentDir->m_Container.push_back(path.path());
+				}
+			}	
+		}
+		return SolutionDirTemp;
+	}
+
 	void ImGuiLayer::GUIDrawAssetPanel()
 	{
 		if (ImGui::Begin("Project", &ShowAssetMenu, ImGuiWindowFlags_MenuBar))
@@ -354,19 +419,95 @@ namespace Cronos {
 				ImGui::EndMenuBar();
 			}
 
-			// left
+			ImGui::BeginChild("left panel", ImVec2(150, 0), true);
+			struct func {
+				static void a(const char* directories, int id)
+				{
+					ImGui::PushID(id);
+					std::filesystem::path currentpath(directories);
+				};
+			};
+				//if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
+				//	// left
+				//	static int a = 0;
+				//	static int ID = 0;
+				//	static int currentDepth=0;
+
+				//	Directories* temp = new Directories(m_RootDirectory);
+				//	temp->m_ID = ID;
+				//	DirectoriesArray.push_back(temp);
+				//	Directories* currentDir = temp;
+				//	for (auto& p = std::filesystem::recursive_directory_iterator(m_RootDirectory); p != std::filesystem::recursive_directory_iterator(); ++p) {					
+				//
+				//		for (auto&j : p) {
+				//			if (j.is_directory()) {
+				//				ID++;
+				//				Directories* temp2 = new Directories(j.path());
+				//				temp2->m_ID = ID;
+				//				temp2->m_DepthID = p.depth();
+				//				int test = p.depth();
+				//				if (p.depth() <= a)		
+				//				{
+				//					int TestID = 0;
+				//					for (auto&co : DirectoriesArray) {
+				//						
+				//						if (p.depth() > 0 && co->m_DepthID == p.depth()-1) {
+				//							if (co->m_ID > TestID) {
+				//								TestID = co->m_ID;
+				//								currentDir = co;
+				//							}
+				//						}
+				//						else if (p.depth() == 0) {
+				//							currentDir = temp;
+				//							break;
+				//						}
+				//					}
+				//					currentDir->childs.push_back(temp2);
+				//					currentDir = temp2;
+				//				}
+				//				else if (p.depth() > a) {
+				//					currentDir->childs.push_back(temp2);
+				//					currentDir = temp2;
+				//				}
+
+				//				a = p.depth();
+				//				DirectoriesArray.push_back(temp2);
+				//			}
+
+				//		}
+				//	}
+				//	ImGui::TreePop();
+				//}
+				//ImGui::EndChild();
+
+			
+			//if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
+			//	// left
+			//	for (auto& p : std::filesystem::recursive_directory_iterator(m_RootDirectory)) {
+			//		if (p.is_directory()) {
+			//			int ap = p.path().generic_string().size();
+			//			std::string Directory = p.path().filename().string();
+			//			if (ImGui::TreeNode(Directory.c_str())) {
+			//				ImGui::TreePop();
+			//				bool apen = true;
+			//			}
+			//		}
+			//	}
+			//	ImGui::TreePop();
+			//}
+			ImGui::EndChild();
 			const char* SceneLabel = "Scenes";
 			static int selected = 0;
-			ImGui::BeginChild("left panel", ImVec2(150, 0), true);
-			if (ImGui::TreeNode("Assets"))
-			{
-				if (ImGui::TreeNode(SceneLabel)) {
-					ImGui::TreePop();
-				}
-				ImGui::TreePop();
-			}
+			//ImGui::BeginChild("left panel", ImVec2(150, 0), true);
+	///*		if (ImGui::TreeNode("Assets"))
+	//		{
+	//			if (ImGui::TreeNode(SceneLabel)) {
+	//				ImGui::TreePop();
+	//			}
+	//			ImGui::TreePop();
+	//		}*/
 
-			ImGui::EndChild();
+			//ImGui::EndChild();
 			ImGui::SameLine();
 
 			// right
@@ -530,5 +671,4 @@ namespace Cronos {
 			ImGui::PopStyleVar();
 		}
 	}
-
 }
