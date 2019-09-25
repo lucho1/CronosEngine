@@ -33,6 +33,35 @@ namespace Cronos {
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
 	
+	AssetItems::AssetItems(std::filesystem::path m_Path) {
+		m_Elements = m_Path.filename().string();
+		m_Extension = m_Path.extension().string();
+		if (m_Extension == "obj") {
+			type = ItemType::ITEM_OBJ;
+		}
+		else if (m_Extension == "fbx") {
+			type = ItemType::ITEM_FBX;
+		}
+		else if (m_Extension == "cpp" || m_Extension == "h") {
+			type = ItemType::ITEM_SCRIPT;
+		}
+	};
+	void AssetItems::DrawIcons()
+	{ 
+	
+		ImGui::BeginGroup();		
+		ImGui::Image("", ImVec2(50, 50));
+		ImGui::Text(m_Elements.c_str());
+		//ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),IM_COL32(0,0,0,0));
+		m_ElementSize = ImGui::GetItemRectSize().x;
+		ImGui::EndGroup();
+		
+	}
+
+	int AssetItems::GetElementSize() {
+
+		return m_ElementSize;
+	}
 	
 	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
 	{
@@ -72,7 +101,7 @@ namespace Cronos {
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 
 		AssetDirectories=LoadCurrentDirectories(m_RootDirectory);
-
+		m_CurrentDir = AssetDirectories;
 		//TEMPORARY
 
 		glGenTextures(1, &my_opengl_texture);
@@ -93,11 +122,12 @@ namespace Cronos {
 		}
 	}
 
-	static void AssetImguiIterator(Directories a) {
+	void ImGuiLayer::AssetImguiIterator(Directories a) {
 		for (auto& c : a.childs) {
 			std::string temp = c->m_Directories.filename().string();
-			if (ImGui::TreeNode(temp.c_str())) {
-				AssetImguiIterator(*c);
+			if (ImGui::TreeNodeEx(temp.c_str())) {
+				m_CurrentDir = c;
+				AssetImguiIterator(*c);	
 				ImGui::TreePop();
 			}
 		}
@@ -442,53 +472,55 @@ namespace Cronos {
 				ImGui::EndMenuBar();
 			}
 			ImGuiIO& io = ImGui::GetIO();
-			ImGui::BeginChild("left panel", ImVec2(150, 0), io.ConfigWindowsResizeFromEdges);
-			//struct func {
-			//	static void a(const char* directories, int id)
-			//	{
-			//		ImGui::PushID(id);
-			//		std::filesystem::path currentpath(directories);
-			//	};
-			//};
-			
+
+			static int WindowSize = 150;
+			ImGui::BeginChild("left panel", ImVec2(WindowSize, 0),true);
 			
 			if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
 			// left
 				for (auto& a : AssetDirectories->childs)
 				{
 					std::string	temp = a->m_Directories.filename().string();
-					if (ImGui::TreeNode(temp.c_str())){
-						AssetImguiIterator(*a);
+					if (ImGui::TreeNode(temp.c_str())){	
+						m_CurrentDir = a;
+						AssetImguiIterator(*a);		
 						ImGui::TreePop();
 					}		
 				}
 				ImGui::TreePop();
 			}
-
 			ImGui::EndChild();
-			const char* SceneLabel = "Scenes";
-			static int selected = 0;
-			//ImGui::BeginChild("left panel", ImVec2(150, 0), true);
-	///*		if (ImGui::TreeNode("Assets"))
-	//		{
-	//			if (ImGui::TreeNode(SceneLabel)) {
-	//				ImGui::TreePop();
-	//			}
-	//			ImGui::TreePop();
-	//		}*/
 
-			//ImGui::EndChild();
+			const char* SceneLabel = "Scenes";
+		
+
 			ImGui::SameLine();
 
 			// right
 			ImGui::BeginGroup();
 			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-			ImGui::Text("MyObject: %d", selected);
-			ImGui::Separator();
+			std::string tempstring = m_CurrentDir->m_Directories.filename().string();
 
-			ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ");
+		
+			ImGui::Text("CurrentWindow: %s", tempstring.c_str());
+			ImGui::Separator();
+			int spaceCounter = 150;
+			for (auto& a : m_CurrentDir->m_Container) {
+				a.DrawIcons();
+				spaceCounter += a.GetElementSize();
+				int b = ImGui::GetWindowWidth();
+				if (spaceCounter < ImGui::GetWindowWidth()) {
+					ImGui::SameLine();
+
+				}
+				else
+					spaceCounter = 150;
+				//ImGui::Button(a.m_Elements.c_str());
+			}
 
 			ImGui::EndChild();
+
+		
 
 			ImGui::EndGroup();
 		}

@@ -5,12 +5,31 @@
 
 namespace Cronos {
 
+	enum class ItemType 
+	{
+		ITEM_NONE=0,
+		ITEM_FBX,
+		ITEM_OBJ,
+		ITEM_MATERIAL,
+		ITEM_SHADER,
+		ITEM_SCRIPT,
+		ITEM_FOLDER,
+		ITEM_TEXTURE
+	};
+
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_Path) { m_Elements = m_Path.filename().string(); };
+		AssetItems(std::filesystem::path m_Path);
 
-		
+		ItemType type = ItemType::ITEM_NONE;
 		std::string m_Elements;
+		void DrawIcons();
+
+		int GetElementSize();
+
+	private:
+		std::string m_Extension;
+		int m_ElementSize;
 	};
 
 	class Directories {
@@ -38,7 +57,9 @@ namespace Cronos {
 		
 		bool OnStart() override;
 
+		void AssetImguiIterator(Directories a);
 
+		Directories* m_CurrentDir;
 
 	private:
 
@@ -57,7 +78,6 @@ namespace Cronos {
 	
 		Directories* LoadCurrentDirectories(std::filesystem::path filepath);
 
-
 	private:
 
 		std::filesystem::path m_RootDirectory; //Temporary
@@ -71,6 +91,7 @@ namespace Cronos {
 		bool ShowNodeEditorPanel = false;
 
 		Directories* AssetDirectories;
+
 		std::vector <Directories*> DirectoriesArray;
 
 		struct Link
