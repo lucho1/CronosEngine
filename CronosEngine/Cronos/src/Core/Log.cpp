@@ -3,6 +3,7 @@
 #include "cnpch.h"
 #include "Globals.h"
 #include "Application.h"
+#include "../ImGui/ImGuiLayer.h"
 #include "psapi.h"
 
 
@@ -93,14 +94,14 @@ namespace Cronos {
 
 	void LogCompilationFirstMessage()
 	{
-		std::cout <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
+		App->EditorGUI->TestLog <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
 						"	Compilation at Date "			<<		__DATE__			<<
 						" and Time "						<<		__TIME__			<<
 		std::endl;
 
 		//---------------------------------- CHECKING AND PRINTING C++ VERSION USED BY COMPILER ---------------------------------------------
 		std::string cppVersion = GetCppVersion(__cplusplus);
-		std::cout <<	"	Standard C++ Version Implemented by Compiler: "		<< __cplusplus							<< " ("			<< cppVersion << ")" << std::endl <<	   
+		App->EditorGUI->TestLog <<	"	Standard C++ Version Implemented by Compiler: "		<< __cplusplus							<< " ("			<< cppVersion << ")" << std::endl <<	   
 						"	OS Found: "											<< (__STDC_HOSTED__ ? "Yes" : "No")		<< std::endl	<<
 						"	OS Version: "										<< WindowsVersion() << std::endl		<< std::endl
 		<< std::endl; 
@@ -119,8 +120,8 @@ namespace Cronos {
 		glGetIntegerv(0x9048, &GPU_TotalMem);
 		glGetIntegerv(0x9049, &GPU_CurrentMem);
 
-		std::cout << std::endl << std::endl << "---- GPU HARDWARE & OPEN GL INFO LOG -----------" << std::endl << std::endl;
-		std::cout <<		
+		App->EditorGUI->TestLog << std::endl << std::endl << "---- GPU HARDWARE & OPEN GL INFO LOG -----------" << std::endl << std::endl;
+		App->EditorGUI->TestLog <<		
 					"	GPU Benchmark: "							<< glGetString(GL_VENDOR)						<< std::endl						<<
 					"	GPU Model:     "							<< glGetString(GL_RENDERER)						<< std::endl						<<
 					"	GPU Total VRAM Memory: "					<< GPU_TotalMem									<< "KB (ONLY FOR NVIDIA GPUs!)"		<< std::endl <<
@@ -134,9 +135,11 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------------------------- CPU INFO PRINT ----------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
+		
+	
 		cppVersion = GetCppVersion(_MSVC_LANG);
-		std::cout << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
-		std::cout <<
+		App->EditorGUI->TestLog << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
+		App->EditorGUI->TestLog <<
 
 					"	PC RAM Storage: "		<<		(float)SDL_GetSystemRAM() / (1024.0f)		<<	" GB"			<< std::endl <<		// GB of RAM memory
 					"	Avalable CPU Cores: "	<<		SDL_GetCPUCount()							<<	std::endl		<<					// Number of available cores in CPU
@@ -149,7 +152,7 @@ namespace Cronos {
 		SYSTEM_INFO SystemInfo;
 		GetSystemInfo(&SystemInfo);
 
-		std::cout << "	Number of Processors: " << SystemInfo.dwNumberOfProcessors << std::endl;
+		App->EditorGUI->TestLog << "	Number of Processors: " << SystemInfo.dwNumberOfProcessors << std::endl;
 		std::string processorArch = "Unknown architecture";
 
 		switch (SystemInfo.wProcessorArchitecture) {
@@ -177,8 +180,8 @@ namespace Cronos {
 				break;
 		}
 
-		std::cout << "	Processor Architecture: "	<< processorArch					<< std::endl;
-		std::cout << "	Processor Revision: "		<< SystemInfo.wProcessorRevision	<< std::endl;
+		App->EditorGUI->TestLog << "	Processor Architecture: "	<< processorArch					<< std::endl;
+		App->EditorGUI->TestLog << "	Processor Revision: "		<< SystemInfo.wProcessorRevision	<< std::endl;
 
 		// Get extended ids.
 		int CPUInfo[4] = { -1 };
@@ -202,8 +205,8 @@ namespace Cronos {
 				memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
 		}
 
-		std::cout << "	CPU: " << CPUBrandString << std::endl;
-		std::cout << std::endl << "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
+		App->EditorGUI->TestLog << "	CPU: " << CPUBrandString << std::endl;
+		App->EditorGUI->TestLog << std::endl << "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
 
 		
 		//------------------------------------------------------------------------------------------------------------------------------------
@@ -215,19 +218,19 @@ namespace Cronos {
 
 		float div = (1e+9);
 
-		std::cout << std::endl << std::endl << "---- MEMORY HARDWARE INFO LOG -----------"							<< std::endl << std::endl;
-
-		std::cout << "	Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad				<<	" %"	<< std::endl;
-		std::cout << "	Total physical memory: "			<<				 MemoryInfo.ullTotalPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "	Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/div			<<	" GB"	<< std::endl;
-		std::cout << "	Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/div		<< " GB" << std::endl;
-		std::cout << std::endl;
-		std::cout << "	Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << "	Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/div			<<	" GB"	<< std::endl;
-		std::cout << std::endl;
-		std::cout << "	Free extended memory: "				<<				 MemoryInfo.ullAvailExtendedVirtual/div	<<	" GB"	<< std::endl;
-		std::cout << "	Total Page File memory: "			<<				 MemoryInfo.ullTotalPageFile/div		<<	" GB"	<< std::endl;
-		std::cout << "	Free Page File memory: "			<<				 MemoryInfo.ullAvailPageFile/div		<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << std::endl << std::endl << "---- MEMORY HARDWARE INFO LOG -----------"							<< std::endl << std::endl;
+		
+		App->EditorGUI->TestLog << "	Percentage of Memory in Use: "		<<				 MemoryInfo.dwMemoryLoad				<<	" %"	<< std::endl;
+		App->EditorGUI->TestLog << "	Total physical memory: "			<<				 MemoryInfo.ullTotalPhys/div			<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << "	Free physical memory: "				<<				 MemoryInfo.ullAvailPhys/div			<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << "	Used physical memory: "				<<	 (MemoryInfo.ullTotalPhys - MemoryInfo.ullAvailPhys)/div		<< " GB" << std::endl;
+		App->EditorGUI->TestLog << std::endl;
+		App->EditorGUI->TestLog << "	Total virtual memory: "				<<				 MemoryInfo.ullTotalVirtual/div			<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << "	Free virtual memory: "				<<				 MemoryInfo.ullAvailVirtual/div			<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << std::endl;
+		App->EditorGUI->TestLog << "	Free extended memory: "				<<				 MemoryInfo.ullAvailExtendedVirtual/div	<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << "	Total Page File memory: "			<<				 MemoryInfo.ullTotalPageFile/div		<<	" GB"	<< std::endl;
+		App->EditorGUI->TestLog << "	Free Page File memory: "			<<				 MemoryInfo.ullAvailPageFile/div		<<	" GB"	<< std::endl;
 
 
 		PROCESS_MEMORY_COUNTERS pmc;
@@ -235,14 +238,14 @@ namespace Cronos {
 		SIZE_T virtualMemUsedByMe = pmc.PagefileUsage;
 		SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
-		std::cout << std::endl;
-		std::cout << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div	<< " GB" << std::endl;
-		std::cout << "	Physical memory used by process: "	<< physMemUsedByMe/div		<< " GB" << std::endl;
+		App->EditorGUI->TestLog << std::endl;
+		App->EditorGUI->TestLog << "	Virtual memory used by process: "	<< virtualMemUsedByMe/div	<< " GB" << std::endl;
+		App->EditorGUI->TestLog << "	Physical memory used by process: "	<< physMemUsedByMe/div		<< " GB" << std::endl;
 		
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
-		std::cout << std::endl << "---- END OF MEMORY HARDWARE INFO LOG ----" << std::endl;
-		std::cout << std::endl << std::endl;
+		App->EditorGUI->TestLog << std::endl << "---- END OF MEMORY HARDWARE INFO LOG ----" << std::endl;
+		App->EditorGUI->TestLog << std::endl << std::endl;
 	}
 }

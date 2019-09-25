@@ -108,7 +108,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Errors.h" />
     <ClInclude Include="src\Core\Globals.h" />
@@ -125,6 +124,7 @@
     <ClInclude Include="src\ImGui\imnodes.h" />
     <ClInclude Include="src\Modules\Audio.h" />
     <ClInclude Include="src\Modules\Camera3D.h" />
+    <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
@@ -500,7 +500,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
@@ -518,6 +517,7 @@
     <ClCompile Include="src\ImGui\imnodes.cpp" />
     <ClCompile Include="src\Modules\Audio.cpp" />
     <ClCompile Include="src\Modules\Camera3D.cpp" />
+    <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />

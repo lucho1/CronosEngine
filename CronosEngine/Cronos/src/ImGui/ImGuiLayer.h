@@ -20,6 +20,8 @@ namespace Cronos {
 
 		Directories* m_CurrentDir;
 
+		std::stringstream TestLog;
+
 	private:
 
 		void setDocking();
@@ -32,6 +34,7 @@ namespace Cronos {
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
+		void GUIDDrawConsolePanel();
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
@@ -42,6 +45,8 @@ namespace Cronos {
 		bool ShowHierarchyMenu = true;
 		bool ShowAssetMenu = true;
 		bool ShowNodeEditorPanel = false;
+		bool ShowConsolePanel = true;
+		bool ShowDemoWindow = false;
 
 		Directories* AssetDirectories;
 

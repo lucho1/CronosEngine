@@ -10,17 +10,14 @@
     <Filter Include="src\Helpers">
       <UniqueIdentifier>{EF38D5A6-5BEE-4D9C-E4E2-4773509744A0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{C0FF640D-2C14-8DBE-F595-301E616989EF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui\OpenGL">
-      <UniqueIdentifier>{F470AC3B-E0D3-3BE0-8959-7496759B0763}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Modules">
-      <UniqueIdentifier>{DE144435-4AF4-C2D0-530C-4EA7BF6A2932}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Helpers\Timers">
       <UniqueIdentifier>{5201C8EA-3EE5-8840-A745-8393934873C2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui">
+      <UniqueIdentifier>{170E22B3-8378-D629-CCB6-87CF3860B47E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui\OpenGL">
+      <UniqueIdentifier>{6B17CD4E-5710-ECA0-8042-D1256C9ACBAC}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Modules">
       <UniqueIdentifier>{F5147E3E-61CA-F633-EABE-F00A5673ED37}</UniqueIdentifier>
@@ -82,21 +79,24 @@
       <Filter>src\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\ImGuiLayer.h">
-      <Filter>ImGui</Filter>
+      <Filter>src\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h">
-      <Filter>ImGui\OpenGL</Filter>
+      <Filter>src\ImGui\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h">
-      <Filter>ImGui\OpenGL</Filter>
+      <Filter>src\ImGui\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\imnodes.h">
-      <Filter>ImGui</Filter>
+      <Filter>src\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Audio.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Camera3D.h">
+      <Filter>src\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Modules\Filesystem.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Input.h">
@@ -1218,7 +1218,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Modules\Filesystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1249,21 +1248,24 @@
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>src\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp">
-      <Filter>ImGui\OpenGL</Filter>
+      <Filter>src\ImGui\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp">
-      <Filter>ImGui\OpenGL</Filter>
+      <Filter>src\ImGui\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\imnodes.cpp">
-      <Filter>ImGui</Filter>
+      <Filter>src\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Audio.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Camera3D.cpp">
+      <Filter>src\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Modules\Filesystem.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Input.cpp">
@@ -1281,6 +1283,5 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Modules\Filesystem.cpp" />
   </ItemGroup>
 </Project>
