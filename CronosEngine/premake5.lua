@@ -23,10 +23,10 @@ IncludeDir["SDL_Mixer"] = "Cronos/vendor/SDL_mixer/include"
 IncludeDir["dlls"] = "Cronos/dll_files"
 IncludeDir["Glad"] = "Cronos/vendor/Glad/include"
 IncludeDir["ImGui"] = "Cronos/vendor/imgui"
+IncludeDir["glm"] = "Cronos/vendor/glm"
 
 include "Cronos/vendor/Glad"
 include "Cronos/vendor/imgui"
-
 
 --PATH=%PATH%;$(ProjectDir)\dll_files
 --Cronos Project (Engine)
@@ -46,7 +46,9 @@ project "Cronos"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	defines
@@ -64,9 +66,8 @@ project "Cronos"
 		"%{prj.name}/src/Core",
 		"%{prj.name}/src/Helpers",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.Glad}"
-
-		--"%{IncludeDir.Glad}"
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.glm}"
 	}
 	libdirs
 	{
@@ -88,7 +89,7 @@ project "Cronos"
 	filter "system:windows"
 		systemversion "latest" -- You can add here your windows SDK version if something fails
 
-		linkoptions 
+		linkoptions
 		{
 			"/SAFESEH:NO", -- Image Has Safe Exception Handers: No"
 		}

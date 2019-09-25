@@ -15,12 +15,12 @@
 
 // LOGGING -----------------------------------------------------------------------
 #define LOG(format, ...) Cronos::Log(__FILE__, __LINE__, format, __VA_ARGS__);
-#define COMPILATIONLOGINFO Cronos::LogCompileFirstMessage()
+#define COMPILATIONLOGINFO Cronos::LogCompilationFirstMessage()
 
 namespace Cronos {
 	
 	void Log(const char file[], int line, const char* format, ...);
-	void LogCompileFirstMessage();
+	void LogCompilationFirstMessage();
 }
 // -------------------------------------------------------------------------------
 
