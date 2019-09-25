@@ -31,53 +31,8 @@ namespace Cronos {
 
 #define TOTEX (void*)(intptr_t)
 
-	inline int make_id(int node, int attribute) { return (node << 16) | attribute; }
+	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
 	
-	AssetItems::AssetItems(std::filesystem::path m_Path) {
-		m_Elements = m_Path.filename().string();
-		m_Extension = m_Path.extension().string();
-
-		if (m_Extension == "obj") {
-			type = ItemType::ITEM_OBJ;
-			TextPath = "res/Icons/Obj_Icon.png";
-		}
-		else if (m_Extension == "fbx") {
-			type = ItemType::ITEM_FBX;
-			TextPath = "res/Icons/Fbx_Icon.png";
-		}
-		else if (m_Extension == "cpp" || m_Extension == "h") {
-			type = ItemType::ITEM_SCRIPT;
-			TextPath = "res/Icons/Script_Icon.png";
-		}
-		else {
-			TextPath = "res/Icons/Shader_Icon.png";
-		}
-	};
-	void AssetItems::DrawIcons()
-	{ 
-
-		//SDL_Surface *bitmapSurface = SDL_LoadBMP("test.bmp");
-		//SDL_Texture *bitmapTex = SDL_CreateTextureFromSurface(App->window->screen_surface, bitmapSurface);
-		//SDL_FreeSurface(bitmapSurface);
-		ImGui::BeginGroup();		
-		ImGui::Image("", ImVec2(50, 50));
-		ImGui::Text(m_Elements.c_str());
-		//ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(),IM_COL32(0,0,0,0));
-		m_ElementSize = ImGui::GetItemRectSize().x;
-		ImGui::EndGroup();
-		
-	}
-
-	int AssetItems::GetElementSize() {
-
-		return m_ElementSize;
-	}
-	
-	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
-	{
-		m_LabelDirectories = m_Directories.string();
-	}
-
 	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer")
 	{
 		
@@ -107,10 +62,9 @@ namespace Cronos {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		setDocking();
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
-		m_RootDirectory = std::filesystem::current_path();
-		m_LabelRootDirectory = m_RootDirectory.filename().string();
 
-		AssetDirectories=LoadCurrentDirectories(m_RootDirectory);
+
+		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
 		//TEMPORARY
 
@@ -414,7 +368,7 @@ namespace Cronos {
 
 	}
 
-	Directories* ImGuiLayer::LoadCurrentDirectories(std::filesystem::path filepath) {
+	/*Directories* ImGuiLayer::LoadCurrentDirectories(std::filesystem::path filepath) {
 
 		static int LastDepth = 0;
 		static int ID = 0;
@@ -466,7 +420,7 @@ namespace Cronos {
 			}	
 		}
 		return SolutionDirTemp;
-	}
+	}*/
 
 	void ImGuiLayer::GUIDrawAssetPanel()
 	{
@@ -486,7 +440,7 @@ namespace Cronos {
 			static int WindowSize = 150;
 			ImGui::BeginChild("left panel", ImVec2(WindowSize, 0),true);
 			
-			if (ImGui::TreeNode(m_LabelRootDirectory.c_str())) {
+			if (ImGui::TreeNode(App->filesystem->GetLabelAssetRoot().c_str())) {
 			// left
 				for (auto& a : AssetDirectories->childs)
 				{

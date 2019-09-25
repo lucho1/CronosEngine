@@ -87,6 +87,7 @@
     <ClInclude Include="src\Renderer\Primitive.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Modules\Filesystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -149,5 +150,6 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Modules\Filesystem.cpp" />
   </ItemGroup>
 </Project>

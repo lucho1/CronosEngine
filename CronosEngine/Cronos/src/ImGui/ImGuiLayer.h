@@ -1,53 +1,9 @@
 #pragma once
 
 #include "Core/Module.h"
-
+#include "Modules/Filesystem.h"
 
 namespace Cronos {
-
-	enum class ItemType 
-	{
-		ITEM_NONE=0,
-		ITEM_FBX,
-		ITEM_OBJ,
-		ITEM_MATERIAL,
-		ITEM_SHADER,
-		ITEM_SCRIPT,
-		ITEM_FOLDER,
-		ITEM_TEXTURE
-	};
-
-	class AssetItems {
-	public:
-		AssetItems(std::filesystem::path m_Path);
-
-		ItemType type = ItemType::ITEM_NONE;
-		std::string m_Elements;
-		void DrawIcons();
-
-		int GetElementSize();
-
-		//temporal
-		std::string TextPath;
-
-	private:
-		std::string m_Extension;
-		int m_ElementSize;
-	};
-
-	class Directories {
-	public:
-
-		Directories(std::filesystem::path m_Path);
-
-		std::filesystem::path m_Directories;
-		std::string m_LabelDirectories;
-		int m_DepthID;
-		int m_ID;
-		std::vector<AssetItems> m_Container;
-		std::list<Directories*>childs;
-
-	};
 
 	class ImGuiLayer : public Module
 	{
@@ -56,9 +12,9 @@ namespace Cronos {
 		ImGuiLayer(Application* app, bool start_enabled=true);
 		~ImGuiLayer();
 		
-		update_status OnUpdate(float dt) override;
+		virtual update_status OnUpdate(float dt) override;
 		
-		bool OnStart() override;
+		virtual bool OnStart() override;
 
 		void AssetImguiIterator(Directories a);
 
@@ -78,13 +34,7 @@ namespace Cronos {
 		void GUIDrawNodeEditorPanel();
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
-	
-		Directories* LoadCurrentDirectories(std::filesystem::path filepath);
-
 	private:
-
-		std::filesystem::path m_RootDirectory; //Temporary
-		std::string m_LabelRootDirectory;
 
 		float m_Time = 0.0f;
 		bool ShowMainMenu = true;

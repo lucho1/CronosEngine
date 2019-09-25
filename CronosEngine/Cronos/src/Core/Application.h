@@ -8,6 +8,7 @@
 #include "Modules/Audio.h"
 #include "Modules/Scene.h"
 #include "Modules/Camera3D.h"
+#include "Modules/Filesystem.h"
 
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
@@ -25,6 +26,7 @@ namespace Cronos {
 		GLRenderer3D* renderer3D;
 		Camera3D* camera;
 		ImGuiLayer* EditorGUI;
+		Filesystem* filesystem;
 
 	private:
 

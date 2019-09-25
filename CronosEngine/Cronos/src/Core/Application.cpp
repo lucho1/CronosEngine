@@ -11,6 +11,8 @@ namespace Cronos {
 		scene = new Scene(this);
 		renderer3D = new GLRenderer3D(this);
 		camera = new Camera3D(this);
+		filesystem = new Filesystem(this);
+
 		EditorGUI = new ImGuiLayer(this);
 
 		// The order of calls is very important!
@@ -27,6 +29,7 @@ namespace Cronos {
 
 		// Scenes
 		AddModule(scene);
+		AddModule(filesystem);
 		AddModule(EditorGUI);
 
 		if (m_FPSCap > 0)

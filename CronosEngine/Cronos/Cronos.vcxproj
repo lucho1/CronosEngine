@@ -108,6 +108,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Errors.h" />
     <ClInclude Include="src\Core\Globals.h" />
@@ -131,6 +132,7 @@
     <ClInclude Include="src\Renderer\Primitive.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
