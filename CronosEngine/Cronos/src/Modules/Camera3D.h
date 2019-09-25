@@ -5,6 +5,9 @@
 #include "Globals.h"
 #include "glmath.h"
 
+#define MIN_FOV 15.0f
+#define MAX_FOV 120.0f
+
 namespace Cronos {
 
 	class Camera3D : public Module
@@ -26,13 +29,13 @@ namespace Cronos {
 
 	public:
 
-		const float* GetViewMatrix()		const { return &m_ViewMatrix; }
+		inline const float* GetViewMatrix()			const { return &m_ViewMatrix; }
 
-		const vec3 GetX()					const { return m_X; }
-		const vec3 GetY()					const { return m_Y; }
-		const vec3 GetZ()					const { return m_Z; }
+		inline const vec3 GetX()					const { return m_X; }
+		inline const vec3 GetY()					const { return m_Y; }
+		inline const vec3 GetZ()					const { return m_Z; }
 
-		const float GetCameraMoveSpeed()	const { return m_CameraMoveSpeed; }
+		inline const float GetCameraMoveSpeed()	const { return m_CameraMoveSpeed; }
 
 	private:
 
@@ -43,7 +46,8 @@ namespace Cronos {
 		//TODO: Change the workflow of this:
 		void Zoom();
 		float nearPlane = 0.125f;
-		float farPlane = 0.512f;
+		float farPlane = 512.0f;
+		float FOV = 60.0f;
 
 	public:
 

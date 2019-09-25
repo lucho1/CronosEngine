@@ -38,10 +38,8 @@ namespace Cronos {
 	update_status Camera3D::OnUpdate(float dt)
 	{
 
-		if (App->input->isMouseScrolling()) {
-
+		if (App->input->isMouseScrolling())
 			Zoom();
-		}
 
 		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT) 
 		{
@@ -195,34 +193,26 @@ namespace Cronos {
 		//
 		//m_Position += newPos;
 
-		static int refactor = 10;
-		static float FOV = 60.0f;
+		if (FOV < MIN_FOV)
+			FOV = MIN_FOV;
+		else if (FOV > MAX_FOV)
+			FOV = MAX_FOV;
 
-		int w = App->window->GetWindowWidth() /*+ refactor*/;
-		int h = App->window->GetWindowHeight() /*+ refactor*/;
-
-		refactor += 10;
-
-		if (FOV >= 15.0f && FOV <= 90.0f) {
+		else if (FOV >= MIN_FOV && FOV <= MAX_FOV) {
 
 			FOV -= (float)App->input->GetMouseZ() * 5.0f;
 
-			glViewport(0, 0, (GLint)w, (GLint)h);
+			//glViewport(0, 0, (GLint)App->window->GetWindowWidth();, (GLint)App->window->GetWindowHeight()); //If something with the camera zoom goes wrong, uncomment this.
 
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 
-
-			App->renderer3D->ProjectionMatrix = perspective(FOV, (float)w / (float)h, 0.125f, 512.0f);
+			App->renderer3D->ProjectionMatrix = perspective(FOV, (float)App->window->GetWindowWidth()/(float)App->window->GetWindowHeight(), nearPlane, farPlane);
 			glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
 
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 		}
-		else if (FOV < 15.0f)
-			FOV = 15.0f;
-		else if (FOV > 90.0f)
-			FOV = 90.0f;
 	}
 
 }
