@@ -27,6 +27,9 @@ namespace Cronos {
 
 		int GetElementSize();
 
+		//temporal
+		std::string TextPath;
+
 	private:
 		std::string m_Extension;
 		int m_ElementSize;

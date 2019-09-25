@@ -36,19 +36,29 @@ namespace Cronos {
 	AssetItems::AssetItems(std::filesystem::path m_Path) {
 		m_Elements = m_Path.filename().string();
 		m_Extension = m_Path.extension().string();
+
 		if (m_Extension == "obj") {
 			type = ItemType::ITEM_OBJ;
+			TextPath = "res/Icons/Obj_Icon.png";
 		}
 		else if (m_Extension == "fbx") {
 			type = ItemType::ITEM_FBX;
+			TextPath = "res/Icons/Fbx_Icon.png";
 		}
 		else if (m_Extension == "cpp" || m_Extension == "h") {
 			type = ItemType::ITEM_SCRIPT;
+			TextPath = "res/Icons/Script_Icon.png";
+		}
+		else {
+			TextPath = "res/Icons/Shader_Icon.png";
 		}
 	};
 	void AssetItems::DrawIcons()
 	{ 
-	
+
+		//SDL_Surface *bitmapSurface = SDL_LoadBMP("test.bmp");
+		//SDL_Texture *bitmapTex = SDL_CreateTextureFromSurface(App->window->screen_surface, bitmapSurface);
+		//SDL_FreeSurface(bitmapSurface);
 		ImGui::BeginGroup();		
 		ImGui::Image("", ImVec2(50, 50));
 		ImGui::Text(m_Elements.c_str());
