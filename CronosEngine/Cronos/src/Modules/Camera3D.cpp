@@ -193,23 +193,25 @@ namespace Cronos {
 		//	newPos += m_CameraScrollSpeed * m_Z * dt;
 		//
 		//m_Position += newPos;
-		
-		glViewport(0, 0, App->window->GetWindowWidth(), App->window->GetWindowHeight());
+		static int refactor = 10;
+		static float FOV = 60.0f;
+
+		int w = App->window->GetWindowWidth() /*+ refactor*/;
+		int h = App->window->GetWindowHeight() /*+ refactor*/;
+
+		refactor += 10;
+
+		if (FOV < 90.0f)
+			FOV -= 10.0f;
+
+		glViewport(0, 0, (GLint)w, (GLint)h);
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
-		float multiplier = (float)App->input->GetMouseZ() * 0.5f;
-
-		//nearPlane += multiplier;
-		//farPlane += multiplier;
-		float aspectRatio = ((float)App->window->GetWindowWidth() / (float)App->window->GetWindowHeight());
-		aspectRatio += multiplier;
-
-		App->renderer3D->ProjectionMatrix = perspective(60.0f, aspectRatio, nearPlane, farPlane);
-
-		mat4x4 res = App->renderer3D->ProjectionMatrix /** App->renderer3D->ViewMatrix*/;
-
-		glLoadMatrixf(&res);
+		
+		App->renderer3D->ProjectionMatrix = perspective(FOV, (float)w / (float)h, 0.125f, 512.0f);
+		glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
