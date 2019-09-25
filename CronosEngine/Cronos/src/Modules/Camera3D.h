@@ -41,7 +41,7 @@ namespace Cronos {
 
 
 		//TODO: Change the workflow of this:
-		void Zoom(/*int width, int height*/);
+		void Zoom();
 		float nearPlane = 0.125f;
 		float farPlane = 0.512f;
 

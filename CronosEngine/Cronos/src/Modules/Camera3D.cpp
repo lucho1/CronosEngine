@@ -183,8 +183,9 @@ namespace Cronos {
 	}
 
 
-	void Camera3D::Zoom(/*int width, int height*/) {
+	void Camera3D::Zoom() {
 
+		//Chapucería:
 		//vec3 newPos(0.0f, 0.0f, 0.0f);
 		//
 		//if (App->input->GetMouseZ() > 0)
@@ -193,6 +194,7 @@ namespace Cronos {
 		//	newPos += m_CameraScrollSpeed * m_Z * dt;
 		//
 		//m_Position += newPos;
+
 		static int refactor = 10;
 		static float FOV = 60.0f;
 
@@ -201,30 +203,26 @@ namespace Cronos {
 
 		refactor += 10;
 
-		if (FOV < 90.0f)
-			FOV -= 10.0f;
+		if (FOV >= 15.0f && FOV <= 90.0f) {
 
-		glViewport(0, 0, (GLint)w, (GLint)h);
+			FOV -= (float)App->input->GetMouseZ() * 5.0f;
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+			glViewport(0, 0, (GLint)w, (GLint)h);
 
-		
-		App->renderer3D->ProjectionMatrix = perspective(FOV, (float)w / (float)h, 0.125f, 512.0f);
-		glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 
-		/*glViewport(0, 0, width, height);
+			App->renderer3D->ProjectionMatrix = perspective(FOV, (float)w / (float)h, 0.125f, 512.0f);
+			glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-		glLoadMatrixf(&ProjectionMatrix);
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();*/
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+		}
+		else if (FOV < 15.0f)
+			FOV = 15.0f;
+		else if (FOV > 90.0f)
+			FOV = 90.0f;
 	}
 
 }
