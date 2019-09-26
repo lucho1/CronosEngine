@@ -4976,6 +4976,16 @@ bool ImGui::IsItemClicked(int mouse_button)
     return IsMouseClicked(mouse_button) && IsItemHovered(ImGuiHoveredFlags_None);
 }
 
+bool ImGui::IsItemClickedID(int mouse_button, const char*label) {
+    //static const char* lastlabel;
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = g.CurrentWindow;
+
+
+    return IsMouseClicked(mouse_button) && IsItemHovered(ImGuiHoveredFlags_None);
+   
+}
+
 bool ImGui::IsItemToggledSelection()
 {
     ImGuiContext& g = *GImGui;

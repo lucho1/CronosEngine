@@ -91,9 +91,12 @@ namespace Cronos {
 		for (auto& c : a.childs) {
 			std::string temp = c->m_Directories.filename().string();
 			if (ImGui::TreeNodeEx(temp.c_str())) {
-				m_CurrentDir = c;
+				
 				AssetImguiIterator(*c);	
 				ImGui::TreePop();
+			}
+			if (ImGui::IsItemClickedID(0,temp.c_str())) {
+				m_CurrentDir = c;
 			}
 		}
 	}
@@ -403,12 +406,20 @@ namespace Cronos {
 			// left
 				for (auto& a : AssetDirectories->childs)
 				{
+					
 					std::string	temp = a->m_Directories.filename().string();
 					if (ImGui::TreeNode(temp.c_str())){	
-						m_CurrentDir = a;
+						
+						/*if (ImGui::IsItemClicked()) {
+							m_CurrentDir = a;
+						}*/
 						AssetImguiIterator(*a);		
 						ImGui::TreePop();
-					}		
+					}	
+					if (ImGui::IsItemClicked()) {
+						m_CurrentDir = a;
+					}
+					
 				}
 				ImGui::TreePop();
 			}
