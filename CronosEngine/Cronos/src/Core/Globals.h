@@ -74,6 +74,7 @@ namespace Cronos {
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
 #define TITLE "Cronos Engine"
+#define ORGANIZATION "UPC CITM - TECH TALENT CENTER, BCN"
 
 // -------------------------------------------------------------------------------
 

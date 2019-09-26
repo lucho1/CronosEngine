@@ -5,6 +5,17 @@
 
 namespace Cronos {
 
+	enum class ConfigMenus {
+		Application = 0,
+		Window,
+		Hardware,
+		Renderer,
+		Input,
+		Audio,
+		Texture
+
+	};
+
 	class ImGuiLayer : public Module
 	{
 	public:
@@ -36,6 +47,17 @@ namespace Cronos {
 		void GUIDrawNodeEditorPanel();
 		void GUIDrawConsolePanel();
 		void GUIDrawConfigurationPanel();
+		
+		//Config Menus
+		void GUIDrawConfigApplicationMenu();
+		void GUIDrawConfigWindowMenu();
+		void GUIDrawConfigHardwareMenu();
+		void GUIDrawConfigRendererMenu();
+		void GUIDrawConfigInputMenu();
+		void GUIDrawConfigAudioMenu();
+		void GUIDrawConfigTexturesMenu();
+
+
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
@@ -53,6 +75,8 @@ namespace Cronos {
 		Directories* AssetDirectories;
 
 		std::vector <Directories*> DirectoriesArray;
+
+		ConfigMenus currentMenu= ConfigMenus::Application;
 
 		struct Link
 		{

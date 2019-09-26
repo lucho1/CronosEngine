@@ -12,6 +12,8 @@ namespace Cronos {
 	{
 	public:
 
+		friend class ImGuiLayer;
+
 		SDLWindow(Application* app, bool start_enabled = true);
 
 		// Destructor

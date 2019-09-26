@@ -621,34 +621,85 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawConfigurationPanel() {
 
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-
 		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
 		ImGui::Begin("Configuration", &ShowConfigurationPanel, ImGuiWindowFlags_NoDocking);
 		ImGui::PopStyleColor();
 
+		
 		ImGui::BeginGroup();
-		int selected = 0;
+		static int selected=-1;
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-		if (ImGui::Selectable("Application"))
-			selected = 1;
-		else if (ImGui::Selectable("Window"))
-			selected = 2;
-		else if (ImGui::Selectable("Hardware"))
-			selected = 3;
-		else if (ImGui::Selectable("Renderer"))
-			selected = 4;
-		else if (ImGui::Selectable("Input"))
-			selected = 5;
-		else if (ImGui::Selectable("Audio"))
-			selected = 6;
-		else if (ImGui::Selectable("Texture"))
-			selected = 7;
-		ImGui::PopStyleVar();
 
+	
+			if (ImGui::Selectable("Application", selected==0)) {
+				currentMenu = ConfigMenus::Application;
+				selected = 0;
+			}
+			else if (ImGui::Selectable("Window", selected==1)) {
+				currentMenu = ConfigMenus::Window;
+				selected = 1;
+			}
+			else if (ImGui::Selectable("Hardware", selected == 2)) {
+				currentMenu = ConfigMenus::Hardware;
+				selected = 2;
+			}
+			else if (ImGui::Selectable("Renderer", selected == 3)){
+				currentMenu = ConfigMenus::Renderer;
+				selected = 3;
+			}
+			else if (ImGui::Selectable("Input", selected == 4)) {
+				currentMenu = ConfigMenus::Input;
+				selected = 4;
+			}
+			else if (ImGui::Selectable("Audio", selected == 5)) {
+				currentMenu = ConfigMenus::Audio;
+				selected = 5;
+			}
+			else if (ImGui::Selectable("Texture", selected == 6)) {
+				currentMenu = ConfigMenus::Texture;
+				selected = 6;
+			}
+		
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+		
 
 		ImGui::EndChild();
 		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+			ImGui::BeginChild("Menus");
+				switch (currentMenu)
+				{
+				case Cronos::ConfigMenus::Application:
+					GUIDrawConfigApplicationMenu();
+					break;
+				case Cronos::ConfigMenus::Window:
+					GUIDrawConfigWindowMenu();
+					break;
+				case Cronos::ConfigMenus::Hardware:
+					GUIDrawConfigHardwareMenu();
+					break;
+				case Cronos::ConfigMenus::Renderer:
+					GUIDrawConfigRendererMenu();
+					break;
+				case Cronos::ConfigMenus::Input:
+					GUIDrawConfigInputMenu();
+					break;
+				case Cronos::ConfigMenus::Audio:
+					GUIDrawConfigAudioMenu();
+					break;
+				case Cronos::ConfigMenus::Texture:
+					GUIDrawConfigTexturesMenu();
+					break;
+				default:
+					break;
+				}
+			ImGui::EndChild();
+		ImGui::EndGroup();
+
 		ImGui::EndGroup();
 
 
@@ -656,6 +707,50 @@ namespace Cronos {
 
 	}
 
+	void ImGuiLayer::GUIDrawConfigApplicationMenu(){
+
+		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+		ImGui::Text("Application");
+		ImGui::Separator();
+		ImGui::Text ("App Name : "); ImGui::SameLine();
+		ImGui::TextColored(Color, TITLE);
+		ImGui::Text("Organization: "); ImGui::SameLine();
+		ImGui::TextColored(Color, ORGANIZATION);
+
+
+	}
+	void ImGuiLayer::GUIDrawConfigWindowMenu() {
+		ImGui::Text("Window");
+		ImGui::Separator();
+		static bool TempWindowActive; //Only To show, it's temporary
+		ImGui::Checkbox("Active", &TempWindowActive);
+		ImGui::Text("Icon: "); ImGui::SameLine(); ImGui::Image("", ImVec2(40, 40));
+		static float brightnesTest=50.0f; //temporary
+		ImGui::SliderFloat("Brightness", &brightnesTest, 0.0f, 100.0f,"%.1f");
+		//ImGui::SliderFloat("Height");
+
+	}
+
+	void ImGuiLayer::GUIDrawConfigHardwareMenu() {
+		ImGui::Text("Hardware");
+		ImGui::Separator();
+	};
+	void ImGuiLayer::GUIDrawConfigRendererMenu() {
+		ImGui::Text("Renderer");
+		ImGui::Separator();
+	};
+	void ImGuiLayer::GUIDrawConfigInputMenu() {
+		ImGui::Text("Input");
+		ImGui::Separator();
+	};
+	void ImGuiLayer::GUIDrawConfigAudioMenu() {
+		ImGui::Text("Audio");
+		ImGui::Separator();
+	};
+	void ImGuiLayer::GUIDrawConfigTexturesMenu() {
+		ImGui::Text("Textures");
+		ImGui::Separator();
+	};
 
 
 	struct ExampleAppLog
