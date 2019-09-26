@@ -95,8 +95,12 @@ namespace Cronos {
 				AssetImguiIterator(*c);	
 				ImGui::TreePop();
 			}
-			if (ImGui::IsItemClickedID(0,temp.c_str())) {
+			if (ImGui::IsItemClicked()) { //TODO NEEDS TO FIX
+				c->isClicked = true;
+			}
+			if (c->isClicked) {
 				m_CurrentDir = c;
+				c->isClicked = false;
 			}
 		}
 	}
@@ -142,8 +146,9 @@ namespace Cronos {
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowAssetMenu)				GUIDrawAssetPanel();
 		if (ShowNodeEditorPanel)		GUIDrawNodeEditorPanel();
-		if (ShowConsolePanel)			GUIDDrawConsolePanel();
+		if (ShowConsolePanel)			GUIDrawConsolePanel();
 		if (ShowDemoWindow)				ImGui::ShowDemoWindow(&ShowDemoWindow);
+		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
 
 		ImGui::End();
 
@@ -204,6 +209,10 @@ namespace Cronos {
 				ImGui::MenuItem("Open Project");
 				ImGui::MenuItem("Save Project");
 				ImGui::Separator();
+				if (ImGui::MenuItem("Configuration")) {
+					ShowConfigurationPanel = true;
+				}
+
 				ImGui::MenuItem("Exit");
 			
 				ImGui::EndMenu();	
@@ -417,6 +426,9 @@ namespace Cronos {
 						ImGui::TreePop();
 					}	
 					if (ImGui::IsItemClicked()) {
+						a->isClicked = true;
+					}
+					if (a->isClicked) {
 						m_CurrentDir = a;
 					}
 					
@@ -606,6 +618,46 @@ namespace Cronos {
 		}
 	}
 
+	void ImGuiLayer::GUIDrawConfigurationPanel() {
+
+		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+
+		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::Begin("Configuration", &ShowConfigurationPanel, ImGuiWindowFlags_NoDocking);
+		ImGui::PopStyleColor();
+
+		ImGui::BeginGroup();
+		int selected = 0;
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
+		if (ImGui::Selectable("Application"))
+			selected = 1;
+		else if (ImGui::Selectable("Window"))
+			selected = 2;
+		else if (ImGui::Selectable("Hardware"))
+			selected = 3;
+		else if (ImGui::Selectable("Renderer"))
+			selected = 4;
+		else if (ImGui::Selectable("Input"))
+			selected = 5;
+		else if (ImGui::Selectable("Audio"))
+			selected = 6;
+		else if (ImGui::Selectable("Texture"))
+			selected = 7;
+		ImGui::PopStyleVar();
+
+
+		ImGui::EndChild();
+		ImGui::SameLine();
+		ImGui::EndGroup();
+
+
+		ImGui::End();
+
+	}
+
+
+
 	struct ExampleAppLog
 	{
 		ImGuiTextBuffer     Buf;
@@ -722,7 +774,9 @@ namespace Cronos {
 		}
 	};
 
-	void ImGuiLayer::GUIDDrawConsolePanel()
+
+
+	void ImGuiLayer::GUIDrawConsolePanel()
 	{
 		static ExampleAppLog log;
 

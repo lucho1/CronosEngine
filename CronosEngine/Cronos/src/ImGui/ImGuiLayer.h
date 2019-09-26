@@ -34,7 +34,8 @@ namespace Cronos {
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
-		void GUIDDrawConsolePanel();
+		void GUIDrawConsolePanel();
+		void GUIDrawConfigurationPanel();
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
@@ -47,6 +48,7 @@ namespace Cronos {
 		bool ShowNodeEditorPanel = false;
 		bool ShowConsolePanel = true;
 		bool ShowDemoWindow = false;
+		bool ShowConfigurationPanel = false;
 
 		Directories* AssetDirectories;
 

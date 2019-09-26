@@ -50,6 +50,8 @@ namespace Cronos {
 		std::vector<AssetItems> m_Container;
 		std::list<Directories*>childs;
 
+		bool isClicked = false;
+
 	};
 
 
