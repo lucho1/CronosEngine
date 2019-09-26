@@ -34,9 +34,9 @@ namespace Cronos {
 		
 		inline uint GetWidth() const { return m_Data.Width; }
 		inline uint GetHeight() const { return m_Data.Height; }
+		
 
-
-	private:
+	public:
 
 		struct WindowData {
 

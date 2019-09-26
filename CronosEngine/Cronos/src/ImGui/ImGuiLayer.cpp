@@ -12,6 +12,7 @@
 #include "imnodes.h"
 
 #include "Core/Application.h"
+#include "Modules/SDLWindow.h"
 //#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
@@ -720,6 +721,9 @@ namespace Cronos {
 
 	}
 	void ImGuiLayer::GUIDrawConfigWindowMenu() {
+		
+		static int Height = (int)App->window->m_Data.Height;
+		static int Width = (int)App->window->m_Data.Width;
 		ImGui::Text("Window");
 		ImGui::Separator();
 		static bool TempWindowActive; //Only To show, it's temporary
@@ -727,8 +731,36 @@ namespace Cronos {
 		ImGui::Text("Icon: "); ImGui::SameLine(); ImGui::Image("", ImVec2(40, 40));
 		static float brightnesTest=50.0f; //temporary
 		ImGui::SliderFloat("Brightness", &brightnesTest, 0.0f, 100.0f,"%.1f");
-		//ImGui::SliderFloat("Height");
+		
+		ImGui::Text("Width"); ImGui::SameLine();
+		if (ImGui::SliderInt("##hidelabel", &Height, 100, 1080,"%d")) {
+			SDL_SetWindowSize(App->window->window, Width, Height);
+		}
+		ImGui::Text("Height"); ImGui::SameLine();
+		if (ImGui::SliderInt("##hidelabel2", &Width, 100, 1920)) {
+			SDL_SetWindowSize(App->window->window, Width, Height);
+		}
 
+		static Uint32 flags=NULL;
+		static bool resizable = true;
+		static bool borderless = false;
+		if(ImGui::CheckboxFlags("Fullscreen", &(unsigned int )flags,SDL_WINDOW_FULLSCREEN)){
+			SDL_SetWindowFullscreen(App->window->window, flags);
+		}ImGui::SameLine();
+		if (ImGui::Checkbox("Borderless", &borderless)) {
+			//SDL_SetWindowFullscreen(App->window->window, flags);
+			SDL_SetWindowBordered(App->window->window, (SDL_bool)!borderless);
+		}		
+		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flags,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+			SDL_SetWindowFullscreen(App->window->window, flags);
+			//SDL_Setwindowfu
+		}ImGui::SameLine();
+		if (ImGui::Checkbox("Resizable", &resizable)) {
+			// NOT WORKING TODO: ASK MARC
+			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
+			
+		}
+		
 	}
 
 	void ImGuiLayer::GUIDrawConfigHardwareMenu() {

@@ -32,7 +32,7 @@ namespace Cronos {
 			//Create window
 			m_Data.Width = SCREEN_WIDTH * SCREEN_SIZE;
 			m_Data.Height = SCREEN_HEIGHT * SCREEN_SIZE;
-			Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+			uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 			//Use OpenGL 2.1
 			//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -63,7 +63,7 @@ namespace Cronos {
 			}
 
 			window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_Data.Width, m_Data.Height, flags);
-
+			//SDL_SetWindowIcon();
 			if (window == NULL)
 			{
 				LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
