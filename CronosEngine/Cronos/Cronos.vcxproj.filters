@@ -13,6 +13,12 @@
     <Filter Include="src\Helpers\Timers">
       <UniqueIdentifier>{5201C8EA-3EE5-8840-A745-8393934873C2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ImGui">
+      <UniqueIdentifier>{170E22B3-8378-D629-CCB6-87CF3860B47E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ImGui\OpenGL">
+      <UniqueIdentifier>{6B17CD4E-5710-ECA0-8042-D1256C9ACBAC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Modules">
       <UniqueIdentifier>{F5147E3E-61CA-F633-EABE-F00A5673ED37}</UniqueIdentifier>
     </Filter>
@@ -72,10 +78,25 @@
     <ClInclude Include="src\Helpers\glmath.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="src\ImGui\ImGuiLayer.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h">
+      <Filter>src\ImGui\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h">
+      <Filter>src\ImGui\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\imnodes.h">
+      <Filter>src\ImGui</Filter>
+    </ClInclude>
     <ClInclude Include="src\Modules\Audio.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Camera3D.h">
+      <Filter>src\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Modules\Filesystem.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Input.h">
@@ -1226,10 +1247,25 @@
     <ClCompile Include="src\Helpers\glmath.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImGui\ImGuiLayer.cpp">
+      <Filter>src\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp">
+      <Filter>src\ImGui\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp">
+      <Filter>src\ImGui\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\imnodes.cpp">
+      <Filter>src\ImGui</Filter>
+    </ClCompile>
     <ClCompile Include="src\Modules\Audio.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Camera3D.cpp">
+      <Filter>src\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Modules\Filesystem.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Input.cpp">

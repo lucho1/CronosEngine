@@ -30,8 +30,8 @@ namespace Cronos {
 		else
 		{
 			//Create window
-			int width = SCREEN_WIDTH * SCREEN_SIZE;
-			int height = SCREEN_HEIGHT * SCREEN_SIZE;
+			m_Data.Width = SCREEN_WIDTH * SCREEN_SIZE;
+			m_Data.Height = SCREEN_HEIGHT * SCREEN_SIZE;
 			Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 			//Use OpenGL 2.1
@@ -62,7 +62,7 @@ namespace Cronos {
 				flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 			}
 
-			window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+			window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_Data.Width, m_Data.Height, flags);
 
 			if (window == NULL)
 			{

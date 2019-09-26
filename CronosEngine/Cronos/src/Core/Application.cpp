@@ -11,6 +11,9 @@ namespace Cronos {
 		scene = new Scene(this);
 		renderer3D = new GLRenderer3D(this);
 		camera = new Camera3D(this);
+		filesystem = new Filesystem(this);
+
+		EditorGUI = new ImGuiLayer(this);
 
 		// The order of calls is very important!
 		// Modules will Init() Start() and Update in this order
@@ -23,8 +26,11 @@ namespace Cronos {
 		AddModule(input);
 		AddModule(audio);
 
+
 		// Scenes
 		AddModule(scene);
+		AddModule(filesystem);
+		AddModule(EditorGUI);
 
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;
@@ -41,6 +47,7 @@ namespace Cronos {
 	bool Application::OnInit()
 	{
 		bool ret = true;
+
 
 		for (auto& element : m_ModulesList)
 			if (ret)

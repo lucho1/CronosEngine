@@ -5,12 +5,15 @@
 
 #include <stdio.h>
 #include <cstdio>
+
 #include <stdlib.h>
+#include <unordered_map>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
 #include <utility>
 #include <functional>

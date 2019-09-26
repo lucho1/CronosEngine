@@ -1,7 +1,8 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-#include "glut/glut.h"
+//#include "glut/glut.h"
+#include <glad/glad.h>
 #include "Errors.h"
 
 //Just in case -- Null redefinition
