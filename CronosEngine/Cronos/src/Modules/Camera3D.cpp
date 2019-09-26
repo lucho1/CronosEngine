@@ -39,7 +39,7 @@ namespace Cronos {
 	{
 
 		if (App->input->isMouseScrolling())
-			Zoom();
+			Zoom(dt);
 
 		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT) 
 		{
@@ -181,38 +181,38 @@ namespace Cronos {
 	}
 
 
-	void Camera3D::Zoom() {
+	void Camera3D::Zoom(float dt) {
 
-		//Chapucería:
-		//vec3 newPos(0.0f, 0.0f, 0.0f);
-		//
-		//if (App->input->GetMouseZ() > 0)
-		//	newPos -= m_CameraScrollSpeed * m_Z * dt;
-		//else
-		//	newPos += m_CameraScrollSpeed * m_Z * dt;
-		//
-		//m_Position += newPos;
+		vec3 newPos(0.0f, 0.0f, 0.0f);
+		
+		if (App->input->GetMouseZ() > 0)
+			newPos -= m_CameraScrollSpeed * m_Z * dt;
+		else
+			newPos += m_CameraScrollSpeed * m_Z * dt;
+		
+		m_Position += newPos;
 
-		if (FOV < MIN_FOV)
-			FOV = MIN_FOV;
-		else if (FOV > MAX_FOV)
-			FOV = MAX_FOV;
+		//To make the zoom touching the FOV (you'll need to define MAX and MIN FOV
+		//if (FOV < MIN_FOV)
+		//	FOV = MIN_FOV;
+		//else if (FOV > MAX_FOV)
+		//	FOV = MAX_FOV;
 
-		else if (FOV >= MIN_FOV && FOV <= MAX_FOV) {
+		//else if (FOV >= MIN_FOV && FOV <= MAX_FOV) {
 
-			FOV -= (float)App->input->GetMouseZ() * 5.0f;
+		//	FOV -= (float)App->input->GetMouseZ() * 5.0f;
 
-			//glViewport(0, 0, (GLint)App->window->GetWindowWidth();, (GLint)App->window->GetWindowHeight()); //If something with the camera zoom goes wrong, uncomment this.
+		//	//glViewport(0, 0, (GLint)App->window->GetWindowWidth();, (GLint)App->window->GetWindowHeight()); //If something with the camera zoom goes wrong, uncomment this.
 
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
+		//	glMatrixMode(GL_PROJECTION);
+		//	glLoadIdentity();
 
-			App->renderer3D->ProjectionMatrix = perspective(FOV, (float)App->window->GetWindowWidth()/(float)App->window->GetWindowHeight(), nearPlane, farPlane);
-			glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
+		//	App->renderer3D->ProjectionMatrix = perspective(FOV, (float)App->window->GetWindowWidth()/(float)App->window->GetWindowHeight(), nearPlane, farPlane);
+		//	glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
 
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-		}
+		//	glMatrixMode(GL_MODELVIEW);
+		//	glLoadIdentity();
+		//}
 	}
 
 }
