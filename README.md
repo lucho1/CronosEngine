@@ -3,10 +3,10 @@
 [![Version](https://img.shields.io/github/v/tag/lucho1/CronosEngine?color=blue&label=Version&style=plastic)](https://github.com/lucho1/CronosEngine/releases)
 ![Last Commit](https://img.shields.io/github/last-commit/lucho1/CronosEngine?color=blue&label=Last%20Commit&style=plastic)
 
-![Code Size](https://img.shields.io/github/languages/code-size/lucho1/CronosEngine?color=green&label=Code%20Size)
+![Code Size](https://img.shields.io/github/languages/code-size/lucho1/CronosEngine?color=green&label=Code%20Size&style=plastic)
 ![Repo Size](https://img.shields.io/github/repo-size/lucho1/CronosEngine?color=green&label=Repo%20Size&style=plastic)
 ![GH Top Language](https://img.shields.io/github/languages/top/lucho1/CronosEngine?color=green&style=plastic)
-![GH Total Languages](https://img.shields.io/github/languages/count/lucho1/CronosEngine?color=green)
+![GH Total Languages](https://img.shields.io/github/languages/count/lucho1/CronosEngine?color=green&style=plastic)
 
 ![Total Downloads](https://img.shields.io/github/downloads/lucho1/CronosEngine/total?color=green&label=Total%20Downloads&style=plastic)
 ![Watchers](https://img.shields.io/github/watchers/lucho1/CronosEngine?style=social)
