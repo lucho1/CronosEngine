@@ -47,7 +47,7 @@ namespace Cronos {
 		void GUIDrawNodeEditorPanel();
 		void GUIDrawConsolePanel();
 		void GUIDrawConfigurationPanel();
-		
+		void GUIDrawPerformancePanel();
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
@@ -57,6 +57,7 @@ namespace Cronos {
 		void GUIDrawConfigAudioMenu();
 		void GUIDrawConfigTexturesMenu();
 
+	
 
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
@@ -69,8 +70,13 @@ namespace Cronos {
 		bool ShowAssetMenu = true;
 		bool ShowNodeEditorPanel = false;
 		bool ShowConsolePanel = true;
+		bool ShowPerformancePanel = false;
 		bool ShowDemoWindow = false;
 		bool ShowConfigurationPanel = false;
+
+
+		std::vector<float>ms_log;
+		std::vector<float>fps_log;
 
 		Directories* AssetDirectories;
 

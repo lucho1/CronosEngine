@@ -57,6 +57,7 @@ namespace Cronos {
 
 		inline const float GetDeltaTime() const { return m_Timestep; }
 		inline const int GetFPSCap() const { return m_FPSCap; }
+		inline const void RequestBrowser(const char* WebDirection) { ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL); }
 
 	private:
 

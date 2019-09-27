@@ -35,7 +35,7 @@ namespace Cronos {
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
 	
-	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer")
+	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"),ms_log(100),fps_log(100)
 	{
 		
 	}
@@ -79,14 +79,7 @@ namespace Cronos {
 
 		return true;
 	}
-	static int iterations = 0;
 
-	static void testIterator(Directories a ) {
-		for (auto& c : a.childs) {
-
-			testIterator(*c);
-		}
-	}
 
 	void ImGuiLayer::AssetImguiIterator(Directories a) {
 		for (auto& c : a.childs) {
@@ -108,11 +101,6 @@ namespace Cronos {
 
 	update_status ImGuiLayer::OnUpdate(float dt)
 	{
-		for (auto& a : AssetDirectories->childs) {
-			iterations++;
-			testIterator(*a);
-		}
-
 		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
 		ImGuiIO& io = ImGui::GetIO();
@@ -150,6 +138,7 @@ namespace Cronos {
 		if (ShowConsolePanel)			GUIDrawConsolePanel();
 		if (ShowDemoWindow)				ImGui::ShowDemoWindow(&ShowDemoWindow);
 		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
+		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
 
 		ImGui::End();
 
@@ -237,27 +226,44 @@ namespace Cronos {
 			}
 			if (ImGui::BeginMenu("Window")) {
 				if (ImGui::MenuItem("NodeEditor")) {
-					ShowNodeEditorPanel = true;
+					ShowNodeEditorPanel = !ShowNodeEditorPanel;
 				}
 				if (ImGui::MenuItem("Inspector")) {
-					ShowInspectorPanel = true;
+					ShowInspectorPanel = !ShowInspectorPanel;
 				}
 				if (ImGui::MenuItem("Hierarchy")) {
-					ShowHierarchyMenu = true;
+					ShowHierarchyMenu = !ShowHierarchyMenu;
 				}
 				if (ImGui::MenuItem("Asset")) {
-					ShowAssetMenu = true;
+					ShowAssetMenu = !ShowAssetMenu;
+				}
+				if (ImGui::MenuItem("Performance")) {
+					ShowPerformancePanel = !ShowPerformancePanel;
 				}
 				if (ImGui::MenuItem("Console")) {
-					ShowConsolePanel = true;
+					ShowConsolePanel = !ShowConsolePanel;
 				}
-				if (ImGui::MenuItem("Demo Window")) {
-					ShowDemoWindow = true;
-				}
+			
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Help")) {
-				ImGui::MenuItem("New");
+				if (ImGui::MenuItem("Demo Window")) {
+					ShowDemoWindow = !ShowDemoWindow;
+				}
+				if (ImGui::MenuItem("Documentation")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/wiki");
+				}
+				if (ImGui::MenuItem("Download latest")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/releases");
+				}
+				if (ImGui::MenuItem("Report a bug")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/issues");
+				}
+				if (ImGui::MenuItem("About (OnConstruction)")) {
+					
+				}
+				
+
 				ImGui::EndMenu();
 			}
 		}
@@ -265,17 +271,45 @@ namespace Cronos {
 		ImGui::EndMainMenuBar();
 
 	}
+	void ImGuiLayer::GUIDrawPerformancePanel() {
+		//ImGui::SetNextWindowSize(ImVec2(200, 400));
+		ImGui::Begin("Performance", &ShowPerformancePanel);
+		static uint count = 0;
+		if (count == 100) {
+			for (uint i = 0; i < 99; i++) {
+				ms_log[i] = ms_log[i + 1];
+				fps_log[i] = fps_log[i + 1];
+			}
+		}
+		else
+			count++;
+
+		fps_log[count - 1] = App->GetFPSCap();
+		ms_log[count - 1] = App->GetDeltaTime() * 1000;
+
+		char title[25];
+	
+		sprintf_s(title, 25, "Framerate %0.1f", fps_log[fps_log.size() - 1]);
+		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+
+		sprintf_s(title, 25, "Milliseconds %0.1f", ms_log[ms_log.size() - 1]);
+		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+		
+		//float a = App->GetDeltaTime();
+
+		ImGui::End();
+	}
 
 	void ImGuiLayer::GUIDrawInspectorMenu()
 	{
 		ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
-		ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
-		static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-		ImGui::Separator();
+			ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
+			static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+			ImGui::Separator();
 
-		GUIDrawTransformPMenu();
-		GUIDrawMaterialsMenu();
+			GUIDrawTransformPMenu();
+			GUIDrawMaterialsMenu();
 
 		ImGui::End();
 
@@ -717,8 +751,11 @@ namespace Cronos {
 		ImGui::TextColored(Color, TITLE);
 		ImGui::Text("Organization: "); ImGui::SameLine();
 		ImGui::TextColored(Color, ORGANIZATION);
-
-
+		ImGui::Separator();
+		ImGui::Text("");
+		ImGui::Text("Performance here"); ImGui::SameLine();
+		if (ImGui::Button("Performance"))
+			ShowPerformancePanel = !ShowPerformancePanel;
 	}
 	void ImGuiLayer::GUIDrawConfigWindowMenu() {
 		
