@@ -5,6 +5,7 @@ namespace Cronos {
 
 	Application::Application(int FPSCap) : m_FPSCap(FPSCap)
 	{
+
 		window = new SDLWindow(this);
 		input = new Input(this);
 		audio = new Audio(this);
@@ -47,7 +48,6 @@ namespace Cronos {
 	bool Application::OnInit()
 	{
 		bool ret = true;
-
 
 		for (auto& element : m_ModulesList)
 			if (ret)

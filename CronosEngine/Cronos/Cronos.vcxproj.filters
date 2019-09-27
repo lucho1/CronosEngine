@@ -93,6 +93,9 @@
     <ClInclude Include="src\Modules\Audio.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="src\Modules\EngineCamera.h">
+      <Filter>src\Modules</Filter>
+    </ClInclude>
     <ClInclude Include="src\Modules\Filesystem.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
@@ -1215,9 +1218,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Modules\EngineCamera.h">
-      <Filter>src\Modules</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1262,6 +1262,9 @@
     <ClCompile Include="src\Modules\Audio.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\Modules\EngineCamera.cpp">
+      <Filter>src\Modules</Filter>
+    </ClCompile>
     <ClCompile Include="src\Modules\Filesystem.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
@@ -1279,9 +1282,6 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Modules\EngineCamera.cpp">
-      <Filter>src\Modules</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
