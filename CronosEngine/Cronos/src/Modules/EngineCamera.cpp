@@ -1,11 +1,11 @@
 #include "cnpch.h"
 #include "Globals.h"
 #include "Application.h"
-#include "Camera3D.h"
+#include "EngineCamera.h"
 
 namespace Cronos {
 
-	Camera3D::Camera3D(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
+	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
 	{
 		CalculateViewMatrix();
 
@@ -15,37 +15,38 @@ namespace Cronos {
 
 		m_Position = vec3(0.0f, 0.0f, 5.0f);
 		m_Reference = vec3(0.0f, 0.0f, 0.0f);
+
 	}
 
-	Camera3D::~Camera3D()
+	EngineCamera::~EngineCamera()
 	{}
 
 	// -----------------------------------------------------------------
-	bool Camera3D::OnStart()
+	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
 		return true;
 	}
 
 	// -----------------------------------------------------------------
-	bool Camera3D::OnCleanUp()
+	bool EngineCamera::OnCleanUp()
 	{
 		LOG("Cleaning camera");
 		return true;
 	}
 
 	// -----------------------------------------------------------------
-	update_status Camera3D::OnUpdate(float dt)
+	update_status EngineCamera::OnUpdate(float dt)
 	{
 
 		if (App->input->isMouseScrolling())
 			Zoom(dt);
 
-		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT) 
+		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 		{
 			vec3 newPos(0.0f, 0.0f, 0.0f);
-			newPos += m_X * App->input->GetMouseXMotion()/2.0f * dt;
-			newPos.y += -App->input->GetMouseYMotion()/2.0f * dt;
+			newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
+			newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
 			m_Position += newPos;
 			m_Reference += newPos;
@@ -88,7 +89,7 @@ namespace Cronos {
 			OrbitAroundReference(vec3(0, 0, 0));
 		}
 
-		if(App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 			LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
 
 		// Recalculate matrix -------------
@@ -98,7 +99,7 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
-	const vec3 Camera3D::CalculateMouseRotation(const vec3& pos, const vec3& ref)
+	const vec3 EngineCamera::CalculateMouseRotation(const vec3& pos, const vec3& ref)
 	{
 		// Mouse motion ----------------
 		// There is another way to do it in Physics handout 1
@@ -117,19 +118,9 @@ namespace Cronos {
 		return ref_pos;
 	}
 
+
 	// -----------------------------------------------------------------
-	void Camera3D::OrbitAroundReference(const vec3 &Reference)
-	{
-		this->m_Reference = Reference;
-
-		m_Z = normalize(m_Position - Reference);
-		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
-		m_Y = cross(m_Z, m_X);
-
-		CalculateViewMatrix();
-	}
-
-	void Camera3D::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
+	void EngineCamera::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
 	{
 		this->m_Position = Position;
 		this->m_Reference = Reference;
@@ -148,7 +139,7 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
-	void Camera3D::LookAt(const vec3 &Spot)
+	void EngineCamera::LookAt(const vec3 &Spot)
 	{
 		m_Reference = Spot;
 
@@ -161,7 +152,7 @@ namespace Cronos {
 
 
 	// -----------------------------------------------------------------
-	void Camera3D::Move(const vec3 &Movement)
+	void EngineCamera::Move(const vec3 &Movement)
 	{
 		m_Position += Movement;
 		m_Reference += Movement;
@@ -170,49 +161,81 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
-	void Camera3D::CalculateViewMatrix()
-	{
-		m_ViewMatrix = mat4x4(	m_X.x, m_Y.x, m_Z.x, 0.0f,
-								m_X.y, m_Y.y, m_Z.y, 0.0f,
-								m_X.z, m_Y.z, m_Z.z, 0.0f,
-								-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
-
-		m_ViewMatrixInverse = inverse(m_ViewMatrix);
-	}
-
-
-	void Camera3D::Zoom(float dt) {
+	void EngineCamera::Zoom(float dt) {
 
 		vec3 newPos(0.0f, 0.0f, 0.0f);
-		
+
 		if (App->input->GetMouseZ() > 0)
 			newPos -= m_CameraScrollSpeed * m_Z * dt;
 		else
 			newPos += m_CameraScrollSpeed * m_Z * dt;
-		
+
 		m_Position += newPos;
-
-		//To make the zoom touching the FOV (you'll need to define MAX and MIN FOV
-		//if (FOV < MIN_FOV)
-		//	FOV = MIN_FOV;
-		//else if (FOV > MAX_FOV)
-		//	FOV = MAX_FOV;
-
-		//else if (FOV >= MIN_FOV && FOV <= MAX_FOV) {
-
-		//	FOV -= (float)App->input->GetMouseZ() * 5.0f;
-
-		//	//glViewport(0, 0, (GLint)App->window->GetWindowWidth();, (GLint)App->window->GetWindowHeight()); //If something with the camera zoom goes wrong, uncomment this.
-
-		//	glMatrixMode(GL_PROJECTION);
-		//	glLoadIdentity();
-
-		//	App->renderer3D->ProjectionMatrix = perspective(FOV, (float)App->window->GetWindowWidth()/(float)App->window->GetWindowHeight(), nearPlane, farPlane);
-		//	glLoadMatrixf(&App->renderer3D->ProjectionMatrix);
-
-		//	glMatrixMode(GL_MODELVIEW);
-		//	glLoadIdentity();
-		//}
 	}
 
+	// -----------------------------------------------------------------
+	void EngineCamera::OrbitAroundReference(const vec3 &Reference)
+	{
+		this->m_Reference = Reference;
+
+		m_Z = normalize(m_Position - Reference);
+		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
+		m_Y = cross(m_Z, m_X);
+
+		CalculateViewMatrix();
+	}
+
+
+	// -----------------------------------------------------------------
+	void EngineCamera::CalculateViewMatrix()
+	{
+		m_ViewMatrix = mat4x4(m_X.x, m_Y.x, m_Z.x, 0.0f,
+			m_X.y, m_Y.y, m_Z.y, 0.0f,
+			m_X.z, m_Y.z, m_Z.z, 0.0f,
+			-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
+
+		m_ViewMatrixInverse = inverse(m_ViewMatrix);
+	}
+
+	// -----------------------------------------------------------------
+	void EngineCamera::CalculateProjection()
+	{
+
+		if (m_FOV < MIN_FOV)
+			m_FOV = MIN_FOV;
+		else if (m_FOV > MAX_FOV)
+			m_FOV = MAX_FOV;
+
+		else if (m_FOV >= MIN_FOV && m_FOV <= MAX_FOV) {
+
+			//glViewport(0, 0, (GLint)App->window->GetWindowWidth();, (GLint)App->window->GetWindowHeight()); //If something with the proj.mat. goes wrong, uncomment this.
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+
+			m_ProjectionMatrix = perspective(m_FOV, App->window->GetAspectRatio(), m_NearPlane, m_FarPlane);
+			glLoadMatrixf(&m_ProjectionMatrix);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+		}
+	}
+
+
+	// -----------------------------------------------------------------
+	void EngineCamera::SetFOV(float FOV)
+	{
+		m_FOV = FOV;
+		CalculateProjection();
+	}
+	void EngineCamera::SetNearPlane(float nPlane)
+	{
+		m_NearPlane = nPlane;
+		CalculateProjection();
+	}
+	void EngineCamera::SetFarPlane(float fPlane)
+	{
+		m_FarPlane = fPlane;
+		CalculateProjection();
+	}
 }

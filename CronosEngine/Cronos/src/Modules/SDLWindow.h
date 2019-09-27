@@ -22,9 +22,8 @@ namespace Cronos {
 		virtual bool OnCleanUp() override;
 
 		void SetTitle(const char* title);
-
-		inline const int GetWindowHeight() const { return (SCREEN_HEIGHT * SCREEN_SIZE); }
-		inline const int GetWindowWidth() const { return (SCREEN_WIDTH * SCREEN_SIZE); }
+		void ReCalculateAspectRatio(uint width, uint height);
+		void OnResize(uint width, uint height);
 
 	public:
 		//The window we'll be rendering to
@@ -33,9 +32,9 @@ namespace Cronos {
 		//The surface contained by the window
 		SDL_Surface* screen_surface;
 		
-		inline uint GetWidth() const { return m_Data.Width; }
-		inline uint GetHeight() const { return m_Data.Height; }
-
+		const inline uint GetWidth()			const { return m_Data.Width;		}
+		const inline uint GetHeight()			const { return m_Data.Height;		}
+		const inline float GetAspectRatio()		const { return m_Data.AspectRatio;	}
 
 	private:
 
@@ -43,6 +42,7 @@ namespace Cronos {
 
 			std::string Title;
 			uint  Width, Height;
+			float AspectRatio = 1.0f;
 			bool VSync;
 			
 		};

@@ -10,7 +10,7 @@ namespace Cronos {
 		audio = new Audio(this);
 		scene = new Scene(this);
 		renderer3D = new GLRenderer3D(this);
-		camera = new Camera3D(this);
+		engineCamera = new EngineCamera(this);
 		filesystem = new Filesystem(this);
 
 		EditorGUI = new ImGuiLayer(this);
@@ -22,7 +22,7 @@ namespace Cronos {
 		// Main Modules
 		AddModule(window);
 		AddModule(renderer3D);
-		AddModule(camera);
+		AddModule(engineCamera);
 		AddModule(input);
 		AddModule(audio);
 

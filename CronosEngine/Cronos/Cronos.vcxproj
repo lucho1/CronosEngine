@@ -123,7 +123,7 @@
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
     <ClInclude Include="src\ImGui\imnodes.h" />
     <ClInclude Include="src\Modules\Audio.h" />
-    <ClInclude Include="src\Modules\Camera3D.h" />
+    <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
@@ -516,7 +516,7 @@
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\ImGui\imnodes.cpp" />
     <ClCompile Include="src\Modules\Audio.cpp" />
-    <ClCompile Include="src\Modules\Camera3D.cpp" />
+    <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />

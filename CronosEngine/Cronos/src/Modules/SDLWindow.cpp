@@ -32,6 +32,7 @@ namespace Cronos {
 			//Create window
 			m_Data.Width = SCREEN_WIDTH * SCREEN_SIZE;
 			m_Data.Height = SCREEN_HEIGHT * SCREEN_SIZE;
+			m_Data.AspectRatio = (float)m_Data.Width / (float)m_Data.Height;
 			Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
 
 			//Use OpenGL 2.1
@@ -110,4 +111,15 @@ namespace Cronos {
 		SDL_SetWindowTitle(window, title);
 	}
 
+	void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
+	{
+		m_Data.AspectRatio = (float)width / (float)height;
+	}
+
+	void SDLWindow::OnResize(uint width, uint height)
+	{
+		glViewport(0, 0, width, height);
+		ReCalculateAspectRatio(width, height);
+		App->engineCamera->CalculateProjection();
+	}
 }
