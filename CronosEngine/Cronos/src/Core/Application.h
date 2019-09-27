@@ -19,28 +19,30 @@ namespace Cronos {
 
 	public:
 
-		SDLWindow* window;
-		Input* input;
-		Audio* audio;
-		Scene* scene;
-		GLRenderer3D* renderer3D;
-		Camera3D* camera;
-		ImGuiLayer* EditorGUI;
-		Filesystem* filesystem;
+		SDLWindow*		window;
+		Input*			input;
+		Audio*			audio;
+		Scene*			scene;
+		GLRenderer3D*	renderer3D;
+		Camera3D*		camera;
+		ImGuiLayer*		EditorGUI;
+		Filesystem*		filesystem;
 
 	private:
 
 		std::vector<Module*> m_ModulesList;
 
 		//Timestep stuff
-		float m_Timestep = 0.0f;
-		Timer mt_LastFrameTime;
+		float	m_Timestep = 0.0f;
+		Timer	mt_LastFrameTime;
 
 		///Framerate Debug Info.
-		//Timer mt_StartingTime; //Time since starting NEEDS TO BE STARTED!!!!!!
-		//Timer mt_LastSecFrameTime; //Timer to check the frames in a second (at each second) NEEDS TO BE STARTED!!!!!
-		//uint m_FrameCount = 0; //Frames since starting
-		//uint32 m_LastSecFrameCount = 0; //Frames in last second
+		Timer	mt_StartingTime; //Time since starting NEEDS TO BE STARTED!!!!!!
+		Timer	mt_LastSecFrameTime; //Timer to check the frames in a second (at each second) NEEDS TO BE STARTED!!!!!
+		uint	m_FrameCount = 0; //Frames since starting
+		uint32	m_LastSecFrameCount = 0; //Frames in last second
+		uint32	m_PREV_LastSecFrameCount = 0; //Stored frames of the previous-to-last second's frames
+		float	m_AverageFPS = 0.0f;
 
 		//FPS CAP
 		int m_CappedMS = -1;
@@ -51,13 +53,20 @@ namespace Cronos {
 		Application(int FPSCap = -1);
 		~Application();
 
-		bool OnInit();
-		update_status OnUpdate();
-		bool OnCleanUp();
+		bool			OnInit();
+		update_status	OnUpdate();
+		bool			OnCleanUp();
 
-		inline const float GetDeltaTime() const { return m_Timestep; }
-		inline const int GetFPSCap() const { return m_FPSCap; }
-		inline const void RequestBrowser(const char* WebDirection) { ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL); }
+		const void		RequestBrowser(const char* WebDirection);
+		void			SetFPSCap(int FPScap);
+
+		//'Getters'
+		inline const float GetDeltaTime()				const		{	return	m_Timestep;					}
+		inline const float GetLastFrameMS()				const		{	return	(m_Timestep * 1000.0f);		}
+		inline const uint32 GetFramesInLastSecond()		const		{	return	m_PREV_LastSecFrameCount;	}
+		inline const float GetAverageFPS()				const		{	return	m_AverageFPS;				}
+														
+		inline const int GetFPSCap()					const		{ return m_FPSCap; }
 
 	private:
 
@@ -67,7 +76,6 @@ namespace Cronos {
 	};
 
 	extern Application* App;
-
 }
 
 #endif

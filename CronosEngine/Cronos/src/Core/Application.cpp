@@ -33,7 +33,7 @@ namespace Cronos {
 		AddModule(EditorGUI);
 
 		if (m_FPSCap > 0)
-			m_CappedMS = 1000 / FPSCap;
+			m_CappedMS = 1000 / m_FPSCap;
 
 	}
 
@@ -59,6 +59,7 @@ namespace Cronos {
 			if (ret)
 				ret = element->OnStart();
 
+		mt_StartingTime.Start();
 		return ret;
 	}
 
@@ -67,8 +68,8 @@ namespace Cronos {
 	void Application::PrepareUpdate()
 	{
 		//For performance information purposes
-		//m_FrameCount++;
-		// m_LastSecFrameCount++;
+		m_FrameCount++;
+		m_LastSecFrameCount++;
 
 		m_Timestep = mt_LastFrameTime.ReadSec();
 		mt_LastFrameTime.Start();
@@ -78,14 +79,14 @@ namespace Cronos {
 	void Application::FinishUpdate()
 	{
 		//For performance information purposes
-		//if(mt_LastSecFrameTime.Read() > 1000) 
-		//{
-		//	mt_LastSecFrameTime.Start();
-		//	uint32 tmp_LastSecFrameCount = m_LastSecFrameCount;
-		//	m_LastSecFrameCount = 0;
-		//}
+		if(mt_LastSecFrameTime.Read() > 1000) 
+		{
+			mt_LastSecFrameTime.Start();
+			m_PREV_LastSecFrameCount = m_LastSecFrameCount;
+			m_LastSecFrameCount = 0;
+		}
 
-		//float m_AverageFPS = float(m_FrameCount) / mt_StartingTime.ReadSec();
+		m_AverageFPS = float(m_FrameCount) / mt_StartingTime.ReadSec();
 		//Cool info gotten from previous info: Secs since start (mt_StartingTime.ReadSec())
 		//|| Frames in last update (current_framecount - last_frame count), probably you'll need to declare a new value or something
 
@@ -131,6 +132,21 @@ namespace Cronos {
 	void Application::AddModule(Module* mod)
 	{
 		m_ModulesList.push_back(mod);
+	}
+
+	const void Application::RequestBrowser(const char* WebDirection)
+	{
+		ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL);
+	}
+
+	void Application::SetFPSCap(int FPScap)
+	{
+		if (FPScap > 0) {
+			m_CappedMS = 1000 / FPScap;
+			m_FPSCap = FPScap;
+		}
+		else
+			LOG("FPS CAP must be bigger than 0!!")
 	}
 
 }
