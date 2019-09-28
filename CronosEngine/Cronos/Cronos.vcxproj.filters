@@ -1218,6 +1218,8 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\Buffers.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1283,5 +1285,7 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
   </ItemGroup>
 </Project>

@@ -128,8 +128,10 @@
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
+    <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -521,8 +523,10 @@
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
+    <ClCompile Include="src\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
@@ -535,4 +539,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>
