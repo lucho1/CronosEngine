@@ -46,16 +46,36 @@ namespace Cronos {
 			4, 3, 0, 0, 7, 4  //F6
 		};
 
-		VAO = new VertexArray();
+		//uint va;
+		//glCreateVertexArrays(1, &va);
+		//glBindVertexArray(va);
+		//
+		//uint vb;
+		//glCreateBuffers(1, &vb);
+		//glBindBuffer(GL_ARRAY_BUFFER, vb);
+		//glBufferData(GL_ARRAY_BUFFER, 3*8* sizeof(float), cbeVertices, GL_STATIC_DRAW);
+		//
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+		//
+		//uint ib;
+		//glCreateBuffers(1, &ib);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
+		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * 6 * sizeof(uint), cbeIndices, GL_STATIC_DRAW);
+		//
+		//glBindVertexArray(va);
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
 
+		VAO = new VertexArray();
+		
 		VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
 		VBO->SetLayout({ {Cronos::ShaderDataType::VEC3F, "a_Position"} });
 		VAO->AddVertexBuffer(*VBO);
-
+		//
 		IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));
 		VAO->AddIndexBuffer(*IBO);
 		
-
+		//glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 		return ret;
 	}
 
@@ -63,7 +83,7 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
-		delete VAO;
+		VAO->~VertexArray();
 		return true;
 	}
 
@@ -76,12 +96,13 @@ namespace Cronos {
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane 
 		m_FloorPlane.Render();
+		//glDrawArrays(GL_TRIANGLES, 0, 8);
 		VAO->Bind();
-		//uint xd = VAO->GetIndexBuffer()->GetCount();
-		uint xd = VAO->m_IBuffer->GetCount();
-		//IndexBuffer tuputamadre = VAO->m_IBuffer;
+		//Cube cbe = Cube(5, 5, 5);
+		//cbe.Render();
 
-		glDrawElements(GL_TRIANGLES, xd, GL_UNSIGNED_INT, &(VAO->m_IBuffer));
+		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
 
 		return UPDATE_CONTINUE;
 	}

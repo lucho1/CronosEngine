@@ -20,12 +20,12 @@ namespace Cronos {
 		void AddIndexBuffer(IndexBuffer& iBuffer);
 
 		const std::vector<VertexBuffer*>& GetVertexBuffers() const { return m_VBuffers_List; }
-		//IndexBuffer* GetIndexBuffer() const { return m_IBuffer; }
-		IndexBuffer* m_IBuffer;
+		IndexBuffer* GetIndexBuffer() const { return m_IBuffer; }
+		
 	private:
 
 		uint m_ID;
-		
+		IndexBuffer* m_IBuffer;
 		std::vector<VertexBuffer*> m_VBuffers_List;
 
 	};
