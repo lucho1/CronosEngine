@@ -3,7 +3,6 @@
 
 #include "Buffers.h"
 
-
 namespace Cronos {
 
 	class VertexArray {
@@ -22,7 +21,10 @@ namespace Cronos {
 		const std::vector<VertexBuffer*>& GetVertexBuffers() const { return m_VBuffers_List; }
 		IndexBuffer* GetIndexBuffer() const { return m_IBuffer; }
 		
+		
 	private:
+
+		GLenum ConvertToOpenGLDataType(VertexDataType type);
 
 		uint m_ID;
 		IndexBuffer* m_IBuffer;

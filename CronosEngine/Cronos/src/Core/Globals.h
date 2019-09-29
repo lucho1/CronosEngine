@@ -25,10 +25,10 @@ namespace Cronos {
 // -------------------------------------------------------------------------------
 
 // ERROR HANDLING ----------------------------------------------------------------
-#define ASSERT(x) if(!(x)) __debugbreak();
+#define CRONOS_ASSERT(x) if(!(x)) __debugbreak();
 
 #ifdef _DEBUG
-	#define GLCall(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+	#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
 	#define GL_SETERRORHANDLER(majV, minV) SetErrorHandler(majV, minV);
 #else
 	#define GLCall(x) x;

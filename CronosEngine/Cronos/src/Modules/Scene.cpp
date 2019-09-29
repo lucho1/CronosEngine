@@ -69,7 +69,7 @@ namespace Cronos {
 		VAO = new VertexArray();
 		
 		VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
-		VBO->SetLayout({ {Cronos::ShaderDataType::VEC3F, "a_Position"} });
+		VBO->SetLayout({ {Cronos::VertexDataType::VEC3F, "a_Position"} });
 		VAO->AddVertexBuffer(*VBO);
 		//
 		IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));

@@ -3,22 +3,25 @@
 
 namespace Cronos {
 
-	GLenum OpenGLDataType(ShaderDataType type)
+	GLenum VertexArray::ConvertToOpenGLDataType(VertexDataType type)
 	{
 		switch (type)
 		{
-		case ShaderDataType::FLOAT:			return GL_FLOAT;
-		case ShaderDataType::VEC2F:			return GL_FLOAT;
-		case ShaderDataType::VEC3F:			return GL_FLOAT;
-		case ShaderDataType::VEC4F:			return GL_FLOAT;
-		case ShaderDataType::MAT3:			return GL_FLOAT;
-		case ShaderDataType::MAT4:			return GL_FLOAT;
-		case ShaderDataType::INT:			return GL_INT;
-		case ShaderDataType::VEC2I:			return GL_INT;
-		case ShaderDataType::VEC3I:			return GL_INT;
-		case ShaderDataType::VEC4I:			return GL_INT;
-		case ShaderDataType::BOOL:			return GL_BOOL;
+		case VertexDataType::INT:			return GL_INT;
+		case VertexDataType::FLOAT:			return GL_FLOAT;
+		case VertexDataType::VEC2I:			return GL_INT;
+		case VertexDataType::VEC3I:			return GL_INT;
+		case VertexDataType::VEC4I:			return GL_INT;
+		case VertexDataType::VEC2F:			return GL_FLOAT;
+		case VertexDataType::VEC3F:			return GL_FLOAT;
+		case VertexDataType::VEC4F:			return GL_FLOAT;
+		case VertexDataType::MAT3:			return GL_FLOAT;
+		case VertexDataType::MAT4:			return GL_FLOAT;
+		case VertexDataType::BOOL:			return GL_BOOL;
 		}
+
+		CRONOS_ASSERT(0, "COULDN'T CONVERT TO OGL DATA TYPE!");
+		return 0;
 	}
 
 
@@ -59,7 +62,7 @@ namespace Cronos {
 			for (auto& element : vBuffer.GetLayout().GetLayoutElements())
 			{
 				glEnableVertexAttribArray(i);
-				glVertexAttribPointer(i, element.GetTypeCount(), OpenGLDataType(element.bd_ShaderDataType),
+				glVertexAttribPointer(i, element.VertexDataTypeCount(element.bd_VertexDataType), ConvertToOpenGLDataType(element.bd_VertexDataType),
 					(element.bd_Normalized ? true : false), vBuffer.GetLayout().GetLayoutStride(), (const void*)element.bd_Offset);
 				
 				i++;
@@ -75,4 +78,5 @@ namespace Cronos {
 		iBuffer.Bind();
 		m_IBuffer = &iBuffer;
 	}
+
 }

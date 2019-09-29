@@ -5,25 +5,44 @@
 
 namespace Cronos {
 
-	uint ShaderDataTypeSize(ShaderDataType shader_data_type)
+	uint BufferData::VertexDataTypeSize(VertexDataType vertex_data_type) const
 	{
-		switch (shader_data_type)
+		switch (vertex_data_type)
 		{
-			case ShaderDataType::FLOAT:	return 4;			//sizeof(float) = 4...
-			case ShaderDataType::VEC2F:	return 4 * 2;		//...size of 2 floats = 4*2 and so on
-			case ShaderDataType::VEC3F:	return 4 * 3;
-			case ShaderDataType::VEC4F:	return 4 * 4;
-			case ShaderDataType::MAT3:	return 4 * 3 * 3;	//sizeof(float) * 3x3 matrix, so 4*3*3
-			case ShaderDataType::MAT4:	return 4 * 4 * 4;
-			case ShaderDataType::INT:	return 4;			//sizeof(int) = 4
-			case ShaderDataType::VEC2I:	return 4 * 2;
-			case ShaderDataType::VEC3I:	return 4 * 3;
-			case ShaderDataType::VEC4I:	return 4 * 4;
-			case ShaderDataType::BOOL:	return 1;			//sizeof(bool) = 1
+			case VertexDataType::FLOAT:	return 4;			//sizeof(float) = 4
+			case VertexDataType::INT:	return 4;			//sizeof(int) = 4
+			case VertexDataType::VEC2I:	return 4 * 2;		//size of 2 ints = 4*2 and so on
+			case VertexDataType::VEC3I:	return 4 * 3;
+			case VertexDataType::VEC4I:	return 4 * 4;
+			case VertexDataType::VEC2F:	return 4 * 2;		
+			case VertexDataType::VEC3F:	return 4 * 3;
+			case VertexDataType::VEC4F:	return 4 * 4;
+			case VertexDataType::MAT3:	return 4 * 3 * 3;	//sizeof(float) * 3x3 matrix, so 4*3*3
+			case VertexDataType::MAT4:	return 4 * 4 * 4;
+			case VertexDataType::BOOL:	return 1;			//sizeof(bool) = 1
 		}
 
-		//ASSERT(0, "Unknown Shader DataType!!");
-		LOG("Unknown Shader DataType!!");
+		CRONOS_ASSERT(0, "Unknown Vertex Data Type!!");
+		return 0;
+	}
+
+	uint BufferData::VertexDataTypeCount(VertexDataType vertex_data_type) const
+	{
+		switch (vertex_data_type)
+		{
+			case VertexDataType::FLOAT:	return 1;
+			case VertexDataType::INT:	return 1;
+			case VertexDataType::VEC2I:	return 2;
+			case VertexDataType::VEC3I:	return 3;
+			case VertexDataType::VEC4I:	return 4;
+			case VertexDataType::VEC2F:	return 2;
+			case VertexDataType::VEC3F:	return 3;
+			case VertexDataType::VEC4F:	return 4;
+			case VertexDataType::MAT3:	return 3 * 3;
+			case VertexDataType::MAT4:	return 4 * 4;
+			case VertexDataType::BOOL:	return 1;
+		}
+		CRONOS_ASSERT(0, "Unknown Vertex Data Type Count!!");
 		return 0;
 	}
 

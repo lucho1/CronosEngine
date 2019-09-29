@@ -3,8 +3,8 @@
 
 namespace Cronos {
 
-	enum class ShaderDataType { NONE = 0, FLOAT, VEC2F, VEC3F, VEC4F, MAT3, MAT4, INT, VEC2I, VEC3I, VEC4I, BOOL };
-	uint ShaderDataTypeSize(ShaderDataType shader_data_type);
+	enum class VertexDataType { NONE = 0, FLOAT, INT, VEC2I, VEC3I, VEC4I, VEC2F, VEC3F, VEC4F, MAT3, MAT4, BOOL };
+
 
 	struct BufferData {
 
@@ -12,30 +12,15 @@ namespace Cronos {
 		bool bd_Normalized;
 		uint bd_Size;
 		uint bd_Offset;
-		ShaderDataType bd_ShaderDataType;
+		VertexDataType bd_VertexDataType;
+
+		uint VertexDataTypeCount(VertexDataType vertex_data_type) const; //How many components has each type
+		uint VertexDataTypeSize(VertexDataType vertex_data_type) const; //The size of the data type of the vertex
 
 		BufferData() {}
-		BufferData(ShaderDataType shader_data_type, const std::string& name, bool norm = false)
-			: bd_ShaderDataType(shader_data_type), bd_Name(name), bd_Normalized(norm), bd_Size(ShaderDataTypeSize(shader_data_type)) {}
+		BufferData(VertexDataType vertex_data_type, const std::string& name, bool norm = false)
+			: bd_VertexDataType(vertex_data_type), bd_Name(name), bd_Normalized(norm), bd_Size(VertexDataTypeSize(vertex_data_type)) {}
 
-		uint GetTypeCount() const //How many components has each type
-		{
-			switch (bd_ShaderDataType)
-			{
-				case ShaderDataType::FLOAT:	return 1;
-				case ShaderDataType::VEC2F:	return 2;
-				case ShaderDataType::VEC3F:	return 3;
-				case ShaderDataType::VEC4F:	return 4;
-				case ShaderDataType::MAT3:	return 3 * 3;
-				case ShaderDataType::MAT4:	return 4 * 4;
-				case ShaderDataType::INT:	return 1;
-				case ShaderDataType::VEC2I:	return 2;
-				case ShaderDataType::VEC3I:	return 3;
-				case ShaderDataType::VEC4I:	return 4;
-				case ShaderDataType::BOOL:	return 1;
-			}
-			return 0;
-		}
 	};
 
 
@@ -44,8 +29,7 @@ namespace Cronos {
 	public:
 
 		BufferLayout() {}
-		BufferLayout(const std::initializer_list<BufferData>& bl_data)
-			: m_BufferLayoutData(bl_data)
+		BufferLayout(const std::initializer_list<BufferData>& bl_data) : m_BufferLayoutData(bl_data)
 		{
 			CalculateValues();
 		}
@@ -91,6 +75,7 @@ namespace Cronos {
 		uint m_ID;
 		BufferLayout m_VBLayout;
 	};
+
 
 	class IndexBuffer {
 
