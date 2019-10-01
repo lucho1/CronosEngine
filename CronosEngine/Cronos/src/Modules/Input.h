@@ -62,6 +62,8 @@ namespace Cronos {
 			return mouse_y_motion;
 		}
 
+		inline const bool getCurrentWinStatus() { return quit; }
+		inline void updateQuit(bool updated) { quit = updated; }
 	private:
 
 		KEY_STATE* keyboard;
@@ -71,6 +73,7 @@ namespace Cronos {
 		int mouse_z;
 		int mouse_x_motion;
 		int mouse_y_motion;
+		bool quit=false;
 		//int mouse_z_motion;
 	};
 

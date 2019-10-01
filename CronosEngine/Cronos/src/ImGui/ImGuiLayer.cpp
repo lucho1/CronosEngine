@@ -45,6 +45,19 @@ namespace Cronos {
 
 	}
 
+	static void HelpMarker(const char* desc)
+	{
+		ImGui::TextDisabled("(?)");
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextUnformatted(desc);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
+	}
+
 	bool ImGuiLayer::OnStart()
 	{
 
@@ -61,7 +74,8 @@ namespace Cronos {
 		io.Fonts->AddFontFromFileTTF(File.c_str(), 14.0f);
 
 
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableSetMousePos | ImGuiConfigFlags_NavEnableKeyboard;
+
 		setDocking();
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
 
@@ -105,6 +119,7 @@ namespace Cronos {
 		static bool DockspaceInitiate;
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(App->window->GetWidth(), App->window->GetHeight());
+		io.WantCaptureKeyboard=true;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -140,12 +155,14 @@ namespace Cronos {
 		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
 		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
 
+
+		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		return UPDATE_CONTINUE;
+		return current_status;
 	}
 
 
@@ -273,33 +290,40 @@ namespace Cronos {
 	}
 	void ImGuiLayer::GUIDrawPerformancePanel() {
 
-		//ImGui::SetNextWindowSize(ImVec2(200, 400));
+		ImGui::SetNextWindowSize(ImVec2(250, 400));
 		ImGui::Begin("Performance", &ShowPerformancePanel);
-		static int a;
-		ImGui::SliderInt("FpsCap: ",&a);
-		static uint count = 0;
-		if (count == 100) {
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		
+		int fpscap = App->GetFPSCap();
+		ImGui::Text("Fps cap :"); ImGui::SameLine();
+		if (ImGui::SliderInt("##fpscap", &fpscap, -1, 100))
+			App->SetFPSCap(fpscap);
+		ImGui::SameLine();
+		HelpMarker("By default is 0, when is no fps cap");
 
-			for (uint i = 0; i < 99; i++) {
-				ms_log[i] = ms_log[i + 1];
-				fps_log[i] = fps_log[i + 1];
-			}
-		}
-		else
-			count++;
-
-		fps_log[count - 1] = App->GetFramesInLastSecond();
-		ms_log[count - 1] = App->GetLastFrameMS();
+		ImGui::Separator();
+	
+		AcumulateLogDT();
 
 		char title[25];
 	
 		sprintf_s(title, 25, "Framerate %0.1f", fps_log[fps_log.size() - 1]);
-		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+		//ImGui::PlotLines("frame", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(200, 100));
+		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(220, 100));
 
 		sprintf_s(title, 25, "Milliseconds %0.1f", ms_log[ms_log.size() - 1]);
-		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(220, 100));
+
+		ImGui::Separator();
+
+		ImGui::Text("To future implement :");
+		ImGui::Text("        Current usage Drawcalls");
+		ImGui::Text("        Memory scene using");
+		ImGui::Text("        etc...");
+
+		ImGui::PopStyleVar();
 		
-		//float a = App->GetDeltaTime();
+		
 
 		ImGui::End();
 	}
@@ -748,6 +772,7 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawConfigApplicationMenu(){
 
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 		ImGui::Text("Application");
 		ImGui::Separator();
@@ -760,9 +785,11 @@ namespace Cronos {
 		ImGui::Text("Performance here"); ImGui::SameLine();
 		if (ImGui::Button("Performance"))
 			ShowPerformancePanel = !ShowPerformancePanel;
+		ImGui::PopStyleVar();
 	}
 	void ImGuiLayer::GUIDrawConfigWindowMenu() {
 		
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 		static int Height = (int)App->window->m_Data.Height;
 		static int Width = (int)App->window->m_Data.Width;
 		ImGui::Text("Window");
@@ -801,6 +828,7 @@ namespace Cronos {
 			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
 			
 		}
+		ImGui::PopStyleVar();
 		
 	}
 
@@ -809,13 +837,42 @@ namespace Cronos {
 		ImGui::Separator();
 	};
 	void ImGuiLayer::GUIDrawConfigRendererMenu() {
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Text("Renderer");
 		ImGui::Separator();
+		static bool Tempvsync = false;
+		ImGui::Text("VSync "); ImGui::SameLine(); ImGui::Checkbox("##vsync",&Tempvsync);
+		ImGui::PopStyleVar();
+
 	};
+
 	void ImGuiLayer::GUIDrawConfigInputMenu() {
+
+		static char mousepos[50];
+		static char mouseMotion[50];
+		static char WheelMotion[30];
+	
+		sprintf_s(mousepos,50, "Mouse Position x: %i y: %i", App->input->GetMouseX(),App->input->GetMouseY());
+		sprintf_s(mouseMotion, 50, "Mouse Motion x: %i y: %i", App->input->GetMouseXMotion(), App->input->GetMouseYMotion());
+		sprintf_s(WheelMotion, 30, "Wheel Motion : %i", App->input->GetMouseZ());
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Text("Input");
 		ImGui::Separator();
+		ImGui::Text(mousepos);
+		ImGui::Text(mouseMotion);
+		ImGui::Text(WheelMotion);
+		ImGui::Separator();
+
+		ImGui::BeginChild("Inputs");
+			ImGui::TextUnformatted(LogInputs.begin());
+			ImGui::SetScrollHere(1.0f);
+		ImGui::EndChild();
+
+		ImGui::PopStyleVar();
 	};
+
 	void ImGuiLayer::GUIDrawConfigAudioMenu() {
 		ImGui::Text("Audio");
 		ImGui::Separator();
@@ -825,155 +882,107 @@ namespace Cronos {
 		ImGui::Separator();
 	};
 
+	void ImGuiLayer::GUIDrawSupportExitOptions() {
 
-	struct ExampleAppLog
-	{
-		ImGuiTextBuffer     Buf;
-		ImGuiTextFilter     Filter;
-		ImVector<int>       LineOffsets;        // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
-		bool                AutoScroll;     // Keep scrolling if already at the bottom
-
-		ExampleAppLog()
+		ImGui::OpenPopup("##menuQuit");
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9, 13));
+		if (ImGui::BeginPopupModal("##menuQuit",NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			AutoScroll = true;
-			Clear();
-		}
-
-		void    Clear()
-		{
-			Buf.clear();
-			LineOffsets.clear();
-			LineOffsets.push_back(0);
-		}
-
-		void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
-		{
-			int old_size = Buf.size();
-			va_list args;
-			va_start(args, fmt);
-			Buf.appendfv(fmt, args);
-			va_end(args);
-			for (int new_size = Buf.size(); old_size < new_size; old_size++)
-				if (Buf[old_size] == '\n')
-					LineOffsets.push_back(old_size + 1);
-		}
-
-		void    Draw(const char* title, bool* p_open = NULL)
-		{
-			if (!ImGui::Begin(title, p_open))
-			{
-				ImGui::End();
-				return;
-			}
-
-			// Options menu
-			if (ImGui::BeginPopup("Options"))
-			{
-				ImGui::Checkbox("Auto-scroll", &AutoScroll);
-				ImGui::EndPopup();
-			}
-
-			// Main window
-			if (ImGui::Button("Options"))
-				ImGui::OpenPopup("Options");
-			ImGui::SameLine();
-			bool clear = ImGui::Button("Clear");
-			ImGui::SameLine();
-			bool copy = ImGui::Button("Copy");
-			ImGui::SameLine();
-			Filter.Draw("Filter", -100.0f);
-
+			ImGui::Text("Are you sure you want to quit?");
 			ImGui::Separator();
-			ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+			
+			//static bool dont_ask_me_next_time = false;
+			//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+			//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+			//ImGui::PopStyleVar();
 
-			if (clear)
-				Clear();
-			if (copy)
-				ImGui::LogToClipboard();
-
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-			const char* buf = Buf.begin();
-			const char* buf_end = Buf.end();
-			if (Filter.IsActive())
-			{
-				// In this example we don't use the clipper when Filter is enabled.
-				// This is because we don't have a random access on the result on our filter.
-				// A real application processing logs with ten of thousands of entries may want to store the result of search/filter.
-				// especially if the filtering function is not trivial (e.g. reg-exp).
-				for (int line_no = 0; line_no < LineOffsets.Size; line_no++)
-				{
-					const char* line_start = buf + LineOffsets[line_no];
-					const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-					if (Filter.PassFilter(line_start, line_end))
-						ImGui::TextUnformatted(line_start, line_end);
-				}
-			}
-			else
-			{
-				// The simplest and easy way to display the entire buffer:
-				//   ImGui::TextUnformatted(buf_begin, buf_end);
-				// And it'll just work. TextUnformatted() has specialization for large blob of text and will fast-forward to skip non-visible lines.
-				// Here we instead demonstrate using the clipper to only process lines that are within the visible area.
-				// If you have tens of thousands of items and their processing cost is non-negligible, coarse clipping them on your side is recommended.
-				// Using ImGuiListClipper requires A) random access into your data, and B) items all being the  same height,
-				// both of which we can handle since we an array pointing to the beginning of each line of text.
-				// When using the filter (in the block of code above) we don't have random access into the data to display anymore, which is why we don't use the clipper.
-				// Storing or skimming through the search result would make it possible (and would be recommended if you want to search through tens of thousands of entries)
-				ImGuiListClipper clipper;
-				clipper.Begin(LineOffsets.Size);
-				while (clipper.Step())
-				{
-					for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
-					{
-						const char* line_start = buf + LineOffsets[line_no];
-						const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-						ImGui::TextUnformatted(line_start, line_end);
-					}
-				}
-				clipper.End();
-			}
+			if (ImGui::Button("Yes", ImVec2(100, 0))) { ImGui::CloseCurrentPopup(); current_status = UPDATE_STOP; }
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("No", ImVec2(100, 0))) { ImGui::CloseCurrentPopup(); App->input->updateQuit(false); }
 			ImGui::PopStyleVar();
-
-			if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-				ImGui::SetScrollHereY(1.0f);
-
-			ImGui::EndChild();
-			ImGui::End();
+			ImGui::EndPopup();
 		}
-	};
+		
+	}
 
+	void ImGuiLayer::GetInput(uint key, uint state,bool mouse) {
 
+		if (currentMenu == ConfigMenus::Input) {
+			static std::stringstream temp;
+			static std::string states[] = { "KEY_IDLE","KEY_DOWN","KEY_REPEAT","KEY_UP " };
+			if (!mouse)
+				temp << "Key: " << key << "- KeyState : " << states[state] << "\n";
+			else {
+				switch (key)
+				{
+				case 1:
+					temp << "Left click -" << "State : " << states[state] << "\n";
+					break;
+				case 2:
+					temp << "Middle click -" << "State : " << states[state] << "\n";
+					break;
+				case 3:
+					temp << "Right click -" << "State : " << states[state] << "\n";
+					break;
+				}
+			}
+			bool a = true;
+
+			LogInputs.appendf(temp.str().c_str());
+		}
+
+	}
+	void ImGuiLayer::AddLog(std::string log) 
+	{
+		log += "\n\n";
+		LogBuffer.appendf(log.c_str());
+
+	}
 
 	void ImGuiLayer::GUIDrawConsolePanel()
 	{
-		static ExampleAppLog log;
-
-		// For the demo: add a debug button _BEFORE_ the normal log window contents
-		// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
-		// Most of the contents of the window will be added by the log.Draw() call.
+	
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Begin("Console", &ShowConsolePanel);
-		if (ImGui::SmallButton("[Debug] Add 5 entries"))
-		{
-			static int counter = 0;
-			for (int n = 0; n < 5; n++)
-			{
-				const char* categories[3] = { "info", "warn", "error" };
-				const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
-				log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-					ImGui::GetFrameCount(), categories[counter % IM_ARRAYSIZE(categories)], ImGui::GetTime(), words[counter % IM_ARRAYSIZE(words)]);
-				counter++;
+	
+		if (ImGui::Button("Clear")) {
+			LogBuffer.clear();
+		}
+
+		ImGui::Separator();
+		
+		ImGui::BeginChild("Console Loging");
+		
+		if (!LogBuffer.empty()) {
+			ImGui::TextUnformatted(LogBuffer.c_str());
+			ImGui::SetScrollHere(1.0f);
+		}
+
+		ImGui::EndChild();
+		ImGui::End();
+		ImGui::PopStyleVar();
+
+	}
+
+	void ImGuiLayer::AcumulateLogDT()
+	{
+		static uint count = 0;
+		if (count == 100) {
+
+			for (uint i = 0; i < 99; i++) {
+				ms_log[i] = ms_log[i + 1];
+				fps_log[i] = fps_log[i + 1];
 			}
 		}
+		else
+			count++;
 
-		static std::string toLog = TestLog.str();
-		if (!toLog.empty()) {
-			log.AddLog(toLog.c_str());
-			toLog.clear();
-		}
-		ImGui::End();
-
-		// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
-		log.Draw("Console", &ShowConsolePanel);
+		fps_log[count - 1] = App->GetFramesInLastSecond();
+		ms_log[count - 1] = App->GetLastFrameMS();
 	}
+
+
 }
+

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Core/Module.h"
+#include "imgui.h"
 #include "Modules/Filesystem.h"
+
+struct ImGuiTextBuffer;
 
 namespace Cronos {
 
@@ -33,6 +36,9 @@ namespace Cronos {
 
 		std::stringstream TestLog;
 
+		void GetInput(uint key, uint state, bool mouse=false);
+		void AddLog(std::string log);
+
 	private:
 
 		void setDocking();
@@ -48,6 +54,7 @@ namespace Cronos {
 		void GUIDrawConsolePanel();
 		void GUIDrawConfigurationPanel();
 		void GUIDrawPerformancePanel();
+		void GUIDrawSupportExitOptions();
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
@@ -57,7 +64,8 @@ namespace Cronos {
 		void GUIDrawConfigAudioMenu();
 		void GUIDrawConfigTexturesMenu();
 
-	
+
+		void AcumulateLogDT();
 
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
@@ -73,7 +81,11 @@ namespace Cronos {
 		bool ShowPerformancePanel = false;
 		bool ShowDemoWindow = false;
 		bool ShowConfigurationPanel = false;
+		bool ShowExitOpitonsPopUp = false;
+		update_status current_status= update_status::UPDATE_CONTINUE;
 
+		ImGuiTextBuffer LogBuffer;
+		ImGuiTextBuffer LogInputs;
 
 		std::vector<float>ms_log;
 		std::vector<float>fps_log;
