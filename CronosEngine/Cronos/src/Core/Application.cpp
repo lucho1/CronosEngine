@@ -104,15 +104,15 @@ namespace Cronos {
 		PrepareUpdate();
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret==UPDATE_CONTINUE)
 				ret = element->OnPreUpdate(m_Timestep);
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret == UPDATE_CONTINUE)
 				ret = element->OnUpdate(m_Timestep);
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret == UPDATE_CONTINUE)
 				ret = element->OnPostUpdate(m_Timestep);
 
 		FinishUpdate();

@@ -82,33 +82,32 @@ namespace Cronos {
 
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
-		//TEMPORARY
 
-		glGenTextures(1, &my_opengl_texture);
-		glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, my_image_width, my_image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, my_image_data);
 
 		return true;
 	}
 
 
-	void ImGuiLayer::AssetImguiIterator(Directories a) {
+	void ImGuiLayer::AssetImguiIterator(Directories a, bool getOut ) {
+		int b = 0;
 		for (auto& c : a.childs) {
+			b++;
 			std::string temp = c->m_Directories.filename().string();
+
 			if (ImGui::TreeNodeEx(temp.c_str())) {
-				
 				AssetImguiIterator(*c);	
 				ImGui::TreePop();
 			}
-			if (ImGui::IsItemClicked()) { //TODO NEEDS TO FIX
-				c->isClicked = true;
-			}
-			if (c->isClicked) {
-				m_CurrentDir = c;
+			if (c->isClicked == true) {
 				c->isClicked = false;
+				c[b - 1].isClicked = true;
+				break;
+			}
+			if (ImGui::IsItemClicked()) {
+				m_CurrentDir = c;
+				c[b-1].isClicked = true;
+				c->isClicked = false;
+				break;
 			}
 		}
 	}
@@ -473,31 +472,38 @@ namespace Cronos {
 
 			static int WindowSize = 150;
 			ImGui::BeginChild("left panel", ImVec2(WindowSize, 0),true);
-			
-			if (ImGui::TreeNode(App->filesystem->GetLabelAssetRoot().c_str())) {
-			// left
-				for (auto& a : AssetDirectories->childs)
-				{
-					
-					std::string	temp = a->m_Directories.filename().string();
-					if (ImGui::TreeNode(temp.c_str())){	
-						
-						/*if (ImGui::IsItemClicked()) {
-							m_CurrentDir = a;
-						}*/
-						AssetImguiIterator(*a);		
-						ImGui::TreePop();
-					}	
-					if (ImGui::IsItemClicked()) {
-						a->isClicked = true;
-					}
-					if (a->isClicked) {
-						m_CurrentDir = a;
-					}
-					
+
+			for (auto &a : AssetDirectories->childs) {
+				std::string	temp = a->m_Directories.filename().string();
+				if (ImGui::TreeNode(temp.c_str())) {
+					AssetImguiIterator(*a);
+					ImGui::TreePop();
 				}
-				ImGui::TreePop();
 			}
+
+			//if (ImGui::TreeNode(App->filesystem->GetLabelAssetRoot().c_str())) {
+			//// left
+			//	for (auto& a : AssetDirectories->childs)
+			//	{
+			//		
+			//		std::string	temp = a->m_Directories.filename().string();
+			//		if (ImGui::TreeNode(temp.c_str())){	
+			//			m_CurrentDir = a;
+			//		/*	if (ImGui::IsItemClicked()) {
+			//				a->isClicked = true;
+			//			}*/
+			//			/*if (ImGui::IsItemClicked()) {
+			//				m_CurrentDir = a;
+			//			}*/
+			//			AssetImguiIterator(*a);
+			//			ImGui::TreePop();
+			//		}						
+			//	/*	if (ImGui::IsItemClicked()&&a->isClicked) {
+			//			m_CurrentDir = a;
+			//		}	*/				
+			//	}
+			//	ImGui::TreePop();
+			//}
 			ImGui::EndChild();
 
 			const char* SceneLabel = "Scenes";
@@ -982,7 +988,6 @@ namespace Cronos {
 		fps_log[count - 1] = App->GetFramesInLastSecond();
 		ms_log[count - 1] = App->GetLastFrameMS();
 	}
-
 
 }
 

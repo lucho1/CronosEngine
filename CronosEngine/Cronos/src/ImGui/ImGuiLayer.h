@@ -30,7 +30,7 @@ namespace Cronos {
 		
 		virtual bool OnStart() override;
 
-		void AssetImguiIterator(Directories a);
+		void AssetImguiIterator(Directories a, bool getOut=false);
 
 		Directories* m_CurrentDir;
 
@@ -82,6 +82,7 @@ namespace Cronos {
 		bool ShowDemoWindow = false;
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
+
 		update_status current_status= update_status::UPDATE_CONTINUE;
 
 		ImGuiTextBuffer LogBuffer;
@@ -105,6 +106,7 @@ namespace Cronos {
 		{
 			float data[3];
 		};
+
 		int current_id_;
 		std::unordered_map<int, float> float_nodes_;
 		std::unordered_map<int, Color3> color_nodes_;

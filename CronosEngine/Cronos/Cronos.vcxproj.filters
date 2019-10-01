@@ -1218,7 +1218,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1289,7 +1288,6 @@
     <ResourceCompile Include="Cronos.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Icons\Cronos_Engine_Logo.ico" />
-    <Image Include="icon1.ico" />
+    <None Include="Cronos.aps" />
   </ItemGroup>
 </Project>

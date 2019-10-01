@@ -82,7 +82,7 @@ namespace Cronos {
 					mouse_buttons[i] = KEY_DOWN;
 					App->EditorGUI->GetInput(i, KEY_DOWN,true);
 				}
-				else {
+				else if(mouse_buttons[i]!=KEY_REPEAT){
 					mouse_buttons[i] = KEY_REPEAT;
 					App->EditorGUI->GetInput(i, KEY_REPEAT, true);
 				}
@@ -129,8 +129,8 @@ namespace Cronos {
 			}
 		}
 
-		/*if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
-			return UPDATE_STOP;*/
+		//if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+		//	return UPDATE_STOP;
 
 		return UPDATE_CONTINUE;
 	}
