@@ -1284,10 +1284,4 @@
       <Filter>src\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Cronos.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Cronos.aps" />
-  </ItemGroup>
 </Project>

@@ -4,7 +4,10 @@
 #include "Module.h"
 #include "Globals.h"
 
+
 namespace Cronos {
+
+	class Directories;
 
 	enum class ItemType
 	{
@@ -17,7 +20,7 @@ namespace Cronos {
 		ITEM_FOLDER,
 		ITEM_TEXTURE
 	};
-
+	
 	class AssetItems {
 	public:
 		AssetItems(std::filesystem::path m_Path);
@@ -27,13 +30,19 @@ namespace Cronos {
 		void DrawIcons();
 
 		int GetElementSize();
+		ItemType GetType() const { return type; }
 
+		Directories* folderDirectory;
+		
 		//temporal
-		std::string TextPath;
+		//std::string TextPath;
 
 	private:
 		std::string m_Extension;
 		int m_ElementSize;
+
+		//if its a folder
+		
 	};
 
 	class Directories {
@@ -50,7 +59,11 @@ namespace Cronos {
 		std::vector<AssetItems> m_Container;
 		std::list<Directories*>childs;
 
-		bool isClicked = false;
+		inline Directories* GetParentDirectory() const { return parentDirectory; }
+		void SetParentDirectory(Directories* parent) { parentDirectory = parent; }
+	private:
+		Directories* parentDirectory;
+		
 
 	};
 

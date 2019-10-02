@@ -88,26 +88,17 @@ namespace Cronos {
 	}
 
 
-	void ImGuiLayer::AssetImguiIterator(Directories a, bool getOut ) {
-		int b = 0;
+	void ImGuiLayer::AssetImguiIterator(Directories a) {
 		for (auto& c : a.childs) {
-			b++;
+		
 			std::string temp = c->m_Directories.filename().string();
+			bool open = ImGui::TreeNodeEx(temp.c_str());
+			if (ImGui::IsItemClicked())
+				m_CurrentDir = c;
 
-			if (ImGui::TreeNodeEx(temp.c_str())) {
+			if (open) {
 				AssetImguiIterator(*c);	
 				ImGui::TreePop();
-			}
-			if (c->isClicked == true) {
-				c->isClicked = false;
-				c[b - 1].isClicked = true;
-				break;
-			}
-			if (ImGui::IsItemClicked()) {
-				m_CurrentDir = c;
-				c[b-1].isClicked = true;
-				c->isClicked = false;
-				break;
 			}
 		}
 	}
@@ -329,7 +320,7 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawInspectorMenu()
 	{
-		ImGui::SetNextWindowSize(ImVec2(500, 400));
+		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
 			ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
 			static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
@@ -470,40 +461,25 @@ namespace Cronos {
 			}
 			ImGuiIO& io = ImGui::GetIO();
 
-			static int WindowSize = 150;
-			ImGui::BeginChild("left panel", ImVec2(WindowSize, 0),true);
+	/*		if (v)
+				*flags |= flags_value;
+			else
+				*flags &= ~flags_value;
+*/
+			//static int WindowSize = 150;
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
 
-			for (auto &a : AssetDirectories->childs) {
-				std::string	temp = a->m_Directories.filename().string();
-				if (ImGui::TreeNode(temp.c_str())) {
-					AssetImguiIterator(*a);
-					ImGui::TreePop();
-				}
+			ImGui::BeginChild("left panel", ImVec2(150, 0),true,window_flags);
+
+			bool open = ImGui::TreeNodeEx(App->filesystem->GetLabelAssetRoot().c_str());
+			if (ImGui::IsItemClicked())
+				m_CurrentDir = AssetDirectories;
+
+			if (open) {
+				AssetImguiIterator(*AssetDirectories);
+				ImGui::TreePop();
 			}
-
-			//if (ImGui::TreeNode(App->filesystem->GetLabelAssetRoot().c_str())) {
-			//// left
-			//	for (auto& a : AssetDirectories->childs)
-			//	{
-			//		
-			//		std::string	temp = a->m_Directories.filename().string();
-			//		if (ImGui::TreeNode(temp.c_str())){	
-			//			m_CurrentDir = a;
-			//		/*	if (ImGui::IsItemClicked()) {
-			//				a->isClicked = true;
-			//			}*/
-			//			/*if (ImGui::IsItemClicked()) {
-			//				m_CurrentDir = a;
-			//			}*/
-			//			AssetImguiIterator(*a);
-			//			ImGui::TreePop();
-			//		}						
-			//	/*	if (ImGui::IsItemClicked()&&a->isClicked) {
-			//			m_CurrentDir = a;
-			//		}	*/				
-			//	}
-			//	ImGui::TreePop();
-			//}
+	
 			ImGui::EndChild();
 
 			const char* SceneLabel = "Scenes";
@@ -512,18 +488,29 @@ namespace Cronos {
 			ImGui::SameLine();
 
 			// right
-			ImGui::BeginGroup();
-			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-			std::string tempstring = m_CurrentDir->m_Directories.filename().string();
+			ImGui::BeginGroup(); 
 
-		
-			ImGui::Text("CurrentWindow: %s", tempstring.c_str());
+			int testa = ImGui::GetWindowWidth();
+			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+			
+			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();	
+			ImGui::Text("%s", LabelFolder.c_str()); 
+
+			if (m_CurrentDir != AssetDirectories) {
+				ImGui::SameLine(ImGui::GetWindowWidth() - 30);
+				if (ImGui::ImageButton("", ImVec2(20, 20), ImVec2(0, 0),ImVec2(0,0),2))
+					m_CurrentDir = m_CurrentDir->GetParentDirectory();
+			
+			}
+
 			ImGui::Separator();
 			int spaceCounter = 150;
 			for (auto& a : m_CurrentDir->m_Container) {
 				a.DrawIcons();
+				if (a.GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked())
+					m_CurrentDir = a.folderDirectory;
 				spaceCounter += a.GetElementSize();
-				int b = ImGui::GetWindowWidth();
+
 				if (spaceCounter < ImGui::GetWindowWidth()) {
 					ImGui::SameLine();
 

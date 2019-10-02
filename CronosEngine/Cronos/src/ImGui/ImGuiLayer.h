@@ -30,7 +30,7 @@ namespace Cronos {
 		
 		virtual bool OnStart() override;
 
-		void AssetImguiIterator(Directories a, bool getOut=false);
+		void AssetImguiIterator(Directories a);
 
 		Directories* m_CurrentDir;
 

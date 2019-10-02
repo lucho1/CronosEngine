@@ -19,29 +19,33 @@ namespace Cronos {
 
 	AssetItems::AssetItems(std::filesystem::path m_Path) {
 		m_Elements = m_Path.filename().string();
-		m_Extension = m_Path.extension().string();
-
+		if (m_Path.has_extension()) {
+			m_Extension = m_Path.extension().string();
+		}
+		else {
+			type = ItemType::ITEM_FOLDER;
+		}
 		if (m_Extension == "obj") {
 			type = ItemType::ITEM_OBJ;
-			TextPath = "res/Icons/Obj_Icon.png";
 		}
 		else if (m_Extension == "fbx") {
 			type = ItemType::ITEM_FBX;
-			TextPath = "res/Icons/Fbx_Icon.png";
 		}
 		else if (m_Extension == "cpp" || m_Extension == "h") {
 			type = ItemType::ITEM_SCRIPT;
-			TextPath = "res/Icons/Script_Icon.png";
+
 		}
-		else {
-			TextPath = "res/Icons/Shader_Icon.png";
-		}
+		////else {
+		////	TextPath = "res/Icons/Shader_Icon.png";
+		////}
 	};
+
 	void AssetItems::DrawIcons()
 	{
 
 		ImGui::BeginGroup();
 		ImGui::Image("", ImVec2(50, 50));
+	
 		ImGui::Text(m_Elements.c_str());
 		m_ElementSize = ImGui::GetItemRectSize().x;
 		ImGui::EndGroup();
@@ -56,6 +60,7 @@ namespace Cronos {
 	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
 	{
 		m_LabelDirectories = m_Directories.string();
+		
 	}
 
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
@@ -89,20 +94,33 @@ namespace Cronos {
 								}
 							}
 							else if (p.depth() == 0) {
+								
 								currentDir = SolutionDirTemp;
 								break;
 							}
 						}
 						currentDir->childs.push_back(newPath);
+						
+						AssetItems* t = new AssetItems(path.path().string().c_str());
+						t->folderDirectory = newPath;
+						currentDir->m_Container.push_back(*t);
+						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
 					}
 					else if (p.depth() > LastDepth) {
 						currentDir->childs.push_back(newPath);
+
+						AssetItems* t = new AssetItems(path.path().string().c_str());
+						t->folderDirectory = newPath;
+						currentDir->m_Container.push_back(*t);
+						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
+
 					}
 
 					LastDepth = p.depth();
 					DirectoriesArray.push_back(newPath);
+					
 				}
 				else {
 					currentDir->m_Container.push_back(path.path());
