@@ -502,6 +502,17 @@ namespace Cronos {
 					m_CurrentDir = m_CurrentDir->GetParentDirectory();
 			
 			}
+			if(ImGui::Button("CreateDirectory")){
+				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
+				Tempcreate += "/Hello";
+				App->filesystem->CreateNewDirectory(m_CurrentDir,"Hello");
+			} ImGui::SameLine();
+
+			if (ImGui::Button("DeleteDirectory")) {
+				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
+				Tempcreate += "/Hello";
+				App->filesystem->DeleteDirectory(Tempcreate.c_str());
+			}
 
 			ImGui::Separator();
 			int spaceCounter = 150;

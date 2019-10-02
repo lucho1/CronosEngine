@@ -27,6 +27,8 @@ namespace Cronos {
 
 		ItemType type = ItemType::ITEM_NONE;
 		std::string m_Elements;
+
+		void Clear();
 		void DrawIcons();
 
 		int GetElementSize();
@@ -49,6 +51,8 @@ namespace Cronos {
 	public:
 
 		Directories(std::filesystem::path m_Path);
+		void Clear();
+		void SetParentDirectory(Directories* parent) { parentDirectory = parent; }
 
 		int m_DepthID;
 		int m_ID;
@@ -56,11 +60,10 @@ namespace Cronos {
 		std::filesystem::path m_Directories;
 		std::string m_LabelDirectories;
 
-		std::vector<AssetItems> m_Container;
+		std::list<AssetItems> m_Container;
 		std::list<Directories*>childs;
 
 		inline Directories* GetParentDirectory() const { return parentDirectory; }
-		void SetParentDirectory(Directories* parent) { parentDirectory = parent; }
 	private:
 		Directories* parentDirectory;
 		
@@ -77,9 +80,13 @@ namespace Cronos {
 		virtual bool OnStart() override;
 
 		Directories *LoadCurrentDirectories(std::filesystem::path filepath);
+		void UpdateDirectories();
+		void CreateNewDirectory(Directories* currentDir, const char* newName);
+		void DeleteDirectory(const char* path);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
+
 
 	private:
 

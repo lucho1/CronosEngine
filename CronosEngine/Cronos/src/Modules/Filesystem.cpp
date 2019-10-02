@@ -39,6 +39,9 @@ namespace Cronos {
 		////	TextPath = "res/Icons/Shader_Icon.png";
 		////}
 	};
+	void AssetItems::Clear() {
+		delete folderDirectory;
+	}
 
 	void AssetItems::DrawIcons()
 	{
@@ -61,6 +64,32 @@ namespace Cronos {
 	{
 		m_LabelDirectories = m_Directories.string();
 		
+	}
+	void Directories::Clear() {
+	
+		m_Container;
+	}
+	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {
+		
+		std::string tempDirName = currentDir->m_LabelDirectories +"/"+ newName;
+
+		std::filesystem::create_directory(tempDirName);
+		Directories* TempDir = new Directories(tempDirName);
+		for (auto& a : DirectoriesArray) {
+			if (a==currentDir) {
+				a->childs.push_back(TempDir);
+				break;
+			}
+		}
+	}
+	void Filesystem::DeleteDirectory(const char* path) {
+		std::filesystem::remove(path);
+	}
+
+	void Filesystem::UpdateDirectories() {
+		for (auto& a : DirectoriesArray) {
+			a->Clear();
+		}
 	}
 
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
@@ -103,7 +132,7 @@ namespace Cronos {
 						
 						AssetItems* t = new AssetItems(path.path().string().c_str());
 						t->folderDirectory = newPath;
-						currentDir->m_Container.push_back(*t);
+						currentDir->m_Container.push_front(*t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
 					}
@@ -112,7 +141,7 @@ namespace Cronos {
 
 						AssetItems* t = new AssetItems(path.path().string().c_str());
 						t->folderDirectory = newPath;
-						currentDir->m_Container.push_back(*t);
+						currentDir->m_Container.push_front(*t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
 
