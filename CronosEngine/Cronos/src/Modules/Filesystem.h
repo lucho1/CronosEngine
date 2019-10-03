@@ -26,9 +26,11 @@ namespace Cronos {
 		AssetItems(std::filesystem::path m_path,ItemType mtype=ItemType::ITEM_NONE);
 
 		ItemType type = ItemType::ITEM_NONE;
+
 		std::string m_AssetShortName;
 		std::string m_AssetFullName;
 		std::string m_AssetNameNoExtension;
+
 		void Clear();
 		virtual void DrawIcons();
 
@@ -95,7 +97,7 @@ namespace Cronos {
 
 
 	private:
-
+		std::vector <AssetItems*> AssetArray;
 		std::vector <Directories*> DirectoriesArray;
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;

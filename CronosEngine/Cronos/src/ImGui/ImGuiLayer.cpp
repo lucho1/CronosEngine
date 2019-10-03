@@ -490,15 +490,30 @@ namespace Cronos {
 			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();	
 			ImGui::Text("%s", LabelFolder.c_str()); 
 
+		
+
+			static char buf1[64] = "Asset Browser";
+			//sprintf_s(buf1, "%s", "sadawd");
+			ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
+			ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+			std::string a = buf1;
+			if (a != "Asset Browser") {
+				ImGui::SameLine();
+
+				if (ImGui::Button("Reset")) {
+					sprintf_s(buf1, "%s", "Asset Browser");
+				}
+			}
+
 			if (m_CurrentDir != AssetDirectories) {
 				ImGui::SameLine(ImGui::GetWindowWidth() - 30);
-				if (ImGui::ImageButton("", ImVec2(20, 20), ImVec2(0, 0),ImVec2(0,0),2))
+				if (ImGui::ImageButton("", ImVec2(20, 20), ImVec2(0, 0), ImVec2(0, 0), 2))
 					m_CurrentDir = m_CurrentDir->GetParentDirectory();
-			
+
 			}
-			if(ImGui::Button("CreateDirectory")){
+	/*		if(ImGui::Button("CreateDirectory")){
 				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
-				Tempcreate += "/Hello";
+				Tempcreate += "/Hello";d
 				App->filesystem->CreateNewDirectory(m_CurrentDir,"Hello");
 			} ImGui::SameLine();
 
@@ -506,7 +521,7 @@ namespace Cronos {
 				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
 				Tempcreate += "/Hello";
 				App->filesystem->DeleteDirectory(Tempcreate.c_str());
-			}
+			}*/
 
 			ImGui::Separator();
 			int spaceCounter = 180;

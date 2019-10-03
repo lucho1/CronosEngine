@@ -228,6 +228,7 @@ namespace Cronos {
 				else {
 					AssetItems* t = new AssetItems(path.path().string().c_str());
 					currentDir->m_Container.push_back(t);
+					AssetArray.push_back(t);
 				}
 			}
 		}
