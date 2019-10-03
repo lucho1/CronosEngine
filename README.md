@@ -1,4 +1,4 @@
-# CronosEngine
+﻿# CronosEngine
 [![License](https://img.shields.io/github/license/lucho1/CronosEngine?color=red&label=License&style=plastic)](https://github.com/lucho1/CronosEngine/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/tag/lucho1/CronosEngine?color=blue&label=Version&style=plastic)](https://github.com/lucho1/CronosEngine/releases)
 ![Last Commit](https://img.shields.io/github/last-commit/lucho1/CronosEngine?color=blue&label=Last%20Commit&style=plastic)
@@ -18,6 +18,12 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM and GLAD.
 **[TODO]** Put the logo image here and links to these libs!
 
 ## Innovating Features
+Asset Browser 
+	-Workflow in and out
+	-Rename Assets
+	-Create/Delete Assets and folders
+
+Start implementing node System
 
 ## Usage
 **Camera Controls** 
