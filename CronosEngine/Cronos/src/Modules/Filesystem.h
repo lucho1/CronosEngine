@@ -23,28 +23,29 @@ namespace Cronos {
 	
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_Path,ItemType mtype=ItemType::ITEM_NONE);
+		AssetItems(std::filesystem::path m_path,ItemType mtype=ItemType::ITEM_NONE);
 
 		ItemType type = ItemType::ITEM_NONE;
 		std::string m_AssetShortName;
 		std::string m_AssetFullName;
+		std::string m_AssetNameNoExtension;
 		void Clear();
 		virtual void DrawIcons();
 
 		int GetElementSize();
 		ItemType GetType() const { return type; }
+		std::string GetAssetPath() const { return m_Path; }
+		std::string GetExtension() const { return m_Extension; }
 
 		Directories* folderDirectory;
 		
-		//temporal
-		//std::string TextPath;
-
 	private:
+
 		std::string m_Extension;
 		int m_ElementSize;
 		char labelID[150];
 		bool hovered;
-		//if its a folder
+		std::string m_Path;
 		
 	};
 
@@ -85,6 +86,7 @@ namespace Cronos {
 		void UpdateDirectories();
 		void CreateNewDirectory(Directories* currentDir, const char* newName);
 		void DeleteDirectory(const char* path);
+		void RenameFile(AssetItems* Asset, const char* newName);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }

@@ -156,7 +156,6 @@ namespace Cronos {
 		glLoadIdentity();
 		ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
 		glLoadMatrixf(&ProjectionMatrix);
-
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 	}

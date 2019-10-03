@@ -17,16 +17,19 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_Path,ItemType mtype): type(mtype) {
-		m_AssetFullName = m_Path.filename().string();
+	AssetItems::AssetItems(std::filesystem::path m_path,ItemType mtype): type(mtype),m_Path(m_path.string()) {
+		m_AssetFullName = m_path.filename().string();
 		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
-		m_AssetShortName = m_AssetFullName;
+		m_AssetNameNoExtension = m_AssetShortName = m_AssetFullName;
+		
 		if (m_AssetFullName.length() > 10) {
 			m_AssetShortName.erase(10);
 			m_AssetShortName += "...";
 		}
-		m_Extension = m_Path.extension().string();
-
+		if (m_path.has_extension()) {
+			m_Extension = m_path.extension().string();
+			m_AssetNameNoExtension.erase(m_AssetNameNoExtension.find(m_Extension));
+		}
 		if (m_Extension == "obj") {
 			type = ItemType::ITEM_OBJ;
 		}
@@ -73,13 +76,37 @@ namespace Cronos {
 			refresh_time = 0.0f;
 
 		if (ImGui::IsItemClicked(1)) {
-			ImGui::OpenPopup("AssetOptions");
+			ImGui::OpenPopup(labelID);
 		}
-		if (ImGui::BeginPopup("AssetOptions")) {
-			if (ImGui::BeginMenu("Sub-menu"))
-			{
-				ImGui::MenuItem("Click me");
+		if (ImGui::BeginPopup(labelID)) {
+			if (ImGui::BeginMenu("Rename File")) {
+
+		
+				static char buf1[64];
+				sprintf_s(buf1, "%s", m_AssetNameNoExtension.c_str());				
+				
+				if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)) {
+					bool a = true;
+				}
+				//ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+				
+				if (ImGui::BeginPopupContextItem())
+				{
+					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+					//ImGui::InputText("##edit", buf1, 64);
+					ImGui::EndPopup();
+
+				}
+			/*	while (ImGui::MenuItem("Renameit")) {
+					static char buf1[64] = { (char)m_AssetNameNoExtension.c_str() }; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+					App->filesystem->RenameFile(this, "Hello");
+				}*/
 				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Delete"))
+			{
+			
 			}
 			ImGui::EndPopup();
 		}
@@ -105,6 +132,22 @@ namespace Cronos {
 	
 		m_Container;
 	}
+
+	void Filesystem::RenameFile(AssetItems* Asset, const char* newName) {
+
+		std::string tempDirName = Asset->GetAssetPath();
+		tempDirName.erase(tempDirName.find(Asset->m_AssetFullName));
+		tempDirName += newName+Asset->GetExtension();
+		std::filesystem::rename(Asset->GetAssetPath(),tempDirName);
+		Asset->m_AssetFullName = newName+Asset->GetExtension();
+		Asset->m_AssetShortName = Asset->m_AssetFullName;
+		if (Asset->m_AssetFullName.length() > 10) {
+			Asset->m_AssetShortName.erase(10);
+			Asset->m_AssetShortName += "...";
+		}
+
+	}
+
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {
 		
 		std::string tempDirName = currentDir->m_LabelDirectories +"/"+ newName;

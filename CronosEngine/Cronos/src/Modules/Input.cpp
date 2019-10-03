@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ImGui/ImGuiLayer.h"
+#include "ImGui/OpenGL/imgui_impl_sdl.h"
 #include "Input.h"
 
 namespace Cronos {
@@ -103,6 +104,7 @@ namespace Cronos {
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
+			ImGui_ImplSDL2_ProcessEvent(&e);
 			switch (e.type)
 			{
 			case SDL_MOUSEWHEEL:
