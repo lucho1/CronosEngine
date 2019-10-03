@@ -84,7 +84,7 @@ namespace Cronos {
 		
 				static char buf1[64];
 				sprintf_s(buf1, "%s", m_AssetNameNoExtension.c_str());				
-				
+				ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x+25);
 				if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)) {
 					App->filesystem->RenameFile(this,buf1);
 				}
@@ -99,7 +99,6 @@ namespace Cronos {
 			}
 			if (ImGui::MenuItem("Delete"))
 			{
-			
 			}
 			ImGui::EndPopup();
 		}
@@ -144,6 +143,7 @@ namespace Cronos {
 
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {
 		
+
 		std::string tempDirName = currentDir->m_LabelDirectories +"/"+ newName;
 
 		std::filesystem::create_directory(tempDirName);
@@ -156,6 +156,7 @@ namespace Cronos {
 		}
 	}
 	void Filesystem::DeleteDirectory(const char* path) {
+		
 		std::filesystem::remove(path);
 	}
 
