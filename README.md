@@ -22,6 +22,7 @@ Asset Browser
 	-Workflow in and out
 	-Rename Assets
 	-Create/Delete Assets and folders
+	-Names are 10 max spaces but apears the full name when mouse on top;
 
 Start implementing node System
 
@@ -36,8 +37,19 @@ Start implementing node System
 * F: Focus camera at Center.
 
 ## Changelog
-v0.1 **[TODO]** Fill this
-
+v0.1 **[TODO]** 
+	Implemented FileSystem
+	Implemented Asset Browser
+		->In and out workflot
+		->Renaming Assets
+		->Create/Delete Assets and folders
+		->Names are 10 max spaces but apears the full name when mouse on top;
+	Implemented Full Configuration menus
+	Implemented UI Panels
+		->Assetbrowser Panel
+		->Inspector Panel (Under construction)
+		->Hierarchy (Under Construction)
+		->Configuration Panel
 ## Credits
 Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrigó Garcia [@markitus18].
 
