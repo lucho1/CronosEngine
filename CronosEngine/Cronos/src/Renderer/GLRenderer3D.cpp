@@ -23,11 +23,15 @@ namespace Cronos {
 	// Called before render is available
 	bool GLRenderer3D::OnInit()
 	{
+		App->EditorGUI->AddLog("Creating 3D Render context");
 		LOG("Creating 3D Renderer context");
 		bool ret = true;
 
 		//Create context
+
 		context = SDL_GL_CreateContext(App->window->window);
+
+		App->EditorGUI->AddLog("Loading Glad");
 		gladLoadGL();
 		if (context == NULL)
 		{
@@ -38,9 +42,10 @@ namespace Cronos {
 		if (ret == true)
 		{
 			//Use Vsync
-			if (VSYNC && SDL_GL_SetSwapInterval(1) < 0)
+			if (VSYNC && SDL_GL_SetSwapInterval(1) < 0) {
+				App->EditorGUI->AddLog(std::string("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError()));
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
-
+			}
 			//Initialize Projection Matrix
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();

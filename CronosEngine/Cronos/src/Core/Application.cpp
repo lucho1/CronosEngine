@@ -51,8 +51,8 @@ namespace Cronos {
 
 		for (auto& element : m_ModulesList)
 			if (ret) {
+				EditorGUI->AddLog(("Initializing Module" + element->m_ModuleName));
 				ret = element->OnInit();
-				EditorGUI->AddLog(("Initializising Module"+ element->m_ModuleName));
 			}
 		// After all Init calls we call Start() in all modules
 		LOG("Application Start --------------");

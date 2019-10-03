@@ -17,14 +17,16 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_Path) {
-		m_Elements = m_Path.filename().string();
-		if (m_Path.has_extension()) {
-			m_Extension = m_Path.extension().string();
+	AssetItems::AssetItems(std::filesystem::path m_Path,ItemType mtype): type(mtype) {
+		m_AssetFullName = m_Path.filename().string();
+		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
+		m_AssetShortName = m_AssetFullName;
+		if (m_AssetFullName.length() > 10) {
+			m_AssetShortName.erase(10);
+			m_AssetShortName += "...";
 		}
-		else {
-			type = ItemType::ITEM_FOLDER;
-		}
+		m_Extension = m_Path.extension().string();
+
 		if (m_Extension == "obj") {
 			type = ItemType::ITEM_OBJ;
 		}
@@ -46,11 +48,45 @@ namespace Cronos {
 	void AssetItems::DrawIcons()
 	{
 
-		ImGui::BeginGroup();
-		ImGui::Image("", ImVec2(50, 50));
-	
-		ImGui::Text(m_Elements.c_str());
+		ImGui::BeginGroup();     
+		
+		if (ImGui::ImageButton(labelID, ImVec2(50, 50),ImVec2(0,0), ImVec2(0, 0),2)) {
+			bool a = true;
+		} 
+		hovered = ImGui::IsItemHovered(); //ASK MARC WHY IS NOT HOVERING ALL TIME
+		static double refresh_time = 0.0;
+		if (hovered) {
+
+			if (refresh_time == 0.0)
+				refresh_time = ImGui::GetTime();
+			//static float Time = ImGui::GetTime();
+			if (ImGui::GetTime() >= refresh_time ) {
+				ImGui::BeginTooltip();
+				ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+				ImGui::TextUnformatted(m_AssetFullName.c_str());
+				ImGui::PopTextWrapPos();
+				ImGui::EndTooltip();
+			}
+			
+		}
+		else
+			refresh_time = 0.0f;
+
+		if (ImGui::IsItemClicked(1)) {
+			ImGui::OpenPopup("AssetOptions");
+		}
+		if (ImGui::BeginPopup("AssetOptions")) {
+			if (ImGui::BeginMenu("Sub-menu"))
+			{
+				ImGui::MenuItem("Click me");
+				ImGui::EndMenu();
+			}
+			ImGui::EndPopup();
+		}
+
+		ImGui::Text(m_AssetShortName.c_str());
 		m_ElementSize = ImGui::GetItemRectSize().x;
+		
 		ImGui::EndGroup();
 
 	}
@@ -130,18 +166,18 @@ namespace Cronos {
 						}
 						currentDir->childs.push_back(newPath);
 						
-						AssetItems* t = new AssetItems(path.path().string().c_str());
+						AssetItems* t = new AssetItems(path.path().string().c_str(),ItemType::ITEM_FOLDER);
 						t->folderDirectory = newPath;
-						currentDir->m_Container.push_front(*t);
+						currentDir->m_Container.push_front(t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
 					}
 					else if (p.depth() > LastDepth) {
 						currentDir->childs.push_back(newPath);
 
-						AssetItems* t = new AssetItems(path.path().string().c_str());
+						AssetItems* t = new AssetItems(path.path().string().c_str(),ItemType::ITEM_FOLDER);
 						t->folderDirectory = newPath;
-						currentDir->m_Container.push_front(*t);
+						currentDir->m_Container.push_front(t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
 
@@ -152,7 +188,8 @@ namespace Cronos {
 					
 				}
 				else {
-					currentDir->m_Container.push_back(path.path());
+					AssetItems* t = new AssetItems(path.path().string().c_str());
+					currentDir->m_Container.push_back(t);
 				}
 			}
 		}

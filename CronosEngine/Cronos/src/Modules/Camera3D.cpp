@@ -1,6 +1,7 @@
 #include "cnpch.h"
 #include "Globals.h"
 #include "Application.h"
+#include "ImGui/ImGuiLayer.h"
 #include "Camera3D.h"
 
 namespace Cronos {
@@ -23,6 +24,7 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	bool Camera3D::OnStart()
 	{
+		App->EditorGUI->AddLog("Setting up the Camera");
 		LOG("Setting up the camera");
 		return true;
 	}
@@ -30,6 +32,7 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	bool Camera3D::OnCleanUp()
 	{
+		App->EditorGUI->AddLog("Cleaning Camera");
 		LOG("Cleaning camera");
 		return true;
 	}

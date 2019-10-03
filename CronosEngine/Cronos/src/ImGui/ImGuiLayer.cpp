@@ -461,12 +461,6 @@ namespace Cronos {
 			}
 			ImGuiIO& io = ImGui::GetIO();
 
-	/*		if (v)
-				*flags |= flags_value;
-			else
-				*flags &= ~flags_value;
-*/
-			//static int WindowSize = 150;
 			ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
 
 			ImGui::BeginChild("left panel", ImVec2(150, 0),true,window_flags);
@@ -515,19 +509,19 @@ namespace Cronos {
 			}
 
 			ImGui::Separator();
-			int spaceCounter = 150;
+			int spaceCounter = 180;
 			for (auto& a : m_CurrentDir->m_Container) {
-				a.DrawIcons();
-				if (a.GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked())
-					m_CurrentDir = a.folderDirectory;
-				spaceCounter += a.GetElementSize();
+				a->DrawIcons();
+				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
+					m_CurrentDir = a->folderDirectory;
+
+				spaceCounter += a->GetElementSize();
 
 				if (spaceCounter < ImGui::GetWindowWidth()) {
 					ImGui::SameLine();
-
 				}
 				else
-					spaceCounter = 150;
+					spaceCounter = 180;
 				//ImGui::Button(a.m_Elements.c_str());
 			}
 
@@ -950,7 +944,7 @@ namespace Cronos {
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Begin("Console", &ShowConsolePanel);
-	
+		
 		if (ImGui::Button("Clear")) {
 			LogBuffer.clear();
 		}
@@ -958,10 +952,11 @@ namespace Cronos {
 		ImGui::Separator();
 		
 		ImGui::BeginChild("Console Loging");
-		
+		ImGui::SameLine(10);
 		if (!LogBuffer.empty()) {
 			ImGui::TextUnformatted(LogBuffer.c_str());
-			ImGui::SetScrollHere(1.0f);
+			if(!ImGui::GetScrollMaxY())
+				ImGui::SetScrollHere(1.0f);
 		}
 
 		ImGui::EndChild();

@@ -23,13 +23,13 @@ namespace Cronos {
 	
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_Path);
+		AssetItems(std::filesystem::path m_Path,ItemType mtype=ItemType::ITEM_NONE);
 
 		ItemType type = ItemType::ITEM_NONE;
-		std::string m_Elements;
-
+		std::string m_AssetShortName;
+		std::string m_AssetFullName;
 		void Clear();
-		void DrawIcons();
+		virtual void DrawIcons();
 
 		int GetElementSize();
 		ItemType GetType() const { return type; }
@@ -42,7 +42,8 @@ namespace Cronos {
 	private:
 		std::string m_Extension;
 		int m_ElementSize;
-
+		char labelID[150];
+		bool hovered;
 		//if its a folder
 		
 	};
@@ -60,12 +61,13 @@ namespace Cronos {
 		std::filesystem::path m_Directories;
 		std::string m_LabelDirectories;
 
-		std::list<AssetItems> m_Container;
+		std::list<AssetItems*> m_Container;
 		std::list<Directories*>childs;
 
 		inline Directories* GetParentDirectory() const { return parentDirectory; }
 	private:
 		Directories* parentDirectory;
+		
 		
 
 	};
