@@ -86,17 +86,10 @@ namespace Cronos {
 				sprintf_s(buf1, "%s", m_AssetNameNoExtension.c_str());				
 				
 				if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)) {
-					bool a = true;
+					App->filesystem->RenameFile(this,buf1);
 				}
-				//ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
 				
-				if (ImGui::BeginPopupContextItem())
-				{
-					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-					//ImGui::InputText("##edit", buf1, 64);
-					ImGui::EndPopup();
-
-				}
+			
 			/*	while (ImGui::MenuItem("Renameit")) {
 					static char buf1[64] = { (char)m_AssetNameNoExtension.c_str() }; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
 					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
@@ -138,6 +131,7 @@ namespace Cronos {
 		std::string tempDirName = Asset->GetAssetPath();
 		tempDirName.erase(tempDirName.find(Asset->m_AssetFullName));
 		tempDirName += newName+Asset->GetExtension();
+		Asset->m_AssetNameNoExtension = newName;
 		std::filesystem::rename(Asset->GetAssetPath(),tempDirName);
 		Asset->m_AssetFullName = newName+Asset->GetExtension();
 		Asset->m_AssetShortName = Asset->m_AssetFullName;
@@ -145,7 +139,7 @@ namespace Cronos {
 			Asset->m_AssetShortName.erase(10);
 			Asset->m_AssetShortName += "...";
 		}
-
+		Asset->SetAssetPath(tempDirName);
 	}
 
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {

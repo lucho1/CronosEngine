@@ -34,6 +34,8 @@ namespace Cronos {
 
 		int GetElementSize();
 		ItemType GetType() const { return type; }
+
+		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		std::string GetAssetPath() const { return m_Path; }
 		std::string GetExtension() const { return m_Extension; }
 
