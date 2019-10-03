@@ -495,11 +495,14 @@ namespace Cronos {
 			static char buf1[64] = "Asset Browser";
 			//sprintf_s(buf1, "%s", "sadawd");
 			ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
-			ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+
+			if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)){
+				
+			}
+
 			std::string a = buf1;
 			if (a != "Asset Browser") {
 				ImGui::SameLine();
-
 				if (ImGui::Button("Reset")) {
 					sprintf_s(buf1, "%s", "Asset Browser");
 				}
