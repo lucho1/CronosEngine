@@ -79,6 +79,14 @@ namespace Cronos {
 		setDocking();
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
 
+		FILE* fp = fopen("../../LICENSE", "r");
+		
+		int c; // note: int, not char, required to handle EOF
+		while ((c = fgetc(fp)) != EOF) { // standard C I/O file reading loop
+			char a = putchar(c);
+			LicenseString += a;
+		}
+
 
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
@@ -144,6 +152,7 @@ namespace Cronos {
 		if (ShowDemoWindow)				ImGui::ShowDemoWindow(&ShowDemoWindow);
 		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
 		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
+		if (ShowAboutPanel)				GUIDrawAboutPanel();
 
 
 		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
@@ -267,7 +276,7 @@ namespace Cronos {
 					App->RequestBrowser("https://github.com/lucho1/CronosEngine/issues");
 				}
 				if (ImGui::MenuItem("About (OnConstruction)")) {
-					
+					ShowAboutPanel = !ShowAboutPanel;
 				}
 				
 
@@ -959,6 +968,38 @@ namespace Cronos {
 		log += "\n\n";
 		LogBuffer.appendf(log.c_str());
 
+	}
+
+	void ImGuiLayer::GUIDrawAboutPanel()
+	{
+		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::SetNextWindowSize(ImVec2(430, 600),ImGuiCond_Appearing);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::Begin("About", &ShowAboutPanel);
+
+			ImGui::Text("Cronos v0.1");
+			ImGui::Text("The next generation 3D Game Engine");
+			ImGui::Text("By"); ImGui::SameLine(); if (ImGui::Button("Lucho Suaya")) { App->RequestBrowser("https://github.com/lucho1"); }
+			ImGui::SameLine(); ImGui::Text("&"); ImGui::SameLine(); if (ImGui::Button("Roger Leon")) { App->RequestBrowser("https://github.com/rleonborras"); }
+
+		ImGui::Separator();
+
+			ImGui::Text("3rd Party Libraries Used:");
+			ImGui::BulletText("SDL 2.0.6");
+			ImGui::BulletText("SDL mixer 2.0.0");
+			ImGui::BulletText("Glad");
+			ImGui::BulletText("ImGui 1.73");
+			ImGui::BulletText("OpenGl 4.3");
+		
+		ImGui::Separator();
+		ImGui::BeginChild("LicenseChild");
+			ImGui::Text("License: ");
+			ImGui::TextUnformatted(LicenseString.c_str());
+		ImGui::EndChild();
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+		ImGui::End();
 	}
 
 	void ImGuiLayer::GUIDrawConsolePanel()

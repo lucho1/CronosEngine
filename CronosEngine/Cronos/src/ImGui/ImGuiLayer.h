@@ -55,6 +55,7 @@ namespace Cronos {
 		void GUIDrawConfigurationPanel();
 		void GUIDrawPerformancePanel();
 		void GUIDrawSupportExitOptions();
+		void GUIDrawAboutPanel();
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
@@ -80,6 +81,7 @@ namespace Cronos {
 		bool ShowConsolePanel = true;
 		bool ShowPerformancePanel = false;
 		bool ShowDemoWindow = false;
+		bool ShowAboutPanel = false;
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
 
@@ -93,6 +95,8 @@ namespace Cronos {
 
 		Directories* AssetDirectories;
 		Directories* LastDir;
+
+		std::string LicenseString;
 
 		std::vector <Directories*> DirectoriesArray;
 
