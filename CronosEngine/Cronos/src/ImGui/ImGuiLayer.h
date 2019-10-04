@@ -92,6 +92,7 @@ namespace Cronos {
 		std::vector<float>fps_log;
 
 		Directories* AssetDirectories;
+		Directories* LastDir;
 
 		std::vector <Directories*> DirectoriesArray;
 

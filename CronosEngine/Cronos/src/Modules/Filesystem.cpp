@@ -118,7 +118,6 @@ namespace Cronos {
 	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
 	{
 		m_LabelDirectories = m_Directories.string();
-		
 	}
 	void Directories::Clear() {
 	
@@ -139,6 +138,35 @@ namespace Cronos {
 			Asset->m_AssetShortName += "...";
 		}
 		Asset->SetAssetPath(tempDirName);
+	}
+
+	void Filesystem::SearchFile(Directories* tempDir, const char* name) {
+		bool isInside = false;
+		for (auto& a : AssetArray) {
+			std::string::size_type n;
+			n = a->m_AssetFullName.find(name);
+			if (n != std::string::npos) {
+				for (auto&b : tempDir->m_Container) {
+					if (a != b)
+						isInside = false;
+					else {
+						isInside = true;
+						break;
+					}
+						
+				}
+				if (!isInside) {
+					tempDir->m_Container.push_back(a);
+				}
+			}
+			else
+				for (auto&b : tempDir->m_Container)
+					if (a == b) {
+						tempDir->m_Container.remove(a);
+						break;
+					}
+						
+		}
 	}
 
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {

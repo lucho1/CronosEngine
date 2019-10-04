@@ -56,6 +56,7 @@ namespace Cronos {
 	class Directories {
 	public:
 
+		Directories() {};
 		Directories(std::filesystem::path m_Path);
 		void Clear();
 		void SetParentDirectory(Directories* parent) { parentDirectory = parent; }
@@ -91,6 +92,7 @@ namespace Cronos {
 		void CreateNewDirectory(Directories* currentDir, const char* newName);
 		void DeleteDirectory(const char* path);
 		void RenameFile(AssetItems* Asset, const char* newName);
+		void SearchFile(Directories* tempDir,const char* name);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }

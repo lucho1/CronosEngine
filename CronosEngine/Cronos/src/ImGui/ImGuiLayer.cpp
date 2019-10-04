@@ -493,11 +493,15 @@ namespace Cronos {
 		
 
 			static char buf1[64] = "Asset Browser";
-			//sprintf_s(buf1, "%s", "sadawd");
 			ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
-
+			
 			if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)){
-				
+				static Directories* tempDir = new Directories();
+				if (m_CurrentDir != tempDir) {
+					LastDir = m_CurrentDir;
+				}
+				m_CurrentDir = tempDir;
+				App->filesystem->SearchFile(tempDir, buf1); 
 			}
 
 			std::string a = buf1;
@@ -505,6 +509,7 @@ namespace Cronos {
 				ImGui::SameLine();
 				if (ImGui::Button("Reset")) {
 					sprintf_s(buf1, "%s", "Asset Browser");
+					m_CurrentDir = LastDir;
 				}
 			}
 

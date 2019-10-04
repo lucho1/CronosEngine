@@ -18,7 +18,8 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM and GLAD.
 **[TODO]** Put the logo image here and links to these libs!
 
 ## Innovating Features
-Asset Browser 
+Asset Panel
+	-Asset Browser (Searcher)
 	-Workflow in and out
 	-Rename Assets
 	-Create/Delete Assets and folders
@@ -39,7 +40,8 @@ Start implementing node System
 ## Changelog
 v0.1 **[TODO]** 
 	Implemented FileSystem
-	Implemented Asset Browser
+	Implemented Asset Panel
+		->Asset browser (Searcher) 
 		->In and out workflot
 		->Renaming Assets
 		->Create/Delete Assets and folders
