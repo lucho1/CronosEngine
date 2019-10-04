@@ -32,6 +32,12 @@ namespace Cronos {
 	}
 
 
+	const std::string SoftwareInfo::GetCppCompilerVersion()
+	{
+		return (std::to_string(_MSVC_LANG) + " (" + ExtractCppVersion(_MSVC_LANG) + ")");
+	}
+
+
 	const std::string SoftwareInfo::ExtractWindowsVersion()
 	{
 		OSVERSIONINFOEX OS;
@@ -91,6 +97,42 @@ namespace Cronos {
 
 
 	//-------------------------------------------------------------------//
+	//--------------------------- MEMORY INFO ---------------------------//
+	//-------------------------------------------------------------------//
+	void MemoryHardware::ExtractMemoryInfo() const
+	{
+		MEMORYSTATUSEX tmpMemoryInfo;
+		tmpMemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
+		GlobalMemoryStatusEx(&tmpMemoryInfo);
+		
+		m_MemoryInfo = tmpMemoryInfo;
+		m_MemoryInfo.dwLength = sizeof(MEMORYSTATUSEX);
+
+
+		GetProcessMemoryInfo(GetCurrentProcess(), &m_ProcessMemCounters, sizeof(m_ProcessMemCounters));
+		mProcess_vMemUsed = m_ProcessMemCounters.PagefileUsage;
+		mProcess_physMemUsed = m_ProcessMemCounters.WorkingSetSize;
+
+	}
+
+
+	//-------------------------------------------------------------------//
+	//---------------------------- GPU INFO -----------------------------//
+	//-------------------------------------------------------------------//
+	const GLint GPUHardware::GetGPUTotalVRAM()
+	{
+		glGetIntegerv(0x9048, &m_GPUTotalVRAM);
+		return m_GPUTotalVRAM/KBTOMB;
+	}
+
+	const GLint GPUHardware::GetGPUCurrentVRAM()
+	{
+		glGetIntegerv(0x9049, &m_GPUCurrentVRAM);
+		return m_GPUCurrentVRAM/KBTOMB;
+	}
+
+
+	//-------------------------------------------------------------------//
 	//--------------------------- SYSTEM INFO ---------------------------//
 	//-------------------------------------------------------------------//
 	bool SystemInfo::OnInit()
@@ -98,6 +140,9 @@ namespace Cronos {
 		//mSoftware_Info->mSoftware_CppVersion = mSoftware_Info->ExtractCppVersion(2);
 		//mSoftware_Info->mSoftware_WindowsVersion = mSoftware_Info->ExtractWindowsVersion();
 		//mSoftware_Info->mSoftware_SDLVersion = mSoftware_Info->ExtractSDLVersion();
+		//mHardware_MemoryInfo->ExtractMemoryInfo();
 	}
+
+
 
 }
