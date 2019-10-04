@@ -142,9 +142,9 @@ namespace Cronos {
 	const GLint GPUHardware::GetGPUTotalVRAM()
 	{
 		GLint tmp_GPUTotalVRAM = 0;
-		//glGetIntegerv(0x9048, &tmp_GPUTotalVRAM);
+		glGetIntegerv(0x9048, &tmp_GPUTotalVRAM);
 
-		m_GPUCurrentVRAM = tmp_GPUTotalVRAM;
+		m_GPUTotalVRAM = tmp_GPUTotalVRAM;
 		return m_GPUTotalVRAM/KBTOMB;
 	}
 
@@ -152,7 +152,7 @@ namespace Cronos {
 	const GLint GPUHardware::GetGPUCurrentVRAM()
 	{
 		GLint tmp_GPUCurrentVRAM = 0;
-		//glGetIntegerv(0x9049, &tmp_GPUCurrentVRAM);
+		glGetIntegerv(0x9049, &tmp_GPUCurrentVRAM);
 
 		m_GPUCurrentVRAM = tmp_GPUCurrentVRAM;
 		return tmp_GPUCurrentVRAM/KBTOMB;
