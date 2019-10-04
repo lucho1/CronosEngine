@@ -2,7 +2,7 @@
 #define _CAMERA3D_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
 #include "glmath.h"
 
 #define MIN_FOV 15.0f

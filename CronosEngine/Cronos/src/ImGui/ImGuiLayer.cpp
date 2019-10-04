@@ -1,18 +1,14 @@
-
-#include "cnpch.h"
+#include "Providers/cnpch.h"
 
 #include "ImGuiLayer.h"
-
 #include "imgui.h"
+
 #include "OpenGL/imgui_impl_sdl.h"
 #include "OpenGL/imgui_impl_opengl3.h"
-
-
 
 #include "imnodes.h"
 
 #include "Core/Application.h"
-//#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION

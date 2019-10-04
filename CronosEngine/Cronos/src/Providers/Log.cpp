@@ -1,8 +1,10 @@
 #pragma once
 
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include "Providers/Globals.h"
+
 #include "Application.h"
+
 #include "../ImGui/ImGuiLayer.h"
 #include "psapi.h"
 

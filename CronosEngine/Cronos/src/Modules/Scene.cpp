@@ -1,7 +1,9 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include "Providers/Globals.h"
+
 #include "Application.h"
 #include "Scene.h"
+
 #include "Renderer/Primitive.h"
 
 namespace Cronos {

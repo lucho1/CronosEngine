@@ -1,7 +1,7 @@
 #ifndef _ERRORS_H_
 #define _ERRORS_H_
 
-#include "cnpch.h"
+#include "Providers/cnpch.h"
 
 #include "SDL/include/SDL.h"
 //#include "SDL/include/SDL_opengl.h"

@@ -2,7 +2,7 @@
 #define _GLRENDERER3D_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
 #include "glmath.h"
 #include "Light.h"
 

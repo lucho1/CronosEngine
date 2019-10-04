@@ -3,7 +3,7 @@
 // Body for CPU Tick Timer class
 // ----------------------------------------------------
 
-#include "cnpch.h"
+#include "Providers/cnpch.h"
 #include "Timer.h"
 
 namespace Cronos {

@@ -1,12 +1,12 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include "Providers/Globals.h"
+
 #include "Primitive.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "glut/glut.h"
 
-//#pragma comment (lib, "glut/glut32.lib")
 
 namespace Cronos {
 

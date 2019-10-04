@@ -22,6 +22,9 @@
     <Filter Include="src\Modules">
       <UniqueIdentifier>{F5147E3E-61CA-F633-EABE-F00A5673ED37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Providers">
+      <UniqueIdentifier>{7ABA7049-E67A-EC7F-AFB5-35FD1B35315C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Renderer">
       <UniqueIdentifier>{73D1DFBF-5F34-6F64-08BA-A71AF4FB3AE7}</UniqueIdentifier>
     </Filter>
@@ -51,16 +54,7 @@
     <ClInclude Include="src\Core\Application.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Errors.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Globals.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Module.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\cnpch.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\Color.h">
@@ -107,6 +101,15 @@
     </ClInclude>
     <ClInclude Include="src\Modules\Scene.h">
       <Filter>src\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\Errors.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\Globals.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\cnpch.h">
+      <Filter>src\Providers</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
       <Filter>src\Renderer</Filter>
@@ -1223,13 +1226,7 @@
     <ClCompile Include="src\Core\Application.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Log.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Main.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\cnpch.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Color.cpp">
@@ -1276,6 +1273,12 @@
     </ClCompile>
     <ClCompile Include="src\Modules\Scene.cpp">
       <Filter>src\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Providers\Log.cpp">
+      <Filter>src\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Providers\cnpch.cpp">
+      <Filter>src\Providers</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
       <Filter>src\Renderer</Filter>

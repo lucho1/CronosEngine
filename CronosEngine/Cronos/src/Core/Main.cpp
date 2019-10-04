@@ -1,6 +1,7 @@
-#include "cnpch.h"
+#include "Providers/cnpch.h"
+#include "Providers/Globals.h"
+
 #include "Application.h"
-#include "Globals.h"
 
 #include "SDL/include/SDL.h"
 

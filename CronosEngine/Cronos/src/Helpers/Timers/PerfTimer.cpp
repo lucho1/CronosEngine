@@ -2,9 +2,9 @@
 // PerfTimer.cpp
 // Slow timer with microsecond precision
 // ----------------------------------------------------
-
-#include "cnpch.h"
+#include "Providers/cnpch.h"
 #include "PerfTimer.h"
+
 #include "SDL\include\SDL_timer.h"
 
 namespace Cronos {
