@@ -27,74 +27,8 @@ namespace Cronos {
 		sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 
 		OutputDebugStringA(tmp_string2);
-
 	}
 
-
-	const std::string GetCppVersion(long int value) {
-
-		std::string cppVersion = "NULL: return value does not match with any C++ version!";
-		switch (value) {
-
-		case(199711L):
-			cppVersion = "C++ 98 or C++03";
-			break;
-		case(201103L):
-			cppVersion = "C++11";
-			break;
-		case(201402L):
-			cppVersion = "C++14";
-			break;
-		case(201703L):
-			cppVersion = "C++17";
-			break;
-		default:
-			cppVersion = "NULL: return value does not match with any C++ version!";
-			break;
-		}
-
-		return cppVersion;
-	}
-
-
-	const std::string GetWindowsVersion() {
-
-		OSVERSIONINFOEX OS;
-		ZeroMemory(&OS, sizeof(OSVERSIONINFOEX));
-		OS.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-		GetVersionEx(&(OSVERSIONINFO&)OS);
-
-		std::string ret = "Windows ";
-
-		if (OS.dwMajorVersion == 10)
-			ret += "10";
-		else if (OS.dwMajorVersion == 6) {
-
-			if (OS.dwMinorVersion == 3)
-				ret += "8.1";
-			else if (OS.dwMinorVersion == 2)
-				ret += "8";
-			else if (OS.dwMinorVersion == 1)
-				ret += "7";
-			else
-				ret += "Vista";
-		}
-		else if (OS.dwMajorVersion == 5) {
-
-			if (OS.dwMinorVersion == 2)
-				ret += "XP SP2";
-			else if (OS.dwMinorVersion == 1)
-				ret += "XP";
-			else if (OS.dwMinorVersion == 0)
-				ret += "2000";
-		}
-		else if (OS.dwMajorVersion == 4 || OS.dwMajorVersion == 3)
-			ret += "WinNT";
-		else
-			ret = "WINDOWS VERSION NOT FOUND";
-
-		return ret;
-	}
 
 	const std::string GetCPUArchitecture(SYSTEM_INFO& SystemInfo) {
 

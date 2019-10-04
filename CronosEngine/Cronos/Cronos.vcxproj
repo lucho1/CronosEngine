@@ -128,6 +128,7 @@
     <ClInclude Include="src\Providers\Errors.h" />
     <ClInclude Include="src\Providers\Globals.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
+    <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -521,6 +522,7 @@
     <ClCompile Include="src\Providers\cnpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
   </ItemGroup>

@@ -4,12 +4,8 @@
 #include "Providers/cnpch.h"
 
 #include "SDL/include/SDL.h"
-//#include "SDL/include/SDL_opengl.h"
 #include "SDL/include/SDL_opengl_glext.h"
 
-//#include "glut/glut.h"
-//#include <gl/GL.h>
-//#include <gl/GLU.h>
 #include <glad/glad.h>
 
 namespace Cronos {
