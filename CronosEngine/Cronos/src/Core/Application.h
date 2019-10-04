@@ -3,6 +3,8 @@
 
 #include "Module.h"
 
+#include "Providers/SystemInfo.h"
+
 #include "Modules/SDLWindow.h"
 #include "Modules/Input.h"
 #include "Modules/Audio.h"
@@ -28,6 +30,8 @@ namespace Cronos {
 		EngineCamera* engineCamera;
 		ImGuiLayer* EditorGUI;
 		Filesystem* filesystem;
+
+		
 
 	private:
 

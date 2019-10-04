@@ -37,6 +37,9 @@ namespace Cronos {
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;
 
+		//Not a Module!
+		SystemInfo AppSystemInfo;
+		int a = 1;
 	}
 
 	Application::~Application()

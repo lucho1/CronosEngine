@@ -1,64 +1,38 @@
 #ifndef _SYSTEMINFO_H_
 #define _SYSTEMINFO_H_
 
-#include "Module.h"
 
-#include "Application.h"
-#include "Providers/Globals.h"
-
+//#include "Application.h"
 #include "psapi.h"
 
 #define BTOGB (1073741824.0f)
-#define KBTOMB 1024.0f//To GB: (1048576.0f)
+#define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
 namespace Cronos
 {
 
-	class SystemInfo : public Module
-	{
-
-	private:
-
-		SystemInfo();
-		~SystemInfo();
-
-		SoftwareInfo*		mSoftware_Info = nullptr;
-		MemoryHardware*		mHardware_MemoryInfo = nullptr;
-		ProcessorHardware*	mHardware_CPUInfo = nullptr;
-		GPUHardware*		mHardware_GPUInfo = nullptr;
-
-	public:
-
-		virtual bool OnInit() override;
-		virtual bool OnCleanUp() override;
-		
-		const SoftwareInfo GetSoftwareInfo()			const { return *mSoftware_Info; }
-		const MemoryHardware GetMemoryHardwareInfo()	const { return *mHardware_MemoryInfo; }
-		const ProcessorHardware GetCPUHardwareInfo()	const { return *mHardware_CPUInfo; }
-		const GPUHardware GetGPUHardwareInfo()			const { return *mHardware_GPUInfo; }
-	
-	};
-
-
 	class SoftwareInfo
 	{
-
 	private:
 
-		friend class SystemInfo;
-
+		//Don't use this, they are just class variables, use the getters instead
 		mutable std::string mSoftware_CppVersion;
 		mutable std::string mSoftware_WindowsVersion;
 		mutable std::string mSoftware_SDLVersion;
 
 	private:
 
+		//Methods to check the versions for different software -- DON'T USE THEM!
 		const std::string ExtractCppVersion(long int cppValue);
 		const std::string ExtractWindowsVersion();
 		const std::string ExtractSDLVersion();
 
+	public:
 
+		void GetValues();
+
+		//Methods to return the different values for software versions... Ready to print -- Use them :)
 		const std::string GetWindowsVersion()	const		{ return mSoftware_WindowsVersion; }
 		const std::string OsFound()				const		{ return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 											
@@ -90,15 +64,15 @@ namespace Cronos
 	{
 	private:
 
-		friend class SystemInfo;
-
 		mutable MEMORYSTATUSEX m_MemoryInfo;
 
 		mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
 		mutable SIZE_T mProcess_vMemUsed;
 		mutable SIZE_T mProcess_physMemUsed;
 
-	private:
+	public:
+
+		void GetValues();
 
 		void ExtractMemoryInfo()					const;
 
@@ -118,57 +92,102 @@ namespace Cronos
 		const uint64 GetPageFileMemory()			const	{ return (uint64)m_MemoryInfo.ullTotalPageFile / BTOGB; } //In GB
 		const uint64 GetFreePageFileMemory()		const	{ return (uint64)m_MemoryInfo.ullAvailPageFile / BTOGB; } //In GB
 	
-		const uint GetMemoryUsedByProcess() const  { return(uint)mProcess_vMemUsed/BTOMB; } //In MB
-		const uint GetMemoryUsedByProcess() const  { return(uint)mProcess_physMemUsed/BTOMB; } //In MB
+		const uint GetVirtualMemoryUsedByProcess()	const	{ return(uint)mProcess_vMemUsed/BTOMB; } //In MB
+		const uint GetPhysMemoryUsedByProcess()		const	{ return(uint)mProcess_physMemUsed/BTOMB; } //In MB
+	
+	};
+
+
+	class GPUHardware
+	{
+	private:
+
+		GLint m_GPUTotalVRAM = 0;
+		GLint m_GPUCurrentVRAM = 0;
+
+	public:
+
+		void GetValues();
+
+		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
+		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
+
+		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
+		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	
 	};
 
 
 	class ProcessorHardware
 	{
-
 	private:
 
-		friend class SystemInfo;
 		SYSTEM_INFO m_CpuSysInfo;
+		std::string m_CpuArchitecture;
 
 		struct InstructionsSet
 		{
-			bool RDTSC_Available;
-
+			bool Available_3DNow = false;
+			bool RDTSC_Available = false;
+			bool AltiVec_Available = false;
+			bool AVX_Available = false;
+			bool AVX2_Available = false;
+			bool MMX_Available = false;
+			bool SSE_Available = false;
+			bool SSE2_Available = false;
+			bool SSE3_Available = false;
+			bool SSE41_Available = false;
+			bool SSE42_Available = false;
 		};
 
+		InstructionsSet m_CPUInstructionSet;
+
 	private:
 
-		const std::string GetCPUArchitecture(SYSTEM_INFO& SystemInfo);
-		const std::string GetCPUBrand();
+		void GetCPUSystemInfo();
+		const std::string ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo);
 
-		const uint GetCPUCores() const { return SDL_GetCPUCount(); }
-		const uint GetCPUCacheLine1Size() const { return SDL_GetCPUCacheLineSize(); } //In bytes
-
+		void PrintCPUBrand();
 		void CheckForCPUInstructionsSet();
+
+	public:
+
+		void GetValues();
+
+		const uint GetCPUCores()						const	{ return SDL_GetCPUCount(); }
+		const uint GetCPUCacheLine1Size()				const	{ return SDL_GetCPUCacheLineSize(); } //In bytes
+
+		const std::string GetCPUArchitecture()			const	{ return m_CpuArchitecture; }
+		const std::string GetNumberOfProcessors()		const	{ return std::to_string(m_CpuSysInfo.dwNumberOfProcessors); }
+		const std::string GetProcessorRevision()		const	{ return std::to_string(m_CpuSysInfo.wProcessorRevision); }
+
+		const InstructionsSet GetCPUInstructionsSet()	const	{ return m_CPUInstructionSet; }
+		const std::string GetCPUInstructionSet()		const;
+
 	};
 
 
-	class GPUHardware
+
+	class SystemInfo
 	{
-
 	private:
 
-		friend class SystemInfo;
+		SoftwareInfo mSoftware_Info;
+		MemoryHardware mHardware_MemoryInfo;
+		ProcessorHardware mHardware_CPUInfo;
+		GPUHardware mHardware_GPUInfo;
 
-		GLint m_GPUTotalVRAM = 0;
-		GLint m_GPUCurrentVRAM = 0;
+	public:
 
-	private:
+		SystemInfo();
+		~SystemInfo();
 
-		const auto GetGPUBenchmark()	const		{ return glGetString(GL_VENDOR); }
-		const auto GetGPUModel()		const		{ return glGetString(GL_RENDERER); }
+		const SoftwareInfo GetSoftwareInfo()			const { return mSoftware_Info; }
+		const MemoryHardware GetMemoryHardwareInfo()	const { return mHardware_MemoryInfo; }
+		const ProcessorHardware GetCPUHardwareInfo()	const { return mHardware_CPUInfo; }
+		const GPUHardware GetGPUHardwareInfo()			const { return mHardware_GPUInfo; }
 
-		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
-		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 	};
-
 }
 
 #endif

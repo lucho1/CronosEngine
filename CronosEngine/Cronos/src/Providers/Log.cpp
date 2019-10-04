@@ -8,9 +8,9 @@
 #include "../ImGui/ImGuiLayer.h"
 #include "psapi.h"
 
-#define BTOGB (1073741824.0f)
-#define KBTOMB 1024.0f//To GB: (1048576.0f)
-#define BTOMB (1048576.0f)
+//#define BTOGB (1073741824.0f)
+//#define KBTOMB 1024.0f//To GB: (1048576.0f)
+//#define BTOMB (1048576.0f)
 
 namespace Cronos {
 
@@ -30,72 +30,12 @@ namespace Cronos {
 	}
 
 
-	const std::string GetCPUArchitecture(SYSTEM_INFO& SystemInfo) {
-
-		std::string ret = "Unknown Architecture";
-
-		switch (SystemInfo.wProcessorArchitecture) {
-
-		case(PROCESSOR_ARCHITECTURE_AMD64):
-			ret = "x64 (AMD or Intel)";
-			break;
-		case(PROCESSOR_ARCHITECTURE_ARM):
-			ret = "ARM";
-			break;
-		case(PROCESSOR_ARCHITECTURE_ARM64):
-			ret = "ARM64";
-			break;
-		case(PROCESSOR_ARCHITECTURE_IA64):
-			ret = "Intel Itanium-based";
-			break;
-		case(PROCESSOR_ARCHITECTURE_INTEL):
-			ret = "x86";
-			break;
-		case(PROCESSOR_ARCHITECTURE_UNKNOWN):
-			ret = "Unknown architecture";
-			break;
-		default:
-			ret = "Unknown architecture";
-			break;
-		}
-
-		return ret;
-	}
-
-	void PrintCPUBrand() {
-
-		// Get extended ids.
-		int CPUInfo[4] = { -1 };
-		__cpuid(CPUInfo, 0x80000000);
-		unsigned int nExIds = CPUInfo[0];
-
-		// Get the information associated with each extended ID.
-		char CPUBrandString[0x40] = { 0 };
-		for (unsigned int i = 0x80000000; i <= nExIds; ++i)
-		{
-			__cpuid(CPUInfo, i);
-
-			// Interpret CPU brand string and cache information.
-			if (i == 0x80000002)
-				memcpy(CPUBrandString, CPUInfo, sizeof(CPUInfo));
-
-			else if (i == 0x80000003)
-				memcpy(CPUBrandString + 16, CPUInfo, sizeof(CPUInfo));
-
-			else if (i == 0x80000004)
-				memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
-		}
-
-		App->EditorGUI->TestLog << " CPU: " << CPUBrandString << std::endl << std::endl;
-	}
-
-
 	void LogCompilationFirstMessage()
 	{
-	//	App->EditorGUI->TestLog <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
-	//								"	Compilation at Date "			<<		__DATE__			<<
-	//								" and Time "						<<		__TIME__			<<
-	//	std::endl;
+		App->EditorGUI->TestLog <<	"-- Compilation Start Succeeded --"	<<		std::endl			<<
+									"	Compilation at Date "			<<		__DATE__			<<
+									" and Time "						<<		__TIME__			<<
+		std::endl;
 
 		//---------------------------------- CHECKING AND PRINTING C++ VERSION USED BY COMPILER & WINDOWS VERSION ----------------------------
 	//	std::string cppVersion = GetCppVersion(__cplusplus);
@@ -136,32 +76,31 @@ namespace Cronos {
 		//---------------------------------------------------- CPU INFO PRINT ----------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//cppVersion = GetCppVersion(_MSVC_LANG);
-		App->EditorGUI->TestLog << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
+		//App->EditorGUI->TestLog << std::endl << std::endl << "---- CPU HARDWARE INFO LOG -----------" << std::endl << std::endl;
 		
-		PrintCPUBrand();
 
-		App->EditorGUI->TestLog <<
+		//App->EditorGUI->TestLog <<
 
-				//	"	PC RAM Storage: "		<<		(float)SDL_GetSystemRAM()/KBTOMB			<<	" GB"			<< std::endl <<		// GB of RAM memory
-				//	"	Avalable CPU Cores: "	<<		SDL_GetCPUCount()							<<	std::endl		<<					// Number of available cores in CPU
-				//	"	L1 Cache Line Size: "	<<		SDL_GetCPUCacheLineSize()					<<	" Bytes"		<< std::endl <<		// Size of the L1 line (little but fast) of the cache memory
-					"	RDTSC Available: "		<<		(SDL_HasRDTSC() ? "Yes" : "No")				<<	std::endl		<<					// If RDTSC is (or not) available - (Read Time Stamp Counter - Records CPU cycles since reset)
+			//	"	PC RAM Storage: "		<<		(float)SDL_GetSystemRAM()/KBTOMB			<<	" GB"			<< std::endl <<		// GB of RAM memory
+			//	"	Avalable CPU Cores: "	<<		SDL_GetCPUCount()							<<	std::endl		<<					// Number of available cores in CPU
+			//	"	L1 Cache Line Size: "	<<		SDL_GetCPUCacheLineSize()					<<	" Bytes"		<< std::endl <<		// Size of the L1 line (little but fast) of the cache memory
+			//"	RDTSC Available: " << (SDL_HasRDTSC() ? "Yes" : "No") << std::endl;		//<<					// If RDTSC is (or not) available - (Read Time Stamp Counter - Records CPU cycles since reset)
 				//	"	VS Compiler Version: "	<<		_MSC_VER									<<	std::endl		<<					// Compiler Version
 				//	"	C++ Version Used: "		<<		_MSVC_LANG << " (" << cppVersion << ")"		<<	std::endl		<<					// C++ standard version targeted by compiler
 				//	"	Multithreaded Specified: "		<<			(_MT ? "Yes" : "No")			<<	std::endl		<< std::endl;		// If multithreaded is specified (or not)
 
 
-		SYSTEM_INFO SystemInfo;
-		GetSystemInfo(&SystemInfo);
-		std::string processorArch = GetCPUArchitecture(SystemInfo);
+		//SYSTEM_INFO SystemInfo;
+		//GetSystemInfo(&SystemInfo);
+		//std::string processorArch = GetCPUArchitecture(SystemInfo);
 		
-		App->EditorGUI->TestLog <<
+		//App->EditorGUI->TestLog <<
 
-					"	Number of Processors: "		<< SystemInfo.dwNumberOfProcessors	<< std::endl <<
-					"	Processor Architecture: "	<< processorArch					<< std::endl <<
-					"	Processor Revision: "		<< SystemInfo.wProcessorRevision	<<
-		std::endl;
-		App->EditorGUI->TestLog <<	std::endl	<< "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
+					//"	Number of Processors: "		<< SystemInfo.dwNumberOfProcessors	<< std::endl <<
+					//"	Processor Architecture: "	<< processorArch					<< std::endl <<
+					//"	Processor Revision: "		<< SystemInfo.wProcessorRevision	<<
+		//std::endl;
+		//App->EditorGUI->TestLog <<	std::endl	<< "---- END OF CPU HARDWARE INFO LOG ----" << std::endl << std::endl;
 
 
 		//------------------------------------------------------------------------------------------------------------------------------------
