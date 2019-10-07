@@ -61,7 +61,7 @@ namespace Cronos {
 				ret = element->OnStart();
 
 		//Not a Module!
-		//SystemInfo AppSystemInfo;
+		SystemInfo AppSystemInfo;
 
 		return ret;
 	}

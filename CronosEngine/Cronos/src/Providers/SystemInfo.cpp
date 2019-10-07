@@ -7,13 +7,25 @@
 namespace Cronos {
 
 	//-------------------------------------------------------------------//
+	//--------------------------- SYSTEM INFO ---------------------------//
+	//-------------------------------------------------------------------//
+	SystemInfo::SystemInfo()
+	{
+		mSoftware_Info.GetValues();
+		mHardware_MemoryInfo.GetValues();
+		mHardware_GPUInfo.GetValues();
+		mHardware_CPUInfo.GetValues();
+	}
+
+
+	//-------------------------------------------------------------------//
 	//-------------------------- SOFTWARE INFO --------------------------//
 	//-------------------------------------------------------------------//
 	void SoftwareInfo::GetValues()
 	{
-		mSoftware_CppVersion	 =	ExtractCppVersion(__cplusplus);
+		mSoftware_CppVersion =	ExtractCppVersion(__cplusplus);
 		mSoftware_WindowsVersion =	ExtractWindowsVersion();
-		mSoftware_SDLVersion	 =	ExtractSDLVersion();
+		mSoftware_SDLVersion =	ExtractSDLVersion();
 	}
 
 
@@ -136,8 +148,8 @@ namespace Cronos {
 	//-------------------------------------------------------------------//
 	void GPUHardware::GetValues()
 	{
-		m_GPUCurrentVRAM = GetGPUCurrentVRAM();
-		m_GPUTotalVRAM = GetGPUTotalVRAM();
+		GetGPUTotalVRAM();
+		GetGPUCurrentVRAM();
 		GPUDetect_ExtractGPUInfo();
 	}
 
@@ -195,6 +207,14 @@ namespace Cronos {
 		CheckForCPUInstructionsSet();
 	}
 
+
+	void ProcessorHardware::GetCPUSystemInfo()
+	{
+		GetSystemInfo(&m_CpuSysInfo);
+		m_CpuArchitecture = ExtractCPUArchitecture(m_CpuSysInfo);
+		getCPUInfo(&m_CPUBrand, &m_CPUVendor);
+	}
+
 	
 	const std::string ProcessorHardware::ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo)
 	{
@@ -227,15 +247,7 @@ namespace Cronos {
 
 		return ret;
 	}
-
-
-	void ProcessorHardware::GetCPUSystemInfo()
-	{
-		GetSystemInfo(&m_CpuSysInfo);
-		m_CpuArchitecture = ExtractCPUArchitecture(m_CpuSysInfo);
-		getCPUInfo(&m_CPUBrand, &m_CPUVendor);
-	}
-
+	
 
 	void ProcessorHardware::CheckForCPUInstructionsSet()
 	{
@@ -304,23 +316,6 @@ namespace Cronos {
 
 		ret += '\n';
 		return ret;
-	}
-
-
-	//-------------------------------------------------------------------//
-	//--------------------------- SYSTEM INFO ---------------------------//
-	//-------------------------------------------------------------------//
-	SystemInfo::SystemInfo()
-	{
-		mSoftware_Info.GetValues();
-		mHardware_MemoryInfo.GetValues();
-		mHardware_GPUInfo.GetValues();
-		mHardware_CPUInfo.GetValues();
-	}
-
-	SystemInfo::~SystemInfo()
-	{
-
 	}
 
 }

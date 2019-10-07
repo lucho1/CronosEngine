@@ -1,17 +1,17 @@
 #ifndef _SYSTEMINFO_H_
 #define _SYSTEMINFO_H_
 
-
-//#include "Application.h"
 #include "psapi.h"
 
 #define BTOGB (1073741824.0f)
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
+
 namespace Cronos
 {
 
+	//-------------------------- SOFTWARE INFO --------------------------//
 	class SoftwareInfo
 	{
 	private:
@@ -30,11 +30,11 @@ namespace Cronos
 
 	public:
 
-		void GetValues();
+		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		//Methods to return the different values for software versions... Ready to print -- Use them :)
 		const std::string GetWindowsVersion()	const		{ return mSoftware_WindowsVersion; }
-		const std::string OsFound()				const		{ return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
+		const std::string OsFoundString()		const		{ return (__STDC_HOSTED__ ? "OS Found" : "OS NOT FOUND!"); }
 											
 		const std::string GetSDLVersion()		const		{ return mSoftware_SDLVersion; }
 		const auto GetOGLVersion()				const		{ return glGetString(GL_VERSION); }
@@ -58,7 +58,7 @@ namespace Cronos
 	};
 
 
-
+	//--------------------------- MEMORY INFO ---------------------------//
 	//TODO: FALTA LO DE RICK
 	class MemoryHardware
 	{
@@ -70,11 +70,11 @@ namespace Cronos
 		mutable SIZE_T mProcess_vMemUsed;
 		mutable SIZE_T mProcess_physMemUsed;
 
+		void ExtractMemoryInfo()					const;
+
 	public:
 
-		void GetValues();
-
-		void ExtractMemoryInfo()					const;
+		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		const float GetRAMSizeFromSDL()				const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
 		const uint32 GetRAMSize()					const	{ return (uint32)m_MemoryInfo.dwLength; } //In GB
@@ -98,6 +98,7 @@ namespace Cronos
 	};
 
 
+	//---------------------------- GPU INFO -----------------------------//
 	class GPUHardware
 	{
 	private:
@@ -117,10 +118,10 @@ namespace Cronos
 			
 			//Info in MB (Just change the division of BTOMB in the GPUDetect_ExtractGPUInfo() function
 			//by the BTOGB one to get the GB). And change this variables name!! (_MB change it by _GB!!!)
-			float mPI_GPUDet_TotalVRAM_MB = 0;
-			float mPI_GPUDet_VRAMUsage_MB = 0;
-			float mPI_GPUDet_CurrentVRAM_MB = 0;
-			float mPI_GPUDet_VRAMReserved_MB = 0;
+			float mPI_GPUDet_TotalVRAM_MB = 0.0f;
+			float mPI_GPUDet_VRAMUsage_MB = 0.0f;
+			float mPI_GPUDet_CurrentVRAM_MB = 0.0f;
+			float mPI_GPUDet_VRAMReserved_MB = 0.0f;
 		
 		};
 
@@ -141,14 +142,14 @@ namespace Cronos
 		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
 		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
 
-		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
-
 		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
-	
+		
+		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }	
 	};
 
 
+	//---------------------------- CPU INFO -----------------------------//
 	class ProcessorHardware
 	{
 	private:
@@ -178,7 +179,6 @@ namespace Cronos
 
 	private:
 
-
 		void GetCPUSystemInfo();
 		const std::string ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo);
 		void CheckForCPUInstructionsSet();
@@ -202,20 +202,22 @@ namespace Cronos
 	};
 
 
-
+	//--------------------------- SYSTEM INFO ---------------------------//
+	//This will handle all the hardware and software info classes to have
+	//it all unified
 	class SystemInfo
 	{
 	private:
 
 		SoftwareInfo mSoftware_Info;
 		MemoryHardware mHardware_MemoryInfo;
-		ProcessorHardware mHardware_CPUInfo;
 		GPUHardware mHardware_GPUInfo;
+		ProcessorHardware mHardware_CPUInfo;
 
 	public:
 
 		SystemInfo();
-		~SystemInfo();
+		~SystemInfo() {}
 
 		const SoftwareInfo GetSoftwareInfo()			const { return mSoftware_Info; }
 		const MemoryHardware GetMemoryHardwareInfo()	const { return mHardware_MemoryInfo; }
@@ -223,6 +225,6 @@ namespace Cronos
 		const GPUHardware GetGPUHardwareInfo()			const { return mHardware_GPUInfo; }
 
 	};
+	
 }
-
 #endif
