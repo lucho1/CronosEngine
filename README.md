@@ -14,28 +14,35 @@
 
 Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho Suaya and Roger Leon) of the Degree in Videogames Design and Development of Universitat Politècnica de Catalunya for the Videogames Engines subject of 3rd course.
 
-We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM and GLAD.
+We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and GLAD.
 **[TODO]** Put the logo image here and links to these libs!
 
 ## Innovating Features
+* Extensive System Info Read (on GPU, CPU, Memory and Software!)
+* Cronos Engine will detect if you have a dedicated NVIDIA or AMD Graphics Card and will use it automatically!
+* Extensive Filesystem with good UX Functionalities.
 
 ## Usage
 **Camera Controls** 
-* Right Click:				Camera Look Around
+* Right Click:			Camera Look Around
 * Right Click + WASD:		Move camera and look around (using camera's forward vector)
-* Alt + Left Click:			Orbit object (by now, orbit center)
+* Alt + Left Click:		Orbit object (by now, orbit center)
 * Alt + Left Click + WASD:	Orbit object (by now, orbit center) and move around it.
 * Shift while Moving:		Duplicate camera moving speed.
-* T, G:						Move camera up and down.
-* Mouse Wheel:				Zoom in/out.
-* F:						Focus camera at object (by now, focus center)
+* T, G:				Move camera up and down.
+* Mouse Wheel:			Zoom in/out.
+* F:					Focus camera at object (by now, focus center)
 
 ## Changelog
 v0.1 **[TODO]** Fill this
-Camera Movement
-Engine's basic GUI & Filesystem
-Hardware's Log Window
-Performance Window
+* Camera Movement
+* Engine's basic GUI & Filesystem
+* Hardware's Log Window - Extensive System Info Read (on GPU, CPU, Memory and Software)
+* Performance Window to track useful info (Memory, FPS, ...)
+* Detection of a dedicated NVIDIA or AMD Graphics Card - automatic usage
+* Implementation of MMRG to track memory leaks and usage (for internal purposes by now)
+* Usage of GPUDetect library to get CPU/GPU information
+
 
 ## Credits
 Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrigó Garcia [@markitus18].
