@@ -75,6 +75,7 @@ namespace Cronos
 	public:
 
 		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void RecalculateRAMParameters()				const	{ ExtractMemoryInfo(); }
 
 		const float GetRAMSizeFromSDL()				const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
 		const uint32 GetRAMSize()					const	{ return (uint32)m_MemoryInfo.dwLength; } //In GB
@@ -145,7 +146,8 @@ namespace Cronos
 		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		
-		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }	
+		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
+		void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 	};
 
 
