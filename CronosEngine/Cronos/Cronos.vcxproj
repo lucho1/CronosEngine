@@ -499,6 +499,8 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
+    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />
@@ -525,6 +527,7 @@
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">

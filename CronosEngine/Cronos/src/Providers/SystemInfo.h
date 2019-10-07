@@ -102,8 +102,37 @@ namespace Cronos
 	{
 	private:
 
+		struct GPUPrimaryInfo_IntelGPUDetect
+		{
+			std::string m_GPUBrand;
+			uint m_GPUID = 0;
+			uint m_GPUVendor = 0;
+
+			//'PI' is for "Primary Info", 'GPUDet' is for "GPUDetect", the code we use to get this info
+			//Info in Bytes
+			uint64 mPI_GPUDet_TotalVRAM_Bytes = 0;
+			uint64 mPI_GPUDet_VRAMUsage_Bytes = 0;
+			uint64 mPI_GPUDet_CurrentVRAM_Bytes = 0;
+			uint64 mPI_GPUDet_VRAMReserved_Bytes = 0;
+			
+			//Info in MB (Just change the division of BTOMB in the GPUDetect_ExtractGPUInfo() function
+			//by the BTOGB one to get the GB). And change this variables name!! (_MB change it by _GB!!!)
+			float mPI_GPUDet_TotalVRAM_MB = 0;
+			float mPI_GPUDet_VRAMUsage_MB = 0;
+			float mPI_GPUDet_CurrentVRAM_MB = 0;
+			float mPI_GPUDet_VRAMReserved_MB = 0;
+		
+		};
+
+		mutable GPUPrimaryInfo_IntelGPUDetect m_PI_GPUDet_GPUInfo; //This is the Info for the current GPU in use
+
+		//For OPENGL GPU "Getter"
 		GLint m_GPUTotalVRAM = 0;
 		GLint m_GPUCurrentVRAM = 0;
+
+	private:
+
+		void GPUDetect_ExtractGPUInfo() const;
 
 	public:
 
@@ -111,6 +140,8 @@ namespace Cronos
 
 		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
 		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
+
+		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
 
 		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
@@ -123,6 +154,9 @@ namespace Cronos
 	private:
 
 		SYSTEM_INFO m_CpuSysInfo;
+		std::string m_CPUBrand;
+		std::string m_CPUVendor;
+
 		std::string m_CpuArchitecture;
 
 		struct InstructionsSet
@@ -144,10 +178,9 @@ namespace Cronos
 
 	private:
 
+
 		void GetCPUSystemInfo();
 		const std::string ExtractCPUArchitecture(SYSTEM_INFO& SystemInfo);
-
-		void PrintCPUBrand();
 		void CheckForCPUInstructionsSet();
 
 	public:
@@ -164,6 +197,8 @@ namespace Cronos
 		const InstructionsSet GetCPUInstructionsSet()	const	{ return m_CPUInstructionSet; }
 		const std::string GetCPUInstructionSet()		const;
 
+		const std::string GetCPUBrand()					const { return m_CPUBrand; }
+		const std::string GetCPUVendor()				const { return m_CPUVendor; }
 	};
 
 

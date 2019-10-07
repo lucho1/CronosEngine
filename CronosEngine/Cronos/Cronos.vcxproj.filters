@@ -1222,6 +1222,8 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\Providers\SystemInfo.h" />
+    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
+    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1288,5 +1290,6 @@
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
   </ItemGroup>
 </Project>

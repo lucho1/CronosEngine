@@ -1,5 +1,8 @@
 #include "Providers/cnpch.h"
 #include "SystemInfo.h"
+#include "gpudetect/DeviceId.h"
+
+#include <codecvt> //To convert wstring to string (For GPU info)
 
 namespace Cronos {
 
@@ -125,7 +128,6 @@ namespace Cronos {
 		GetProcessMemoryInfo(GetCurrentProcess(), &m_ProcessMemCounters, sizeof(m_ProcessMemCounters));
 		mProcess_vMemUsed = m_ProcessMemCounters.PagefileUsage;
 		mProcess_physMemUsed = m_ProcessMemCounters.WorkingSetSize;
-
 	}
 
 
@@ -136,6 +138,7 @@ namespace Cronos {
 	{
 		m_GPUCurrentVRAM = GetGPUCurrentVRAM();
 		m_GPUTotalVRAM = GetGPUTotalVRAM();
+		GPUDetect_ExtractGPUInfo();
 	}
 
 	
@@ -159,13 +162,36 @@ namespace Cronos {
 	}
 
 
+	void GPUHardware::GPUDetect_ExtractGPUInfo() const
+	{
+		GPUPrimaryInfo_IntelGPUDetect tmp;
+		std::wstring tmp_GPUBrand_WString;
+
+		if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes))
+		{
+			//Converting the WSTRING variable into a std::string
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
+
+			//If you prefer that in a char[] variable type, use:
+			//sprintf_s(char[], char[] size, "%S", tmp_GPUBrand_WString.c_str());
+
+			tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOMB;
+			tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOMB;
+			tmp.mPI_GPUDet_CurrentVRAM_MB = tmp.mPI_GPUDet_CurrentVRAM_Bytes / BTOMB;
+			tmp.mPI_GPUDet_VRAMReserved_MB = tmp.mPI_GPUDet_VRAMReserved_Bytes / BTOMB;
+
+			m_PI_GPUDet_GPUInfo = tmp;
+		}
+	}
+
+
 	//-------------------------------------------------------------------//
-	//--------------------------- SYSTEM INFO ---------------------------//
+	//--------------------------- CPU INFO ------------------------------//
 	//-------------------------------------------------------------------//
 	void ProcessorHardware::GetValues()
 	{
 		GetCPUSystemInfo();
-		//PrintCPUBrand();
 		CheckForCPUInstructionsSet();
 	}
 
@@ -203,38 +229,11 @@ namespace Cronos {
 	}
 
 
-	void ProcessorHardware::PrintCPUBrand()
-	{
-		// Get extended ids.
-		int CPUInfo[4] = { -1 };
-		__cpuid(CPUInfo, 0x80000000);
-		unsigned int nExIds = CPUInfo[0];
-
-		// Get the information associated with each extended ID.
-		char CPUBrandString[0x40] = { 0 };
-		for (unsigned int i = 0x80000000; i <= nExIds; ++i)
-		{
-			__cpuid(CPUInfo, i);
-
-			// Interpret CPU brand string and cache information.
-			if (i == 0x80000002)
-				memcpy(CPUBrandString, CPUInfo, sizeof(CPUInfo));
-
-			else if (i == 0x80000003)
-				memcpy(CPUBrandString + 16, CPUInfo, sizeof(CPUInfo));
-
-			else if (i == 0x80000004)
-				memcpy(CPUBrandString + 32, CPUInfo, sizeof(CPUInfo));
-		}
-
-		//App->EditorGUI->TestLog << " CPU: " << CPUBrandString << std::endl << std::endl;
-	}
-
-
 	void ProcessorHardware::GetCPUSystemInfo()
 	{
 		GetSystemInfo(&m_CpuSysInfo);
 		m_CpuArchitecture = ExtractCPUArchitecture(m_CpuSysInfo);
+		getCPUInfo(&m_CPUBrand, &m_CPUVendor);
 	}
 
 
@@ -319,32 +318,9 @@ namespace Cronos {
 		mHardware_CPUInfo.GetValues();
 	}
 
-
 	SystemInfo::~SystemInfo()
 	{
-		//if (mSoftware_Info != nullptr)
-		//{
-		//	delete mSoftware_Info;
-		//	mSoftware_Info = nullptr;
-		//}
-		//
-		//if (mHardware_MemoryInfo != nullptr)
-		//{
-		//	delete mHardware_MemoryInfo;
-		//	mHardware_MemoryInfo = nullptr;
-		//}
-		//
-		//if (mHardware_CPUInfo != nullptr)
-		//{
-		//	delete mHardware_CPUInfo;
-		//	mHardware_CPUInfo = nullptr;
-		//}
-		//
-		//if (mHardware_GPUInfo != nullptr)
-		//{
-		//	delete mHardware_GPUInfo;
-		//	mHardware_GPUInfo = nullptr;
-		//}
+
 	}
 
 }
