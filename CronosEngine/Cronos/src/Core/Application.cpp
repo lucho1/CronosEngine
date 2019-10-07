@@ -1,5 +1,7 @@
 #include "Providers/cnpch.h"
 
+#include "mmgr/mmgr.h"
+
 #include "Application.h"
 
 namespace Cronos {

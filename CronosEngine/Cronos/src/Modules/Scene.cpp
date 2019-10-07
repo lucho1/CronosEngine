@@ -1,6 +1,7 @@
 #include "Providers/cnpch.h"
-#include "Providers/Globals.h"
+#include "mmgr/mmgr.h"
 
+#include "Providers/Globals.h"
 #include "Application.h"
 #include "Scene.h"
 

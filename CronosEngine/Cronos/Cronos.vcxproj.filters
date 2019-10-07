@@ -1224,6 +1224,8 @@
     <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="vendor\gpudetect\DeviceId.h" />
     <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
+    <ClInclude Include="vendor\mmgr\mmgr.h" />
+    <ClInclude Include="vendor\mmgr\nommgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1291,5 +1293,6 @@
     </ClCompile>
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
+    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
   </ItemGroup>
 </Project>

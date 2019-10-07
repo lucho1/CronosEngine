@@ -1,6 +1,7 @@
 #include "Providers/cnpch.h"
-#include "Providers/Globals.h"
+#include <codecvt> //To convert wstring to string (For GPU info)
 
+#include "Providers/Globals.h"
 #include "Application.h"
 #include "GLRenderer3D.h"
 

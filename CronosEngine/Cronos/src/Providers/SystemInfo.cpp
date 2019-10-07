@@ -1,8 +1,11 @@
 #include "Providers/cnpch.h"
+#include <codecvt> //To convert wstring to string (For GPU info)
+
+#include "mmgr/mmgr.h"
+
 #include "SystemInfo.h"
 #include "gpudetect/DeviceId.h"
 
-#include <codecvt> //To convert wstring to string (For GPU info)
 
 namespace Cronos {
 

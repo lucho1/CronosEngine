@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Providers/cnpch.h"
-#include "Providers/Globals.h"
+#include "mmgr/mmgr.h"
 
+#include "Providers/Globals.h"
 #include "Application.h"
 
 #include "../ImGui/ImGuiLayer.h"

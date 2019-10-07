@@ -1,6 +1,8 @@
 #include "Providers/cnpch.h"
-#include "Providers/Globals.h"
 
+#include "mmgr/mmgr.h"
+
+#include "Providers/Globals.h"
 #include "Light.h"
 
 #include <gl/GL.h>
