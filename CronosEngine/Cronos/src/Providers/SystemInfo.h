@@ -138,7 +138,7 @@ namespace Cronos
 
 	public:
 
-		void GetValues();
+		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
 		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
@@ -187,7 +187,7 @@ namespace Cronos
 
 	public:
 
-		void GetValues();
+		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		const uint GetCPUCores()						const	{ return SDL_GetCPUCount(); }
 		const uint GetCPUCacheLine1Size()				const	{ return SDL_GetCPUCacheLineSize(); } //In bytes
