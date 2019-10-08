@@ -129,8 +129,10 @@
     <ClInclude Include="src\Providers\Globals.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Providers\SystemInfo.h" />
+    <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -531,6 +533,10 @@
     <ClCompile Include="src\Renderer\Primitive.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
+    <ClCompile Include="src\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
+    <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">

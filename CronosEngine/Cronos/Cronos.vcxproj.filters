@@ -1226,6 +1226,8 @@
     <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
     <ClInclude Include="vendor\mmgr\mmgr.h" />
     <ClInclude Include="vendor\mmgr\nommgr.h" />
+    <ClInclude Include="src\Renderer\Buffers.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1294,5 +1296,7 @@
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
+    <ClCompile Include="src\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
   </ItemGroup>
 </Project>
