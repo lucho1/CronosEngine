@@ -2,7 +2,7 @@
 #define _FILESYSTEM_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
 
 
 namespace Cronos {

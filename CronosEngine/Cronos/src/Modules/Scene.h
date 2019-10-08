@@ -2,7 +2,10 @@
 #define _SCENE_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
+#include "Renderer/Primitive.h"
+#include "Renderer/VertexArray.h"
+
 
 namespace Cronos {
 
@@ -19,6 +22,11 @@ namespace Cronos {
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
+
+	private:
+
+		Plane m_FloorPlane;
+		VertexArray* VAO; //To test
 
 	};
 

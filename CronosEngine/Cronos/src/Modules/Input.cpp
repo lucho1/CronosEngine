@@ -1,5 +1,7 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include "mmgr/mmgr.h"
+
+#include "Providers/Globals.h"
 #include "Application.h"
 #include "ImGui/ImGuiLayer.h"
 #include "ImGui/OpenGL/imgui_impl_sdl.h"
@@ -100,6 +102,7 @@ namespace Cronos {
 		}
 
 		mouse_x_motion = mouse_y_motion = 0;
+		m_MouseScroll = false;
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -108,6 +111,7 @@ namespace Cronos {
 			switch (e.type)
 			{
 			case SDL_MOUSEWHEEL:
+				m_MouseScroll = true;
 				mouse_z = e.wheel.y;
 				break;
 
@@ -122,11 +126,11 @@ namespace Cronos {
 			case SDL_QUIT:
 				quit = true;
 				break;
-				
+
 			case SDL_WINDOWEVENT:
 			{
 				if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-					App->renderer3D->OnResize(e.window.data1, e.window.data2);
+					App->window->OnResize(e.window.data1, e.window.data2);
 			}
 			}
 		}

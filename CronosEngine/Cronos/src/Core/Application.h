@@ -3,15 +3,18 @@
 
 #include "Module.h"
 
+#include "Providers/SystemInfo.h"
+
 #include "Modules/SDLWindow.h"
 #include "Modules/Input.h"
 #include "Modules/Audio.h"
 #include "Modules/Scene.h"
-#include "Modules/Camera3D.h"
+#include "Modules/EngineCamera.h"
 #include "Modules/Filesystem.h"
 
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
+
 
 namespace Cronos {
 
@@ -19,14 +22,14 @@ namespace Cronos {
 
 	public:
 
-		SDLWindow*		window;
-		Input*			input;
-		Audio*			audio;
-		Scene*			scene;
-		GLRenderer3D*	renderer3D;
-		Camera3D*		camera;
-		ImGuiLayer*		EditorGUI;
-		Filesystem*		filesystem;
+		SDLWindow* window;
+		Input* input;
+		Audio* audio;
+		Scene* scene;
+		GLRenderer3D* renderer3D;
+		EngineCamera* engineCamera;
+		ImGuiLayer* EditorGUI;
+		Filesystem* filesystem;
 
 	private:
 
@@ -65,7 +68,7 @@ namespace Cronos {
 		inline const float GetLastFrameMS()				const		{	return	(m_Timestep * 1000.0f);		}
 		inline const uint32 GetFramesInLastSecond()		const		{	return	m_PREV_LastSecFrameCount;	}
 		inline const float GetAverageFPS()				const		{	return	m_AverageFPS;				}
-														
+
 		inline const int GetFPSCap()					const		{ return m_FPSCap; }
 
 	private:

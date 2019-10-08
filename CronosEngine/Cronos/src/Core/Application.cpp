@@ -1,16 +1,20 @@
-#include "cnpch.h"
+#include "Providers/cnpch.h"
+
+#include "mmgr/mmgr.h"
+
 #include "Application.h"
 
 namespace Cronos {
 
 	Application::Application(int FPSCap) : m_FPSCap(FPSCap)
 	{
+
 		window = new SDLWindow(this);
 		input = new Input(this);
 		audio = new Audio(this);
 		scene = new Scene(this);
 		renderer3D = new GLRenderer3D(this);
-		camera = new Camera3D(this);
+		engineCamera = new EngineCamera(this);
 		filesystem = new Filesystem(this);
 
 		EditorGUI = new ImGuiLayer(this);
@@ -22,7 +26,7 @@ namespace Cronos {
 		// Main Modules
 		AddModule(window);
 		AddModule(renderer3D);
-		AddModule(camera);
+		AddModule(engineCamera);
 		AddModule(input);
 		AddModule(audio);
 
@@ -33,7 +37,7 @@ namespace Cronos {
 		AddModule(EditorGUI);
 
 		if (m_FPSCap > 0)
-			m_CappedMS = 1000 / m_FPSCap;
+			m_CappedMS = 1000 / FPSCap;
 
 	}
 
@@ -48,7 +52,6 @@ namespace Cronos {
 	{
 		bool ret = true;
 
-
 		for (auto& element : m_ModulesList)
 			if (ret) {
 				EditorGUI->AddLog(("Initializing Module" + element->m_ModuleName));
@@ -61,6 +64,10 @@ namespace Cronos {
 				ret = element->OnStart();
 
 		mt_StartingTime.Start();
+
+		//Not a Module!
+		//SystemInfo AppSystemInfo;
+
 		return ret;
 	}
 
@@ -80,7 +87,7 @@ namespace Cronos {
 	void Application::FinishUpdate()
 	{
 		//For performance information purposes
-		if(mt_LastSecFrameTime.Read() > 1000) 
+		if(mt_LastSecFrameTime.Read() > 1000)
 		{
 			mt_LastSecFrameTime.Start();
 			m_PREV_LastSecFrameCount = m_LastSecFrameCount;

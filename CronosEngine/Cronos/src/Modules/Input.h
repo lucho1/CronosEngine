@@ -2,7 +2,7 @@
 #define _INPUT_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
 
 namespace Cronos {
 
@@ -27,6 +27,7 @@ namespace Cronos {
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
 
+
 		KEY_STATE GetKey(int id) const
 		{
 			return keyboard[id];
@@ -36,28 +37,31 @@ namespace Cronos {
 		{
 			return mouse_buttons[id];
 		}
-
-		int GetMouseX() const
+		inline bool isMouseScrolling() const
+		{
+			return m_MouseScroll;
+		}
+		inline int GetMouseX() const
 		{
 			return mouse_x;
 		}
 
-		int GetMouseY() const
+		inline int GetMouseY() const
 		{
 			return mouse_y;
 		}
 
-		int GetMouseZ() const
+		inline int GetMouseZ() const
 		{
 			return mouse_z;
 		}
 
-		int GetMouseXMotion() const
+		inline int GetMouseXMotion() const
 		{
 			return mouse_x_motion;
 		}
 
-		int GetMouseYMotion() const
+		inline int GetMouseYMotion() const
 		{
 			return mouse_y_motion;
 		}
@@ -73,8 +77,9 @@ namespace Cronos {
 		int mouse_z;
 		int mouse_x_motion;
 		int mouse_y_motion;
-		bool quit=false;
-		//int mouse_z_motion;
+		bool quit = false;
+		bool m_MouseScroll;
+
 	};
 
 }

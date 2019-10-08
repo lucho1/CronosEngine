@@ -1,13 +1,10 @@
-
-#include "cnpch.h"
+#include "Providers/cnpch.h"
 
 #include "ImGuiLayer.h"
-
 #include "imgui.h"
+
 #include "OpenGL/imgui_impl_sdl.h"
 #include "OpenGL/imgui_impl_opengl3.h"
-
-
 
 #include "imnodes.h"
 
@@ -25,7 +22,7 @@ namespace Cronos {
 
 	static ImGuiDockNodeFlags dockspace_flags;
 	ImGuiWindowFlags window_flags;
-	
+
 
 	int my_image_width = 504, my_image_height = 507;
 	//unsigned char* my_image_data = stbi_load("../Hazel/src/Textures/Texture_Sample.jpg", &my_image_width, &my_image_height, NULL, 4);
@@ -34,10 +31,10 @@ namespace Cronos {
 #define TOTEX (void*)(intptr_t)
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
-	
+
 	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"),ms_log(100),fps_log(100)
 	{
-		
+
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -80,7 +77,7 @@ namespace Cronos {
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
 
 		FILE* fp = fopen("../../LICENSE", "r");
-		
+
 		int c; // note: int, not char, required to handle EOF
 		while ((c = fgetc(fp)) != EOF) { // standard C I/O file reading loop
 			//char a = putchar(c);
@@ -98,14 +95,14 @@ namespace Cronos {
 
 	void ImGuiLayer::AssetImguiIterator(Directories a) {
 		for (auto& c : a.childs) {
-		
+
 			std::string temp = c->m_Directories.filename().string();
 			bool open = ImGui::TreeNodeEx(temp.c_str());
 			if (ImGui::IsItemClicked())
 				m_CurrentDir = c;
 
 			if (open) {
-				AssetImguiIterator(*c);	
+				AssetImguiIterator(*c);
 				ImGui::TreePop();
 			}
 		}
@@ -199,13 +196,13 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawMainBar()
 	{
-		
+
 		ImGui::BeginMainMenuBar();
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 			if (ImGui::BeginMenu("File")) {
-				
-				ImGui::MenuItem("New Scene");			
+
+				ImGui::MenuItem("New Scene");
 				ImGui::MenuItem("Open Scene");
 				ImGui::Separator();
 				ImGui::MenuItem("Save");
@@ -220,10 +217,10 @@ namespace Cronos {
 				}
 
 				ImGui::MenuItem("Exit");
-			
-				ImGui::EndMenu();	
+
+				ImGui::EndMenu();
 			}
-			
+
 			if (ImGui::BeginMenu("Edit")) {
 				ImGui::MenuItem("New");
 				ImGui::EndMenu();
@@ -259,7 +256,7 @@ namespace Cronos {
 				if (ImGui::MenuItem("Console")) {
 					ShowConsolePanel = !ShowConsolePanel;
 				}
-			
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Help")) {
@@ -278,7 +275,7 @@ namespace Cronos {
 				if (ImGui::MenuItem("About (OnConstruction)")) {
 					ShowAboutPanel = !ShowAboutPanel;
 				}
-				
+
 
 				ImGui::EndMenu();
 			}
@@ -292,7 +289,7 @@ namespace Cronos {
 		ImGui::SetNextWindowSize(ImVec2(250, 400));
 		ImGui::Begin("Performance", &ShowPerformancePanel);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
-		
+
 		int fpscap = App->GetFPSCap();
 		ImGui::Text("Fps cap :"); ImGui::SameLine();
 		if (ImGui::SliderInt("##fpscap", &fpscap, -1, 100))
@@ -301,11 +298,11 @@ namespace Cronos {
 		HelpMarker("By default is 0, when is no fps cap");
 
 		ImGui::Separator();
-	
+
 		AcumulateLogDT();
 
 		char title[25];
-	
+
 		sprintf_s(title, 25, "Framerate %0.1f", fps_log[fps_log.size() - 1]);
 		//ImGui::PlotLines("frame", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(200, 100));
 		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(220, 100));
@@ -321,8 +318,8 @@ namespace Cronos {
 		ImGui::Text("        etc...");
 
 		ImGui::PopStyleVar();
-		
-		
+
+
 
 		ImGui::End();
 	}
@@ -482,35 +479,35 @@ namespace Cronos {
 				AssetImguiIterator(*AssetDirectories);
 				ImGui::TreePop();
 			}
-	
+
 			ImGui::EndChild();
 
 			const char* SceneLabel = "Scenes";
-		
+
 
 			ImGui::SameLine();
 
 			// right
-			ImGui::BeginGroup(); 
+			ImGui::BeginGroup();
 
 			int testa = ImGui::GetWindowWidth();
 			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-			
-			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();	
-			ImGui::Text("%s", LabelFolder.c_str()); 
 
-		
+			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();
+			ImGui::Text("%s", LabelFolder.c_str());
+
+
 
 			static char buf1[64] = "Asset Browser";
 			ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
-			
+
 			if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)){
 				static Directories* tempDir = new Directories();
 				if (m_CurrentDir != tempDir) {
 					LastDir = m_CurrentDir;
 				}
 				m_CurrentDir = tempDir;
-				App->filesystem->SearchFile(tempDir, buf1); 
+				App->filesystem->SearchFile(tempDir, buf1);
 			}
 
 			std::string a = buf1;
@@ -559,7 +556,7 @@ namespace Cronos {
 
 			ImGui::EndChild();
 			ImGui::EndGroup();
-			
+
 		}
 		ImGui::End();
 	}
@@ -718,14 +715,14 @@ namespace Cronos {
 		ImGui::Begin("Configuration", &ShowConfigurationPanel, ImGuiWindowFlags_NoDocking);
 		ImGui::PopStyleColor();
 
-		
+
 		ImGui::BeginGroup();
 		static int selected=-1;
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
 
-	
+
 			if (ImGui::Selectable("Application", selected==0)) {
 				currentMenu = ConfigMenus::Application;
 				selected = 0;
@@ -754,10 +751,10 @@ namespace Cronos {
 				currentMenu = ConfigMenus::Texture;
 				selected = 6;
 			}
-		
+
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
-		
+
 
 		ImGui::EndChild();
 		ImGui::SameLine();
@@ -818,7 +815,7 @@ namespace Cronos {
 		ImGui::PopStyleVar();
 	}
 	void ImGuiLayer::GUIDrawConfigWindowMenu() {
-		
+
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 		static int Height = (int)App->window->m_Data.Height;
 		static int Width = (int)App->window->m_Data.Width;
@@ -829,7 +826,7 @@ namespace Cronos {
 		ImGui::Text("Icon: "); ImGui::SameLine(); ImGui::Image("", ImVec2(40, 40));
 		static float brightnesTest=50.0f; //temporary
 		ImGui::SliderFloat("Brightness", &brightnesTest, 0.0f, 100.0f,"%.1f");
-		
+
 		ImGui::Text("Width"); ImGui::SameLine();
 		if (ImGui::SliderInt("##hidelabel", &Height, 100, 1080,"%d")) {
 			SDL_SetWindowSize(App->window->window, Width, Height);
@@ -848,7 +845,7 @@ namespace Cronos {
 		if (ImGui::Checkbox("Borderless", &borderless)) {
 			//SDL_SetWindowFullscreen(App->window->window, flags);
 			SDL_SetWindowBordered(App->window->window, (SDL_bool)!borderless);
-		}		
+		}
 		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flags,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
 			SDL_SetWindowFullscreen(App->window->window, flags);
 			//SDL_Setwindowfu
@@ -856,10 +853,10 @@ namespace Cronos {
 		if (ImGui::Checkbox("Resizable", &resizable)) {
 			// NOT WORKING TODO: ASK MARC
 			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
-			
+
 		}
 		ImGui::PopStyleVar();
-		
+
 	}
 
 	void ImGuiLayer::GUIDrawConfigHardwareMenu() {
@@ -882,7 +879,7 @@ namespace Cronos {
 		static char mousepos[50];
 		static char mouseMotion[50];
 		static char WheelMotion[30];
-	
+
 		sprintf_s(mousepos,50, "Mouse Position x: %i y: %i", App->input->GetMouseX(),App->input->GetMouseY());
 		sprintf_s(mouseMotion, 50, "Mouse Motion x: %i y: %i", App->input->GetMouseXMotion(), App->input->GetMouseYMotion());
 		sprintf_s(WheelMotion, 30, "Wheel Motion : %i", App->input->GetMouseZ());
@@ -920,7 +917,7 @@ namespace Cronos {
 		{
 			ImGui::Text("Are you sure you want to quit?");
 			ImGui::Separator();
-			
+
 			//static bool dont_ask_me_next_time = false;
 			//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 			//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
@@ -933,7 +930,7 @@ namespace Cronos {
 			ImGui::PopStyleVar();
 			ImGui::EndPopup();
 		}
-		
+
 	}
 
 	void ImGuiLayer::GetInput(uint key, uint state,bool mouse) {
@@ -963,7 +960,7 @@ namespace Cronos {
 		}
 
 	}
-	void ImGuiLayer::AddLog(std::string log) 
+	void ImGuiLayer::AddLog(std::string log)
 	{
 		log += "\n\n";
 		LogBuffer.appendf(log.c_str());
@@ -990,7 +987,7 @@ namespace Cronos {
 			ImGui::BulletText("Glad");
 			ImGui::BulletText("ImGui 1.73");
 			ImGui::BulletText("OpenGl 4.3");
-		
+
 		ImGui::Separator();
 		ImGui::BeginChild("LicenseChild");
 			ImGui::Text("License: ");
@@ -1004,17 +1001,17 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawConsolePanel()
 	{
-	
+
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Begin("Console", &ShowConsolePanel);
-		
+
 		if (ImGui::Button("Clear")) {
 			LogBuffer.clear();
 		}
 
 		ImGui::Separator();
-		
+
 		ImGui::BeginChild("Console Loging");
 		ImGui::SameLine(10);
 		if (!LogBuffer.empty()) {
@@ -1047,4 +1044,3 @@ namespace Cronos {
 	}
 
 }
-

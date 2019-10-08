@@ -40,8 +40,8 @@ project "Cronos"
 	targetdir("bin/" .. outputdir .. "/Cronos")
 	objdir("bin-int/" .. outputdir .. "/Cronos")
 
-	pchheader "cnpch.h"
-	pchsource "Cronos/src/Core/cnpch.cpp"
+	pchheader "Providers/cnpch.h"
+	pchsource "Cronos/src/Providers/cnpch.cpp"
 
 	files
 	{

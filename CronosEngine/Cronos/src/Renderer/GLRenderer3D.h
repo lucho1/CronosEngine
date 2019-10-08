@@ -2,7 +2,7 @@
 #define _GLRENDERER3D_H_
 
 #include "Module.h"
-#include "Globals.h"
+#include "Providers/Globals.h"
 #include "glmath.h"
 #include "Light.h"
 
@@ -22,14 +22,12 @@ namespace Cronos {
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
 
-		void OnResize(int width, int height);
-
 	public:
 
 		Light lights[MAX_LIGHTS];
 		SDL_GLContext context;
-		mat3x3 NormalMatrix;
-		mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+		//mat3x3 NormalMatrix;
+		//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 	};
 
 }

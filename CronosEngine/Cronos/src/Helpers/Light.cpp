@@ -1,6 +1,10 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+
+#include "mmgr/mmgr.h"
+
+#include "Providers/Globals.h"
 #include "Light.h"
+
 #include <gl/GL.h>
 
 namespace Cronos {

@@ -22,6 +22,9 @@
     <Filter Include="src\Modules">
       <UniqueIdentifier>{F5147E3E-61CA-F633-EABE-F00A5673ED37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Providers">
+      <UniqueIdentifier>{7ABA7049-E67A-EC7F-AFB5-35FD1B35315C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Renderer">
       <UniqueIdentifier>{73D1DFBF-5F34-6F64-08BA-A71AF4FB3AE7}</UniqueIdentifier>
     </Filter>
@@ -51,16 +54,7 @@
     <ClInclude Include="src\Core\Application.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Errors.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\Globals.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Module.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\cnpch.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\Color.h">
@@ -93,7 +87,7 @@
     <ClInclude Include="src\Modules\Audio.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="src\Modules\Camera3D.h">
+    <ClInclude Include="src\Modules\EngineCamera.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
     <ClInclude Include="src\Modules\Filesystem.h">
@@ -108,10 +102,28 @@
     <ClInclude Include="src\Modules\Scene.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="src\Providers\Errors.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\Globals.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\SystemInfo.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Providers\cnpch.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Buffers.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Primitive.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\VertexArray.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -1218,18 +1230,16 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\mmgr\mmgr.h" />
+    <ClInclude Include="vendor\mmgr\nommgr.h" />
+    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
+    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Log.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Main.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\cnpch.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Color.cpp">
@@ -1262,7 +1272,7 @@
     <ClCompile Include="src\Modules\Audio.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="src\Modules\Camera3D.cpp">
+    <ClCompile Include="src\Modules\EngineCamera.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
     <ClCompile Include="src\Modules\Filesystem.cpp">
@@ -1277,11 +1287,28 @@
     <ClCompile Include="src\Modules\Scene.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\Providers\Log.cpp">
+      <Filter>src\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Providers\SystemInfo.cpp">
+      <Filter>src\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Providers\cnpch.cpp">
+      <Filter>src\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Buffers.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\VertexArray.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
   </ItemGroup>
 </Project>

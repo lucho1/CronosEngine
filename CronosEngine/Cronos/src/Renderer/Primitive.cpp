@@ -1,12 +1,13 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include <codecvt> //To convert wstring to string (For GPU info)
+
+#include "Providers/Globals.h"
 #include "Primitive.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "glut/glut.h"
 
-//#pragma comment (lib, "glut/glut32.lib")
 
 namespace Cronos {
 
@@ -266,7 +267,7 @@ namespace Cronos {
 
 		glBegin(GL_LINES);
 
-		float d = 200.0f;
+		float d = 20.0f;
 
 		for (float i = -d; i <= d; i += 1.0f)
 		{

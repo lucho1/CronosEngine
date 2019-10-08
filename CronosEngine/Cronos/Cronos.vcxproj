@@ -57,7 +57,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>cnpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -82,7 +82,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>cnpch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -109,10 +109,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h" />
-    <ClInclude Include="src\Core\Errors.h" />
-    <ClInclude Include="src\Core\Globals.h" />
     <ClInclude Include="src\Core\Module.h" />
-    <ClInclude Include="src\Core\cnpch.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
@@ -123,13 +120,19 @@
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
     <ClInclude Include="src\ImGui\imnodes.h" />
     <ClInclude Include="src\Modules\Audio.h" />
-    <ClInclude Include="src\Modules\Camera3D.h" />
+    <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
+    <ClInclude Include="src\Providers\Errors.h" />
+    <ClInclude Include="src\Providers\Globals.h" />
+    <ClInclude Include="src\Providers\SystemInfo.h" />
+    <ClInclude Include="src\Providers\cnpch.h" />
+    <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
+    <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -498,14 +501,14 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
+    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
+    <ClInclude Include="vendor\mmgr\mmgr.h" />
+    <ClInclude Include="vendor\mmgr\nommgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />
-    <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
-    <ClCompile Include="src\Core\cnpch.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
     <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />
@@ -516,13 +519,22 @@
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\ImGui\imnodes.cpp" />
     <ClCompile Include="src\Modules\Audio.cpp" />
-    <ClCompile Include="src\Modules\Camera3D.cpp" />
+    <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
+    <ClCompile Include="src\Providers\Log.cpp" />
+    <ClCompile Include="src\Providers\SystemInfo.cpp" />
+    <ClCompile Include="src\Providers\cnpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
+    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">

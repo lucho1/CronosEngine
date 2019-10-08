@@ -1,14 +1,11 @@
-#include "cnpch.h"
-#include "Globals.h"
+#include "Providers/cnpch.h"
+#include <codecvt> //To convert wstring to string (For GPU info)
+
+#include "Providers/Globals.h"
 #include "Application.h"
 #include "GLRenderer3D.h"
 
-//#include "SDL/include/SDL_opengl.h"
-// #include <gl/GL.h>
-//#include <gl/GLU.h>
 #include <glad/glad.h>
-//#pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
-//#pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
 namespace Cronos {
 
@@ -54,7 +51,7 @@ namespace Cronos {
 			GLenum error = glGetError();
 			if (error != GL_NO_ERROR)
 			{
-				
+
 				LOG("Error initializing OpenGL! %s\n", error);
 				ret = false;
 			}
@@ -75,7 +72,7 @@ namespace Cronos {
 			glClearDepth(1.0f);
 
 			//Initialize clear color
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 			//Check for error
 			error = glGetError();
@@ -89,8 +86,8 @@ namespace Cronos {
 			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
 			lights[0].ref = GL_LIGHT0;
-			lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
-			lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
+			lights[0].ambient.Set(0.75f, 0.75f, 0.75f, 1.0f); //0.25f, 0.25f, 0.25f, 1.0f
+			lights[0].diffuse.Set(0.0f, 0.0f, 0.0f, 0.0f); //0.75f, 0.75f, 0.75f, 1.0f
 			lights[0].SetPos(0.0f, 0.0f, 2.5f);
 			lights[0].Init();
 
@@ -108,7 +105,7 @@ namespace Cronos {
 		}
 
 		// Projection matrix for
-		OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		App->window->OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		return ret;
 	}
@@ -120,10 +117,10 @@ namespace Cronos {
 		glLoadIdentity();
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(App->camera->GetViewMatrix());
+		glLoadMatrixf(App->engineCamera->GetViewMatrix());
 
 		// light 0 on cam pos
-		lights[0].SetPos(App->camera->m_Position.x, App->camera->m_Position.y, App->camera->m_Position.z);
+		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
 
 		for (uint i = 0; i < MAX_LIGHTS; ++i)
 			lights[i].Render();
@@ -146,18 +143,4 @@ namespace Cronos {
 
 		return true;
 	}
-
-
-	void GLRenderer3D::OnResize(int width, int height)
-	{
-		glViewport(0, 0, width, height);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
-		glLoadMatrixf(&ProjectionMatrix);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	}
-
 }
