@@ -15,7 +15,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Cronos</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -127,8 +127,8 @@
     <ClInclude Include="src\Modules\Scene.h" />
     <ClInclude Include="src\Providers\Errors.h" />
     <ClInclude Include="src\Providers\Globals.h" />
-    <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Providers\SystemInfo.h" />
+    <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
@@ -525,18 +525,16 @@
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
     <ClCompile Include="src\Providers\Log.cpp" />
+    <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="src\Providers\cnpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\Providers\SystemInfo.cpp" />
-    <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
-    <ClCompile Include="src\Renderer\Primitive.cpp" />
-    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
-    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
     <ClCompile Include="src\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
+    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">

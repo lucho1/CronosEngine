@@ -108,13 +108,22 @@
     <ClInclude Include="src\Providers\Globals.h">
       <Filter>src\Providers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Providers\SystemInfo.h">
+      <Filter>src\Providers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Providers\cnpch.h">
       <Filter>src\Providers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Buffers.h">
+      <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Primitive.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\VertexArray.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
@@ -1221,13 +1230,10 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\Providers\SystemInfo.h" />
-    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
-    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
     <ClInclude Include="vendor\mmgr\mmgr.h" />
     <ClInclude Include="vendor\mmgr\nommgr.h" />
-    <ClInclude Include="src\Renderer\Buffers.h" />
-    <ClInclude Include="src\Renderer\VertexArray.h" />
+    <ClInclude Include="vendor\gpudetect\DeviceId.h" />
+    <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1284,8 +1290,14 @@
     <ClCompile Include="src\Providers\Log.cpp">
       <Filter>src\Providers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Providers\SystemInfo.cpp">
+      <Filter>src\Providers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Providers\cnpch.cpp">
       <Filter>src\Providers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Buffers.cpp">
+      <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
       <Filter>src\Renderer</Filter>
@@ -1293,10 +1305,10 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Providers\SystemInfo.cpp" />
-    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
+    <ClCompile Include="src\Renderer\VertexArray.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
-    <ClCompile Include="src\Renderer\Buffers.cpp" />
-    <ClCompile Include="src\Renderer\VertexArray.cpp" />
+    <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
   </ItemGroup>
 </Project>
