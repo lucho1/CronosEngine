@@ -134,9 +134,6 @@ namespace Cronos {
 	{
 		ExtractMemoryInfo();
 		RecalculateMemStatisticsFromMMGR();
-
-		m_MemoryInfo_StatsFromMMRG;
-		int a = 0;
 	}
 
 	
@@ -166,10 +163,10 @@ namespace Cronos {
 	const uint MemoryHardware::GetMemStatsFromMMGR_TotalActualMemory()			const { return m_MemoryInfo_StatsFromMMRG.totalActualMemory; }
 	const uint MemoryHardware::GetMemStatsFromMMGR_PeakReportedMemory()			const { return m_MemoryInfo_StatsFromMMRG.peakReportedMemory; }
 	const uint MemoryHardware::GetMemStatsFromMMGR_PeakActualMemory()			const { return m_MemoryInfo_StatsFromMMRG.peakActualMemory; }
-
+	
 	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedReportedMemory()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedReportedMemory; }
 	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedActualMemory()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedActualMemory; }
-
+	
 	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedAllocUnitCount()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedAllocUnitCount; }
 	const uint MemoryHardware::GetMemStatsFromMMGR_TotalAllocUnitCount()		const { return m_MemoryInfo_StatsFromMMRG.totalAllocUnitCount; }
 	const uint MemoryHardware::GetMemStatsFromMMGR_PeakAllocUnitCount()			const { return m_MemoryInfo_StatsFromMMRG.peakAllocUnitCount; }
