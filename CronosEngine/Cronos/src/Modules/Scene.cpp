@@ -28,14 +28,14 @@ namespace Cronos {
 
 		//---------------- TEST ----------------//		
 		float cbeVertices[3 * 8] = {
-			-10.0f,	-2.0f,	-10.0f, //1
-			 10.0f,	-2.0f,	-10.0f, //2
-			 10.0f,	 2.0f,	-10.0f, //3
-			-10.0f,	 2.0f,	-10.0f, //4
-			-10.0f,	 2.0f,	 10.0f, //5
-			 10.0f,	 2.0f,	 10.0f, //6
-			 10.0f,	-2.0f,	 10.0f, //7
-			-10.0f,	-2.0f,	 10.0f  //8
+			-2.0f,	-2.0f,	-2.0f, //1
+			 2.0f,	-2.0f,	-2.0f, //2
+			 2.0f,	 2.0f,	-2.0f, //3
+			-2.0f,	 2.0f,	-2.0f, //4
+			-2.0f,	 2.0f,	 2.0f, //5
+			 2.0f,	 2.0f,	 2.0f, //6
+			 2.0f,	-2.0f,	 2.0f, //7
+			-2.0f,	-2.0f,	 2.0f  //8
 		};	// x	  y		  z	
 		uint cbeIndices[6 * 6] = {
 			0, 1, 2, 2, 3, 0, //F1
@@ -102,6 +102,7 @@ namespace Cronos {
 		//cbe.Render();
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
+		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
 
 		return UPDATE_CONTINUE;
