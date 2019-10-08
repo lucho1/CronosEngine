@@ -14,9 +14,7 @@
 
 #include <assert.h>
 #include <new>
-#include <string.h> // strlen, strncmp
-#include <stdio.h>  // for fwrite, ssprintf, sscanf
-#include <stdlib.h>
+
 
 namespace imnodes
 {

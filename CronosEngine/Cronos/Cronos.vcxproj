@@ -503,9 +503,7 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
     <ClInclude Include="vendor\gpudetect\DeviceId.h" />
     <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
-    <ClInclude Include="vendor\imgui\imgui.h" />
     <ClInclude Include="vendor\mmgr\mmgr.h" />
-    <ClInclude Include="vendor\mmgr\nommgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />
