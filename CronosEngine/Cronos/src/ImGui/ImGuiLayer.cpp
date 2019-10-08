@@ -83,8 +83,8 @@ namespace Cronos {
 		
 		int c; // note: int, not char, required to handle EOF
 		while ((c = fgetc(fp)) != EOF) { // standard C I/O file reading loop
-			char a = putchar(c);
-			LicenseString += a;
+			//char a = putchar(c);
+			LicenseString += c;
 		}
 
 
