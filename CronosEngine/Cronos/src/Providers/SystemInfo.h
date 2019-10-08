@@ -8,12 +8,11 @@
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
-typedef struct sMStats;
+//typedef struct sMStats;
 
 namespace Cronos
 {
 	
-
 	//-------------------------- SOFTWARE INFO --------------------------//
 	class SoftwareInfo
 	{
@@ -33,7 +32,7 @@ namespace Cronos
 
 	public:
 
-		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		//Methods to return the different values for software versions... Ready to print -- Use them :)
 		const std::string GetWindowsVersion()	const		{ return mSoftware_WindowsVersion; }
@@ -68,7 +67,6 @@ namespace Cronos
 	private:
 
 		mutable MEMORYSTATUSEX m_MemoryInfo;
-		sMStats* m_MemoryInfo_StatsFromMMRG;
 
 		mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
 		mutable SIZE_T mProcess_vMemUsed;
@@ -78,10 +76,9 @@ namespace Cronos
 
 	public:
 
-		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 		//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
 		void RecalculateRAMParameters();
-		//auto& getRAMINF();
 
 		const float GetRAMSizeFromSDL()								const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
 
@@ -105,17 +102,17 @@ namespace Cronos
 		const uint GetPhysMemoryUsedByProcess()						const { return(uint)mProcess_physMemUsed / BTOMB; } //In MB
 
 		//Getting Stats of Memory from MMRG
-		//const uint GetMemStatsFromMMRG_TotalReportedMemory()		const	{ return m_MemoryInfo_StatsFromMMRG.totalReportedMemory; }
-		//const uint GetMemStatsFromMMRG_TotalActualMemory()			const	{ return m_MemoryInfo_StatsFromMMRG.totalActualMemory; }
-		//const uint GetMemStatsFromMMRG_PeakReportedMemory()			const	{ return m_MemoryInfo_StatsFromMMRG.peakReportedMemory; }
-		//const uint GetMemStatsFromMMRG_PeakActualMemory()			const	{ return m_MemoryInfo_StatsFromMMRG.peakActualMemory; }
-		//
-		//const uint GetMemStatsFromMMRG_AccumulatedReportedMemory()	const	{ return m_MemoryInfo_StatsFromMMRG.accumulatedReportedMemory; }
-		//const uint GetMemStatsFromMMRG_AccumulatedActualMemory()	const	{ return m_MemoryInfo_StatsFromMMRG.accumulatedActualMemory; }
-		//
-		//const uint GetMemStatsFromMMRG_AccumulatedAllocUnitCount()	const	{ return m_MemoryInfo_StatsFromMMRG.accumulatedAllocUnitCount; }
-		//const uint GetMemStatsFromMMRG_TotalAllocUnitCount()		const	{ return m_MemoryInfo_StatsFromMMRG.totalAllocUnitCount; }
-		//const uint GetMemStatsFromMMRG_PeakAllocUnitCount()			const	{ return m_MemoryInfo_StatsFromMMRG.peakAllocUnitCount; }
+		const uint GetMemStatsFromMMGR_TotalReportedMemory()		const;
+		const uint GetMemStatsFromMMGR_TotalActualMemory()			const;
+		const uint GetMemStatsFromMMGR_PeakReportedMemory()			const;
+		const uint GetMemStatsFromMMGR_PeakActualMemory()			const;
+																		 
+		const uint GetMemStatsFromMMGR_AccumulatedReportedMemory()	const;
+		const uint GetMemStatsFromMMGR_AccumulatedActualMemory()	const;
+																		 
+		const uint GetMemStatsFromMMGR_AccumulatedAllocUnitCount()	const;
+		const uint GetMemStatsFromMMGR_TotalAllocUnitCount()		const;
+		const uint GetMemStatsFromMMGR_PeakAllocUnitCount()			const;
 	
 	};
 
@@ -159,7 +156,8 @@ namespace Cronos
 
 	public:
 
-		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
 
 		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
 		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
@@ -168,7 +166,7 @@ namespace Cronos
 		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		
 		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
-		void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
+		
 	};
 
 
@@ -208,7 +206,7 @@ namespace Cronos
 
 	public:
 
-		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
+		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 
 		const uint GetCPUCores()						const	{ return SDL_GetCPUCount(); }
 		const uint GetCPUCacheLine1Size()				const	{ return SDL_GetCPUCacheLineSize(); } //In bytes

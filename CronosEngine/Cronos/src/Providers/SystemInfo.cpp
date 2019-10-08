@@ -9,22 +9,27 @@
 
 namespace Cronos {
 
+	static sMStats m_MemoryInfo_StatsFromMMRG;
+	void RecalculateMemStatisticsFromMMGR() {
+		m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
+	}
+
 	//-------------------------------------------------------------------//
 	//--------------------------- SYSTEM INFO ---------------------------//
 	//-------------------------------------------------------------------//
 	SystemInfo::SystemInfo()
 	{
-		mSoftware_Info.GetValues();
-		mHardware_MemoryInfo.GetValues();
-		mHardware_GPUInfo.GetValues();
-		mHardware_CPUInfo.GetValues();
+		mSoftware_Info.DetectSystemProperties();
+		mHardware_MemoryInfo.DetectSystemProperties();
+		mHardware_GPUInfo.DetectSystemProperties();
+		mHardware_CPUInfo.DetectSystemProperties();
 	}
 
 
 	//-------------------------------------------------------------------//
 	//-------------------------- SOFTWARE INFO --------------------------//
 	//-------------------------------------------------------------------//
-	void SoftwareInfo::GetValues()
+	void SoftwareInfo::DetectSystemProperties()
 	{
 		mSoftware_CppVersion =	ExtractCppVersion(__cplusplus);
 		mSoftware_WindowsVersion =	ExtractWindowsVersion();
@@ -125,9 +130,13 @@ namespace Cronos {
 	//-------------------------------------------------------------------//
 	//--------------------------- MEMORY INFO ---------------------------//
 	//-------------------------------------------------------------------//
-	void MemoryHardware::GetValues()
+	void MemoryHardware::DetectSystemProperties()
 	{
 		ExtractMemoryInfo();
+		RecalculateMemStatisticsFromMMGR();
+
+		m_MemoryInfo_StatsFromMMRG;
+		int a = 0;
 	}
 
 	
@@ -148,24 +157,28 @@ namespace Cronos {
 
 	void MemoryHardware::RecalculateRAMParameters()
 	{
-		ExtractMemoryInfo();
-		//Cronos::sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
-		
-		m_MemoryInfo_StatsFromMMRG = &m_getMemoryStatistics();
-		//sMStats tmp_MemStats 
-		//m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
-		//m_MemoryInfo_StatsFromMMRG = tmp_MemStats;
+		DetectSystemProperties();
 	}
-	//auto& MemoryHardware::getRAMINF()
-	//{
-	//	sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
-	//	return m_MemoryInfo_StatsFromMMRG;
-	//}
+
+
+	//Getting Stats of Memory from MMRG
+	const uint MemoryHardware::GetMemStatsFromMMGR_TotalReportedMemory()		const { return m_MemoryInfo_StatsFromMMRG.totalReportedMemory; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_TotalActualMemory()			const { return m_MemoryInfo_StatsFromMMRG.totalActualMemory; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_PeakReportedMemory()			const { return m_MemoryInfo_StatsFromMMRG.peakReportedMemory; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_PeakActualMemory()			const { return m_MemoryInfo_StatsFromMMRG.peakActualMemory; }
+
+	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedReportedMemory()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedReportedMemory; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedActualMemory()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedActualMemory; }
+
+	const uint MemoryHardware::GetMemStatsFromMMGR_AccumulatedAllocUnitCount()	const { return m_MemoryInfo_StatsFromMMRG.accumulatedAllocUnitCount; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_TotalAllocUnitCount()		const { return m_MemoryInfo_StatsFromMMRG.totalAllocUnitCount; }
+	const uint MemoryHardware::GetMemStatsFromMMGR_PeakAllocUnitCount()			const { return m_MemoryInfo_StatsFromMMRG.peakAllocUnitCount; }
+
 
 	//-------------------------------------------------------------------//
 	//---------------------------- GPU INFO -----------------------------//
 	//-------------------------------------------------------------------//
-	void GPUHardware::GetValues()
+	void GPUHardware::DetectSystemProperties()
 	{
 		GetGPUTotalVRAM();
 		GetGPUCurrentVRAM();
@@ -220,7 +233,7 @@ namespace Cronos {
 	//-------------------------------------------------------------------//
 	//--------------------------- CPU INFO ------------------------------//
 	//-------------------------------------------------------------------//
-	void ProcessorHardware::GetValues()
+	void ProcessorHardware::DetectSystemProperties()
 	{
 		GetCPUSystemInfo();
 		CheckForCPUInstructionsSet();
