@@ -8,11 +8,11 @@
 #define KBTOMB 1024.0f //To GB: (1048576.0f)
 #define BTOMB (1048576.0f)
 
-
+typedef struct sMStats;
 
 namespace Cronos
 {
-	struct sMStats;
+	
 
 	//-------------------------- SOFTWARE INFO --------------------------//
 	class SoftwareInfo
@@ -68,7 +68,7 @@ namespace Cronos
 	private:
 
 		mutable MEMORYSTATUSEX m_MemoryInfo;
-		//sMStats m_MemoryInfo_StatsFromMMRG;
+		sMStats* m_MemoryInfo_StatsFromMMRG;
 
 		mutable PROCESS_MEMORY_COUNTERS m_ProcessMemCounters;
 		mutable SIZE_T mProcess_vMemUsed;
@@ -80,7 +80,7 @@ namespace Cronos
 
 		void GetValues(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 		//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
-		void RecalculateRAMParameters() const;
+		void RecalculateRAMParameters();
 		//auto& getRAMINF();
 
 		const float GetRAMSizeFromSDL()								const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB

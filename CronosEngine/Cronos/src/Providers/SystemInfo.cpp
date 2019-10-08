@@ -146,12 +146,12 @@ namespace Cronos {
 	}
 
 
-	void MemoryHardware::RecalculateRAMParameters() const
+	void MemoryHardware::RecalculateRAMParameters()
 	{
 		ExtractMemoryInfo();
-		sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
+		//Cronos::sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
 		
-		
+		m_MemoryInfo_StatsFromMMRG = &m_getMemoryStatistics();
 		//sMStats tmp_MemStats 
 		//m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
 		//m_MemoryInfo_StatsFromMMRG = tmp_MemStats;
