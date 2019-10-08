@@ -146,6 +146,22 @@ namespace Cronos {
 	}
 
 
+	void MemoryHardware::RecalculateRAMParameters() const
+	{
+		ExtractMemoryInfo();
+		sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
+		
+		
+		//sMStats tmp_MemStats 
+		//m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
+		//m_MemoryInfo_StatsFromMMRG = tmp_MemStats;
+	}
+	//auto& MemoryHardware::getRAMINF()
+	//{
+	//	sMStats m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics();
+	//	return m_MemoryInfo_StatsFromMMRG;
+	//}
+
 	//-------------------------------------------------------------------//
 	//---------------------------- GPU INFO -----------------------------//
 	//-------------------------------------------------------------------//
