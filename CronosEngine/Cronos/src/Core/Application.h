@@ -5,8 +5,6 @@
 
 #include "Providers/SystemInfo.h"
 
-#include "Providers/Globals.h" //TODO: DEL
-
 #include "Modules/SDLWindow.h"
 #include "Modules/Input.h"
 #include "Modules/Audio.h"
@@ -17,11 +15,6 @@
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
 
-#include "Timers/Timer.h"
-
-#include "json/json.hpp"
-
-using json = nlohmann::json;
 
 namespace Cronos {
 
@@ -57,12 +50,6 @@ namespace Cronos {
 		//FPS CAP
 		int m_CappedMS = -1;
 		int m_FPSCap = -1;
-
-		//JSON
-		json JSONFile;
-		void LoadJsonFile();
-		void SaveJsonFile();
-		const char* jsonAddress;
 
 	public:
 

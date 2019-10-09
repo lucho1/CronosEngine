@@ -1,9 +1,10 @@
 #include "Providers/cnpch.h"
 
-#include "Application.h"
-#include "Helpers/RNGen.h"
-
 #include "mmgr/mmgr.h"
+
+#include "Application.h"
+
+#include "Helpers/RNGen.h"
 
 namespace Cronos {
 
@@ -39,10 +40,7 @@ namespace Cronos {
 
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;
-			
-		//Json file
-		jsonAddress = "config.json";
-		LoadJsonFile();
+				
 	}
 
 	Application::~Application()
@@ -141,31 +139,6 @@ namespace Cronos {
 	void Application::AddModule(Module* mod)
 	{
 		m_ModulesList.push_back(mod);
-	}
-
-	void Application::LoadJsonFile()
-	{
-		json config;
-
-		//If the adress of the settings file is null, create  an exception
-		CRONOS_ASSERT(jsonAddress != nullptr, "ADDRESS NULLPTR");
-
-		//Create a stream and open the file
-		std::ifstream stream;
-		stream.open(jsonAddress);
-
-		config = json::parse(stream);
-
-		stream.close();
-
-		std::string name = config["Application"]["Name"];
-		std::string version = config["Application"]["Version"];
-		int a = 0;
-	}
-
-	void Application::SaveJsonFile()
-	{
-
 	}
 
 }
