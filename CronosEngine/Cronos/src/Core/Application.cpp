@@ -56,8 +56,10 @@ namespace Cronos {
 		//Not a Module!
 		//SystemInfo AppSystemInfo;
 		//Json file
-		LoadJsonFile("res/configuration/config.json");
-		SaveJsonFile("res/configuration/config.json");
+		m_DefaultConfigurationFilepath = "res/configuration/config.json";
+		mt_SaveTimer.Start();
+		//LoadJsonFile("res/configuration/config.json");
+		//SaveJsonFile("res/configuration/config.json");
 
 		for (auto& element : m_ModulesList)
 			if (ret)
@@ -87,6 +89,12 @@ namespace Cronos {
 	// ---------------------------------------------
 	void Application::FinishUpdate()
 	{
+		if (m_MustLoad)
+			LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
+		if (m_MustSave || mt_SaveTimer.ReadSec() > 30.0f)
+			SaveJsonFile(m_DefaultConfigurationFilepath.c_str());
+
+
 		//For performance information purposes
 		//if(mt_LastSecFrameTime.Read() > 1000) 
 		//{
@@ -143,6 +151,19 @@ namespace Cronos {
 		m_ModulesList.push_back(mod);
 	}
 
+
+	// SERIALIZATION ---------------------------------------------
+	void Application::LoadEngineData() const
+	{
+		m_MustLoad = true;
+	}
+
+	void Application::SaveEngineData() const
+	{
+		m_MustSave = false;
+	}
+
+
 	//Save/Load JSON File
 	void Application::LoadJsonFile(const char* filePath) const
 	{
@@ -176,7 +197,7 @@ namespace Cronos {
 		//Call all modules to load
 
 
-
+		m_MustLoad = false;
 	}
 
 
@@ -204,6 +225,9 @@ namespace Cronos {
 		aux_JSONFile["Application"]["Name"] = "CronosEngine";
 		aux_JSONFile["Application"]["Version"] = "v0.1";
 
+		//TODO: Do with the loaded data what you have to do to make it useful
+		//TODO: Create a default time to save
+
 		//Call modules to Save into json aux file
 
 
@@ -215,6 +239,8 @@ namespace Cronos {
 		OutputFile_Stream << std::setw(4) << aux_JSONFile << std::endl;
 		OutputFile_Stream.close();
 		m_JSONConfigFile = aux_JSONFile;
+		m_MustSave = false;
+		mt_SaveTimer.Start();
 	}
 
 }

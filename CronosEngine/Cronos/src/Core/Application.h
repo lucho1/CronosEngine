@@ -59,7 +59,8 @@ namespace Cronos {
 		mutable json m_JSONConfigFile;
 		mutable bool m_MustLoad = false;
 		mutable bool m_MustSave = false;
-		Timer mt_SaveTimer;
+		mutable Timer mt_SaveTimer;
+		std::string m_DefaultConfigurationFilepath;
 
 	private:
 
@@ -84,8 +85,8 @@ namespace Cronos {
 		inline const int GetFPSCap() const { return m_FPSCap; }
 
 		//SERIALIZATION & CONFIG READING
-		//void SaveEngineData() const;
-		//void LoadEngineData() const;
+		void SaveEngineData() const;
+		void LoadEngineData() const;
 	};
 
 	extern Application* App;
