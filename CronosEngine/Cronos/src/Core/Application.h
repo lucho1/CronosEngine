@@ -5,6 +5,8 @@
 
 #include "Providers/SystemInfo.h"
 
+#include "Providers/Globals.h" //TODO: DEL
+
 #include "Modules/SDLWindow.h"
 #include "Modules/Input.h"
 #include "Modules/Audio.h"
@@ -15,6 +17,10 @@
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
 
+#include "Timers/Timer.h"
+
+#include "json/json.hpp"
+using json = nlohmann::json;
 
 namespace Cronos {
 
@@ -30,8 +36,6 @@ namespace Cronos {
 		EngineCamera* engineCamera;
 		ImGuiLayer* EditorGUI;
 		Filesystem* filesystem;
-
-		
 
 	private:
 
@@ -51,6 +55,22 @@ namespace Cronos {
 		int m_CappedMS = -1;
 		int m_FPSCap = -1;
 
+		//SERIALIZATION & CONFIG READING
+		mutable json m_JSONConfigFile;
+		mutable bool m_MustLoad = false;
+		mutable bool m_MustSave = false;
+		Timer mt_SaveTimer;
+
+	private:
+
+		void AddModule(Module* mod);
+		void PrepareUpdate();
+		void FinishUpdate();
+
+		//SERIALIZATION & CONFIG READING
+		void LoadJsonFile(const char* filePath) const;
+		void SaveJsonFile(const char* filePath) const;
+		
 	public:
 
 		Application(int FPSCap = -1);
@@ -63,11 +83,9 @@ namespace Cronos {
 		inline const float GetDeltaTime() const { return m_Timestep; }
 		inline const int GetFPSCap() const { return m_FPSCap; }
 
-	private:
-
-		void AddModule(Module* mod);
-		void PrepareUpdate();
-		void FinishUpdate();
+		//SERIALIZATION & CONFIG READING
+		//void SaveEngineData() const;
+		//void LoadEngineData() const;
 	};
 
 	extern Application* App;

@@ -25,7 +25,8 @@ namespace Cronos {
 // -------------------------------------------------------------------------------
 
 // ERROR HANDLING ----------------------------------------------------------------
-#define ASSERT(x, ...) if(!(x)) {std::cout << "ASSERION FAILED: " << __VA_ARGS__ << std::endl; __debugbreak(); }
+#define CRONOS_ASSERT(x, ...) if(!(x)) {std::cout << "CRONOS ERROR ASSERT: " << __VA_ARGS__ << std::endl; __debugbreak(); }
+#define CRONOS_WARN(x, ...) if(!(x)) {std::cout << "CRONOS WARN: " << __VA_ARGS__ << std::endl; }
 
 #ifdef _DEBUG
 	#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));

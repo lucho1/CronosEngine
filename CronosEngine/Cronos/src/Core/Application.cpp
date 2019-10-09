@@ -1,10 +1,9 @@
 #include "Providers/cnpch.h"
 
-#include "mmgr/mmgr.h"
-
 #include "Application.h"
-
 #include "Helpers/RNGen.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 
@@ -40,7 +39,7 @@ namespace Cronos {
 
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;
-				
+		
 	}
 
 	Application::~Application()
@@ -54,6 +53,12 @@ namespace Cronos {
 	{
 		bool ret = true;
 
+		//Not a Module!
+		//SystemInfo AppSystemInfo;
+		//Json file
+		LoadJsonFile("res/configuration/config.json");
+		SaveJsonFile("res/configuration/config.json");
+
 		for (auto& element : m_ModulesList)
 			if (ret)
 				ret = element->OnInit();
@@ -63,9 +68,6 @@ namespace Cronos {
 		for (auto& element : m_ModulesList)
 			if (ret)
 				ret = element->OnStart();
-
-		//Not a Module!
-		//SystemInfo AppSystemInfo;
 
 		return ret;
 	}
@@ -139,6 +141,80 @@ namespace Cronos {
 	void Application::AddModule(Module* mod)
 	{
 		m_ModulesList.push_back(mod);
+	}
+
+	//Save/Load JSON File
+	void Application::LoadJsonFile(const char* filePath) const
+	{
+		//If the path is nullptr, we might not want to break, but to issue a warning
+		if (filePath == nullptr) {
+
+			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to load: " + std::string(filePath)));
+			return;
+		}
+
+		//Load a file from the given path into an input file stream (ifstream)
+		std::ifstream InputFile_Stream;
+		InputFile_Stream.open(filePath);
+
+		//Same than above
+		if (InputFile_Stream.is_open() == false) {
+
+			CRONOS_WARN(InputFile_Stream.is_open(), "Unable to Open file to load!");
+			InputFile_Stream.close();
+			return;
+		}
+
+		//Load the file into the json file and close the file
+		m_JSONConfigFile = json::parse(InputFile_Stream);
+		InputFile_Stream.close();
+
+		//Now copy all the json file data into our code data, then call all modules to load
+		std::string name = m_JSONConfigFile["Application"]["Name"];
+		std::string version = m_JSONConfigFile["Application"]["Version"];
+
+		//Call all modules to load
+
+
+
+	}
+
+
+	void Application::SaveJsonFile(const char* filePath) const
+	{
+		if (filePath == nullptr) {
+
+			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
+			return;
+		}
+		
+		//As we did first in Load(), we create now an output file stream (ofstream) to save there the json file
+		std::ofstream OutputFile_Stream;
+		OutputFile_Stream.open(filePath);
+
+		if (OutputFile_Stream.is_open() == false) {
+
+			CRONOS_WARN(OutputFile_Stream.is_open(), "Unable to Open file to save!");
+			OutputFile_Stream.close();
+			return;
+		}
+
+		//Auxiliar JSON File to which to save all data, then call all modules to save
+		json aux_JSONFile;
+		aux_JSONFile["Application"]["Name"] = "CronosEngine";
+		aux_JSONFile["Application"]["Version"] = "v0.1";
+
+		//Call modules to Save into json aux file
+
+
+
+
+
+
+
+		OutputFile_Stream << std::setw(4) << aux_JSONFile << std::endl;
+		OutputFile_Stream.close();
+		m_JSONConfigFile = aux_JSONFile;
 	}
 
 }
