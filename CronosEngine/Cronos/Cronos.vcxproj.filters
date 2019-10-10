@@ -1235,6 +1235,39 @@
     <ClInclude Include="vendor\gpudetect\DeviceId.h" />
     <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
+    <ClInclude Include="vendor\Assimp\include\ai_assert.h" />
+    <ClInclude Include="vendor\Assimp\include\anim.h" />
+    <ClInclude Include="vendor\Assimp\include\camera.h" />
+    <ClInclude Include="vendor\Assimp\include\cexport.h" />
+    <ClInclude Include="vendor\Assimp\include\cfileio.h" />
+    <ClInclude Include="vendor\Assimp\include\cimport.h" />
+    <ClInclude Include="vendor\Assimp\include\color4.h" />
+    <ClInclude Include="vendor\Assimp\include\config.h" />
+    <ClInclude Include="vendor\Assimp\include\DefaultLogger.hpp" />
+    <ClInclude Include="vendor\Assimp\include\defs.h" />
+    <ClInclude Include="vendor\Assimp\include\Exporter.hpp" />
+    <ClInclude Include="vendor\Assimp\include\Importer.hpp" />
+    <ClInclude Include="vendor\Assimp\include\importerdesc.h" />
+    <ClInclude Include="vendor\Assimp\include\IOStream.hpp" />
+    <ClInclude Include="vendor\Assimp\include\IOSystem.hpp" />
+    <ClInclude Include="vendor\Assimp\include\light.h" />
+    <ClInclude Include="vendor\Assimp\include\Logger.hpp" />
+    <ClInclude Include="vendor\Assimp\include\LogStream.hpp" />
+    <ClInclude Include="vendor\Assimp\include\material.h" />
+    <ClInclude Include="vendor\Assimp\include\matrix3x3.h" />
+    <ClInclude Include="vendor\Assimp\include\matrix4x4.h" />
+    <ClInclude Include="vendor\Assimp\include\mesh.h" />
+    <ClInclude Include="vendor\Assimp\include\metadata.h" />
+    <ClInclude Include="vendor\Assimp\include\NullLogger.hpp" />
+    <ClInclude Include="vendor\Assimp\include\postprocess.h" />
+    <ClInclude Include="vendor\Assimp\include\ProgressHandler.hpp" />
+    <ClInclude Include="vendor\Assimp\include\quaternion.h" />
+    <ClInclude Include="vendor\Assimp\include\scene.h" />
+    <ClInclude Include="vendor\Assimp\include\texture.h" />
+    <ClInclude Include="vendor\Assimp\include\types.h" />
+    <ClInclude Include="vendor\Assimp\include\vector2.h" />
+    <ClInclude Include="vendor\Assimp\include\vector3.h" />
+    <ClInclude Include="vendor\Assimp\include\version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1312,5 +1345,14 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vendor\Assimp\include\color4.inl" />
+    <None Include="vendor\Assimp\include\material.inl" />
+    <None Include="vendor\Assimp\include\matrix3x3.inl" />
+    <None Include="vendor\Assimp\include\matrix4x4.inl" />
+    <None Include="vendor\Assimp\include\quaternion.inl" />
+    <None Include="vendor\Assimp\include\vector2.inl" />
+    <None Include="vendor\Assimp\include\vector3.inl" />
   </ItemGroup>
 </Project>

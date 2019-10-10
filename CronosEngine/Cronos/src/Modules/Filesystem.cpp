@@ -195,7 +195,27 @@ namespace Cronos {
 		}
 	}
 
+	bool LoadAssimpMesh(const char* filePath) {
+
+		bool ret = true;
+		const aiScene* scene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
+		if (scene != nullptr&&scene->HasMeshes()) {
+			
+
+			aiReleaseImport(scene);
+		}
+		else {
+			LOG("Error loading scene %s", filePath);
+			ret = false;
+		}
+		
+		return ret;
+	}
+
+
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
+
+		
 
 		static int LastDepth = 0;
 		static int ID = 0;

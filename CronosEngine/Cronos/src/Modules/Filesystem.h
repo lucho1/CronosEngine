@@ -3,11 +3,26 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-
+#include "Assimp/include/cimport.h"
+#include "Assimp/include/scene.h"
+#include "Assimp/include/postprocess.h"
+#include "Assimp/include/cfileio.h"
 
 namespace Cronos {
 
 	class Directories;
+
+	struct VertexData {
+
+		uint id_index = 0; // index in VRAM
+		uint num_index = 0;
+
+		uint* index = nullptr;
+		uint id_vertex = 0; // unique vertex in VRAM
+		uint num_vertex = 0;
+		float* vertex = nullptr;
+
+	};
 
 	enum class ItemType
 	{
@@ -97,6 +112,8 @@ namespace Cronos {
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 
+		bool LoadAssimpMesh(const char* filePath);
+		//aiScene* aiImportFile(const char* filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	private:
 		std::vector <AssetItems*> AssetArray;
