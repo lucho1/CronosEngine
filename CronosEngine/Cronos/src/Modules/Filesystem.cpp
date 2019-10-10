@@ -2,6 +2,12 @@
 
 #include "Filesystem.h"
 #include "Application.h"
+#include "Renderer/Buffers.h"
+#include "Assimp/include/cimport.h"
+#include "Assimp/include/scene.h"
+#include "Assimp/include/postprocess.h"
+#include "Assimp/include/cfileio.h"
+
 #include "imgui.h"
 
 namespace Cronos {
@@ -19,6 +25,7 @@ namespace Cronos {
 	}
 
 	AssetItems::AssetItems(std::filesystem::path m_path,ItemType mtype): type(mtype),m_Path(m_path.string()) {
+
 		m_AssetFullName = m_path.filename().string();
 		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
 		m_AssetNameNoExtension = m_AssetShortName = m_AssetFullName;
@@ -195,12 +202,34 @@ namespace Cronos {
 		}
 	}
 
-	bool LoadAssimpMesh(const char* filePath) {
+	bool Filesystem::LoadAssimpMesh(const char* filePath) {
+		
+		
+		IndexBuffer* testIndex;
+
+		VertexData TestData;
 
 		bool ret = true;
 		const aiScene* scene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
+
 		if (scene != nullptr&&scene->HasMeshes()) {
 			
+			for (int a = 0; a < scene->mNumMeshes; ++a) {
+				aiMesh mMesh = aiMesh
+				TestData.num_vertex = scene->mMeshes[a]->mNumVertices;
+				TestData.vertex = new float[TestData.num_vertex * 3];
+				memcpy(TestData.vertex, scene->mMeshes[a]->mVertices, sizeof(float)*TestData.num_vertex * 3);
+
+				if (scene->mMeshes[a]->HasFaces()) {
+					TestData.num_index = scene->mMeshes[a]->mNumFaces * 3;
+					TestData.index = new uint[TestData.num_index];
+					for (uint i = 0; i < scene->mMeshes[a]->mNumFaces; ++i) {
+						memcpy(&TestData.index[i * 3], scene->mMeshes[a]->mFaces[i].mIndices, 3 * sizeof(uint));
+					}
+				}
+			}
+			VertexBuffer* testVertex = new VertexBuffer(TestData.vertex,sizeof(TestData.vertex));
+			//testVertex->SetLayout(Cronos::)
 
 			aiReleaseImport(scene);
 		}
@@ -215,7 +244,7 @@ namespace Cronos {
 
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
 
-		
+		LoadAssimpMesh("res/warrior.fbx");
 
 		static int LastDepth = 0;
 		static int ID = 0;
