@@ -10,10 +10,12 @@
 
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
+#include "Providers/SystemInfo.h"
 //#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
+#define sameLine ImGui::SameLine();
 //#include <Hazel/stb_image.h>
 
 //#define SRC_DIR "C:/Users/rleon/Documents/Dev/Engine/Hazel"
@@ -860,8 +862,29 @@ namespace Cronos {
 	}
 
 	void ImGuiLayer::GUIDrawConfigHardwareMenu() {
+
+		SystemInfo info;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 15));
+		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 		ImGui::Text("Hardware");
 		ImGui::Separator();
+		ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());
+		ImGui::Separator();
+		ImGui::Text("CPU cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCores()).c_str()); sameLine; ImGui::TextColored(Color, " (Cache : "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCacheLine1Size()).c_str());
+		sameLine; ImGui::TextColored(Color, " kb)");
+		ImGui::Text("System Ram: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()).c_str()); sameLine; ImGui::TextColored(Color, "Gb");
+		ImGui::Text("Caps: "); sameLine; ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetCPUInstructionSet().c_str());
+		ImGui::Separator();
+		ImGui::Text("GPU: "); sameLine; ImGui::TextColored(Color, "vendor "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUVendor).c_str()); sameLine; ImGui::TextColored(Color, " Device"); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
+		ImGui::Text("Brand: "); sameLine; ImGui::TextColored(Color, info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUBrand.c_str());
+		ImGui::Text("VRam Budget: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Usage: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Aviable: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Reserved: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+
+		
+		ImGui::PopStyleVar();
 	};
 	void ImGuiLayer::GUIDrawConfigRendererMenu() {
 
