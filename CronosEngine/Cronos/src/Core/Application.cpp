@@ -4,6 +4,8 @@
 
 #include "Application.h"
 
+#include "Helpers/RNGen.h"
+
 namespace Cronos {
 
 	Application::Application(int FPSCap) : m_FPSCap(FPSCap)

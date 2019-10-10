@@ -25,7 +25,7 @@ namespace Cronos {
 // -------------------------------------------------------------------------------
 
 // ERROR HANDLING ----------------------------------------------------------------
-#define CRONOS_ASSERT(x) if(!(x)) __debugbreak();
+#define ASSERT(x, ...) if(!(x)) {std::cout << "ASSERION FAILED: " << __VA_ARGS__ << std::endl; __debugbreak(); }
 
 #ifdef _DEBUG
 	#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
@@ -38,22 +38,22 @@ namespace Cronos {
 // -------------------------------------------------------------------------------
 
 // DEFINES -----------------------------------------------------------------------
-#define CN_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define CN_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1) //TODO: Delete this
 
 /// Keep a value between 0.0f and 1.0f
-#define CAP(n) ((n <= 0.0f) ? n=0.0f : (n >= 1.0f) ? n=1.0f : n=n)
+#define CAP(n) ((n <= 0.0f) ? n = 0.0f : (n >= 1.0f) ? n = 1.0f : n = n)
 
 /// Conversors
-#define DEGTORAD 0.0174532925199432957f
-#define RADTODEG 57.295779513082320876f
-#define HAVE_M_PI
+#define DEGTORAD	0.0174532925199432957f
+#define RADTODEG	57.295779513082320876f
+#define PI			3.14159265359
 #define TO_BOOL( a )  ( (a != 0) ? true : false )
 
 /// Useful helpers, InRange checker, min, max and clamp
-#define IN_RANGE( value, min, max ) ( ((value) >= (min) && (value) <= (max)) ? 1 : 0 )
 #define MIN( a, b ) ( ((a) < (b)) ? (a) : (b) )
 #define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
 #define CLAMP(x, upper, lower) (MIN(upper, MAX(x, lower)))
+#define IN_RANGE( value, min, max ) ( ((value) >= (MIN) && (value) <= (MAX)) ? 1 : 0 )
 
 /// Standard string size
 #define SHORT_STR	32
