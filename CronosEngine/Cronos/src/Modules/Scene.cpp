@@ -1,12 +1,17 @@
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
+
 
 #include "Application.h"
 #include "Scene.h"
 
 #include "Renderer/Buffers.h"
+#include "Renderer/Model.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
+
+	static Mesh vmeshxd; //To test
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -48,6 +53,26 @@ namespace Cronos {
 			4, 3, 0, 0, 7, 4  //F6
 		};
 
+		std::vector<Vertex>VertexVec;
+		Vertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0), glm::vec2(0.0, 0.0) };
+
+		for (int i = 0; i < 8; i++)
+			VertexVec.push_back(defV);
+
+		uint iter = 0;
+		for (int i = 0; i < 8; i++)
+		{
+			//glm::vec3 pos = glm::vec3(1.0, 1.0, 1.0);
+			glm::vec3 pos = glm::vec3(cbeVertices[0 + iter], cbeVertices[1 + iter], cbeVertices[2 + iter]);
+
+			VertexVec[i].Position = pos;
+			iter += 3;
+		}
+		
+		std::vector<uint> indvec;
+		indvec.assign(cbeIndices, cbeIndices + (6*6));
+		vmeshxd = Mesh(VertexVec, indvec);
+
 		//uint va;
 		//glCreateVertexArrays(1, &va);
 		//glBindVertexArray(va);
@@ -68,14 +93,14 @@ namespace Cronos {
 		//glBindVertexArray(va);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
 
-		VAO = new VertexArray();
-
-		VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
-		VBO->SetLayout({ {Cronos::VertexDataType::VEC3F, "a_Position"} });
-		VAO->AddVertexBuffer(*VBO);
+		//VAO = new VertexArray();
 		//
-		IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));
-		VAO->AddIndexBuffer(*IBO);
+		//VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
+		//VBO->SetLayout({ {Cronos::VertexDataType::VEC3F, "a_Position"} });
+		//VAO->AddVertexBuffer(*VBO);
+		////
+		//IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));
+		//VAO->AddIndexBuffer(*IBO);
 
 		//glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 		return ret;
@@ -99,13 +124,13 @@ namespace Cronos {
 		// "Floor" Plane
 		m_FloorPlane.Render();
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
-		VAO->Bind();
+		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
-
+		vmeshxd.Draw();
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
+		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
 
 		return UPDATE_CONTINUE;
 	}

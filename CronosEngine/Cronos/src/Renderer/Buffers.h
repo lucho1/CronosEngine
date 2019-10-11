@@ -1,7 +1,10 @@
 #ifndef _BUFFERS_H_
 #define _BUFFERS_H_
 
+
 namespace Cronos {
+
+	struct Vertex;
 
 	enum class VertexDataType { NONE = 0, FLOAT, INT, VEC2I, VEC3I, VEC4I, VEC2F, VEC3F, VEC4F, MAT3, MAT4, BOOL };
 
@@ -61,7 +64,7 @@ namespace Cronos {
 
 	public:
 
-		VertexBuffer(float* vertices, uint size);
+		VertexBuffer(/*float**/Vertex* vertices, uint size);
 		~VertexBuffer();
 
 		void Bind() const;

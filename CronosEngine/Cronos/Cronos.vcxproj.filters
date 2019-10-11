@@ -1271,6 +1271,7 @@
     <ClInclude Include="vendor\Assimp\include\Compiler\poppack1.h" />
     <ClInclude Include="vendor\Assimp\include\Compiler\pstdint.h" />
     <ClInclude Include="vendor\Assimp\include\Compiler\pushpack1.h" />
+    <ClInclude Include="src\Renderer\Model.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1348,6 +1349,7 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
+    <ClCompile Include="src\Renderer\Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vendor\Assimp\include\color4.inl" />
