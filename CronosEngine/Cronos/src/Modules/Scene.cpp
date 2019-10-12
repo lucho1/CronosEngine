@@ -12,6 +12,7 @@
 namespace Cronos {
 
 	static Mesh* vmeshxd; //To test
+	static Model* vmodelxd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -54,10 +55,15 @@ namespace Cronos {
 		};
 
 		std::vector<Vertex>VertexVec;
+		std::vector<Texture>TextureVec;
 		Vertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
+		Texture defT = { 0, "TEXTURENONE" };
 
 		for (int i = 0; i < 8; i++)
+		{
+			TextureVec.push_back(defT);
 			VertexVec.push_back(defV);
+		}
 
 		uint iter = 0;
 		for (int i = 0; i < 8; i++)
@@ -69,7 +75,9 @@ namespace Cronos {
 		
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
-		vmeshxd = new Mesh(VertexVec, indvec);
+		vmeshxd = new Mesh(VertexVec, indvec, TextureVec);
+		vmodelxd = new Model("res/warrior.fbx");
+		
 
 		//uint va;
 		//glCreateVertexArrays(1, &va);
@@ -127,6 +135,7 @@ namespace Cronos {
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
 		vmeshxd->Draw();
+		vmodelxd->Draw();
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
