@@ -11,8 +11,8 @@
 
 namespace Cronos {
 
-	static Mesh* vmeshxd; //To test
-	static Model* vmodelxd;
+	static CronosMesh* vmeshxd; //To test
+	static CronosModel* vmodelxd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -54,10 +54,10 @@ namespace Cronos {
 			4, 3, 0, 0, 7, 4  //F6
 		};
 
-		std::vector<Vertex>VertexVec;
-		std::vector<Texture>TextureVec;
-		Vertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
-		Texture defT = { 0, "TEXTURENONE" };
+		std::vector<CronosVertex>VertexVec;
+		std::vector<CronosTexture>TextureVec;
+		CronosVertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
+		CronosTexture defT = { 0, "TEXTURENONE" };
 
 		for (int i = 0; i < 8; i++)
 		{
@@ -75,9 +75,9 @@ namespace Cronos {
 		
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
-		vmeshxd = new Mesh(VertexVec, indvec, TextureVec);
-		vmodelxd = new Model("res/warrior.fbx");
-		
+		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
+		vmodelxd = new CronosModel("res/warrior.fbx");
+		vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
 		//glCreateVertexArrays(1, &va);
@@ -136,6 +136,10 @@ namespace Cronos {
 		//cbe.Render();
 		vmeshxd->Draw();
 		vmodelxd->Draw();
+
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
+
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);

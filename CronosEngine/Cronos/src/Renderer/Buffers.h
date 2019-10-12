@@ -4,7 +4,7 @@
 
 namespace Cronos {
 
-	struct Vertex;
+	struct CronosVertex;
 
 	enum class VertexDataType { NONE = 0, FLOAT, INT, VEC2I, VEC3I, VEC4I, VEC2F, VEC3F, VEC4F, MAT3, MAT4, BOOL };
 
@@ -64,7 +64,7 @@ namespace Cronos {
 
 	public:
 
-		VertexBuffer(/*float**/Vertex* vertices, uint size);
+		VertexBuffer(CronosVertex* vertices, uint size);
 		~VertexBuffer();
 
 		void Bind() const;
