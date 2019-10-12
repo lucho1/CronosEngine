@@ -27,34 +27,11 @@ namespace Cronos {
 		return true;
 	}
 
-	static void SetErrorHandler(int MajV, int minV) { //TODO: Test this
-
-		if (MajV < 4 || minV < 3) {
-
-			std::cout << "glDebugMessageCallback not Available because of OpenGL Version!" << std::endl << "	Error Handler NOT running - Unsuccessful Operation" << std::endl;
-			std::cout << "	OpenGL Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
-			return;
-		}
-
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-
-		// Enable the debug callback
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
-		PFNGLDEBUGMESSAGECALLBACKAMDPROC(&ErrorCallback()); //Equals to glDebugMessageCallback(ErrorCallback, 0);??
-
-		//glDebugMessageCallback(ErrorCallback, 0);
-		//glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
-		//__debugbreak();
-		// To Output a Message: glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Vary dangerous error");
-
-		std::cout << "---- Registering OpenGL debug Callback - Error Handler ----" << std::endl << "	Error Handler Running Successfully" << std::endl;
-		std::cout << "	Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
-	}
-
 
 	static void APIENTRY ErrorCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
+
+		if (id == 131185)
+			return;
 
 		std::cout << "-----------------------------------------------------------------------" << std::endl <<
 			"---------------------OPENGL ERROR CALLBACK START-----------------------" << std::endl;
@@ -105,6 +82,32 @@ namespace Cronos {
 			"-----------------------------------------------------------------------" << std::endl <<
 			std::endl << std::endl << std::endl;
 
+	}
+
+	static void SetErrorHandler(int MajV, int minV) { //TODO: Test this
+
+		if (MajV < 4 || minV < 3) {
+
+			std::cout << "glDebugMessageCallback not Available because of OpenGL Version!" << std::endl << "	Error Handler NOT running - Unsuccessful Operation" << std::endl;
+			std::cout << "	OpenGL Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
+			return;
+		}
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+
+		// Enable the debug callback
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+		//PFNGLDEBUGMESSAGECALLBACKAMDPROC(&ErrorCallback()); //Equals to glDebugMessageCallback(ErrorCallback, 0);??
+
+		glDebugMessageCallback(ErrorCallback, 0);
+		//glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
+		//__debugbreak();
+		// To Output a Message: glDebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_ERROR, 0, GL_DEBUG_SEVERITY_NOTIFICATION, -1, "Vary dangerous error");
+
+		std::cout << "---- Registering OpenGL debug Callback - Error Handler ----" << std::endl << "	Error Handler Running Successfully" << std::endl;
+		std::cout << "	Version used by Error Handler: " << MajV << "." << minV << std::endl << std::endl;
 	}
 
 }
