@@ -23,12 +23,12 @@ namespace Cronos {
 	{
 		m_MeshVAO->~VertexArray();
 
-		//if (m_MeshVAO != nullptr)
-		//	delete m_MeshVAO;
-		//if (m_MeshIBO != nullptr)
-		//	delete m_MeshIBO;
-		//if (m_MeshVBO != nullptr)
-		//	delete m_MeshVBO;
+		if (m_MeshVAO != nullptr)
+			delete m_MeshVAO;
+		if (m_MeshIBO != nullptr)
+			delete m_MeshIBO;
+		if (m_MeshVBO != nullptr)
+			delete m_MeshVBO;
 	}
 
 	void Mesh::Draw()
@@ -42,7 +42,7 @@ namespace Cronos {
 		m_MeshVAO = new VertexArray();
 
 		Vertex* VBasArray = &m_VertexVector[0];
-		m_MeshVBO = new VertexBuffer(VBasArray, m_VertexVector.size());
+		m_MeshVBO = new VertexBuffer(VBasArray, m_VertexVector.size() * sizeof(Vertex));
 
 		m_MeshVBO->SetLayout({
 			{Cronos::VertexDataType::VEC3F, "a_Position"},
@@ -54,11 +54,6 @@ namespace Cronos {
 
 		m_MeshIBO = new IndexBuffer(&m_IndicesVector[0], m_IndicesVector.size());
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
-		/*
-		glm::vec3 Position; vec3 float
-		glm::vec3 Normal; vec3 float
-		glm::vec2 TexCoords; vec2 float
-		*/
 	}
 
 }

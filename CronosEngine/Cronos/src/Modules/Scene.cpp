@@ -11,7 +11,7 @@
 
 namespace Cronos {
 
-	static Mesh vmeshxd; //To test
+	static Mesh* vmeshxd; //To test
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -54,7 +54,7 @@ namespace Cronos {
 		};
 
 		std::vector<Vertex>VertexVec;
-		Vertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(0.0, 0.0, 0.0), glm::vec2(0.0, 0.0) };
+		Vertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
 
 		for (int i = 0; i < 8; i++)
 			VertexVec.push_back(defV);
@@ -62,16 +62,14 @@ namespace Cronos {
 		uint iter = 0;
 		for (int i = 0; i < 8; i++)
 		{
-			//glm::vec3 pos = glm::vec3(1.0, 1.0, 1.0);
 			glm::vec3 pos = glm::vec3(cbeVertices[0 + iter], cbeVertices[1 + iter], cbeVertices[2 + iter]);
-
 			VertexVec[i].Position = pos;
 			iter += 3;
 		}
 		
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
-		vmeshxd = Mesh(VertexVec, indvec);
+		vmeshxd = new Mesh(VertexVec, indvec);
 
 		//uint va;
 		//glCreateVertexArrays(1, &va);
@@ -111,14 +109,15 @@ namespace Cronos {
 	{
 		LOG("Unloading Intro scene");
 		VAO->~VertexArray();
+		delete vmeshxd;
+		if (vmeshxd != nullptr) vmeshxd = nullptr;
+
 		return true;
 	}
 
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-
-
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
@@ -127,7 +126,7 @@ namespace Cronos {
 		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
-		vmeshxd.Draw();
+		vmeshxd->Draw();
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
