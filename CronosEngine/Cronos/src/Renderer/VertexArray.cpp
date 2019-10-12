@@ -7,17 +7,17 @@ namespace Cronos {
 	{
 		switch (type)
 		{
-		case VertexDataType::INT:			return GL_INT;
-		case VertexDataType::FLOAT:			return GL_FLOAT;
-		case VertexDataType::VEC2I:			return GL_INT;
-		case VertexDataType::VEC3I:			return GL_INT;
-		case VertexDataType::VEC4I:			return GL_INT;
-		case VertexDataType::VEC2F:			return GL_FLOAT;
-		case VertexDataType::VEC3F:			return GL_FLOAT;
-		case VertexDataType::VEC4F:			return GL_FLOAT;
-		case VertexDataType::MAT3:			return GL_FLOAT;
-		case VertexDataType::MAT4:			return GL_FLOAT;
-		case VertexDataType::BOOL:			return GL_BOOL;
+			case VertexDataType::INT:			return GL_INT;
+			case VertexDataType::FLOAT:			return GL_FLOAT;
+			case VertexDataType::VEC2I:			return GL_INT;
+			case VertexDataType::VEC3I:			return GL_INT;
+			case VertexDataType::VEC4I:			return GL_INT;
+			case VertexDataType::VEC2F:			return GL_FLOAT;
+			case VertexDataType::VEC3F:			return GL_FLOAT;
+			case VertexDataType::VEC4F:			return GL_FLOAT;
+			case VertexDataType::MAT3:			return GL_FLOAT;
+			case VertexDataType::MAT4:			return GL_FLOAT;
+			case VertexDataType::BOOL:			return GL_BOOL;
 		}
 
 		CRONOS_ASSERT(0, "COULDN'T CONVERT TO OGL DATA TYPE!");
@@ -32,12 +32,13 @@ namespace Cronos {
 
 	VertexArray::~VertexArray()
 	{
-		delete m_IBuffer;
+		if (m_IBuffer != nullptr)
+			m_IBuffer->~IndexBuffer();
 
 		for (auto element : m_VBuffers_List)
-			delete element;
-		m_VBuffers_List.clear();
+			element->~VertexBuffer();
 
+		m_VBuffers_List.clear();
 		glDeleteVertexArrays(1, &m_ID);
 	}
 

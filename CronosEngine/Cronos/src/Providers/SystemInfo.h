@@ -2,7 +2,6 @@
 #define _SYSTEMINFO_H_
 
 #include "psapi.h"
-//#include "mmgr/mmgr.h"
 
 #define BTOGB (1073741824.0f)
 #define KBTOMB 1024.0f //To GB: (1048576.0f)

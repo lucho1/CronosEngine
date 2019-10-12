@@ -1,4 +1,4 @@
-# CronosEngine
+﻿# CronosEngine
 [![License](https://img.shields.io/github/license/lucho1/CronosEngine?color=red&label=License&style=plastic)](https://github.com/lucho1/CronosEngine/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/tag/lucho1/CronosEngine?color=blue&label=Version&style=plastic)](https://github.com/lucho1/CronosEngine/releases)
 ![Last Commit](https://img.shields.io/github/last-commit/lucho1/CronosEngine?color=blue&label=Last%20Commit&style=plastic)
@@ -18,12 +18,22 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and G
 **[TODO]** Put the logo image here and links to these libs!
 
 ## Innovating Features
+* Extensive Filesystem with good UX Functionalities
+* Asset Panel
+	-Asset Browser (Searcher)
+	-Workflow in and out
+	-Renaming of Assets
+	-Creation/Deletion of Assets and Folders
+	-Names of Assets are 10 chars max but the full name appears when the mouse is on top
+
+* Started the implementation of node System
 * Extensive System Info Read (on GPU, CPU, Memory and Software!)
 * Cronos Engine will detect if you have a dedicated NVIDIA or AMD Graphics Card and will use it automatically!
-* Extensive Filesystem with good UX Functionalities.
+* Usage of Precompiled Header to imporve build performance
+* Engine's Project built with a Premake file
 
 ## Usage
-**Camera Controls** 
+**Camera Controls**
 * Right Click:			Camera Look Around
 * Right Click + WASD:		Move camera and look around (using camera's forward vector)
 * Alt + Left Click:		Orbit object (by now, orbit center)
@@ -36,13 +46,27 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and G
 ## Changelog
 v0.1 **[TODO]** Fill this
 * Camera Movement
-* Engine's basic GUI & Filesystem
+* Engine's basic GUI
+   * Implemented Asset Panel
+				->Asset Browser (Searcher)
+				->Workflow in and out
+				->Renaming of Assets
+				->Creation/Deletion of Assets and Folders
+				->Names of Assets are 10 chars max but the full name appears when the mouse is on top
+   * Full Configuration menus
+   * UI Panels
+				->Assetbrowser Panel
+				->Inspector Panel (Under construction)
+				->Hierarchy (Under Construction)
+				->Configuration Panel
+* Filesystem Implemented
 * Hardware's Log Window - Extensive System Info Read (on GPU, CPU, Memory and Software)
 * Performance Window to track useful info (Memory, FPS, ...)
 * Detection of a dedicated NVIDIA or AMD Graphics Card - automatic usage
 * Implementation of MMRG to track memory leaks and usage (for internal purposes by now)
 * Usage of GPUDetect library to get CPU/GPU information
-
+* Usage of Precompiled Header to imporve build performance
+* Engine's Project built with a Premake file
 
 ## Credits
 Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrigó Garcia [@markitus18].

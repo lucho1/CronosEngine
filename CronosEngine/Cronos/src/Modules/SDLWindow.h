@@ -12,6 +12,8 @@ namespace Cronos {
 	{
 	public:
 
+		friend class ImGuiLayer;
+
 		SDLWindow(Application* app, bool start_enabled = true);
 
 		// Destructor
@@ -31,7 +33,7 @@ namespace Cronos {
 
 		//The surface contained by the window
 		SDL_Surface* screen_surface;
-		
+
 		const inline uint GetWidth()			const { return m_Data.Width;		}
 		const inline uint GetHeight()			const { return m_Data.Height;		}
 		const inline float GetAspectRatio()		const { return m_Data.AspectRatio;	}
@@ -44,7 +46,7 @@ namespace Cronos {
 			uint  Width, Height;
 			float AspectRatio = 1.0f;
 			bool VSync;
-			
+
 		};
 
 		WindowData m_Data;

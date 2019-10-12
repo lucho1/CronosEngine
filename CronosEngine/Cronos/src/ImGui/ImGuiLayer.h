@@ -1,9 +1,23 @@
 #pragma once
 
 #include "Core/Module.h"
+#include "imgui.h"
 #include "Modules/Filesystem.h"
 
+struct ImGuiTextBuffer;
+
 namespace Cronos {
+
+	enum class ConfigMenus {
+		Application = 0,
+		Window,
+		Hardware,
+		Renderer,
+		Input,
+		Audio,
+		Texture
+
+	};
 
 	class ImGuiLayer : public Module
 	{
@@ -22,6 +36,9 @@ namespace Cronos {
 
 		std::stringstream TestLog;
 
+		void GetInput(uint key, uint state, bool mouse=false);
+		void AddLog(std::string log);
+
 	private:
 
 		void setDocking();
@@ -34,7 +51,23 @@ namespace Cronos {
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
-		void GUIDDrawConsolePanel();
+		void GUIDrawConsolePanel();
+		void GUIDrawConfigurationPanel();
+		void GUIDrawPerformancePanel();
+		void GUIDrawSupportExitOptions();
+		void GUIDrawAboutPanel();
+		//Config Menus
+		void GUIDrawConfigApplicationMenu();
+		void GUIDrawConfigWindowMenu();
+		void GUIDrawConfigHardwareMenu();
+		void GUIDrawConfigRendererMenu();
+		void GUIDrawConfigInputMenu();
+		void GUIDrawConfigAudioMenu();
+		void GUIDrawConfigTexturesMenu();
+
+
+		void AcumulateLogDT();
+
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
@@ -46,11 +79,28 @@ namespace Cronos {
 		bool ShowAssetMenu = true;
 		bool ShowNodeEditorPanel = false;
 		bool ShowConsolePanel = true;
+		bool ShowPerformancePanel = false;
 		bool ShowDemoWindow = false;
+		bool ShowAboutPanel = false;
+		bool ShowConfigurationPanel = false;
+		bool ShowExitOpitonsPopUp = false;
+
+		update_status current_status= update_status::UPDATE_CONTINUE;
+
+		ImGuiTextBuffer LogBuffer;
+		ImGuiTextBuffer LogInputs;
+
+		std::vector<float>ms_log;
+		std::vector<float>fps_log;
 
 		Directories* AssetDirectories;
+		Directories* LastDir;
+
+		std::string LicenseString;
 
 		std::vector <Directories*> DirectoriesArray;
+
+		ConfigMenus currentMenu= ConfigMenus::Application;
 
 		struct Link
 		{
@@ -61,6 +111,7 @@ namespace Cronos {
 		{
 			float data[3];
 		};
+
 		int current_id_;
 		std::unordered_map<int, float> float_nodes_;
 		std::unordered_map<int, Color3> color_nodes_;

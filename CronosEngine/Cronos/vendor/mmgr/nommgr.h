@@ -30,30 +30,30 @@
 //
 // Copyright 2000, Fluid Studios, Inc., all rights reserved.
 // ---------------------------------------------------------------------------------------------------------------------------------
-
-#ifdef	new
-#undef	new
-#endif
-
-#ifdef	delete
-#undef	delete
-#endif
-
-#ifdef	malloc
-#undef	malloc
-#endif
-
-#ifdef	calloc
-#undef	calloc
-#endif
-
-#ifdef	realloc
-#undef	realloc
-#endif
-
-#ifdef	free
-#undef	free
-#endif
+//
+//#ifdef	new
+//#undef	new
+//#endif
+//
+//#ifdef	delete
+//#undef	delete
+//#endif
+//
+//#ifdef	malloc
+//#undef	malloc
+//#endif
+//
+//#ifdef	calloc
+//#undef	calloc
+//#endif
+//
+//#ifdef	realloc
+//#undef	realloc
+//#endif
+//
+//#ifdef	free
+//#undef	free
+//#endif
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // nommgr.h - End of file

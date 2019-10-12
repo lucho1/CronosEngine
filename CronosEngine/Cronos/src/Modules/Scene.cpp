@@ -1,12 +1,18 @@
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
+
 
 #include "Application.h"
 #include "Scene.h"
 
 #include "Renderer/Buffers.h"
+#include "Renderer/Model.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
+
+	static CronosMesh* vmeshxd; //To test
+	static CronosModel* vmodelxd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -48,6 +54,31 @@ namespace Cronos {
 			4, 3, 0, 0, 7, 4  //F6
 		};
 
+		std::vector<CronosVertex>VertexVec;
+		std::vector<CronosTexture>TextureVec;
+		CronosVertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
+		CronosTexture defT = { 0, "TEXTURENONE" };
+
+		for (int i = 0; i < 8; i++)
+		{
+			TextureVec.push_back(defT);
+			VertexVec.push_back(defV);
+		}
+
+		uint iter = 0;
+		for (int i = 0; i < 8; i++)
+		{
+			glm::vec3 pos = glm::vec3(cbeVertices[0 + iter], cbeVertices[1 + iter], cbeVertices[2 + iter]);
+			VertexVec[i].Position = pos;
+			iter += 3;
+		}
+		
+		std::vector<uint> indvec;
+		indvec.assign(cbeIndices, cbeIndices + (6*6));
+		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
+		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
+		//vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
+
 		//uint va;
 		//glCreateVertexArrays(1, &va);
 		//glBindVertexArray(va);
@@ -68,14 +99,14 @@ namespace Cronos {
 		//glBindVertexArray(va);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
 
-		VAO = new VertexArray();
-
-		VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
-		VBO->SetLayout({ {Cronos::VertexDataType::VEC3F, "a_Position"} });
-		VAO->AddVertexBuffer(*VBO);
+		//VAO = new VertexArray();
 		//
-		IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));
-		VAO->AddIndexBuffer(*IBO);
+		//VertexBuffer* VBO = new VertexBuffer(cbeVertices, sizeof(cbeVertices));
+		//VBO->SetLayout({ {Cronos::VertexDataType::VEC3F, "a_Position"} });
+		//VAO->AddVertexBuffer(*VBO);
+		////
+		//IndexBuffer* IBO = new IndexBuffer(cbeIndices, sizeof(cbeIndices));
+		//VAO->AddIndexBuffer(*IBO);
 
 		//glBindBuffer(GL_ARRAY_BUFFER, m_ID);
 		return ret;
@@ -86,26 +117,56 @@ namespace Cronos {
 	{
 		LOG("Unloading Intro scene");
 		VAO->~VertexArray();
+		delete vmeshxd;
+		if (vmeshxd != nullptr) vmeshxd = nullptr;
+
 		return true;
 	}
 
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-
-
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
 		m_FloorPlane.Render();
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
-		VAO->Bind();
+		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
+		//vmeshxd->Draw();
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		vmodelxd->Draw();
+		//vmodelxd->DrawTextureCoordinates();
+		//vmodelxd->DrawVerticesNormals();
+		vmodelxd->DrawPlanesNormals();
+
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
+
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+
+		
+		glm::vec3 axis_vec = vmodelxd->GetModelAxis();
+		glLineWidth(2.0f);
+		glBegin(GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+		glEnd();
+
+		
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
+		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);
 
 		return UPDATE_CONTINUE;
 	}

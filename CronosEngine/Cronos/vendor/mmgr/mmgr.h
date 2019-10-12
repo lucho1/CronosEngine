@@ -1,12 +1,12 @@
 // ---------------------------------------------------------------------------------------------------------------------------------
-//                                     _     
-//                                    | |    
-//  _ __ ___  _ __ ___   __ _ _ __    | |__  
-// | '_ ` _ \| '_ ` _ \ / _` | '__|   | '_ \ 
+//                                     _
+//                                    | |
+//  _ __ ___  _ __ ___   __ _ _ __    | |__
+// | '_ ` _ \| '_ ` _ \ / _` | '__|   | '_ \
 // | | | | | | | | | | | (_| | |    _ | | | |
 // |_| |_| |_|_| |_| |_|\__, |_|   (_)|_| |_|
-//                       __/ |               
-//                      |___/                
+//                       __/ |
+//                      |___/
 //
 // Memory manager & tracking software
 //
@@ -131,7 +131,7 @@ unsigned int	m_calcAllUnused();
 // Logging and reporting
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int countMemoryLeaks();
+//unsigned int countMemoryLeaks();
 void		m_dumpAllocUnit(const sAllocUnit *allocUnit, const char *prefix = "");
 void		m_dumpMemoryReport(const char *filename = "memreport.log", const bool overwrite = true);
 sMStats		m_getMemoryStatistics();
@@ -140,12 +140,12 @@ sMStats		m_getMemoryStatistics();
 // Variations of global operators new & delete
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-void	*operator new(size_t reportedSize);
-void	*operator new[](size_t reportedSize);
-void	*operator new(size_t reportedSize, const char *sourceFile, int sourceLine);
-void	*operator new[](size_t reportedSize, const char *sourceFile, int sourceLine);
-void	operator delete(void *reportedAddress);
-void	operator delete[](void *reportedAddress);
+//void	*operator new(size_t reportedSize);
+//void	*operator new[](size_t reportedSize);
+//void	*operator new(size_t reportedSize, const char *sourceFile, int sourceLine);
+//void	*operator new[](size_t reportedSize, const char *sourceFile, int sourceLine);
+//void	operator delete(void *reportedAddress);
+//void	operator delete[](void *reportedAddress);
 
 #endif // _H_MMGR
 
@@ -153,13 +153,13 @@ void	operator delete[](void *reportedAddress);
 // Macros -- "Kids, please don't try this at home. We're trained professionals here." :)
 // ---------------------------------------------------------------------------------------------------------------------------------
 
-#include "nommgr.h"
-#define	new		(m_setOwner  (__FILE__,__LINE__,__FUNCTION__),false) ? NULL : new
+//#include "nommgr.h"
+//#define	new		(m_setOwner  (__FILE__,__LINE__,__FUNCTION__),false) ? NULL : new
 //#define	delete		(m_setOwner  (__FILE__,__LINE__,__FUNCTION__),false) ? m_setOwner("",0,"") : delete
-#define	malloc(sz)	m_allocator  (__FILE__,__LINE__,__FUNCTION__,m_alloc_malloc,sz)
-#define	calloc(sz)	m_allocator  (__FILE__,__LINE__,__FUNCTION__,m_alloc_calloc,sz)
-#define	realloc(ptr,sz)	m_reallocator(__FILE__,__LINE__,__FUNCTION__,m_alloc_realloc,sz,ptr)
-#define	free(ptr)	m_deallocator(__FILE__,__LINE__,__FUNCTION__,m_alloc_free,ptr)
+//#define	malloc(sz)	m_allocator  (__FILE__,__LINE__,__FUNCTION__,m_alloc_malloc,sz)
+//#define	calloc(sz)	m_allocator  (__FILE__,__LINE__,__FUNCTION__,m_alloc_calloc,sz)
+//#define	realloc(ptr,sz)	m_reallocator(__FILE__,__LINE__,__FUNCTION__,m_alloc_realloc,sz,ptr)
+//#define	free(ptr)	m_deallocator(__FILE__,__LINE__,__FUNCTION__,m_alloc_free,ptr)
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // mmgr.h - End of file

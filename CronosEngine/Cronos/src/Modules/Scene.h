@@ -6,7 +6,6 @@
 #include "Renderer/Primitive.h"
 #include "Renderer/VertexArray.h"
 
-
 namespace Cronos {
 
 	class Scene : public Module

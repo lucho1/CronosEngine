@@ -15,7 +15,7 @@ namespace Cronos {
 
 	public:
 
-		Module(Application* parent, std::string name/* = "Module Unnamed"*/, bool start_enabled = true)
+		Module(Application* parent, std::string name/* = "Module Unnamed"*/, bool start_enabled = true):m_ModuleName(name)
 		{
 		}
 

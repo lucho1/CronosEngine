@@ -9,9 +9,13 @@
 #include "imnodes.h"
 
 #include "Core/Application.h"
+#include "Modules/SDLWindow.h"
+#include "Providers/SystemInfo.h"
+//#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
+#define sameLine ImGui::SameLine();
 //#include <Hazel/stb_image.h>
 
 //#define SRC_DIR "C:/Users/rleon/Documents/Dev/Engine/Hazel"
@@ -20,7 +24,7 @@ namespace Cronos {
 
 	static ImGuiDockNodeFlags dockspace_flags;
 	ImGuiWindowFlags window_flags;
-	
+
 
 	int my_image_width = 504, my_image_height = 507;
 	//unsigned char* my_image_data = stbi_load("../Hazel/src/Textures/Texture_Sample.jpg", &my_image_width, &my_image_height, NULL, 4);
@@ -29,15 +33,28 @@ namespace Cronos {
 #define TOTEX (void*)(intptr_t)
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
-	
-	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer")
+
+	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"),ms_log(100),fps_log(100)
 	{
-		
+
 	}
 
 	ImGuiLayer::~ImGuiLayer()
 	{
 
+	}
+
+	static void HelpMarker(const char* desc)
+	{
+		ImGui::TextDisabled("(?)");
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+			ImGui::TextUnformatted(desc);
+			ImGui::PopTextWrapPos();
+			ImGui::EndTooltip();
+		}
 	}
 
 	bool ImGuiLayer::OnStart()
@@ -56,58 +73,50 @@ namespace Cronos {
 		io.Fonts->AddFontFromFileTTF(File.c_str(), 14.0f);
 
 
-		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableSetMousePos | ImGuiConfigFlags_NavEnableKeyboard;
+
 		setDocking();
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
+
+		FILE* fp = fopen("../../LICENSE", "r");
+
+		int c; // note: int, not char, required to handle EOF
+		while ((c = fgetc(fp)) != EOF) { // standard C I/O file reading loop
+			//char a = putchar(c);
+			LicenseString += c;
+		}
 
 
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
-		//TEMPORARY
 
-		glGenTextures(1, &my_opengl_texture);
-		glBindTexture(GL_TEXTURE_2D, my_opengl_texture);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, my_image_width, my_image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, my_image_data);
 
 		return true;
 	}
-	static int iterations = 0;
 
-	static void testIterator(Directories a ) {
-		for (auto& c : a.childs) {
-
-			testIterator(*c);
-		}
-	}
 
 	void ImGuiLayer::AssetImguiIterator(Directories a) {
 		for (auto& c : a.childs) {
+
 			std::string temp = c->m_Directories.filename().string();
-			if (ImGui::TreeNodeEx(temp.c_str())) {
-				
-				AssetImguiIterator(*c);	
-				ImGui::TreePop();
-			}
-			if (ImGui::IsItemClickedID(0,temp.c_str())) {
+			bool open = ImGui::TreeNodeEx(temp.c_str());
+			if (ImGui::IsItemClicked())
 				m_CurrentDir = c;
+
+			if (open) {
+				AssetImguiIterator(*c);
+				ImGui::TreePop();
 			}
 		}
 	}
 
 	update_status ImGuiLayer::OnUpdate(float dt)
 	{
-		for (auto& a : AssetDirectories->childs) {
-			iterations++;
-			testIterator(*a);
-		}
-
 		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(App->window->GetWidth(), App->window->GetHeight());
+		io.WantCaptureKeyboard=true;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -138,15 +147,20 @@ namespace Cronos {
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowAssetMenu)				GUIDrawAssetPanel();
 		if (ShowNodeEditorPanel)		GUIDrawNodeEditorPanel();
-		if (ShowConsolePanel)			GUIDDrawConsolePanel();
+		if (ShowConsolePanel)			GUIDrawConsolePanel();
 		if (ShowDemoWindow)				ImGui::ShowDemoWindow(&ShowDemoWindow);
+		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
+		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
+		if (ShowAboutPanel)				GUIDrawAboutPanel();
 
+
+		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		return UPDATE_CONTINUE;
+		return current_status;
 	}
 
 
@@ -184,13 +198,13 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawMainBar()
 	{
-		
+
 		ImGui::BeginMainMenuBar();
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 			if (ImGui::BeginMenu("File")) {
-				
-				ImGui::MenuItem("New Scene");			
+
+				ImGui::MenuItem("New Scene");
 				ImGui::MenuItem("Open Scene");
 				ImGui::Separator();
 				ImGui::MenuItem("Save");
@@ -200,11 +214,15 @@ namespace Cronos {
 				ImGui::MenuItem("Open Project");
 				ImGui::MenuItem("Save Project");
 				ImGui::Separator();
+				if (ImGui::MenuItem("Configuration")) {
+					ShowConfigurationPanel = true;
+				}
+
 				ImGui::MenuItem("Exit");
-			
-				ImGui::EndMenu();	
+
+				ImGui::EndMenu();
 			}
-			
+
 			if (ImGui::BeginMenu("Edit")) {
 				ImGui::MenuItem("New");
 				ImGui::EndMenu();
@@ -223,27 +241,44 @@ namespace Cronos {
 			}
 			if (ImGui::BeginMenu("Window")) {
 				if (ImGui::MenuItem("NodeEditor")) {
-					ShowNodeEditorPanel = true;
+					ShowNodeEditorPanel = !ShowNodeEditorPanel;
 				}
 				if (ImGui::MenuItem("Inspector")) {
-					ShowInspectorPanel = true;
+					ShowInspectorPanel = !ShowInspectorPanel;
 				}
 				if (ImGui::MenuItem("Hierarchy")) {
-					ShowHierarchyMenu = true;
+					ShowHierarchyMenu = !ShowHierarchyMenu;
 				}
 				if (ImGui::MenuItem("Asset")) {
-					ShowAssetMenu = true;
+					ShowAssetMenu = !ShowAssetMenu;
+				}
+				if (ImGui::MenuItem("Performance")) {
+					ShowPerformancePanel = !ShowPerformancePanel;
 				}
 				if (ImGui::MenuItem("Console")) {
-					ShowConsolePanel = true;
+					ShowConsolePanel = !ShowConsolePanel;
 				}
-				if (ImGui::MenuItem("Demo Window")) {
-					ShowDemoWindow = true;
-				}
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Help")) {
-				ImGui::MenuItem("New");
+				if (ImGui::MenuItem("Demo Window")) {
+					ShowDemoWindow = !ShowDemoWindow;
+				}
+				if (ImGui::MenuItem("Documentation")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/wiki");
+				}
+				if (ImGui::MenuItem("Download latest")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/releases");
+				}
+				if (ImGui::MenuItem("Report a bug")) {
+					App->RequestBrowser("https://github.com/lucho1/CronosEngine/issues");
+				}
+				if (ImGui::MenuItem("About (OnConstruction)")) {
+					ShowAboutPanel = !ShowAboutPanel;
+				}
+
+
 				ImGui::EndMenu();
 			}
 		}
@@ -251,17 +286,56 @@ namespace Cronos {
 		ImGui::EndMainMenuBar();
 
 	}
+	void ImGuiLayer::GUIDrawPerformancePanel() {
+
+		ImGui::SetNextWindowSize(ImVec2(250, 400));
+		ImGui::Begin("Performance", &ShowPerformancePanel);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+
+		int fpscap = App->GetFPSCap();
+		ImGui::Text("Fps cap :"); ImGui::SameLine();
+		if (ImGui::SliderInt("##fpscap", &fpscap, -1, 100))
+			App->SetFPSCap(fpscap);
+		ImGui::SameLine();
+		HelpMarker("By default is 0, when is no fps cap");
+
+		ImGui::Separator();
+
+		AcumulateLogDT();
+
+		char title[25];
+
+		sprintf_s(title, 25, "Framerate %0.1f", fps_log[fps_log.size() - 1]);
+		//ImGui::PlotLines("frame", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(200, 100));
+		ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(220, 100));
+
+		sprintf_s(title, 25, "Milliseconds %0.1f", ms_log[ms_log.size() - 1]);
+		ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(220, 100));
+
+		ImGui::Separator();
+
+		ImGui::Text("To future implement :");
+		ImGui::Text("        Current usage Drawcalls");
+		ImGui::Text("        Memory scene using");
+		ImGui::Text("        etc...");
+
+		ImGui::PopStyleVar();
+
+
+
+		ImGui::End();
+	}
 
 	void ImGuiLayer::GUIDrawInspectorMenu()
 	{
-		ImGui::SetNextWindowSize(ImVec2(500, 400));
+		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
-		ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
-		static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-		ImGui::Separator();
+			ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
+			static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
+			ImGui::Separator();
 
-		GUIDrawTransformPMenu();
-		GUIDrawMaterialsMenu();
+			GUIDrawTransformPMenu();
+			GUIDrawMaterialsMenu();
 
 		ImGui::End();
 
@@ -395,62 +469,96 @@ namespace Cronos {
 			}
 			ImGuiIO& io = ImGui::GetIO();
 
-			static int WindowSize = 150;
-			ImGui::BeginChild("left panel", ImVec2(WindowSize, 0),true);
-			
-			if (ImGui::TreeNode(App->filesystem->GetLabelAssetRoot().c_str())) {
-			// left
-				for (auto& a : AssetDirectories->childs)
-				{
-					
-					std::string	temp = a->m_Directories.filename().string();
-					if (ImGui::TreeNode(temp.c_str())){	
-						
-						/*if (ImGui::IsItemClicked()) {
-							m_CurrentDir = a;
-						}*/
-						AssetImguiIterator(*a);		
-						ImGui::TreePop();
-					}	
-					if (ImGui::IsItemClicked()) {
-						m_CurrentDir = a;
-					}
-					
-				}
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
+
+			ImGui::BeginChild("left panel", ImVec2(150, 0),true,window_flags);
+
+			bool open = ImGui::TreeNodeEx(App->filesystem->GetLabelAssetRoot().c_str());
+			if (ImGui::IsItemClicked())
+				m_CurrentDir = AssetDirectories;
+
+			if (open) {
+				AssetImguiIterator(*AssetDirectories);
 				ImGui::TreePop();
 			}
+
 			ImGui::EndChild();
 
 			const char* SceneLabel = "Scenes";
-		
+
 
 			ImGui::SameLine();
 
 			// right
 			ImGui::BeginGroup();
-			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-			std::string tempstring = m_CurrentDir->m_Directories.filename().string();
 
-		
-			ImGui::Text("CurrentWindow: %s", tempstring.c_str());
+			int testa = ImGui::GetWindowWidth();
+			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+
+			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();
+			ImGui::Text("%s", LabelFolder.c_str());
+
+
+
+			static char buf1[64] = "Asset Browser";
+			ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
+
+			if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)){
+				static Directories* tempDir = new Directories();
+				if (m_CurrentDir != tempDir) {
+					LastDir = m_CurrentDir;
+				}
+				m_CurrentDir = tempDir;
+				App->filesystem->SearchFile(tempDir, buf1);
+			}
+
+			std::string a = buf1;
+			if (a != "Asset Browser") {
+				ImGui::SameLine();
+				if (ImGui::Button("Reset")) {
+					sprintf_s(buf1, "%s", "Asset Browser");
+					m_CurrentDir = LastDir;
+				}
+			}
+
+			if (m_CurrentDir != AssetDirectories) {
+				ImGui::SameLine(ImGui::GetWindowWidth() - 30);
+				if (ImGui::ImageButton("", ImVec2(20, 20), ImVec2(0, 0), ImVec2(0, 0), 2))
+					m_CurrentDir = m_CurrentDir->GetParentDirectory();
+
+			}
+	/*		if(ImGui::Button("CreateDirectory")){
+				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
+				Tempcreate += "/Hello";d
+				App->filesystem->CreateNewDirectory(m_CurrentDir,"Hello");
+			} ImGui::SameLine();
+
+			if (ImGui::Button("DeleteDirectory")) {
+				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
+				Tempcreate += "/Hello";
+				App->filesystem->DeleteDirectory(Tempcreate.c_str());
+			}*/
+
 			ImGui::Separator();
-			int spaceCounter = 150;
+			int spaceCounter = 180;
 			for (auto& a : m_CurrentDir->m_Container) {
-				a.DrawIcons();
-				spaceCounter += a.GetElementSize();
-				int b = ImGui::GetWindowWidth();
+				a->DrawIcons();
+				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
+					m_CurrentDir = a->folderDirectory;
+
+				spaceCounter += a->GetElementSize();
+
 				if (spaceCounter < ImGui::GetWindowWidth()) {
 					ImGui::SameLine();
-
 				}
 				else
-					spaceCounter = 150;
+					spaceCounter = 180;
 				//ImGui::Button(a.m_Elements.c_str());
 			}
 
 			ImGui::EndChild();
 			ImGui::EndGroup();
-			
+
 		}
 		ImGui::End();
 	}
@@ -602,152 +710,360 @@ namespace Cronos {
 		}
 	}
 
-	struct ExampleAppLog
-	{
-		ImGuiTextBuffer     Buf;
-		ImGuiTextFilter     Filter;
-		ImVector<int>       LineOffsets;        // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
-		bool                AutoScroll;     // Keep scrolling if already at the bottom
+	void ImGuiLayer::GUIDrawConfigurationPanel() {
 
-		ExampleAppLog()
-		{
-			AutoScroll = true;
-			Clear();
-		}
-
-		void    Clear()
-		{
-			Buf.clear();
-			LineOffsets.clear();
-			LineOffsets.push_back(0);
-		}
-
-		void    AddLog(const char* fmt, ...) IM_FMTARGS(2)
-		{
-			int old_size = Buf.size();
-			va_list args;
-			va_start(args, fmt);
-			Buf.appendfv(fmt, args);
-			va_end(args);
-			for (int new_size = Buf.size(); old_size < new_size; old_size++)
-				if (Buf[old_size] == '\n')
-					LineOffsets.push_back(old_size + 1);
-		}
-
-		void    Draw(const char* title, bool* p_open = NULL)
-		{
-			if (!ImGui::Begin(title, p_open))
-			{
-				ImGui::End();
-				return;
-			}
-
-			// Options menu
-			if (ImGui::BeginPopup("Options"))
-			{
-				ImGui::Checkbox("Auto-scroll", &AutoScroll);
-				ImGui::EndPopup();
-			}
-
-			// Main window
-			if (ImGui::Button("Options"))
-				ImGui::OpenPopup("Options");
-			ImGui::SameLine();
-			bool clear = ImGui::Button("Clear");
-			ImGui::SameLine();
-			bool copy = ImGui::Button("Copy");
-			ImGui::SameLine();
-			Filter.Draw("Filter", -100.0f);
-
-			ImGui::Separator();
-			ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-
-			if (clear)
-				Clear();
-			if (copy)
-				ImGui::LogToClipboard();
-
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-			const char* buf = Buf.begin();
-			const char* buf_end = Buf.end();
-			if (Filter.IsActive())
-			{
-				// In this example we don't use the clipper when Filter is enabled.
-				// This is because we don't have a random access on the result on our filter.
-				// A real application processing logs with ten of thousands of entries may want to store the result of search/filter.
-				// especially if the filtering function is not trivial (e.g. reg-exp).
-				for (int line_no = 0; line_no < LineOffsets.Size; line_no++)
-				{
-					const char* line_start = buf + LineOffsets[line_no];
-					const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-					if (Filter.PassFilter(line_start, line_end))
-						ImGui::TextUnformatted(line_start, line_end);
-				}
-			}
-			else
-			{
-				// The simplest and easy way to display the entire buffer:
-				//   ImGui::TextUnformatted(buf_begin, buf_end);
-				// And it'll just work. TextUnformatted() has specialization for large blob of text and will fast-forward to skip non-visible lines.
-				// Here we instead demonstrate using the clipper to only process lines that are within the visible area.
-				// If you have tens of thousands of items and their processing cost is non-negligible, coarse clipping them on your side is recommended.
-				// Using ImGuiListClipper requires A) random access into your data, and B) items all being the  same height,
-				// both of which we can handle since we an array pointing to the beginning of each line of text.
-				// When using the filter (in the block of code above) we don't have random access into the data to display anymore, which is why we don't use the clipper.
-				// Storing or skimming through the search result would make it possible (and would be recommended if you want to search through tens of thousands of entries)
-				ImGuiListClipper clipper;
-				clipper.Begin(LineOffsets.Size);
-				while (clipper.Step())
-				{
-					for (int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++)
-					{
-						const char* line_start = buf + LineOffsets[line_no];
-						const char* line_end = (line_no + 1 < LineOffsets.Size) ? (buf + LineOffsets[line_no + 1] - 1) : buf_end;
-						ImGui::TextUnformatted(line_start, line_end);
-					}
-				}
-				clipper.End();
-			}
-			ImGui::PopStyleVar();
-
-			if (AutoScroll && ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-				ImGui::SetScrollHereY(1.0f);
-
-			ImGui::EndChild();
-			ImGui::End();
-		}
-	};
-
-	void ImGuiLayer::GUIDDrawConsolePanel()
-	{
-		static ExampleAppLog log;
-
-		// For the demo: add a debug button _BEFORE_ the normal log window contents
-		// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
-		// Most of the contents of the window will be added by the log.Draw() call.
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Console", &ShowConsolePanel);
-		if (ImGui::SmallButton("[Debug] Add 5 entries"))
-		{
-			static int counter = 0;
-			for (int n = 0; n < 5; n++)
-			{
-				const char* categories[3] = { "info", "warn", "error" };
-				const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
-				log.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-					ImGui::GetFrameCount(), categories[counter % IM_ARRAYSIZE(categories)], ImGui::GetTime(), words[counter % IM_ARRAYSIZE(words)]);
-				counter++;
-			}
-		}
+		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::Begin("Configuration", &ShowConfigurationPanel, ImGuiWindowFlags_NoDocking);
+		ImGui::PopStyleColor();
 
-		static std::string toLog = TestLog.str();
-		if (!toLog.empty()) {
-			log.AddLog(toLog.c_str());
-			toLog.clear();
-		}
+
+		ImGui::BeginGroup();
+		static int selected=-1;
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
+
+
+			if (ImGui::Selectable("Application", selected==0)) {
+				currentMenu = ConfigMenus::Application;
+				selected = 0;
+			}
+			else if (ImGui::Selectable("Window", selected==1)) {
+				currentMenu = ConfigMenus::Window;
+				selected = 1;
+			}
+			else if (ImGui::Selectable("Hardware", selected == 2)) {
+				currentMenu = ConfigMenus::Hardware;
+				selected = 2;
+			}
+			else if (ImGui::Selectable("Renderer", selected == 3)){
+				currentMenu = ConfigMenus::Renderer;
+				selected = 3;
+			}
+			else if (ImGui::Selectable("Input", selected == 4)) {
+				currentMenu = ConfigMenus::Input;
+				selected = 4;
+			}
+			else if (ImGui::Selectable("Audio", selected == 5)) {
+				currentMenu = ConfigMenus::Audio;
+				selected = 5;
+			}
+			else if (ImGui::Selectable("Texture", selected == 6)) {
+				currentMenu = ConfigMenus::Texture;
+				selected = 6;
+			}
+
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+
+
+		ImGui::EndChild();
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+			ImGui::BeginChild("Menus");
+				switch (currentMenu)
+				{
+				case Cronos::ConfigMenus::Application:
+					GUIDrawConfigApplicationMenu();
+					break;
+				case Cronos::ConfigMenus::Window:
+					GUIDrawConfigWindowMenu();
+					break;
+				case Cronos::ConfigMenus::Hardware:
+					GUIDrawConfigHardwareMenu();
+					break;
+				case Cronos::ConfigMenus::Renderer:
+					GUIDrawConfigRendererMenu();
+					break;
+				case Cronos::ConfigMenus::Input:
+					GUIDrawConfigInputMenu();
+					break;
+				case Cronos::ConfigMenus::Audio:
+					GUIDrawConfigAudioMenu();
+					break;
+				case Cronos::ConfigMenus::Texture:
+					GUIDrawConfigTexturesMenu();
+					break;
+				default:
+					break;
+				}
+			ImGui::EndChild();
+		ImGui::EndGroup();
+
+		ImGui::EndGroup();
+
+
 		ImGui::End();
 
-		// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
-		log.Draw("Console", &ShowConsolePanel);
 	}
+
+	void ImGuiLayer::GUIDrawConfigApplicationMenu(){
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
+		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+		ImGui::Text("Application");
+		ImGui::Separator();
+		ImGui::Text ("App Name : "); ImGui::SameLine();
+		ImGui::TextColored(Color, TITLE);
+		ImGui::Text("Organization: "); ImGui::SameLine();
+		ImGui::TextColored(Color, ORGANIZATION);
+		ImGui::Separator();
+		ImGui::Text("");
+		ImGui::Text("Performance here"); ImGui::SameLine();
+		if (ImGui::Button("Performance"))
+			ShowPerformancePanel = !ShowPerformancePanel;
+		ImGui::PopStyleVar();
+	}
+	void ImGuiLayer::GUIDrawConfigWindowMenu() {
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
+		static int Height = (int)App->window->m_Data.Height;
+		static int Width = (int)App->window->m_Data.Width;
+		ImGui::Text("Window");
+		ImGui::Separator();
+		static bool TempWindowActive; //Only To show, it's temporary
+		ImGui::Checkbox("Active", &TempWindowActive);
+		ImGui::Text("Icon: "); ImGui::SameLine(); ImGui::Image("", ImVec2(40, 40));
+		static float brightnesTest=50.0f; //temporary
+		ImGui::SliderFloat("Brightness", &brightnesTest, 0.0f, 100.0f,"%.1f");
+
+		ImGui::Text("Width"); ImGui::SameLine();
+		if (ImGui::SliderInt("##hidelabel", &Height, 100, 1080,"%d")) {
+			SDL_SetWindowSize(App->window->window, Width, Height);
+		}
+		ImGui::Text("Height"); ImGui::SameLine();
+		if (ImGui::SliderInt("##hidelabel2", &Width, 100, 1920)) {
+			SDL_SetWindowSize(App->window->window, Width, Height);
+		}
+
+		static Uint32 flags=NULL;
+		static bool resizable = true;
+		static bool borderless = false;
+		if(ImGui::CheckboxFlags("Fullscreen", &(unsigned int )flags,SDL_WINDOW_FULLSCREEN)){
+			SDL_SetWindowFullscreen(App->window->window, flags);
+		}ImGui::SameLine();
+		if (ImGui::Checkbox("Borderless", &borderless)) {
+			//SDL_SetWindowFullscreen(App->window->window, flags);
+			SDL_SetWindowBordered(App->window->window, (SDL_bool)!borderless);
+		}
+		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flags,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+			SDL_SetWindowFullscreen(App->window->window, flags);
+			//SDL_Setwindowfu
+		}ImGui::SameLine();
+		if (ImGui::Checkbox("Resizable", &resizable)) {
+			// NOT WORKING TODO: ASK MARC
+			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
+
+		}
+		ImGui::PopStyleVar();
+
+	}
+
+	void ImGuiLayer::GUIDrawConfigHardwareMenu() {
+
+		SystemInfo info;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 15));
+		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+		ImGui::Text("Hardware");
+		ImGui::Separator();
+		ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());
+		ImGui::Separator();
+		ImGui::Text("CPU cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCores()).c_str()); sameLine; ImGui::TextColored(Color, " (Cache : "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCacheLine1Size()).c_str());
+		sameLine; ImGui::TextColored(Color, " kb)");
+		ImGui::Text("System Ram: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()).c_str()); sameLine; ImGui::TextColored(Color, "Gb");
+		ImGui::Text("Caps: "); sameLine; ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetCPUInstructionSet().c_str());
+		ImGui::Separator();
+		ImGui::Text("GPU: "); sameLine; ImGui::TextColored(Color, "vendor "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUVendor).c_str()); sameLine; ImGui::TextColored(Color, " Device"); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
+		ImGui::Text("Brand: "); sameLine; ImGui::TextColored(Color, info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUBrand.c_str());
+		ImGui::Text("VRam Budget: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Usage: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Aviable: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		ImGui::Text("VRam Reserved: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+
+		
+		ImGui::PopStyleVar();
+	};
+	void ImGuiLayer::GUIDrawConfigRendererMenu() {
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::Text("Renderer");
+		ImGui::Separator();
+		static bool Tempvsync = false;
+		ImGui::Text("VSync "); ImGui::SameLine(); ImGui::Checkbox("##vsync",&Tempvsync);
+		ImGui::PopStyleVar();
+
+	};
+
+	void ImGuiLayer::GUIDrawConfigInputMenu() {
+
+		static char mousepos[50];
+		static char mouseMotion[50];
+		static char WheelMotion[30];
+
+		sprintf_s(mousepos,50, "Mouse Position x: %i y: %i", App->input->GetMouseX(),App->input->GetMouseY());
+		sprintf_s(mouseMotion, 50, "Mouse Motion x: %i y: %i", App->input->GetMouseXMotion(), App->input->GetMouseYMotion());
+		sprintf_s(WheelMotion, 30, "Wheel Motion : %i", App->input->GetMouseZ());
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::Text("Input");
+		ImGui::Separator();
+		ImGui::Text(mousepos);
+		ImGui::Text(mouseMotion);
+		ImGui::Text(WheelMotion);
+		ImGui::Separator();
+
+		ImGui::BeginChild("Inputs");
+			ImGui::TextUnformatted(LogInputs.begin());
+			ImGui::SetScrollHere(1.0f);
+		ImGui::EndChild();
+
+		ImGui::PopStyleVar();
+	};
+
+	void ImGuiLayer::GUIDrawConfigAudioMenu() {
+		ImGui::Text("Audio");
+		ImGui::Separator();
+	};
+	void ImGuiLayer::GUIDrawConfigTexturesMenu() {
+		ImGui::Text("Textures");
+		ImGui::Separator();
+	};
+
+	void ImGuiLayer::GUIDrawSupportExitOptions() {
+
+		ImGui::OpenPopup("##menuQuit");
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9, 13));
+		if (ImGui::BeginPopupModal("##menuQuit",NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to quit?");
+			ImGui::Separator();
+
+			//static bool dont_ask_me_next_time = false;
+			//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+			//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+			//ImGui::PopStyleVar();
+
+			if (ImGui::Button("Yes", ImVec2(100, 0))) { ImGui::CloseCurrentPopup(); current_status = UPDATE_STOP; }
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("No", ImVec2(100, 0))) { ImGui::CloseCurrentPopup(); App->input->updateQuit(false); }
+			ImGui::PopStyleVar();
+			ImGui::EndPopup();
+		}
+
+	}
+
+	void ImGuiLayer::GetInput(uint key, uint state,bool mouse) {
+
+		if (currentMenu == ConfigMenus::Input) {
+			static std::stringstream temp;
+			static std::string states[] = { "KEY_IDLE","KEY_DOWN","KEY_REPEAT","KEY_UP " };
+			if (!mouse)
+				temp << "Key: " << key << "- KeyState : " << states[state] << "\n";
+			else {
+				switch (key)
+				{
+				case 1:
+					temp << "Left click -" << "State : " << states[state] << "\n";
+					break;
+				case 2:
+					temp << "Middle click -" << "State : " << states[state] << "\n";
+					break;
+				case 3:
+					temp << "Right click -" << "State : " << states[state] << "\n";
+					break;
+				}
+			}
+			bool a = true;
+
+			LogInputs.appendf(temp.str().c_str());
+		}
+
+	}
+	void ImGuiLayer::AddLog(std::string log)
+	{
+		log += "\n\n";
+		LogBuffer.appendf(log.c_str());
+
+	}
+
+	void ImGuiLayer::GUIDrawAboutPanel()
+	{
+		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::SetNextWindowSize(ImVec2(430, 600),ImGuiCond_Appearing);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::Begin("About", &ShowAboutPanel);
+
+			ImGui::Text("Cronos v0.1");
+			ImGui::Text("The next generation 3D Game Engine");
+			ImGui::Text("By"); ImGui::SameLine(); if (ImGui::Button("Lucho Suaya")) { App->RequestBrowser("https://github.com/lucho1"); }
+			ImGui::SameLine(); ImGui::Text("&"); ImGui::SameLine(); if (ImGui::Button("Roger Leon")) { App->RequestBrowser("https://github.com/rleonborras"); }
+
+		ImGui::Separator();
+
+			ImGui::Text("3rd Party Libraries Used:");
+			ImGui::BulletText("SDL 2.0.6");
+			ImGui::BulletText("SDL mixer 2.0.0");
+			ImGui::BulletText("Glad");
+			ImGui::BulletText("ImGui 1.73");
+			ImGui::BulletText("OpenGl 4.3");
+
+		ImGui::Separator();
+		ImGui::BeginChild("LicenseChild");
+			ImGui::Text("License: ");
+			ImGui::TextUnformatted(LicenseString.c_str());
+		ImGui::EndChild();
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+		ImGui::End();
+	}
+
+	void ImGuiLayer::GUIDrawConsolePanel()
+	{
+
+		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImGui::Begin("Console", &ShowConsolePanel);
+
+		if (ImGui::Button("Clear")) {
+			LogBuffer.clear();
+		}
+
+		ImGui::Separator();
+
+		ImGui::BeginChild("Console Loging");
+		ImGui::SameLine(10);
+		if (!LogBuffer.empty()) {
+			ImGui::TextUnformatted(LogBuffer.c_str());
+			if(!ImGui::GetScrollMaxY())
+				ImGui::SetScrollHere(1.0f);
+		}
+
+		ImGui::EndChild();
+		ImGui::End();
+		ImGui::PopStyleVar();
+
+	}
+
+	void ImGuiLayer::AcumulateLogDT()
+	{
+		static uint count = 0;
+		if (count == 100) {
+
+			for (uint i = 0; i < 99; i++) {
+				ms_log[i] = ms_log[i + 1];
+				fps_log[i] = fps_log[i + 1];
+			}
+		}
+		else
+			count++;
+
+		fps_log[count - 1] = App->GetFramesInLastSecond();
+		ms_log[count - 1] = App->GetLastFrameMS();
+	}
+
 }

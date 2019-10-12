@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 
+
 namespace Cronos {
 
 	uint BufferData::VertexDataTypeSize(VertexDataType vertex_data_type) const
@@ -47,7 +48,7 @@ namespace Cronos {
 	}
 
 	//-------------- VERTEX BUFFER ------------------------------------------------
-	VertexBuffer::VertexBuffer(float* vertices, uint size)
+	VertexBuffer::VertexBuffer(CronosVertex* vertices, uint size)
 	{
 		//Setting the buffer to generate (an Array one), the buffer size,
 		//the data source (the float* vertices), and for what we are using it

@@ -39,7 +39,7 @@ namespace Cronos {
 
 		if (m_FPSCap > 0)
 			m_CappedMS = 1000 / FPSCap;
-		
+
 	}
 
 	Application::~Application()
@@ -62,14 +62,20 @@ namespace Cronos {
 		//SaveJsonFile("res/configuration/config.json");
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret) {
+				EditorGUI->AddLog(("Initializing Module" + element->m_ModuleName));
 				ret = element->OnInit();
-
+			}
 		// After all Init calls we call Start() in all modules
 		LOG("Application Start --------------");
 		for (auto& element : m_ModulesList)
 			if (ret)
 				ret = element->OnStart();
+
+		mt_StartingTime.Start();
+
+		//Not a Module!
+		//SystemInfo AppSystemInfo;
 
 		return ret;
 	}
@@ -79,8 +85,8 @@ namespace Cronos {
 	void Application::PrepareUpdate()
 	{
 		//For performance information purposes
-		//m_FrameCount++;
-		// m_LastSecFrameCount++;
+		m_FrameCount++;
+		m_LastSecFrameCount++;
 
 		m_Timestep = mt_LastFrameTime.ReadSec();
 		mt_LastFrameTime.Start();
@@ -96,14 +102,14 @@ namespace Cronos {
 
 
 		//For performance information purposes
-		//if(mt_LastSecFrameTime.Read() > 1000) 
-		//{
-		//	mt_LastSecFrameTime.Start();
-		//	uint32 tmp_LastSecFrameCount = m_LastSecFrameCount;
-		//	m_LastSecFrameCount = 0;
-		//}
+		if(mt_LastSecFrameTime.Read() > 1000)
+		{
+			mt_LastSecFrameTime.Start();
+			m_PREV_LastSecFrameCount = m_LastSecFrameCount;
+			m_LastSecFrameCount = 0;
+		}
 
-		//float m_AverageFPS = float(m_FrameCount) / mt_StartingTime.ReadSec();
+		m_AverageFPS = float(m_FrameCount) / mt_StartingTime.ReadSec();
 		//Cool info gotten from previous info: Secs since start (mt_StartingTime.ReadSec())
 		//|| Frames in last update (current_framecount - last_frame count), probably you'll need to declare a new value or something
 
@@ -120,15 +126,15 @@ namespace Cronos {
 		PrepareUpdate();
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret==UPDATE_CONTINUE)
 				ret = element->OnPreUpdate(m_Timestep);
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret == UPDATE_CONTINUE)
 				ret = element->OnUpdate(m_Timestep);
 
 		for (auto& element : m_ModulesList)
-			if (ret)
+			if (ret == UPDATE_CONTINUE)
 				ret = element->OnPostUpdate(m_Timestep);
 
 		FinishUpdate();
@@ -208,7 +214,7 @@ namespace Cronos {
 			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
 			return;
 		}
-		
+
 		//As we did first in Load(), we create now an output file stream (ofstream) to save there the json file
 		std::ofstream OutputFile_Stream;
 		OutputFile_Stream.open(filePath);
@@ -241,6 +247,22 @@ namespace Cronos {
 		m_JSONConfigFile = aux_JSONFile;
 		m_MustSave = false;
 		mt_SaveTimer.Start();
+	}
+
+}
+	const void Application::RequestBrowser(const char* WebDirection)
+	{
+		ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL);
+	}
+
+	void Application::SetFPSCap(int FPScap)
+	{
+		if (FPScap > 0) {
+			m_CappedMS = 1000 / FPScap;
+			m_FPSCap = FPScap;
+		}
+		else
+			LOG("FPS CAP must be bigger than 0!!")
 	}
 
 }

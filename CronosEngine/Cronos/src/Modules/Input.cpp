@@ -3,6 +3,8 @@
 
 #include "Providers/Globals.h"
 #include "Application.h"
+#include "ImGui/ImGuiLayer.h"
+#include "ImGui/OpenGL/imgui_impl_sdl.h"
 #include "Input.h"
 
 namespace Cronos {
@@ -48,15 +50,22 @@ namespace Cronos {
 		{
 			if (keys[i] == 1)
 			{
-				if (keyboard[i] == KEY_IDLE)
+				if (keyboard[i] == KEY_IDLE) {
 					keyboard[i] = KEY_DOWN;
-				else
+					App->EditorGUI->GetInput(i, KEY_DOWN);
+				}
+				else if (keyboard[i] != KEY_REPEAT)
+				{
 					keyboard[i] = KEY_REPEAT;
+					App->EditorGUI->GetInput(i, KEY_REPEAT);
+				}
 			}
 			else
 			{
-				if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+				if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN) {
 					keyboard[i] = KEY_UP;
+					App->EditorGUI->GetInput(i, KEY_DOWN);
+				}
 				else
 					keyboard[i] = KEY_IDLE;
 			}
@@ -72,15 +81,21 @@ namespace Cronos {
 		{
 			if (buttons & SDL_BUTTON(i))
 			{
-				if (mouse_buttons[i] == KEY_IDLE)
+				if (mouse_buttons[i] == KEY_IDLE) {
 					mouse_buttons[i] = KEY_DOWN;
-				else
+					App->EditorGUI->GetInput(i, KEY_DOWN,true);
+				}
+				else if(mouse_buttons[i]!=KEY_REPEAT){
 					mouse_buttons[i] = KEY_REPEAT;
+					App->EditorGUI->GetInput(i, KEY_REPEAT, true);
+				}
 			}
 			else
 			{
-				if (mouse_buttons[i] == KEY_REPEAT || mouse_buttons[i] == KEY_DOWN)
+				if (mouse_buttons[i] == KEY_REPEAT || mouse_buttons[i] == KEY_DOWN) {
 					mouse_buttons[i] = KEY_UP;
+					App->EditorGUI->GetInput(i, KEY_UP,true);
+				}
 				else
 					mouse_buttons[i] = KEY_IDLE;
 			}
@@ -89,10 +104,10 @@ namespace Cronos {
 		mouse_x_motion = mouse_y_motion = 0;
 		m_MouseScroll = false;
 
-		bool quit = false;
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
+			ImGui_ImplSDL2_ProcessEvent(&e);
 			switch (e.type)
 			{
 			case SDL_MOUSEWHEEL:
@@ -119,9 +134,9 @@ namespace Cronos {
 			}
 			}
 		}
-		
-		if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
-			return UPDATE_STOP;
+
+		//if (quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+		//	return UPDATE_STOP;
 
 		return UPDATE_CONTINUE;
 	}

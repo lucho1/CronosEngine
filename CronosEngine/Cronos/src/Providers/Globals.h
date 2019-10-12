@@ -18,7 +18,7 @@
 #define COMPILATIONLOGINFO Cronos::LogCompilationFirstMessage()
 
 namespace Cronos {
-	
+
 	void Log(const char file[], int line, const char* format, ...);
 	void LogCompilationFirstMessage();
 }
@@ -75,6 +75,7 @@ namespace Cronos {
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
 #define TITLE "Cronos Engine"
+#define ORGANIZATION "UPC CITM - TECH TALENT CENTER, BCN"
 
 // -------------------------------------------------------------------------------
 

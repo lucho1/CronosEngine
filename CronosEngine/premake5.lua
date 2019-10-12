@@ -24,6 +24,7 @@ IncludeDir["dlls"] = "Cronos/dll_files"
 IncludeDir["Glad"] = "Cronos/vendor/Glad/include"
 IncludeDir["ImGui"] = "Cronos/vendor/imgui"
 IncludeDir["glm"] = "Cronos/vendor/glm"
+IncludeDir["Assimp"]="Cronos/vendor/Assimp"
 
 include "Cronos/vendor/Glad"
 include "Cronos/vendor/imgui"
@@ -67,13 +68,15 @@ project "Cronos"
 		"%{prj.name}/src/Helpers",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{InCludeDir.Assimp}"
 	}
 	libdirs
 	{
 		"%{prj.name}/vendor/SDL_mixer/libx86",
 		"%{prj.name}/vendor/SDL/libx86",
-		"%{prj.name}/vendor/glut"
+		"%{prj.name}/vendor/glut",
+		"%{prj.name}/vendor/Assimp/libx86"
 	}
 	links
 	{
@@ -83,7 +86,8 @@ project "Cronos"
 		"SDL2.lib",
 		"SDL2main.lib",
 		"ImGui",
-		"Glad"
+		"Glad",
+		"Assimp.lib"
 	}
 
 	filter "system:windows"

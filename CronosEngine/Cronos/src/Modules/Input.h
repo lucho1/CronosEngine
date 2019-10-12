@@ -26,7 +26,7 @@ namespace Cronos {
 		virtual bool OnInit() override;
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
-	
+
 
 		KEY_STATE GetKey(int id) const
 		{
@@ -66,8 +66,10 @@ namespace Cronos {
 			return mouse_y_motion;
 		}
 
+		inline const bool getCurrentWinStatus() { return quit; }
+		inline void updateQuit(bool updated) { quit = updated; }
 	private:
-		
+
 		KEY_STATE* keyboard;
 		KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
 		int mouse_x;
@@ -75,6 +77,7 @@ namespace Cronos {
 		int mouse_z;
 		int mouse_x_motion;
 		int mouse_y_motion;
+		bool quit = false;
 		bool m_MouseScroll;
 
 	};
