@@ -76,7 +76,7 @@ namespace Cronos {
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
-		vmodelxd = new CronosModel("res/warrior.fbx");
+		vmodelxd = new CronosModel("res/BakerHouse.fbx");
 		vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
@@ -135,6 +135,7 @@ namespace Cronos {
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
 		vmeshxd->Draw();
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 		vmodelxd->Draw();
 
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
@@ -142,6 +143,22 @@ namespace Cronos {
 
 		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
 			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+
+		glm::vec3 axis_vec = vmodelxd->GetModelAxis();
+		glLineWidth(2.0f);
+		glBegin(GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+		glEnd();
+
+		
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

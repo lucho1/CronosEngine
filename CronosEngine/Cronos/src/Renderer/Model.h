@@ -29,8 +29,7 @@ namespace Cronos {
 	{
 	public:
 		
-		CronosMesh(std::vector<CronosVertex> vertices, std::vector<uint>indices, std::vector<CronosTexture>textures);
-		CronosMesh();
+		CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures);
 		~CronosMesh();
 
 		void Draw();
@@ -66,21 +65,25 @@ namespace Cronos {
 		void Draw();
 		void ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
 		void MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude);
-	
+		
+		const glm::vec3 GetModelAxis() const { return m_ModelAxis; }
+
 	private:
-	
+		
+		void CalculateModelAxis();
+
 		std::vector<CronosMesh*> m_ModelMeshesVector;
 		std::string m_ModelDirectoryPath;
+		glm::vec3 m_ModelAxis;
 	};
 
 
 	class AssimpCronosTranslator
 	{
-		
 	private:
 		friend class CronosModel;
 
-		AssimpCronosTranslator(CronosModel* Cr_Model) : m_CronosModel(Cr_Model) {}
+		AssimpCronosTranslator(CronosModel* Cr_Model);
 		
 		void LoadModel(const std::string& filepath);
 		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene);
