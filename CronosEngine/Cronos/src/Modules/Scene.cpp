@@ -76,8 +76,8 @@ namespace Cronos {
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
-		vmodelxd = new CronosModel("res/BakerHouse.fbx");
-		vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
+		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
+		//vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
 		//glCreateVertexArrays(1, &va);
@@ -134,9 +134,12 @@ namespace Cronos {
 		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
-		vmeshxd->Draw();
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		//vmeshxd->Draw();
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		vmodelxd->Draw();
+		//vmodelxd->DrawTextureCoordinates();
+		//vmodelxd->DrawVerticesNormals();
+		vmodelxd->DrawPlanesNormals();
 
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
 			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
@@ -144,6 +147,7 @@ namespace Cronos {
 		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
 			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
 
+		
 		glm::vec3 axis_vec = vmodelxd->GetModelAxis();
 		glLineWidth(2.0f);
 		glBegin(GL_LINES);

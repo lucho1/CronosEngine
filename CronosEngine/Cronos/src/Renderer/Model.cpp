@@ -33,6 +33,64 @@ namespace Cronos {
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
+	void CronosMesh::DrawVerticesNormals()
+	{
+		float linelength = 0.000002f;
+
+		glLineWidth(2.0f);
+		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
+		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+		for (; item != m_VertexVector.end(); item++)
+		{
+
+			//glm::vec3 norm = (*item).Normal + (*item).Position;
+			glm::vec3 pos = (*item).Position;
+			glm::vec3 norm = (*item).Position + (*item).Normal;
+			
+			glBegin(GL_LINES);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glVertex3f(norm.x + linelength, norm.y, norm.z);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glVertex3f(norm.x, norm.y + linelength, norm.z);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glVertex3f(norm.x, norm.y, norm.z + linelength);
+			glEnd();
+		}
+	}
+
+	void CronosMesh::DrawPlanesNormals()
+	{
+		float linelength = 1.0f;
+		glColor4f(0.6f, 0.4f, 0.2f, 1.0f);
+		std::vector<uint>::iterator item = m_IndicesVector.begin();
+
+		for (uint i = 0; i < m_IndicesVector.size();)
+		{
+			glm::vec3 planeVecNorm = glm::vec3(0, 0, 0);
+			glm::vec3 auxvec = glm::vec3(0, 0, 0);
+			glm::vec3 planepos = glm::vec3(0, 0, 0);
+
+			for (uint j = 0; j < 3; j++)
+			{
+				if (i < m_VertexVector.size()) {
+					auxvec += m_VertexVector[i].Normal;
+					planepos += m_VertexVector[i].Position;
+				}
+				i++;
+			}
+
+			float auxvecMagnitude = glm::sqrt((glm::pow(auxvec.x, 2)) + (glm::pow(auxvec.y, 2)) + (glm::pow(auxvec.z, 2)));
+			auxvec /= auxvecMagnitude;
+			planepos /= 3;
+			planeVecNorm = planepos + auxvec;
+
+			glBegin(GL_LINES);
+				glVertex3f(planepos.x, planepos.y, planepos.z);
+				glVertex3f(planeVecNorm.x + linelength, planeVecNorm.y + linelength, planeVecNorm.z + linelength);
+			glEnd();
+		}
+	}
+
 	void CronosMesh::SetupMesh()
 	{
 		m_MeshVAO = new VertexArray();
@@ -41,9 +99,9 @@ namespace Cronos {
 		m_MeshVBO = new VertexBuffer(VBasArray, m_VertexVector.size() * sizeof(CronosVertex));
 
 		m_MeshVBO->SetLayout({
-			{Cronos::VertexDataType::VEC3F, "a_Position", true},
-			{Cronos::VertexDataType::VEC3F, "a_Normal", true},
-			{Cronos::VertexDataType::VEC2F, "a_TexCoords", true}
+			{Cronos::VertexDataType::VEC3F, "a_Position"},
+			{Cronos::VertexDataType::VEC3F, "a_Normal"},
+			{Cronos::VertexDataType::VEC2F, "a_TexCoords"}
 		});
 
 		m_MeshVAO->AddVertexBuffer(*m_MeshVBO);
@@ -123,6 +181,21 @@ namespace Cronos {
 		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
 			m_ModelMeshesVector[i]->Draw();
 	}
+
+	void CronosModel::DrawVerticesNormals()
+	{
+		//Just iterate all model's meshes and draw them
+		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
+			m_ModelMeshesVector[i]->DrawVerticesNormals();
+	}
+
+	void CronosModel::DrawPlanesNormals()
+	{
+		//Just iterate all model's meshes and draw them
+		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
+			m_ModelMeshesVector[i]->DrawPlanesNormals();
+	}
+
 
 	//TODO: Change this, is not optimal!
 	void CronosModel::ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude)

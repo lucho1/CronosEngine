@@ -33,6 +33,9 @@ namespace Cronos {
 		~CronosMesh();
 
 		void Draw();
+		void DrawVerticesNormals();
+		void DrawPlanesNormals();
+
 		void ScaleMesh(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
 		void MoveMesh(glm::vec3 Unitary_moveAxis, float moveMagnitude);
 
@@ -63,6 +66,9 @@ namespace Cronos {
 		~CronosModel();
 
 		void Draw();
+		void DrawVerticesNormals();
+		void DrawPlanesNormals();
+
 		void ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
 		void MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude);
 		
