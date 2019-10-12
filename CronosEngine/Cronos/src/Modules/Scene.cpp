@@ -140,6 +140,9 @@ namespace Cronos {
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
 			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
 
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		//glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr/* VAO->GetIndexBuffer()*/);

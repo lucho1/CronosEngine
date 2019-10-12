@@ -78,6 +78,28 @@ namespace Cronos {
 		}
 	}
 
+	void CronosMesh::MoveMesh(glm::vec3 Unitary_moveAxis, float moveMagnitude)
+	{
+		if (Unitary_moveAxis.x == 1.0f)
+		{
+			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+			for (; item != m_VertexVector.end(); item++)
+				(*item).Position.x += moveMagnitude;
+		}
+		if (Unitary_moveAxis.y == 1.0f)
+		{
+			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+			for (; item != m_VertexVector.end(); item++)
+				(*item).Position.y += moveMagnitude;
+		}
+		if (Unitary_moveAxis.z == 1.0f)
+		{
+			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+			for (; item != m_VertexVector.end(); item++)
+				(*item).Position.z += moveMagnitude;
+		}
+	}
+
 
 	// ---------------------------------- CRONOS MODELS ----------------------------------
 	CronosModel::CronosModel(const std::string& filepath)
@@ -90,7 +112,6 @@ namespace Cronos {
 		//LoadCronosModel(filepath);
 		AssimpCronosTranslator m_ACT(this);
 		m_ACT.LoadModel(filepath);
-		int a = 0;
 	}
 
 	CronosModel::~CronosModel()
@@ -138,6 +159,27 @@ namespace Cronos {
 			LOG("Couldn't Scale Model. Axis must only contain 0s or 1s and scaleMagnitude must be bigger or equal than 0!");
 	}
 
+	void CronosModel::MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude)
+	{
+		if ((Unitary_moveAxis.x == 0.0f || Unitary_moveAxis.x == 1.0f) &&
+			(Unitary_moveAxis.y == 0.0f || Unitary_moveAxis.y == 1.0f) &&
+			(Unitary_moveAxis.z == 0.0f || Unitary_moveAxis.z == 1.0f))
+		{
+
+			std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+			for (; item != m_ModelMeshesVector.end(); item++)
+			{
+				(*item)->MoveMesh(Unitary_moveAxis, moveMagnitude);
+				CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());;
+				(*item)->~CronosMesh();
+				(*item) = nullptr;
+				*item = tmpMesh;
+			}
+		}
+		else
+			LOG("Couldn't Move Model. Axis must only contain 0s or 1s!");
+	}
+
 
 	// ---------------------------------- ASSIMP-CRONOS MODEL TRANSLATOR ----------------------------------
 	void AssimpCronosTranslator::LoadModel(const std::string& filepath)
@@ -157,9 +199,11 @@ namespace Cronos {
 			return;
 		}
 
+		//This thing with directory is to get the model directory and not its path, so
+		//the substr() gets, in this case, all the characters until the last '/' char.
+		//So, if filepath is "AA/BB/model.fbx", this will be "AA/BB"
+		m_CronosModel->m_ModelDirectoryPath = filepath.substr(0, filepath.find_last_of('/'));
 		//If all is correct, we process all the nodes passing the first one (root)
-		//m_CronosModel->m_ModelDirectoryPath = filepath.substr(0, filepath.find_last_of('/'));
-		m_CronosModel->m_ModelDirectoryPath = filepath;
 		ProcessAssimpNode(scene->mRootNode, scene);
 	}
 

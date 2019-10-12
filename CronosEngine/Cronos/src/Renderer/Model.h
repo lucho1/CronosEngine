@@ -35,6 +35,7 @@ namespace Cronos {
 
 		void Draw();
 		void ScaleMesh(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
+		void MoveMesh(glm::vec3 Unitary_moveAxis, float moveMagnitude);
 
 		const std::vector<CronosTexture> GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
@@ -64,6 +65,7 @@ namespace Cronos {
 
 		void Draw();
 		void ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
+		void MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude);
 	
 	private:
 	
