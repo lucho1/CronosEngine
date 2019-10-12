@@ -249,7 +249,6 @@ namespace Cronos {
 		mt_SaveTimer.Start();
 	}
 
-}
 	const void Application::RequestBrowser(const char* WebDirection)
 	{
 		ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL);
