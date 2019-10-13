@@ -33,6 +33,7 @@ namespace Cronos {
 		ITEM_TEXTURE_PNG,
 		ITEM_TEXTURE_TGA,
 		ITEM_TEXTURE_JPEG,
+		MAX_ITEMS
 	};
 	
 	class AssetItems {
@@ -59,7 +60,7 @@ namespace Cronos {
 		
 	private:
 		
-		GLuint Icon_texture;
+		GLuint m_IconTex;
 		std::string m_Extension;
 		int m_ElementSize;
 		char labelID[150];
@@ -111,7 +112,7 @@ namespace Cronos {
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
-
+		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]; }
 		//bool LoadAssimpMesh(const char* filePath);
 		//aiScene* aiImportFile(const char* filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 
@@ -122,6 +123,7 @@ namespace Cronos {
 		std::string m_LabelRootDirectory;
 
 		Directories* m_AssetRoot;
+		GLuint ArrayIconTextures[(int)ItemType::MAX_ITEMS];
 
 	};
 

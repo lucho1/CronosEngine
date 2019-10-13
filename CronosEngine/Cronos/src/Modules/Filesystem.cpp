@@ -19,11 +19,22 @@ namespace Cronos {
 	}
 
 	bool Filesystem::OnStart() {
-	
+
+		//loader Icons -> this needs to be loaded with JSON
+
+		ArrayIconTextures[(int)ItemType::ITEM_FBX] = App->textureManager->CreateTexture("res/Icons/Fbx_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_FOLDER] = App->textureManager->CreateTexture("res/Icons/Folder_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_MATERIAL] = App->textureManager->CreateTexture("res/Icons/Material_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_OBJ] = App->textureManager->CreateTexture("res/Icons/Obj_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_SCRIPT] = App->textureManager->CreateTexture("res/Icons/Script_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_SHADER] = App->textureManager->CreateTexture("res/Icons/Shader_Icon.png");
+
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory);
 
+	
+		
 		return true;
 	}
 
@@ -43,16 +54,19 @@ namespace Cronos {
 		}
 		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
+			m_IconTex = App->filesystem->GetIcon(type);
 		}
-		else if (m_Extension == ".fbx") {
+		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
 			type = ItemType::ITEM_FBX;
+			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".cpp" || m_Extension == ".h") {
 			type = ItemType::ITEM_SCRIPT;
+			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".png" ) {
 			type = ItemType::ITEM_TEXTURE_PNG;
-			Icon_texture = App->textureManager->CreateTexture(m_Path.c_str());
+			m_IconTex = App->textureManager->CreateTexture(m_Path.c_str());
 		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
@@ -60,9 +74,10 @@ namespace Cronos {
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
 		}
-		////else {
-		////	TextPath = "res/Icons/Shader_Icon.png";
-		////}
+		if (type == ItemType::ITEM_FOLDER) {
+			m_IconTex = App->filesystem->GetIcon(type);
+		}
+	
 	};
 	void AssetItems::Clear() {
 		delete folderDirectory;
@@ -73,7 +88,7 @@ namespace Cronos {
 
 		ImGui::BeginGroup();    
 		
-		if (ImGui::ImageButton((void*)(intptr_t)Icon_texture, ImVec2(50, 50),ImVec2(0,0), ImVec2(1, 1),2)) {
+		if (ImGui::ImageButton((void*)(intptr_t)m_IconTex, ImVec2(50, 50),ImVec2(0,0), ImVec2(1, 1),2)) {
 			bool a = true;
 		} 
 		hovered = ImGui::IsItemHovered(); //ASK MARC WHY IS NOT HOVERING ALL TIME
@@ -304,6 +319,7 @@ namespace Cronos {
 						currentDir->childs.push_back(newPath);
 
 						AssetItems* t = new AssetItems(path.path().string().c_str(),ItemType::ITEM_FOLDER);
+						
 						t->folderDirectory = newPath;
 						currentDir->m_Container.push_front(t);
 						newPath->SetParentDirectory(currentDir);
