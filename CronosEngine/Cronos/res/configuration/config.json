@@ -19,8 +19,26 @@
   },
 
   "Renderer": {
-    "VSYNC":  true,
+    "VSYNC": true,
     "OpenGL_MajorV": 4,
     "OpenGL_MinorV": 3
+  },
+
+  "Audio": {
+    "MasterVolume": 100,
+    "MusicVolume": 100,
+    "SFXVolume": 100,
+    "DefaultMusicFadeTime": 2.0
+  },
+
+  "EngineCamera": {
+    "InitialPosition": [ 3.0, 3.0, 3.0 ],
+    "InitialLookAt": [ 0.0, 0.0, 0.0 ],
+    "CameraScrollSpeed": 20.0,
+    "CameraMoveSpeed": 5.0,
+    "FOV": 60.0,
+    "NearPlane": 0.125,
+    "FarPlane": 512.0
   }
+
 }

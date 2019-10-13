@@ -18,13 +18,13 @@ namespace Cronos {
 		virtual ~SDLWindow();
 
 		virtual bool OnInit() override;
-		virtual bool OnStart() override;
 		virtual bool OnCleanUp() override;
 
 		inline void ReCalculateAspectRatio(uint width, uint height);
 		void OnResize(uint width, uint height);
 
-		virtual void SaveModuleData(json& JSONFile) override;
+		//Save/Load
+		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
 
 	public:
@@ -55,7 +55,6 @@ namespace Cronos {
 			//std::string Title;
 			uint  Width, Height, ScreenSize;
 			float AspectRatio = 1.0f;
-			bool VSyncActive;
 
 			bool WindowFullscreen;
 			bool WindowResizable;
@@ -65,9 +64,7 @@ namespace Cronos {
 		};
 
 		WindowData m_Data;
-		int Mv = 4, mv = 3; //Open GL Major and Minor version
 		Uint32 m_WindowFlags;
-
 	};
 
 }

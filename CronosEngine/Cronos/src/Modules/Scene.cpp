@@ -30,9 +30,6 @@ namespace Cronos {
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
 
-		App->engineCamera->Move(vec3(1.0f, 1.0f, 0.0f)); //Camera begins one unit up in Y and one unit to the right
-		App->engineCamera->LookAt(vec3(0.0f, 0.0f, 0.0f)); //To look at center
-
 
 		//---------------- TEST ----------------//
 		float cbeVertices[3 * 8] = {

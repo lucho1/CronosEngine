@@ -9,7 +9,6 @@ namespace Cronos {
 
 	Application::Application(int FPSCap) : m_FPSCap(FPSCap)
 	{
-
 		window = new SDLWindow(this);
 		input = new Input(this);
 		audio = new Audio(this);
@@ -48,13 +47,12 @@ namespace Cronos {
 	bool Application::OnInit()
 	{
 		bool ret = true;
-
+		COMPILATIONLOGINFO;
 		//Not a Module!
 		//SystemInfo AppSystemInfo;
 
 		//Loading...
 		m_DefaultConfigurationFilepath = "res/configuration/config.json";
-		//LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
 		LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
 		mt_SaveTimer.Start();
 

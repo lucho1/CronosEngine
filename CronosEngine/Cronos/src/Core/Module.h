@@ -34,7 +34,7 @@ namespace Cronos {
 		virtual update_status OnUpdate(float dt) { return UPDATE_CONTINUE; }
 		virtual update_status OnPostUpdate(float dt) { return UPDATE_CONTINUE; }
 
-		virtual void SaveModuleData(json& JSONFile) {}
+		virtual void SaveModuleData(json& JSONFile) const {}
 		virtual void LoadModuleData(json& JSONFile) {}
 
 	};

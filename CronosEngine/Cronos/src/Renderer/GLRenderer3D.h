@@ -22,7 +22,8 @@ namespace Cronos {
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
 
-		virtual void SaveModuleData(json& JSONFile) override;
+		//Save/Load
+		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
 
 	public:

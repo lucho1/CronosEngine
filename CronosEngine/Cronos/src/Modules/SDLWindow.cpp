@@ -50,15 +50,6 @@ namespace Cronos {
 	}
 
 
-	bool SDLWindow::OnStart()
-	{
-		COMPILATIONLOGINFO;
-		GL_SETERRORHANDLER(Mv, mv);
-
-		return true;
-	}
-
-
 	// Called before quitting
 	bool SDLWindow::OnCleanUp()
 	{
@@ -76,7 +67,7 @@ namespace Cronos {
 	}
 
 
-	void SDLWindow::SaveModuleData(json& JSONFile)
+	void SDLWindow::SaveModuleData(json& JSONFile) const
 	{
 		JSONFile["Window"]["ScreenWidth"] = m_Data.Width;
 		JSONFile["Window"]["ScreenHeight"] = m_Data.Height;

@@ -29,6 +29,8 @@ namespace Cronos {
 
 		App->EditorGUI->AddLog("Loading Glad");
 		gladLoadGL();
+		GL_SETERRORHANDLER(m_OGL_Mv, m_OGL_mv);
+
 		if (context == NULL)
 		{
 			LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -142,7 +144,7 @@ namespace Cronos {
 		return true;
 	}
 
-	void GLRenderer3D::SaveModuleData(json& JSONFile)
+	void GLRenderer3D::SaveModuleData(json& JSONFile) const
 	{
 		JSONFile["Renderer"]["VSYNC"] = m_VSyncActive;
 		JSONFile["Renderer"]["OpenGL_MajorV"] = m_OGL_Mv;

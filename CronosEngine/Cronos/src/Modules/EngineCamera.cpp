@@ -27,6 +27,11 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
+		SetFOV(m_FOV);
+		SetNearPlane(m_NearPlane);
+		SetFarPlane(m_FarPlane);
+
+		Look(m_Position, m_Reference);
 		return true;
 	}
 
@@ -40,7 +45,6 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status EngineCamera::OnUpdate(float dt)
 	{
-
 		if (App->input->isMouseScrolling())
 			Zoom(dt);
 
@@ -202,7 +206,6 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void EngineCamera::CalculateProjection()
 	{
-
 		if (m_FOV < MIN_FOV)
 			m_FOV = MIN_FOV;
 		else if (m_FOV > MAX_FOV)
@@ -223,6 +226,36 @@ namespace Cronos {
 		}
 	}
 
+	// -----------------------------------------------------------------
+	//Save/Load
+	void EngineCamera::SaveModuleData(json& JSONFile) const
+	{
+		JSONFile["EngineCamera"]["CameraMoveSpeed"] = m_CameraMoveSpeed;
+		JSONFile["EngineCamera"]["CameraScrollSpeed"] = m_CameraScrollSpeed;
+		JSONFile["EngineCamera"]["FOV"] = m_FOV;
+		JSONFile["EngineCamera"]["NearPlane"] = m_NearPlane;
+		JSONFile["EngineCamera"]["FarPlane"] = m_FarPlane;
+	}
+
+	void EngineCamera::LoadModuleData(json& JSONFile)
+	{
+		vec3 initialPos = vec3(	JSONFile["EngineCamera"]["InitialPosition"][0],
+								JSONFile["EngineCamera"]["InitialPosition"][1],
+								JSONFile["EngineCamera"]["InitialPosition"][2]);
+
+		vec3 initialRefence = vec3(	JSONFile["EngineCamera"]["InitialLookAt"][0],
+									JSONFile["EngineCamera"]["InitialLookAt"][1],
+									JSONFile["EngineCamera"]["InitialLookAt"][2]);
+
+		m_CameraMoveSpeed = JSONFile["EngineCamera"]["CameraMoveSpeed"];
+		m_CameraScrollSpeed = JSONFile["EngineCamera"]["CameraScrollSpeed"];
+		m_FOV = JSONFile["EngineCamera"]["FOV"];
+		m_NearPlane = JSONFile["EngineCamera"]["NearPlane"];
+		m_FarPlane = JSONFile["EngineCamera"]["FarPlane"];
+
+		m_Reference = initialRefence;
+		m_Position = initialPos;
+	}
 
 	// -----------------------------------------------------------------
 	void EngineCamera::SetFOV(float FOV)

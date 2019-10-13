@@ -4,14 +4,11 @@
 #include "Module.h"
 #include "SDL_mixer\include\SDL_mixer.h"
 
-namespace Cronos {
-
-#define DEFAULT_MUSIC_FADE_TIME 2.0f
-
 #define PERCENTAGE_VOL_VALUE_TO_SDL(volume) (volume * MIX_MAX_VOLUME/100)
 #define SDL_VOL_VALUE_TO_PERCENTAGE(volume) (volume * 100/MIX_MAX_VOLUME)
 #define PERCENTAGE_MODIFIER_VALUE(volume) (volume/100)
 
+namespace Cronos {
 
 	enum class song_type {
 
@@ -40,7 +37,6 @@ namespace Cronos {
 
 		char* nextSong_id = "NULL";
 		Music_Song* nextSong = nullptr;
-
 	};
 
 
@@ -55,7 +51,7 @@ namespace Cronos {
 		bool OnCleanUp() override;
 
 		// Play a music file
-		bool PlayMusic(const char* path, float fade_time = DEFAULT_MUSIC_FADE_TIME);
+		bool PlayMusic(const char* path, float fade_time = 2.0f);
 
 		//Check if something is being played
 		bool MusicPlaying();
@@ -65,6 +61,10 @@ namespace Cronos {
 
 		// Play a previously loaded WAV
 		bool PlayFx(unsigned int fx, int repeat = 0);
+
+		//Save/Load
+		virtual void SaveModuleData(json& JSONFile) const override;
+		virtual void LoadModuleData(json& JSONFile) override;
 
 	public:
 
@@ -94,6 +94,8 @@ namespace Cronos {
 
 		Mix_Music* music = nullptr;
 		std::vector<Mix_Chunk*>	m_FXList;
+
+		float m_DefaultFadeTime;
 
 		// 0% - 100% Range
 		uint m_MasterVol = 100;
