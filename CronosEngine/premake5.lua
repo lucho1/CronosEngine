@@ -25,6 +25,7 @@ IncludeDir["Glad"] = "Cronos/vendor/Glad/include"
 IncludeDir["ImGui"] = "Cronos/vendor/imgui"
 IncludeDir["glm"] = "Cronos/vendor/glm"
 IncludeDir["Assimp"]="Cronos/vendor/Assimp"
+IncludeDir["gpuDetect"]="Cronos/vendor/gpudetect"
 
 include "Cronos/vendor/Glad"
 include "Cronos/vendor/imgui"
@@ -49,7 +50,11 @@ project "Cronos"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/gpudetect/**.cpp",
+		"%{prj.name}/vendor/gpudetect/**.h",
+		"%{prj.name}/vendor/mmgr/**.cpp",
+		"%{prj.name}/vendor/mmgr/**.h"
 	}
 
 	defines
@@ -69,7 +74,7 @@ project "Cronos"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
-		"%{InCludeDir.Assimp}"
+		"%{IncludeDir.Assimp}"
 	}
 	libdirs
 	{

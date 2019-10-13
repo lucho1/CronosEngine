@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -71,7 +71,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -85,7 +85,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -99,8 +99,8 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>assimp.lib;glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\Assimp\libx86;vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -112,8 +112,8 @@
     <ClInclude Include="src\Core\Module.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
-    <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
+    <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
     <ClInclude Include="src\Helpers\Timers\Timer.h" />
     <ClInclude Include="src\Helpers\glmath.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
@@ -135,42 +135,6 @@
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
-    <ClInclude Include="vendor\Assimp\include\ai_assert.h" />
-    <ClInclude Include="vendor\Assimp\include\anim.h" />
-    <ClInclude Include="vendor\Assimp\include\camera.h" />
-    <ClInclude Include="vendor\Assimp\include\cexport.h" />
-    <ClInclude Include="vendor\Assimp\include\cfileio.h" />
-    <ClInclude Include="vendor\Assimp\include\cimport.h" />
-    <ClInclude Include="vendor\Assimp\include\color4.h" />
-    <ClInclude Include="vendor\Assimp\include\Compiler\poppack1.h" />
-    <ClInclude Include="vendor\Assimp\include\Compiler\pstdint.h" />
-    <ClInclude Include="vendor\Assimp\include\Compiler\pushpack1.h" />
-    <ClInclude Include="vendor\Assimp\include\config.h" />
-    <ClInclude Include="vendor\Assimp\include\DefaultLogger.hpp" />
-    <ClInclude Include="vendor\Assimp\include\defs.h" />
-    <ClInclude Include="vendor\Assimp\include\Exporter.hpp" />
-    <ClInclude Include="vendor\Assimp\include\Importer.hpp" />
-    <ClInclude Include="vendor\Assimp\include\importerdesc.h" />
-    <ClInclude Include="vendor\Assimp\include\IOStream.hpp" />
-    <ClInclude Include="vendor\Assimp\include\IOSystem.hpp" />
-    <ClInclude Include="vendor\Assimp\include\light.h" />
-    <ClInclude Include="vendor\Assimp\include\Logger.hpp" />
-    <ClInclude Include="vendor\Assimp\include\LogStream.hpp" />
-    <ClInclude Include="vendor\Assimp\include\material.h" />
-    <ClInclude Include="vendor\Assimp\include\matrix3x3.h" />
-    <ClInclude Include="vendor\Assimp\include\matrix4x4.h" />
-    <ClInclude Include="vendor\Assimp\include\mesh.h" />
-    <ClInclude Include="vendor\Assimp\include\metadata.h" />
-    <ClInclude Include="vendor\Assimp\include\NullLogger.hpp" />
-    <ClInclude Include="vendor\Assimp\include\postprocess.h" />
-    <ClInclude Include="vendor\Assimp\include\ProgressHandler.hpp" />
-    <ClInclude Include="vendor\Assimp\include\quaternion.h" />
-    <ClInclude Include="vendor\Assimp\include\scene.h" />
-    <ClInclude Include="vendor\Assimp\include\texture.h" />
-    <ClInclude Include="vendor\Assimp\include\types.h" />
-    <ClInclude Include="vendor\Assimp\include\vector2.h" />
-    <ClInclude Include="vendor\Assimp\include\vector3.h" />
-    <ClInclude Include="vendor\Assimp\include\version.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -549,8 +513,8 @@
     <ClCompile Include="src\Core\Main.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
-    <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
+    <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />
     <ClCompile Include="src\Helpers\Timers\Timer.cpp" />
     <ClCompile Include="src\Helpers\glmath.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />
@@ -584,16 +548,7 @@
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="vendor\Assimp\include\color4.inl" />
-    <None Include="vendor\Assimp\include\material.inl" />
-    <None Include="vendor\Assimp\include\matrix3x3.inl" />
-    <None Include="vendor\Assimp\include\matrix4x4.inl" />
-    <None Include="vendor\Assimp\include\quaternion.inl" />
-    <None Include="vendor\Assimp\include\vector2.inl" />
-    <None Include="vendor\Assimp\include\vector3.inl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 
