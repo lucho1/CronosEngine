@@ -111,6 +111,9 @@
     <ClInclude Include="src\Modules\Scene.h">
       <Filter>src\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="src\Modules\TextureManager.h">
+      <Filter>src\Modules</Filter>
+    </ClInclude>
     <ClInclude Include="src\Providers\Errors.h">
       <Filter>src\Providers</Filter>
     </ClInclude>
@@ -133,6 +136,9 @@
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Primitive.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Textures.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\VertexArray.h">
@@ -1310,6 +1316,9 @@
     <ClCompile Include="src\Modules\Scene.cpp">
       <Filter>src\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="src\Modules\TextureManager.cpp">
+      <Filter>src\Modules</Filter>
+    </ClCompile>
     <ClCompile Include="src\Providers\Log.cpp">
       <Filter>src\Providers</Filter>
     </ClCompile>
@@ -1329,6 +1338,9 @@
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Primitive.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer\Textures.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\VertexArray.cpp">

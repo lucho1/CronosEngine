@@ -30,7 +30,9 @@ namespace Cronos {
 		ITEM_SHADER,
 		ITEM_SCRIPT,
 		ITEM_FOLDER,
-		ITEM_TEXTURE
+		ITEM_TEXTURE_PNG,
+		ITEM_TEXTURE_TGA,
+		ITEM_TEXTURE_JPEG,
 	};
 	
 	class AssetItems {
@@ -56,7 +58,8 @@ namespace Cronos {
 		Directories* folderDirectory;
 		
 	private:
-
+		
+		GLuint Icon_texture;
 		std::string m_Extension;
 		int m_ElementSize;
 		char labelID[150];

@@ -25,6 +25,7 @@ IncludeDir["Glad"] = "Cronos/vendor/Glad/include"
 IncludeDir["ImGui"] = "Cronos/vendor/imgui"
 IncludeDir["glm"] = "Cronos/vendor/glm"
 IncludeDir["Assimp"]="Cronos/vendor/Assimp"
+IncludeDir["DevIL"]="Cronos/vendor/DevIL"
 IncludeDir["gpuDetect"]="Cronos/vendor/gpudetect"
 
 include "Cronos/vendor/Glad"
@@ -74,6 +75,7 @@ project "Cronos"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.DevIL}",
 		"%{IncludeDir.Assimp}"
 	}
 	libdirs
@@ -81,6 +83,7 @@ project "Cronos"
 		"%{prj.name}/vendor/SDL_mixer/libx86",
 		"%{prj.name}/vendor/SDL/libx86",
 		"%{prj.name}/vendor/glut",
+		"%{prj.name}/vendor/DevIL/lib86",
 		"%{prj.name}/vendor/Assimp/libx86"
 	}
 	links
@@ -92,6 +95,9 @@ project "Cronos"
 		"SDL2main.lib",
 		"ImGui",
 		"Glad",
+		"DevIL.lib",
+		"ILU.lib",
+		"ILUT.lib",
 		"Assimp.lib"
 	}
 

@@ -11,6 +11,7 @@
 #include "Modules/Scene.h"
 #include "Modules/EngineCamera.h"
 #include "Modules/Filesystem.h"
+#include "Modules/TextureManager.h"
 
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
@@ -30,6 +31,7 @@ namespace Cronos {
 		EngineCamera* engineCamera;
 		ImGuiLayer* EditorGUI;
 		Filesystem* filesystem;
+		TextureManager* textureManager;
 
 	private:
 

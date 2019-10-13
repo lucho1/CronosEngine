@@ -2,6 +2,8 @@
 
 #include "Filesystem.h"
 #include "Application.h"
+#include "TextureManager.h"
+
 //#include "Renderer/Buffers.h"
 //#include "Assimp/include/cimport.h"
 //#include "Assimp/include/scene.h"
@@ -13,10 +15,11 @@
 namespace Cronos {
 
 	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled) {
-
+		
 	}
 
 	bool Filesystem::OnStart() {
+	
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory);
@@ -38,15 +41,24 @@ namespace Cronos {
 			m_Extension = m_path.extension().string();
 			m_AssetNameNoExtension.erase(m_AssetNameNoExtension.find(m_Extension));
 		}
-		if (m_Extension == "obj") {
+		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
 		}
-		else if (m_Extension == "fbx") {
+		else if (m_Extension == ".fbx") {
 			type = ItemType::ITEM_FBX;
 		}
-		else if (m_Extension == "cpp" || m_Extension == "h") {
+		else if (m_Extension == ".cpp" || m_Extension == ".h") {
 			type = ItemType::ITEM_SCRIPT;
-
+		}
+		else if (m_Extension == ".png" ) {
+			type = ItemType::ITEM_TEXTURE_PNG;
+			Icon_texture = App->textureManager->CreateTexture(m_Path.c_str());
+		}
+		else if (m_Extension == ".jpeg") {
+			type = ItemType::ITEM_TEXTURE_JPEG;
+		}
+		else if (m_Extension == ".tga") {
+			type = ItemType::ITEM_TEXTURE_TGA;
 		}
 		////else {
 		////	TextPath = "res/Icons/Shader_Icon.png";
@@ -59,9 +71,9 @@ namespace Cronos {
 	void AssetItems::DrawIcons()
 	{
 
-		ImGui::BeginGroup();     
+		ImGui::BeginGroup();    
 		
-		if (ImGui::ImageButton(labelID, ImVec2(50, 50),ImVec2(0,0), ImVec2(0, 0),2)) {
+		if (ImGui::ImageButton((void*)(intptr_t)Icon_texture, ImVec2(50, 50),ImVec2(0,0), ImVec2(1, 1),2)) {
 			bool a = true;
 		} 
 		hovered = ImGui::IsItemHovered(); //ASK MARC WHY IS NOT HOVERING ALL TIME

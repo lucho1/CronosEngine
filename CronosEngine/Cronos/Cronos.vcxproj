@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -71,8 +71,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -85,7 +85,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -99,8 +99,8 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -126,6 +126,7 @@
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
+    <ClInclude Include="src\Modules\TextureManager.h" />
     <ClInclude Include="src\Providers\Errors.h" />
     <ClInclude Include="src\Providers\Globals.h" />
     <ClInclude Include="src\Providers\SystemInfo.h" />
@@ -134,6 +135,7 @@
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
+    <ClInclude Include="src\Renderer\Textures.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -527,6 +529,7 @@
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
+    <ClCompile Include="src\Modules\TextureManager.cpp" />
     <ClCompile Include="src\Providers\Log.cpp" />
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="src\Providers\cnpch.cpp">
@@ -536,6 +539,7 @@
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="src\Renderer\Textures.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
@@ -551,4 +555,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project> 
+</Project>

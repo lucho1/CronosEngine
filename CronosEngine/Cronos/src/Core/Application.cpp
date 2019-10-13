@@ -18,7 +18,7 @@ namespace Cronos {
 		renderer3D = new GLRenderer3D(this);
 		engineCamera = new EngineCamera(this);
 		filesystem = new Filesystem(this);
-
+		textureManager = new TextureManager(this);
 		EditorGUI = new ImGuiLayer(this);
 
 		// The order of calls is very important!
@@ -31,7 +31,7 @@ namespace Cronos {
 		AddModule(engineCamera);
 		AddModule(input);
 		AddModule(audio);
-
+		AddModule(textureManager);
 
 		// Scenes
 		AddModule(scene);
