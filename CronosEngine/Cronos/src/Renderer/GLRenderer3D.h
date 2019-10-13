@@ -22,12 +22,26 @@ namespace Cronos {
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
 
+		virtual void SaveModuleData(json& JSONFile) override;
+		virtual void LoadModuleData(json& JSONFile) override;
+
+	public:
+
+		void SetVsync(bool setStatus);
+		void SetOpenGLVersion(int MajorVersion, int MinorVersion);
+
 	public:
 
 		Light lights[MAX_LIGHTS];
 		SDL_GLContext context;
 		//mat3x3 NormalMatrix;
 		//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+
+	private:
+
+		bool m_VSyncActive;
+		int m_OGL_Mv = 4, m_OGL_mv = 3; //Open GL Major and Minor version
+
 	};
 
 }

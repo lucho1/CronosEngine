@@ -36,10 +36,6 @@ namespace Cronos {
 		AddModule(scene);
 		AddModule(filesystem);
 		AddModule(EditorGUI);
-
-		if (m_FPSCap > 0)
-			m_CappedMS = 1000 / FPSCap;
-
 	}
 
 	Application::~Application()
@@ -55,17 +51,20 @@ namespace Cronos {
 
 		//Not a Module!
 		//SystemInfo AppSystemInfo;
-		//Json file
-		m_DefaultConfigurationFilepath = "res/configuration/config.json";
-		mt_SaveTimer.Start();
-		//LoadJsonFile("res/configuration/config.json");
-		//SaveJsonFile("res/configuration/config.json");
 
+		//Loading...
+		m_DefaultConfigurationFilepath = "res/configuration/config.json";
+		//LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
+		LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
+		mt_SaveTimer.Start();
+
+		//Init all Modules
 		for (auto& element : m_ModulesList)
 			if (ret) {
 				EditorGUI->AddLog(("Initializing Module" + element->m_ModuleName));
 				ret = element->OnInit();
 			}
+
 		// After all Init calls we call Start() in all modules
 		LOG("Application Start --------------");
 		for (auto& element : m_ModulesList)
@@ -171,7 +170,7 @@ namespace Cronos {
 
 
 	//Save/Load JSON File
-	void Application::LoadJsonFile(const char* filePath) const
+	void Application::LoadJsonFile(const char* filePath)
 	{
 		//If the path is nullptr, we might not want to break, but to issue a warning
 		if (filePath == nullptr) {
@@ -196,12 +195,23 @@ namespace Cronos {
 		m_JSONConfigFile = json::parse(InputFile_Stream);
 		InputFile_Stream.close();
 
-		//Now copy all the json file data into our code data, then call all modules to load
-		std::string name = m_JSONConfigFile["Application"]["Name"];
-		std::string version = m_JSONConfigFile["Application"]["Version"];
+		//Now copy all the json file data into our code data
+		m_AppName = m_JSONConfigFile["Application"]["Name"].get<std::string>();
+		m_AppVersion = m_JSONConfigFile["Application"]["Version"].get<std::string>();
+
+		m_AppOrganization = m_JSONConfigFile["Application"]["Organization"].get<std::string>();
+		m_AppAuthors = m_JSONConfigFile["Application"]["Authors"].get<std::string>();
+		m_FPSCap = m_JSONConfigFile["Application"]["FPS Cap"].get<int>();
+
+		SetFPSCap(m_FPSCap);
+		SetAppTitle(m_AppName);
+		SetAppVersion(m_AppVersion);
+		SetAppOrganization(m_AppOrganization);
+		SetAppAuthors(m_AppAuthors);
 
 		//Call all modules to load
-
+		for (auto element : m_ModulesList)
+			element->LoadModuleData(m_JSONConfigFile);
 
 		m_MustLoad = false;
 	}
@@ -228,18 +238,15 @@ namespace Cronos {
 
 		//Auxiliar JSON File to which to save all data, then call all modules to save
 		json aux_JSONFile;
-		aux_JSONFile["Application"]["Name"] = "CronosEngine";
-		aux_JSONFile["Application"]["Version"] = "v0.1";
+		aux_JSONFile["Application"]["Name"] = m_AppName;
+		aux_JSONFile["Application"]["Version"] = m_AppVersion;
 
 		//TODO: Do with the loaded data what you have to do to make it useful
 		//TODO: Create a default time to save
 
 		//Call modules to Save into json aux file
-
-
-
-
-
+		for (auto element : m_ModulesList)
+			element->SaveModuleData(aux_JSONFile);
 
 
 		OutputFile_Stream << std::setw(4) << aux_JSONFile << std::endl;
@@ -249,6 +256,8 @@ namespace Cronos {
 		mt_SaveTimer.Start();
 	}
 
+
+	//"Setters"
 	const void Application::RequestBrowser(const char* WebDirection)
 	{
 		ShellExecuteA(NULL, "open", WebDirection, NULL, NULL, SW_SHOWNORMAL);
@@ -264,4 +273,25 @@ namespace Cronos {
 			LOG("FPS CAP must be bigger than 0!!")
 	}
 
+	void Application::SetAppTitle(const std::string& name)
+	{
+		m_AppName = name;
+		if(App->window->window != nullptr)
+			App->window->SetTitle(name.c_str());
+	}
+
+	void Application::SetAppVersion(const std::string& version)
+	{
+		m_AppVersion = version;
+	}
+
+	void Application::SetAppOrganization(const std::string& org)
+	{
+		m_AppOrganization = org;
+	}
+
+	void Application::SetAppAuthors(const std::string& authors)
+	{
+		m_AppAuthors = authors;
+	}
 }

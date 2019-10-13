@@ -22,11 +22,12 @@
 #include "json/json.hpp"
 using json = nlohmann::json;
 
+
 namespace Cronos {
 
 	class Application {
 
-	public:
+	public: //Modules
 
 		SDLWindow* window;
 		Input* input;
@@ -37,7 +38,7 @@ namespace Cronos {
 		ImGuiLayer* EditorGUI;
 		Filesystem* filesystem;
 
-	private:
+	private: //Time stuff
 
 		std::vector<Module*> m_ModulesList;
 
@@ -45,7 +46,7 @@ namespace Cronos {
 		float	m_Timestep = 0.0f;
 		Timer	mt_LastFrameTime;
 
-		///Framerate Debug Info.
+		//Framerate Debug Info.
 		Timer	mt_StartingTime; //Time since starting NEEDS TO BE STARTED!!!!!!
 		Timer	mt_LastSecFrameTime; //Timer to check the frames in a second (at each second) NEEDS TO BE STARTED!!!!!
 		uint	m_FrameCount = 0; //Frames since starting
@@ -57,12 +58,18 @@ namespace Cronos {
 		int m_CappedMS = -1;
 		int m_FPSCap = -1;
 
-		//SERIALIZATION & CONFIG READING
+	public: //Serialization & Config
+
 		mutable json m_JSONConfigFile;
 		mutable bool m_MustLoad = false;
 		mutable bool m_MustSave = false;
 		mutable Timer mt_SaveTimer;
+
 		std::string m_DefaultConfigurationFilepath;
+		std::string m_AppName;
+		std::string m_AppVersion;
+		std::string m_AppOrganization;
+		std::string m_AppAuthors;
 
 	private:
 
@@ -71,7 +78,7 @@ namespace Cronos {
 		void FinishUpdate();
 
 		//SERIALIZATION & CONFIG READING
-		void LoadJsonFile(const char* filePath) const;
+		void LoadJsonFile(const char* filePath);
 		void SaveJsonFile(const char* filePath) const;
 		
 	public:
@@ -83,8 +90,20 @@ namespace Cronos {
 		update_status	OnUpdate();
 		bool			OnCleanUp();
 
+	public:
+		
 		const void		RequestBrowser(const char* WebDirection);
 		void			SetFPSCap(int FPScap);
+		void			SetAppTitle(const std::string& name);
+		void			SetAppVersion(const std::string& version);
+		void			SetAppOrganization(const std::string& org);
+		void			SetAppAuthors(const std::string& authors);
+
+		//SERIALIZATION & CONFIG READING
+		void SaveEngineData() const;
+		void LoadEngineData() const;
+
+	public:
 
 		//'Getters'
 		inline const float GetDeltaTime()				const		{	return	m_Timestep;					}
@@ -94,9 +113,11 @@ namespace Cronos {
 
 		inline const int GetFPSCap()					const		{ return m_FPSCap; }
 
-		//SERIALIZATION & CONFIG READING
-		void SaveEngineData() const;
-		void LoadEngineData() const;
+		inline const std::string GetAppTitle()			const		{ return m_AppName; }
+		inline const std::string GetAppVersion()		const		{ return m_AppVersion; }
+		inline const std::string GetAppOrganization()	const		{ return m_AppOrganization; }
+		inline const std::string GetAppAuthors()		const		{ return m_AppAuthors; }
+
 	};
 
 	extern Application* App;

@@ -25,7 +25,6 @@ namespace Cronos {
 		bool ret = true;
 
 		//Create context
-
 		context = SDL_GL_CreateContext(App->window->window);
 
 		App->EditorGUI->AddLog("Loading Glad");
@@ -39,7 +38,7 @@ namespace Cronos {
 		if (ret == true)
 		{
 			//Use Vsync
-			if (VSYNC && SDL_GL_SetSwapInterval(1) < 0) {
+			if (m_VSyncActive && SDL_GL_SetSwapInterval(1) < 0) {
 				App->EditorGUI->AddLog(std::string("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError()));
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 			}
@@ -51,7 +50,6 @@ namespace Cronos {
 			GLenum error = glGetError();
 			if (error != GL_NO_ERROR)
 			{
-
 				LOG("Error initializing OpenGL! %s\n", error);
 				ret = false;
 			}
@@ -105,7 +103,7 @@ namespace Cronos {
 		}
 
 		// Projection matrix for
-		App->window->OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
 
 		return ret;
 	}
@@ -142,5 +140,45 @@ namespace Cronos {
 		SDL_GL_DeleteContext(context);
 
 		return true;
+	}
+
+	void GLRenderer3D::SaveModuleData(json& JSONFile)
+	{
+		JSONFile["Renderer"]["VSYNC"] = m_VSyncActive;
+		JSONFile["Renderer"]["OpenGL_MajorV"] = m_OGL_Mv;
+		JSONFile["Renderer"]["OpenGL_MinorV"] = m_OGL_mv;
+	}
+
+	void GLRenderer3D::LoadModuleData(json& JSONFile)
+	{
+		m_VSyncActive = JSONFile["Renderer"]["VSYNC"];
+		m_OGL_Mv = JSONFile["Renderer"]["OpenGL_MajorV"];
+		m_OGL_mv = JSONFile["Renderer"]["OpenGL_MinorV"];
+
+		SetVsync(m_VSyncActive);
+		SetOpenGLVersion(m_OGL_Mv, m_OGL_mv);
+	}
+
+	void GLRenderer3D::SetVsync(bool setStatus)
+	{
+		m_VSyncActive = setStatus;
+
+		if (setStatus == true)
+			SDL_GL_SetSwapInterval(1);
+		else
+			SDL_GL_SetSwapInterval(0);
+	}
+
+	void GLRenderer3D::SetOpenGLVersion(int MajorVersion, int MinorVersion)
+	{
+		if (MajorVersion < 4 && MajorVersion > 2 && MinorVersion > 0 && MinorVersion < 6)
+		{
+			m_OGL_Mv = MajorVersion;
+			m_OGL_mv = MinorVersion;
+
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, m_OGL_Mv);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, m_OGL_mv);
+			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+		}
 	}
 }

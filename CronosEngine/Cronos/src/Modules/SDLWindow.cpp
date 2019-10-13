@@ -32,41 +32,7 @@ namespace Cronos {
 		}
 		else
 		{
-			//Create window
-			m_Data.Width = SCREEN_WIDTH * SCREEN_SIZE;
-			m_Data.Height = SCREEN_HEIGHT * SCREEN_SIZE;
-			m_Data.AspectRatio = (float)m_Data.Width / (float)m_Data.Height;
-			Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-
-			//Use OpenGL 2.1
-			//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-			//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, Mv);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, mv);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-
-			if (WIN_FULLSCREEN == true)
-			{
-				flags |= SDL_WINDOW_FULLSCREEN;
-			}
-
-			if (WIN_RESIZABLE == true)
-			{
-				flags |= SDL_WINDOW_RESIZABLE;
-			}
-
-			if (WIN_BORDERLESS == true)
-			{
-				flags |= SDL_WINDOW_BORDERLESS;
-			}
-
-			if (WIN_FULLSCREEN_DESKTOP == true)
-			{
-				flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			}
-
-			window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_Data.Width, m_Data.Height, flags);
+			window = SDL_CreateWindow(App->GetAppTitle().c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_Data.Width, m_Data.Height, m_WindowFlags);
 
 			if (window == NULL)
 			{
@@ -109,20 +75,135 @@ namespace Cronos {
 		return true;
 	}
 
-	void SDLWindow::SetTitle(const char* title)
+
+	void SDLWindow::SaveModuleData(json& JSONFile)
 	{
-		SDL_SetWindowTitle(window, title);
+		JSONFile["Window"]["ScreenWidth"] = m_Data.Width;
+		JSONFile["Window"]["ScreenHeight"] = m_Data.Height;
+		JSONFile["Window"]["ScreenSize"] = m_Data.ScreenSize;
+
+		JSONFile["Window"]["Fullscreen"] = m_Data.WindowFullscreen;
+		JSONFile["Window"]["DesktopFullscreen"] = m_Data.WindowDesktopFullscreen;
+		JSONFile["Window"]["Resizable"] = m_Data.WindowResizable;
+		JSONFile["Window"]["Borderless"] = m_Data.WindowBorderless;
+
+		JSONFile["Window"]["Bright"] = m_Data.WindowBright;
 	}
 
-	void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
+	void SDLWindow::LoadModuleData(json& JSONFile)
+	{
+		m_Data.Width = JSONFile["Window"]["ScreenWidth"];
+		m_Data.Height = JSONFile["Window"]["ScreenHeight"];
+		m_Data.ScreenSize = JSONFile["Window"]["ScreenSize"];
+		ReCalculateAspectRatio(m_Data.Width, m_Data.Height);
+
+		m_Data.WindowFullscreen = JSONFile["Window"]["Fullscreen"];
+		m_Data.WindowDesktopFullscreen = JSONFile["Window"]["DesktopFullscreen"];
+		m_Data.WindowResizable = JSONFile["Window"]["Resizable"];
+		m_Data.WindowBorderless = JSONFile["Window"]["Borderless"];
+
+		m_Data.WindowBright = JSONFile["Window"]["Bright"];
+
+		m_WindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+		SetWindowFullscreen(m_Data.WindowFullscreen);
+		SetWindowResizable(m_Data.WindowResizable);
+		SetWindowBorderless(m_Data.WindowBorderless);
+		SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
+	}
+
+
+	inline void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
 	{
 		m_Data.AspectRatio = (float)width / (float)height;
 	}
+
 
 	void SDLWindow::OnResize(uint width, uint height)
 	{
 		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
 		App->engineCamera->CalculateProjection();
+		SetWindowFullscreen(false);
+		SetWindowDesktopFullscreen(false);
+	}
+
+
+	void SDLWindow::SetWindowFullscreen(bool setStatus)
+	{
+		if (setStatus != m_Data.WindowFullscreen) {
+
+			m_Data.WindowFullscreen = setStatus;
+			if (setStatus == true) {
+
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+				m_WindowFlags |= SDL_WINDOW_FULLSCREEN;
+			}
+			else
+				SDL_SetWindowFullscreen(window, 0);
+
+			if (m_Data.WindowDesktopFullscreen == true)
+				SetWindowDesktopFullscreen(false);
+		}
+	}
+
+	void SDLWindow::SetWindowResizable(bool setStatus)
+	{
+		//if (setStatus != m_Data.WindowResizable) {
+		//
+		//	m_Data.WindowResizable = setStatus;
+		//	SDL_SetWindowResizable(window, (SDL_bool)setStatus);
+		//
+		//	if(setStatus == true)
+		//		m_WindowFlags |= SDL_WINDOW_RESIZABLE;
+		//}
+	}
+
+	void SDLWindow::SetWindowBorderless(bool setStatus)
+	{
+		if (setStatus != m_Data.WindowBorderless) {
+
+			m_Data.WindowBorderless = setStatus;
+			SDL_SetWindowBordered(window, (SDL_bool)setStatus);
+
+			if(setStatus == true)
+				m_WindowFlags |= SDL_WINDOW_BORDERLESS;
+		}
+	}
+
+	void SDLWindow::SetWindowDesktopFullscreen(bool setStatus)
+	{
+		if (setStatus != m_Data.WindowDesktopFullscreen) {
+
+			m_Data.WindowDesktopFullscreen = setStatus;
+			if (setStatus == true) {
+
+				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+				m_WindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			}
+			else
+				SDL_SetWindowFullscreen(window, 0);
+
+			if (m_Data.WindowFullscreen == true)
+				SetWindowFullscreen(false);
+		}
+	}
+
+	void SDLWindow::SetWindowBright(float BrightValue)
+	{
+		if (BrightValue < 0.0f || BrightValue > 100.0f) {
+
+			CRONOS_WARN((BrightValue < 0.0f || BrightValue > 100.0f), "Couldn't change Brighteness. Bright Value must be between 0 and 100!!");
+			return;
+		}
+		else
+			BrightValue /= 100;
+
+		m_Data.WindowBright = BrightValue;
+		SDL_SetWindowBrightness(window, BrightValue);
+	}
+
+	void SDLWindow::SetTitle(const char* title)
+	{
+		SDL_SetWindowTitle(window, title);
 	}
 }

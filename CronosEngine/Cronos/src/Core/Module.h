@@ -1,6 +1,9 @@
 #ifndef _MODULE_H_
 #define _MODULE_H_
 
+#include "json/json.hpp"
+using json = nlohmann::json;
+
 namespace Cronos {
 
 	class Application;
@@ -30,6 +33,9 @@ namespace Cronos {
 		virtual update_status OnPreUpdate(float dt) { return UPDATE_CONTINUE; }
 		virtual update_status OnUpdate(float dt) { return UPDATE_CONTINUE; }
 		virtual update_status OnPostUpdate(float dt) { return UPDATE_CONTINUE; }
+
+		virtual void SaveModuleData(json& JSONFile) {}
+		virtual void LoadModuleData(json& JSONFile) {}
 
 	};
 

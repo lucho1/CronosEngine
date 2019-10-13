@@ -806,9 +806,9 @@ namespace Cronos {
 		ImGui::Text("Application");
 		ImGui::Separator();
 		ImGui::Text ("App Name : "); ImGui::SameLine();
-		ImGui::TextColored(Color, TITLE);
+		ImGui::TextColored(Color, (App->GetAppTitle() + " " + App->GetAppVersion()).c_str());
 		ImGui::Text("Organization: "); ImGui::SameLine();
-		ImGui::TextColored(Color, ORGANIZATION);
+		ImGui::TextColored(Color, (App->GetAppOrganization() + "\n Authors: " + App->GetAppAuthors()).c_str());
 		ImGui::Separator();
 		ImGui::Text("");
 		ImGui::Text("Performance here"); ImGui::SameLine();

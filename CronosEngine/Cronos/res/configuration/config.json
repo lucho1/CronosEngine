@@ -1,6 +1,26 @@
 {
-    "Application": {
-        "Name": "CronosEngine",
-        "Version": "v0.1"
-    }
+  "Application": {
+    "Name": "Cronos Engine",
+    "Version": "v0.1",
+    "Organization": "UPC CITM - TECH TALENT CENTER",
+    "Authors": "Lucho Suaya Leiro and Roger Leon Borras",
+    "FPS Cap": -1
+  },
+
+  "Window": {
+    "ScreenWidth": 1024,
+    "ScreenHeight": 720,
+    "ScreenSize": 1.0,
+    "Fullscreen": false,
+    "DesktopFullscreen": false,
+    "Resizable": true,
+    "Borderless": false,
+    "Bright": 1.0
+  },
+
+  "Renderer": {
+    "VSYNC":  true,
+    "OpenGL_MajorV": 4,
+    "OpenGL_MinorV": 3
+  }
 }

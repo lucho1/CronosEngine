@@ -31,7 +31,7 @@ Cronos::Application* Cronos::App = nullptr;
 
 int main(int argc, char ** argv)
 {
-	LOG("Starting game '%s'...", TITLE);
+	LOG("Starting Engine '%s'...");
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -96,6 +96,6 @@ int main(int argc, char ** argv)
 	}
 
 	delete Cronos::App;
-	LOG("Exiting game '%s'...\n", TITLE);
+	LOG("Exiting Engine '%s'...\n");
 	return main_return;
 }
