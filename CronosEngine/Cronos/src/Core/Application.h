@@ -64,6 +64,7 @@ namespace Cronos {
 		mutable bool m_MustLoad = false;
 		mutable bool m_MustSave = false;
 		mutable Timer mt_SaveTimer;
+		float SaveTime;
 
 		std::string m_DefaultConfigurationFilepath;
 		std::string m_AppName;

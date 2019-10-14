@@ -4,41 +4,54 @@
     "Version": "v0.1",
     "Organization": "UPC CITM - TECH TALENT CENTER",
     "Authors": "Lucho Suaya Leiro and Roger Leon Borras",
-    "FPS Cap": -1
+    "FPS Cap": -1,
+    "SaveTime": 300.0
   },
-
-  "Window": {
-    "ScreenWidth": 1024,
-    "ScreenHeight": 720,
-    "ScreenSize": 1.0,
-    "Fullscreen": false,
-    "DesktopFullscreen": false,
-    "Resizable": true,
-    "Borderless": false,
-    "Bright": 1.0
-  },
-
-  "Renderer": {
-    "VSYNC": true,
-    "OpenGL_MajorV": 4,
-    "OpenGL_MinorV": 3
-  },
-
-  "Audio": {
-    "MasterVolume": 100,
-    "MusicVolume": 100,
-    "SFXVolume": 100,
-    "DefaultMusicFadeTime": 2.0
-  },
-
+    "Audio": {
+        "DefaultMusicFadeTime": 2.0,
+        "MasterVolume": 100,
+        "MusicVolume": 100,
+        "SFXVolume": 100
+    },
   "EngineCamera": {
     "InitialPosition": [ 3.0, 3.0, 3.0 ],
     "InitialLookAt": [ 0.0, 0.0, 0.0 ],
-    "CameraScrollSpeed": 20.0,
     "CameraMoveSpeed": 5.0,
+    "CameraScrollSpeed": 20.0,
     "FOV": 60.0,
-    "NearPlane": 0.125,
-    "FarPlane": 512.0
-  }
+    "FarPlane": 512.0,
+    "NearPlane": 0.125
+  },
+  "Renderer": {
+    "VSYNC": true,
+    "OpenGL_MajorV": 4,
+    "OpenGL_MinorV": 3,
 
+    "Blend": true,
+    "FaceCulling": true,
+    "ClipDistance": false,
+
+    "ColorDither": false,
+    "AntialiasedLPSmooth": false,
+    "Multisampling": false,
+
+    "GL_ColorMaterial": true,
+    "GL_Lighting": true,
+
+    "ScissorTest": false,
+    "StencilTest": false,
+    "DepthTest": false,
+
+    "WireframeDraw": true
+  },
+  "Window": {
+    "ScreenHeight": 720,
+    "ScreenWidth": 1024,
+    "ScreenSize": 1,
+    "Bright": 20.0,
+    "DesktopFullscreen": false,
+    "Borderless": false,
+    "Fullscreen": true,
+    "Resizable": true
+  }
 }

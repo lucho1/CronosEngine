@@ -10,6 +10,25 @@ namespace Cronos {
 
 #define MAX_LIGHTS 8
 
+	struct OpenGLSettings
+	{
+		bool Blend;
+		bool ClipDistance;
+		bool FaceCull;
+		bool WireframeDraw;
+
+		bool DepthTest;
+		bool ScissorTest;
+		bool StencilTest;
+
+		bool ColorDither;
+		bool AntialiasedLineAndPolygonSmooth; //x2
+		bool Multisample;
+
+		bool GL_Lighting;
+		bool GL_ColorMaterial;
+	};
+
 	class GLRenderer3D : public Module
 	{
 	public:
@@ -31,6 +50,25 @@ namespace Cronos {
 		void SetVsync(bool setStatus);
 		void SetOpenGLVersion(int MajorVersion, int MinorVersion);
 
+		//OpenGL Settings
+		void SetOpenGLSettings();
+
+		void SetBlending(bool setStatus);
+		//void SetClipDistance(bool setStatus);
+		void SetFaceCulling(bool setStatus);
+		void SetWireframeDrawMode(bool setStatus);
+
+		void SetDepthTest(bool setStatus);
+		void SetScissorTest(bool setStatus);
+		void SetStencilTest(bool setStatus);
+
+		void SetColorDither(bool setStatus);
+		void SetAntialiasedSmooth(bool setStatus);
+		void SetMultisampling(bool setStatus);
+
+		void SetGLLighting(bool setStatus);
+		void SetGLColorMaterial(bool setStatus);
+
 	public:
 
 		Light lights[MAX_LIGHTS];
@@ -42,6 +80,8 @@ namespace Cronos {
 
 		bool m_VSyncActive;
 		int m_OGL_Mv = 4, m_OGL_mv = 3; //Open GL Major and Minor version
+
+		OpenGLSettings m_CurrentSettings;
 
 	};
 

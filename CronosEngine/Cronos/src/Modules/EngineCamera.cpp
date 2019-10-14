@@ -235,6 +235,14 @@ namespace Cronos {
 		JSONFile["EngineCamera"]["FOV"] = m_FOV;
 		JSONFile["EngineCamera"]["NearPlane"] = m_NearPlane;
 		JSONFile["EngineCamera"]["FarPlane"] = m_FarPlane;
+
+		JSONFile["EngineCamera"]["InitialPosition"][0] = m_Position.x;
+		JSONFile["EngineCamera"]["InitialPosition"][1] = m_Position.y;
+		JSONFile["EngineCamera"]["InitialPosition"][2] = m_Position.z;
+
+		JSONFile["EngineCamera"]["InitialLookAt"][0] = m_Reference.x;
+		JSONFile["EngineCamera"]["InitialLookAt"][1] = m_Reference.y;
+		JSONFile["EngineCamera"]["InitialLookAt"][2] = m_Reference.z;
 	}
 
 	void EngineCamera::LoadModuleData(json& JSONFile)

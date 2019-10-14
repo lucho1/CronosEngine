@@ -94,7 +94,7 @@ namespace Cronos {
 	{
 		if (m_MustLoad)
 			LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
-		if (m_MustSave || mt_SaveTimer.ReadSec() > 30.0f)
+		if (m_MustSave || mt_SaveTimer.ReadSec() > SaveTime)
 			SaveJsonFile(m_DefaultConfigurationFilepath.c_str());
 
 
@@ -200,6 +200,7 @@ namespace Cronos {
 		m_AppOrganization = m_JSONConfigFile["Application"]["Organization"].get<std::string>();
 		m_AppAuthors = m_JSONConfigFile["Application"]["Authors"].get<std::string>();
 		m_FPSCap = m_JSONConfigFile["Application"]["FPS Cap"].get<int>();
+		SaveTime = m_JSONConfigFile["Application"]["SaveTime"].get<float>();
 
 		SetFPSCap(m_FPSCap);
 		SetAppTitle(m_AppName);
@@ -239,8 +240,10 @@ namespace Cronos {
 		aux_JSONFile["Application"]["Name"] = m_AppName;
 		aux_JSONFile["Application"]["Version"] = m_AppVersion;
 
-		//TODO: Do with the loaded data what you have to do to make it useful
-		//TODO: Create a default time to save
+		m_JSONConfigFile["Application"]["Organization"] = m_AppOrganization;
+		m_JSONConfigFile["Application"]["Authors"] = m_AppAuthors;
+		m_JSONConfigFile["Application"]["FPS Cap"] = m_FPSCap;
+		m_JSONConfigFile["Application"]["SaveTime"] = SaveTime;
 
 		//Call modules to Save into json aux file
 		for (auto element : m_ModulesList)

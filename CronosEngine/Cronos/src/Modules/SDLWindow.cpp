@@ -44,6 +44,12 @@ namespace Cronos {
 				//Get window surface
 				screen_surface = SDL_GetWindowSurface(window);
 			}
+
+			SetWindowFullscreen(m_Data.WindowFullscreen);
+			SetWindowResizable(m_Data.WindowResizable);
+			SetWindowBorderless(m_Data.WindowBorderless);
+			SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
+			SetWindowBright(m_Data.WindowBright);
 		}
 
 		return ret;
@@ -96,10 +102,10 @@ namespace Cronos {
 		m_Data.WindowBright = JSONFile["Window"]["Bright"];
 
 		m_WindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
-		SetWindowFullscreen(m_Data.WindowFullscreen);
-		SetWindowResizable(m_Data.WindowResizable);
-		SetWindowBorderless(m_Data.WindowBorderless);
-		SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
+		//SetWindowFullscreen(m_Data.WindowFullscreen);
+		//SetWindowResizable(m_Data.WindowResizable);
+		//SetWindowBorderless(m_Data.WindowBorderless);
+		//SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
 	}
 
 
@@ -111,7 +117,7 @@ namespace Cronos {
 
 	void SDLWindow::OnResize(uint width, uint height)
 	{
-		glViewport(0, 0, width, height);
+ 		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
 		App->engineCamera->CalculateProjection();
 		SetWindowFullscreen(false);
@@ -121,20 +127,17 @@ namespace Cronos {
 
 	void SDLWindow::SetWindowFullscreen(bool setStatus)
 	{
-		if (setStatus != m_Data.WindowFullscreen) {
+		m_Data.WindowFullscreen = setStatus;
+		if (setStatus == true) {
 
-			m_Data.WindowFullscreen = setStatus;
-			if (setStatus == true) {
-
-				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-				m_WindowFlags |= SDL_WINDOW_FULLSCREEN;
-			}
-			else
-				SDL_SetWindowFullscreen(window, 0);
-
-			if (m_Data.WindowDesktopFullscreen == true)
-				SetWindowDesktopFullscreen(false);
+			SetWindowDesktopFullscreen(false);
+			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+			m_WindowFlags |= SDL_WINDOW_FULLSCREEN;
 		}
+		else
+			SDL_SetWindowFullscreen(window, 0);				
+
+		OnResize(m_Data.Width, m_Data.Height);
 	}
 
 	void SDLWindow::SetWindowResizable(bool setStatus)
@@ -151,38 +154,34 @@ namespace Cronos {
 
 	void SDLWindow::SetWindowBorderless(bool setStatus)
 	{
-		if (setStatus != m_Data.WindowBorderless) {
+		m_Data.WindowBorderless = setStatus;
+		SDL_SetWindowBordered(window, (SDL_bool)!setStatus);
 
-			m_Data.WindowBorderless = setStatus;
-			SDL_SetWindowBordered(window, (SDL_bool)setStatus);
-
-			if(setStatus == true)
-				m_WindowFlags |= SDL_WINDOW_BORDERLESS;
-		}
+		if(setStatus == true)
+			m_WindowFlags |= SDL_WINDOW_BORDERLESS;
 	}
 
 	void SDLWindow::SetWindowDesktopFullscreen(bool setStatus)
 	{
-		if (setStatus != m_Data.WindowDesktopFullscreen) {
+		m_Data.WindowDesktopFullscreen = setStatus;
+		if(setStatus == true)
+			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		else
+			SDL_SetWindowFullscreen(window, 0);
+		/*if (setStatus == true) {
 
-			m_Data.WindowDesktopFullscreen = setStatus;
-			if (setStatus == true) {
-
-				SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-				m_WindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			}
-			else
-				SDL_SetWindowFullscreen(window, 0);
-
-			if (m_Data.WindowFullscreen == true)
-				SetWindowFullscreen(false);
+			SetWindowFullscreen(false);
+			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			m_WindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
+		else
+			SDL_SetWindowFullscreen(window, 0);		*/	
 	}
 
 	void SDLWindow::SetWindowBright(float BrightValue)
 	{
 		if (BrightValue < 0.0f || BrightValue > 100.0f) {
-
+		
 			CRONOS_WARN((BrightValue < 0.0f || BrightValue > 100.0f), "Couldn't change Brighteness. Bright Value must be between 0 and 100!!");
 			return;
 		}
@@ -190,7 +189,9 @@ namespace Cronos {
 			BrightValue /= 100;
 
 		m_Data.WindowBright = BrightValue;
-		SDL_SetWindowBrightness(window, BrightValue);
+
+		if (SDL_SetWindowBrightness(window, BrightValue) != 0)
+			LOG("Could not change window brightness: %s\n", SDL_GetError());
 	}
 
 	void SDLWindow::SetTitle(const char* title)
