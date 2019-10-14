@@ -47,6 +47,9 @@ namespace Cronos {
 		ILuint TempImage;
 		ilGenImages(1,&TempImage);
 		ilBindImage(TempImage);
+		glSamplerParameteri(TempImage, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glSamplerParameteri(TempImage, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glSamplerParameterf(TempImage, GL_TEXTURE_MAX_ANISOTROPY_EXT, 80.0f);
 
 		if (ilLoadImage((const ILstring)path)) {
 			TempTex = ilutGLBindTexImage();
@@ -59,21 +62,27 @@ namespace Cronos {
 			bpp = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
  			format = ilGetInteger(IL_IMAGE_FORMAT);
 			ILubyte *Data = ilGetData();
+			if (Data) {
+				glEnable(GL_TEXTURE_2D);
+				//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				glGenTextures(1, &TempTex);
+				glBindTexture(GL_TEXTURE_2D, TempTex);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-			glEnable(GL_TEXTURE_2D);
-			//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			glGenTextures(1, &TempTex);
-			glBindTexture(GL_TEXTURE_2D, TempTex);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, Data);
-			//Erase textures
-			glBindTexture(GL_TEXTURE_2D, 0);
-			ilBindImage(0);
-			ilDeleteImage(TempImage);
+
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, Data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+				//Erase textures
+				glBindTexture(GL_TEXTURE_2D, 0);
+				ilBindImage(0);
+				ilDeleteImage(TempImage);
+			}
+			else {
+				std::cout << "failed to load the data of " << path << std::endl;
+			}
 
 		}
 		else {

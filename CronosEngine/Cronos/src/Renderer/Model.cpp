@@ -1,6 +1,8 @@
 #include "Providers/cnpch.h"
 
 #include "Model.h"
+#include "Application.h"
+#include "Modules/TextureManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -30,6 +32,9 @@ namespace Cronos {
 	void CronosMesh::Draw()
 	{
 		m_MeshVAO->Bind();
+		//gltexture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_TexturesVector.at(0).m_TextureID);
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
@@ -347,8 +352,7 @@ namespace Cronos {
 				tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
 			tmp_VertexVector.push_back(tmpVertex);
-		}
-
+		} 
 		//Process mesh's indices
 		for (uint i = 0; i < as_mesh->mNumFaces; i++)
 		{
@@ -357,7 +361,8 @@ namespace Cronos {
 				tmp_IndicesVector.push_back(face.mIndices[j]);
 		}
 
-		CronosTexture defT = { 0, "TEXTURENONE" };
+		CronosTexture defT;
+		defT.m_TextureID = App->textureManager->CreateTexture("res/Baker_house.png");
 		tmp_TextureVector.push_back(defT);
 
 		return new CronosMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);
