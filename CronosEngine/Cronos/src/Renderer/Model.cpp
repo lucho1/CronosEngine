@@ -163,6 +163,11 @@ namespace Cronos {
 		CalculateModelAxis();
 	}
 
+	CronosModel::CronosModel(CronosPrimitive* primitive)
+	{
+
+	}
+
 	CronosModel::~CronosModel()
 	{
 		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();

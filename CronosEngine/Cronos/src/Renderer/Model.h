@@ -10,7 +10,10 @@
 #include <Assimp/include/scene.h>
 #include <Assimp/include/postprocess.h>
 
+
 namespace Cronos {
+
+	class CronosPrimitive;
 
 	struct CronosVertex
 	{
@@ -63,6 +66,7 @@ namespace Cronos {
 		friend class AssimpCronosTranslator;
 
 		CronosModel(const std::string& filepath);
+		CronosModel(CronosPrimitive* primitive);
 		~CronosModel();
 
 		void Draw();

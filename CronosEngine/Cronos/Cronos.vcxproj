@@ -131,6 +131,7 @@
     <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
+    <ClInclude Include="src\Renderer\CronosPrimitive.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
@@ -569,6 +570,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Renderer\CronosPrimitive.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
