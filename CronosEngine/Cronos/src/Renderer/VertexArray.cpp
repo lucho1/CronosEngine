@@ -62,10 +62,9 @@ namespace Cronos {
 			uint i = 0;
 			for (auto& element : vBuffer.GetLayout().GetLayoutElements())
 			{
-				glEnableVertexAttribArray(i);
 				glVertexAttribPointer(i, element.VertexDataTypeCount(element.bd_VertexDataType), ConvertToOpenGLDataType(element.bd_VertexDataType),
 					(element.bd_Normalized ? true : false), vBuffer.GetLayout().GetLayoutStride(), (const void*)element.bd_Offset);
-				
+				glEnableVertexAttribArray(i);
 				i++;
 			}
 

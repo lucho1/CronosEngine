@@ -31,11 +31,20 @@ namespace Cronos {
 
 	void CronosMesh::Draw()
 	{
-		m_MeshVAO->Bind();
+		
 		//gltexture
+		//glActiveTexture(GL_TEXTURE0);
+		for (uint i = 0; i < m_TexturesVector.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, m_TexturesVector[i].m_TextureID);
+		}
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_TexturesVector.at(0).m_TextureID);
-		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
+		m_MeshVAO->Bind();
+		//glBindTexture(GL_TEXTURE_2D, m_TexturesVector.at(0).m_TextureID);
+		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void CronosMesh::DrawVerticesNormals()
@@ -100,8 +109,8 @@ namespace Cronos {
 	{
 		m_MeshVAO = new VertexArray();
 
-		CronosVertex* VBasArray = &m_VertexVector[0];
-		m_MeshVBO = new VertexBuffer(VBasArray, m_VertexVector.size() * sizeof(CronosVertex));
+		//CronosVertex* VBasArray = &m_VertexVector[0];
+		m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
 
 		m_MeshVBO->SetLayout({
 			{Cronos::VertexDataType::VEC3F, "a_Position"},
@@ -362,7 +371,7 @@ namespace Cronos {
 		}
 
 		CronosTexture defT;
-		defT.m_TextureID = App->textureManager->CreateTexture("res/Baker_house.png");
+		defT.m_TextureID = App->textureManager->CreateTexture("res/Icons/Test.png");
 		tmp_TextureVector.push_back(defT);
 
 		return new CronosMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);

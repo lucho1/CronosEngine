@@ -15,7 +15,7 @@
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#define sameLine ImGui::SameLine();
+#define sameLine ImGui::SameLine()
 //#include <Hazel/stb_image.h>
 
 //#define SRC_DIR "C:/Users/rleon/Documents/Dev/Engine/Hazel"
@@ -540,9 +540,12 @@ namespace Cronos {
 			}*/
 
 			ImGui::Separator();
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			int spaceCounter = 180;
 			for (auto& a : m_CurrentDir->m_Container) {
+				
 				a->DrawIcons();
+				
 				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
 					m_CurrentDir = a->folderDirectory;
 
@@ -555,6 +558,7 @@ namespace Cronos {
 					spaceCounter = 180;
 				//ImGui::Button(a.m_Elements.c_str());
 			}
+			ImGui::PopStyleColor();
 
 			ImGui::EndChild();
 			ImGui::EndGroup();
@@ -704,10 +708,11 @@ namespace Cronos {
 				links_.erase(link_id);
 				//}
 			}
-			ImGui::End();
-			ImGui::PopStyleColor();
-			ImGui::PopStyleVar();
+		
 		}
+		ImGui::End();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 	}
 
 	void ImGuiLayer::GUIDrawConfigurationPanel() {
@@ -826,8 +831,11 @@ namespace Cronos {
 		static bool TempWindowActive; //Only To show, it's temporary
 		ImGui::Checkbox("Active", &TempWindowActive);
 		ImGui::Text("Icon: "); ImGui::SameLine(); ImGui::Image("", ImVec2(40, 40));
-		static float brightnesTest=50.0f; //temporary
-		ImGui::SliderFloat("Brightness", &brightnesTest, 0.0f, 100.0f,"%.1f");
+
+		static float brightnesTest=SDL_GetWindowBrightness(App->window->window); //temporary
+		if (ImGui::SliderFloat("Brightness", &brightnesTest, 0.2f, 2.0f, "%.01f")) {
+			SDL_SetWindowBrightness(App->window->window, brightnesTest);
+		}
 
 		ImGui::Text("Width"); ImGui::SameLine();
 		if (ImGui::SliderInt("##hidelabel", &Height, 100, 1080,"%d")) {
@@ -838,24 +846,25 @@ namespace Cronos {
 			SDL_SetWindowSize(App->window->window, Width, Height);
 		}
 
-		static Uint32 flags=NULL;
+		static Uint32 flagsFullscreen=NULL;
+		static Uint32 flagsFullWindowed = NULL;
+
 		static bool resizable = true;
 		static bool borderless = false;
-		if(ImGui::CheckboxFlags("Fullscreen", &(unsigned int )flags,SDL_WINDOW_FULLSCREEN)){
-			SDL_SetWindowFullscreen(App->window->window, flags);
+		if(ImGui::CheckboxFlags("Fullscreen", &(unsigned int )flagsFullscreen,SDL_WINDOW_FULLSCREEN)){
+			SDL_SetWindowFullscreen(App->window->window, flagsFullscreen);
 		}ImGui::SameLine();
 		if (ImGui::Checkbox("Borderless", &borderless)) {
 			//SDL_SetWindowFullscreen(App->window->window, flags);
 			SDL_SetWindowBordered(App->window->window, (SDL_bool)!borderless);
 		}
-		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flags,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
-			SDL_SetWindowFullscreen(App->window->window, flags);
+		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flagsFullWindowed,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
+			SDL_SetWindowFullscreen(App->window->window, flagsFullWindowed);
 			//SDL_Setwindowfu
 		}ImGui::SameLine();
 		if (ImGui::Checkbox("Resizable", &resizable)) {
 			// NOT WORKING TODO: ASK MARC
 			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
-
 		}
 		ImGui::PopStyleVar();
 

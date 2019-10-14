@@ -98,5 +98,6 @@ namespace Cronos {
 	private:
 		CronosModel* m_CronosModel;
 	};
+
 }
 #endif

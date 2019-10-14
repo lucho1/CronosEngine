@@ -87,7 +87,7 @@ namespace Cronos {
 	{
 
 		ImGui::BeginGroup();    
-		
+
 		if (ImGui::ImageButton((void*)(intptr_t)m_IconTex, ImVec2(50, 50),ImVec2(0,0), ImVec2(1, 1),2)) {
 			bool a = true;
 		} 

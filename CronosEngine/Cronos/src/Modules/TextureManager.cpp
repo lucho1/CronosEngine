@@ -47,9 +47,9 @@ namespace Cronos {
 		ILuint TempImage;
 		ilGenImages(1,&TempImage);
 		ilBindImage(TempImage);
-		glSamplerParameteri(TempImage, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glSamplerParameteri(TempImage, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glSamplerParameterf(TempImage, GL_TEXTURE_MAX_ANISOTROPY_EXT, 80.0f);
+		//glSamplerParameteri(TempImage, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		//glSamplerParameteri(TempImage, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		//glSamplerParameterf(TempImage, GL_TEXTURE_MAX_ANISOTROPY_EXT, 80.0f);
 
 		if (ilLoadImage((const ILstring)path)) {
 			TempTex = ilutGLBindTexImage();
