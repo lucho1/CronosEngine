@@ -3,13 +3,12 @@
 
 #include "par_shapes/par_shapes.h"
 
-#define STRINGIFY(A) #A
 
 namespace Cronos
 {
 	
 	// --------------------------------- PRIMITIVE MODEL ---------------------------------
-	CronosPrimitive::CronosPrimitive(PrimitiveType primitve_type) : CronosModel(this)
+	CronosPrimitive::CronosPrimitive(PrimitiveType primitve_type, glm::vec3 size, int figure_slices, int figure_stacks) : CronosModel(this)
 	{
 		if (primitve_type == PrimitiveType::NONE)
 		{
@@ -18,9 +17,7 @@ namespace Cronos
 		}
 		else
 		{
-			ParShapeToPrimitive(primitve_type);
-
-
+			ParShapeToPrimitive(primitve_type, size, figure_slices, figure_stacks);
 			this->CalculateModelAxis();
 		}
 	}
@@ -42,33 +39,64 @@ namespace Cronos
 			Primitive_Mesh = nullptr;
 		}
 	}
+
+	//float center[3] = {0, 1, 3};
+	//float axis[3] = { 0, 1, 0 };
+	//float axis[3] = {1, 0, 0 };
+	//par_shapes_rotate(&ParshapeMesh, -(PI/2.0f), &axis[0]);
+
+	//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
+	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE
 	
-	void CronosPrimitive::ParShapeToPrimitive(PrimitiveType primitve_type)
+	void CronosPrimitive::ParShapeToPrimitive(PrimitiveType primitve_type, glm::vec3 size, int figure_slices, int figure_stacks)
 	{
 		par_shapes_mesh ParshapeMesh;
 
 		switch (primitve_type)
 		{
-		case PrimitiveType::CUBE: {
-				
-				//float center[3] = {0, 1, 3};
-				//float axis[3] = { 0, 1, 0 };
-				//
-				ParshapeMesh = *par_shapes_create_rock(1, 4);
-
-				par_shapes_translate(&ParshapeMesh, 0, 0, 0);
-				//float axis[3] = {1, 0, 0 };
-				//par_shapes_rotate(&ParshapeMesh, -(PI/2.0f), &axis[0]);
-				par_shapes_scale(&ParshapeMesh, 2, 2, 2);
+		//Very Simple primitives (for par shapes)
+			case PrimitiveType::CUBE:
+					ParshapeMesh = *par_shapes_create_cube();
+					break;
+			case PrimitiveType::TETRAHEDRON:
+				ParshapeMesh = *par_shapes_create_tetrahedron();
 				break;
-		}
-		case PrimitiveType::NONE:
-			LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
-		default:
-			LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
+			case PrimitiveType::OCTAHEDRON:
+				ParshapeMesh = *par_shapes_create_octahedron();
+				break;
+			case PrimitiveType::DODECAHEDRON:
+				ParshapeMesh = *par_shapes_create_dodecahedron();
+				break;
+			case PrimitiveType::ICOSAHEDRON:
+				ParshapeMesh = *par_shapes_create_icosahedron();
+				break;
+		//Simple primitives for par shapes (slices, stacks)
+			case PrimitiveType::CYLINDER:
+				ParshapeMesh = *par_shapes_create_cylinder(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::CONE:
+				ParshapeMesh = *par_shapes_create_cone(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::SPHERE:
+				ParshapeMesh = *par_shapes_create_parametric_sphere(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::SEMI_SPHERE:
+				ParshapeMesh = *par_shapes_create_hemisphere(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::PLANE:
+				ParshapeMesh = *par_shapes_create_plane(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::KLEIN_BOTTLE:
+				ParshapeMesh = *par_shapes_create_klein_bottle(figure_slices, figure_stacks);
+				break;
+			case PrimitiveType::NONE:
+				LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
+			default:
+				LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
 		}
 
-
+		par_shapes_translate(&ParshapeMesh, 0, 0, 0);
+		par_shapes_scale(&ParshapeMesh, size.x, size.y, size.z);
 		std::vector<CronosVertex>tmpVertexVector;
 
 		uint j = 0;
@@ -107,7 +135,7 @@ namespace Cronos
 		tmpIndicesVector.push_back(0);
 
 		std::vector<unsigned short> tmpUSIndicesVector;
-		for (uint i = 0; i < (ParshapeMesh.ntriangles * 4); i++)
+		for (uint i = 0; i < (ParshapeMesh.ntriangles * 3); i++)
 			tmpUSIndicesVector.push_back(ParshapeMesh.triangles[i]);
 
 		std::vector<CronosTexture>tmp_TextureVector;

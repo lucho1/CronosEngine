@@ -78,7 +78,11 @@ namespace Cronos {
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE);
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CYLINDER);
+
+		//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
+	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE
+
 		//vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
@@ -138,7 +142,7 @@ namespace Cronos {
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
-		//m_FloorPlane.Render();
+		m_FloorPlane.Render();
 		glColor3f(White.r, White.g, White.b);
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
 		//VAO->Bind();
@@ -163,22 +167,22 @@ namespace Cronos {
 			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
 
 		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 0.1f);
 
 		
-		glm::vec3 axis_vec = vmodelxd->GetModelAxis();
-		glLineWidth(2.0f);
-		glBegin(GL_LINES);
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
-			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
-		glEnd();
+		//glm::vec3 axis_vec = vmodelxd->GetModelAxis();
+		//glLineWidth(2.0f);
+		//glBegin(GL_LINES);
+		//	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		//	glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//	glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+		//	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+		//	glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//	glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+		//	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		//	glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//	glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+		//glEnd();
 
 		
 
