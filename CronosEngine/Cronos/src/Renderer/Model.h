@@ -14,6 +14,7 @@
 namespace Cronos {
 
 	class CronosPrimitive;
+	class CronosPrimitiveMesh;
 
 	struct CronosVertex
 	{
@@ -30,12 +31,15 @@ namespace Cronos {
 
 	class CronosMesh
 	{
+		friend class CronosPrimitiveMesh;
+
 	public:
 		
 		CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures);
+		CronosMesh(CronosPrimitiveMesh* primitive) {}
 		~CronosMesh();
 
-		void Draw();
+		virtual void Draw();
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
@@ -48,7 +52,7 @@ namespace Cronos {
 
 	private:
 
-		void SetupMesh();
+		virtual void SetupMesh();
 
 		std::vector<CronosTexture> m_TexturesVector;
 		std::vector<CronosVertex> m_VertexVector;
@@ -62,11 +66,13 @@ namespace Cronos {
 
 	class CronosModel
 	{
-	public:
 		friend class AssimpCronosTranslator;
+		friend class CronosPrimitive;
 
+	public:
+		
 		CronosModel(const std::string& filepath);
-		CronosModel(CronosPrimitive* primitive);
+		CronosModel(CronosPrimitive* primitive) {}
 		~CronosModel();
 
 		void Draw();

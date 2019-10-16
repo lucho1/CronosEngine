@@ -1,64 +1,160 @@
 #include "Providers/cnpch.h"
 #include "CronosPrimitive.h"
 
+#include "par_shapes/par_shapes.h"
+
+#define STRINGIFY(A) #A
+
 namespace Cronos
 {
-	void CronosPrimitive::ParShapeToPrimitive()
+	
+	// --------------------------------- PRIMITIVE MODEL ---------------------------------
+	CronosPrimitive::CronosPrimitive(PrimitiveType primitve_type) : CronosModel(this)
 	{
-		
-		std::vector<glm::vec3> positionVector;
-
-
-		float* vertices = Parshape_Mesh.points;
-		float* normals = Parshape_Mesh.normals;
-		float* text_coords = Parshape_Mesh.tcoords;
-
-		uint j = 0;
-		for (uint i = 0; i < Parshape_Mesh.npoints; i++)
+		if (primitve_type == PrimitiveType::NONE)
 		{
-			float x = Parshape_Mesh.points[j];
-			float y = Parshape_Mesh.points[++j];
-			float z = Parshape_Mesh.points[++j];
+			LOG("Invalid Primitive Type!! Couldn't be created!");
+			return;
+		}
+		else
+		{
+			ParShapeToPrimitive(primitve_type);
 
+
+			this->CalculateModelAxis();
+		}
+	}
+
+	CronosPrimitive::~CronosPrimitive()
+	{
+		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+		for (; item != m_ModelMeshesVector.end(); item++)
+		{
+			(*item)->~CronosMesh();
+			m_ModelMeshesVector.erase(item);
+		}
+
+		m_ModelMeshesVector.clear();
+
+		if (Primitive_Mesh != nullptr)
+		{
+			delete Primitive_Mesh;
+			Primitive_Mesh = nullptr;
+		}
+	}
+	
+	void CronosPrimitive::ParShapeToPrimitive(PrimitiveType primitve_type)
+	{
+		par_shapes_mesh ParshapeMesh;
+
+		switch (primitve_type)
+		{
+		case PrimitiveType::CUBE: {
+				
+				//float center[3] = {0, 1, 3};
+				//float axis[3] = { 0, 1, 0 };
+				//
+				ParshapeMesh = *par_shapes_create_rock(1, 4);
+
+				par_shapes_translate(&ParshapeMesh, 0, 0, 0);
+				//float axis[3] = {1, 0, 0 };
+				//par_shapes_rotate(&ParshapeMesh, -(PI/2.0f), &axis[0]);
+				par_shapes_scale(&ParshapeMesh, 2, 2, 2);
+				break;
+		}
+		case PrimitiveType::NONE:
+			LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
+		default:
+			LOG("Invalid Primitive Type!!"); par_shapes_free_mesh(&ParshapeMesh); return;
 		}
 
 
+		std::vector<CronosVertex>tmpVertexVector;
 
+		uint j = 0;
+		for (uint i = 0; i < ParshapeMesh.npoints; i++)
+		{
+			CronosVertex tmpVertex;
 
+			float x = ParshapeMesh.points[j];
+			float y = ParshapeMesh.points[j + 1];
+			float z = ParshapeMesh.points[j + 2];
 
-		unsigned short* PrSh_Indices = Parshape_Mesh.triangles;
-		const uint IndicesSize = sizeof(PrSh_Indices) / sizeof(PrSh_Indices[0]);
+			tmpVertex.Position = glm::vec3(x, y, z);
+			
+			if (ParshapeMesh.normals != nullptr) {
 
-		uint Indices_to_CronosIndices[IndicesSize];
-		for (uint i = 0; i < IndicesSize; i++)
-			Indices_to_CronosIndices[i] = PrSh_Indices[i];
+				x = ParshapeMesh.normals[j];
+				y = ParshapeMesh.normals[j + 1];
+				z = ParshapeMesh.normals[j + 2];
+
+				tmpVertex.Normal = glm::vec3(x, y, z);
+			}
+
+			//if (ParshapeMesh.tcoords != nullptr)
+			//{
+			//	x = ParshapeMesh.tcoords[j];
+			//	y = ParshapeMesh.tcoords[j + 1];
+			//
+			//	tmpVertex.TexCoords = glm::vec2(x, y);
+			//}
+
+			tmpVertexVector.push_back(tmpVertex);
+			j += 3;
+		}
 
 		std::vector<uint> tmpIndicesVector;
-		for (uint i = 0; i < IndicesSize; i++)
-			tmpIndicesVector.push_back(Indices_to_CronosIndices[i]);
+		tmpIndicesVector.push_back(0);
 
+		std::vector<unsigned short> tmpUSIndicesVector;
+		for (uint i = 0; i < (ParshapeMesh.ntriangles * 4); i++)
+			tmpUSIndicesVector.push_back(ParshapeMesh.triangles[i]);
 
+		std::vector<CronosTexture>tmp_TextureVector;
+		CronosTexture defT = { 0, "TEXTURENONE" };
+		tmp_TextureVector.push_back(defT);
 
-
+		Primitive_Mesh = new CronosPrimitiveMesh(tmpVertexVector, tmpIndicesVector, tmp_TextureVector, tmpUSIndicesVector);
+		this->m_ModelMeshesVector.push_back(Primitive_Mesh);
 		
+	//	par_shapes_free_mesh(&ParshapeMesh);
+	}
 
+	// --------------------------------- PRIMITIVE MESH ---------------------------------
+	CronosPrimitiveMesh::CronosPrimitiveMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures, std::vector<unsigned short>usIndices)
+		: CronosMesh(this)
+	{
+		m_VertexVector = vertices;
+		m_IndicesVector = indices;
+		m_TexturesVector = textures;
+		m_PARSHAPES_IndicesVector = usIndices;
 
+		SetupMesh();
+	}
+
+	void CronosPrimitiveMesh::SetupMesh()
+	{
 		
-		CronosMesh tmpMesh(vertex, tmpIndicesVector, textures);
+		m_MeshVAO = new VertexArray();
+
+		CronosVertex* VBasArray = &m_VertexVector[0];
+		m_MeshVBO = new VertexBuffer(VBasArray, m_VertexVector.size() * sizeof(CronosVertex));
+
+		m_MeshVBO->SetLayout({
+			{Cronos::VertexDataType::VEC3F, "a_Position"},
+			{Cronos::VertexDataType::VEC3F, "a_Normal"},
+			{Cronos::VertexDataType::VEC2F, "a_TexCoords"}
+			});
+
+		m_MeshVAO->AddVertexBuffer(*m_MeshVBO);
+
+		m_MeshIBO = new IndexBuffer(&m_PARSHAPES_IndicesVector[0], m_PARSHAPES_IndicesVector.size());
+		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
+	}
+
+	void CronosPrimitiveMesh::Draw()
+	{
+		m_MeshVAO->Bind();
+		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_SHORT, nullptr);
 	}
 }
-
-
-
-/*
-	//ushort array --> uint array
-
-	//Setting ushort array
-	unsigned short ushortArray[5] = { 0, 1, 2, 3, 4 };
-	const uint size = sizeof(ushortArray) / sizeof(ushortArray[0]);
-
-	//Setting uint array
-	uint uintArray[size];
-	for (uint i = 0; i < size; i++)
-		uintArray[i] = ushortArray[i];
-*/

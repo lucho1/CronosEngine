@@ -85,6 +85,7 @@ namespace Cronos {
 	public:
 
 		IndexBuffer(uint* indices, uint count);
+		IndexBuffer(unsigned short* indices, uint count);
 		~IndexBuffer();
 
 		void Bind() const;

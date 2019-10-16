@@ -2,23 +2,41 @@
 #define _CRONOSPRIMITIVE_H_
 
 #include "Model.h"
-#include "par_shapes/par_shapes.h"
 
 namespace Cronos {
 
-	class CronosPrimitive : public CronosModel
+	typedef struct par_shapes_mesh_s;
+	enum class PrimitiveType { NONE = -1, CUBE = 0 };
+
+	class CronosPrimitiveMesh : public CronosMesh
 	{
+		friend class CronosPrimitive;
 	public:
 
-		CronosPrimitive(par_shapes_mesh_s ParshapeMesh) : CronosModel(this), Parshape_Mesh(ParshapeMesh) {}
-		~CronosPrimitive() {}
+		virtual void Draw() override;
+		const std::vector<unsigned short> GetIndexVector() const { return m_PARSHAPES_IndicesVector; }
 
 	private:
 
-		void ParShapeToPrimitive();
+		CronosPrimitiveMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures, std::vector<unsigned short>usIndices);
+		virtual void SetupMesh() override;
 
-		par_shapes_mesh_s Parshape_Mesh;
+		std::vector<unsigned short> m_PARSHAPES_IndicesVector;
+	};
 
+
+	class CronosPrimitive : public CronosModel
+	{
+		friend class CronosModel;
+	public:
+
+		CronosPrimitive(PrimitiveType primitve_type);
+		~CronosPrimitive();
+
+	private:
+
+		void ParShapeToPrimitive(PrimitiveType primitve_type);
+		CronosPrimitiveMesh* Primitive_Mesh;
 	};
 
 

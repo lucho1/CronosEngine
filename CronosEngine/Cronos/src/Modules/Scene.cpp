@@ -1,11 +1,11 @@
 #include "Providers/cnpch.h"
 
-
 #include "Application.h"
 #include "Scene.h"
 
 #include "Renderer/Buffers.h"
 #include "Renderer/Model.h"
+#include "Renderer/CronosPrimitive.h"
 
 #include "mmgr/mmgr.h"
 
@@ -13,6 +13,7 @@ namespace Cronos {
 
 	static CronosMesh* vmeshxd; //To test
 	static CronosModel* vmodelxd;
+	static CronosPrimitive* vCubePrimitivexd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -77,6 +78,7 @@ namespace Cronos {
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE);
 		//vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
@@ -116,9 +118,16 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
-		VAO->~VertexArray();
+		//VAO->~VertexArray();
 		delete vmeshxd;
 		if (vmeshxd != nullptr) vmeshxd = nullptr;
+		vmodelxd->~CronosModel();
+		delete vmodelxd;
+		if (vmodelxd != nullptr)
+			vmodelxd = nullptr;
+		vCubePrimitivexd->~CronosPrimitive();
+		if (vCubePrimitivexd != nullptr)
+			vCubePrimitivexd = nullptr;
 
 		return true;
 	}
@@ -129,17 +138,26 @@ namespace Cronos {
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
-		m_FloorPlane.Render();
+		//m_FloorPlane.Render();
+		glColor3f(White.r, White.g, White.b);
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
 		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
 		//cbe.Render();
 		//vmeshxd->Draw();
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		vmodelxd->Draw();
+
+		//vmodelxd->Draw();
 		//vmodelxd->DrawTextureCoordinates();
 		//vmodelxd->DrawVerticesNormals();
-		vmodelxd->DrawPlanesNormals();
+		//vmodelxd->DrawPlanesNormals();
+
+		vCubePrimitivexd->Draw();
+
+		
+
+
+		
 
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
 			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
