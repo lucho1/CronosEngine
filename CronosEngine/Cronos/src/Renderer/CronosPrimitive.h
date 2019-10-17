@@ -13,23 +13,6 @@ namespace Cronos {
 									CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE				//Simple primitives for par shapes (slices, stacks)
 								};				
 
-	class CronosPrimitiveMesh : public CronosMesh
-	{
-		friend class CronosPrimitive;
-	public:
-
-		virtual void Draw() override;
-		const std::vector<unsigned short> GetIndexVector() const { return m_PARSHAPES_IndicesVector; }
-
-	private:
-
-		CronosPrimitiveMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures, std::vector<unsigned short>usIndices);
-		virtual void SetupMesh() override;
-
-		std::vector<unsigned short> m_PARSHAPES_IndicesVector;
-	};
-
-
 	class CronosPrimitive : public CronosModel
 	{
 		friend class CronosModel;
@@ -43,10 +26,7 @@ namespace Cronos {
 	private:
 
 		void ParShapeToPrimitive(PrimitiveType primitve_type, glm::vec3 size, int figure_slices, int figure_stacks);
-		CronosPrimitiveMesh* Primitive_Mesh;
+		CronosMesh *m_PrimitiveMesh = nullptr;
 	};
-
-
-
 }
 #endif
