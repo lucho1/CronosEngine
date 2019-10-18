@@ -78,7 +78,7 @@ namespace Cronos {
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::TETRAHEDRON);
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::EMPTY, { 2,2,2 }, 0.7f);
 
 		//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
 	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE
@@ -156,32 +156,36 @@ namespace Cronos {
 		//vmodelxd->DrawVerticesNormals();
 		//vmodelxd->DrawPlanesNormals();
 
-		vCubePrimitivexd->Draw();
+		if(vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->Draw();
 
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-			vCubePrimitivexd->ScaleModel(0.9f);
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-			vCubePrimitivexd->MoveModel(glm::vec3(2, 0, 0));
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->MoveModel(glm::vec3(1, 0, 0), 1);
 
-		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
 			vCubePrimitivexd->RotateModel(45.0, glm::vec3(0, 1, 0));
 
-		
-		glm::vec3 axis_vec = vCubePrimitivexd->GetModelAxis();
-		glLineWidth(2.0f);
-		glBegin(GL_LINES);
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
-			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
-		glEnd();
+		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->CreateDisk();
 
+		if (vCubePrimitivexd != nullptr) {
+			glm::vec3 axis_vec = vCubePrimitivexd->GetModelAxis();
+			glLineWidth(2.0f);
+			glBegin(GL_LINES);
+				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+				glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+			glEnd();
+		}
 		
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);

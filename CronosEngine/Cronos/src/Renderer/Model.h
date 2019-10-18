@@ -35,12 +35,12 @@ namespace Cronos {
 		CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<CronosTexture>textures);
 		~CronosMesh();
 
-		virtual void Draw();
+		void Draw();
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
-		void ScaleMesh(float scaleMagnitude);
-		void MoveMesh(glm::vec3 MoveVec);
+		void ScaleMesh(glm::vec3 ScaleMagnitude);
+		void MoveMesh(glm::vec3 MoveAxis, float moveMagnitude);
 		void RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis);
 
 		const std::vector<CronosTexture> GetTexturesVector() const { return m_TexturesVector; }
@@ -49,7 +49,7 @@ namespace Cronos {
 
 	private:
 
-		virtual void SetupMesh();
+		void SetupMesh();
 
 		std::vector<CronosTexture> m_TexturesVector;
 		std::vector<CronosVertex> m_VertexVector;
@@ -76,8 +76,8 @@ namespace Cronos {
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
-		void ScaleModel(float scaleMagnitude);
-		virtual void MoveModel(glm::vec3 MoveVec);
+		void ScaleModel(glm::vec3 ScaleMagnitude);
+		void MoveModel(glm::vec3 MoveAxis, float moveMagnitude);
 		void RotateModel(float RotDegrees, glm::vec3 RotAxis);
 		
 		const glm::vec3 GetModelAxis() const { return m_ModelAxis; }
