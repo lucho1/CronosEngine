@@ -47,9 +47,12 @@ namespace Cronos
 				ParshapeMesh = par_shapes_create_icosahedron();
 				break;
 		//Simple primitives for par shapes (slices, stacks)
-			case PrimitiveType::CYLINDER:
+			case PrimitiveType::EMPTY_CYLINDER:
 				ParshapeMesh = par_shapes_create_cylinder(figure_slices, figure_stacks);
 				break;
+			case PrimitiveType::CLOSED_CYLINDER:
+				CreateCylinder(size, figure_slices, figure_stacks);
+				return;
 			case PrimitiveType::CONE:
 				ParshapeMesh = par_shapes_create_cone(figure_slices, figure_stacks);
 				break;
@@ -102,6 +105,39 @@ namespace Cronos
 			delete m_PrimitiveMesh;
 			m_PrimitiveMesh = nullptr;
 		}
+	}
+
+	void CronosPrimitive::CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks)
+	{
+		//Check if the size forms a circle (to directly do a rounded cylinder) or not (to do a rounded cylinder and then scale it)
+		if (size.x == size.y &&  size.x == size.z)
+		{
+			//First, create a normal cylinder and put it at (0,0,0)
+			par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(figure_slices, figure_stacks);
+			par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+
+			//Now create 2 disks around the cylinder of radius size/2 (since x, y and z are the same, we can just pick x)
+			float center_arr[3] = { 0, 0, 1 };
+			float normal[3] = { 0, 0, 1 };
+			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x/2, figure_slices, center_arr, normal);
+			par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(size.x/2, figure_slices, center_arr, normal);
+
+			//Rotate one of the disks (to make it see outside the cylinder) -- A translation is needed (I don't know why, ParShapes stuff \_O_/ )
+			float RotAx[3] = { 1, 0, 0 };
+			par_shapes_rotate(Disk2_PrShM, PI, RotAx);
+			par_shapes_translate(Disk2_PrShM, 0, 0, 1);
+
+			//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes and call the ParShapes to Cronos Primitive function
+			ParshapeMesh = par_shapes_create_empty();
+			par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
+			par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
+			par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+		}
+		else {
+			CreateCylinder(glm::vec3(2, 2, 2), figure_slices, figure_slices);
+		}
+
+		ParShapeToPrimitive(size);
 	}
 
 	void CronosPrimitive::CreateRock(glm::vec3 size, int seed, uint nSubdivisions)
