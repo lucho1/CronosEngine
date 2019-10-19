@@ -78,7 +78,7 @@ namespace Cronos {
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CLOSED_CYLINDER, { 2, 1, 2 });
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CLOSED_CYLINDER, { 3, 2, 1 });
 
 		//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
 	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE

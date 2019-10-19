@@ -115,28 +115,34 @@ namespace Cronos
 			//First, create a normal cylinder and put it at (0,0,0)
 			par_shapes_mesh* Cyl_PrShM = par_shapes_create_cylinder(figure_slices, figure_stacks);
 			par_shapes_translate(Cyl_PrShM, 0, 0, 0);
+			par_shapes_scale(Cyl_PrShM, size.x, size.y, size.z);
 
-			//Now create 2 disks around the cylinder of radius size/2 (since x, y and z are the same, we can just pick x)
-			float center_arr[3] = { 0, 0, 1 };
+			//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
+			float center_arr[3] = { 0, 0, size.z };
 			float normal[3] = { 0, 0, 1 };
-			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x/2, figure_slices, center_arr, normal);
-			par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(size.x/2, figure_slices, center_arr, normal);
+			float center_arr2[3] = { 0, 0, 1 };
+			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x, figure_slices, center_arr, normal);
+			par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(size.x, figure_slices, center_arr2, normal);
 
-			//Rotate one of the disks (to make it see outside the cylinder) -- A translation is needed (I don't know why, ParShapes stuff \_O_/ )
+			//Rotate one of the disks (to make it see outside the cylinder) -- A translation is needed (I don't know why, ParShapes stuff \_O_/, guess it has to do wit Rot. Axis)
 			float RotAx[3] = { 1, 0, 0 };
 			par_shapes_rotate(Disk2_PrShM, PI, RotAx);
 			par_shapes_translate(Disk2_PrShM, 0, 0, 1);
 
-			//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes and call the ParShapes to Cronos Primitive function
+			//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
 			ParshapeMesh = par_shapes_create_empty();
 			par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
 			par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
 			par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
 		}
-		else {
-			CreateCylinder(glm::vec3(2, 2, 2), figure_slices, figure_slices);
+		else
+		{
+			CreateCylinder(glm::vec3(1, 1, 1), figure_slices, figure_slices);
+			ScaleModel(size);
+			return;
 		}
 
+		//At the end, call the translation function
 		ParShapeToPrimitive(size);
 	}
 
