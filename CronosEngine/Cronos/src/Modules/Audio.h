@@ -95,8 +95,6 @@ namespace Cronos {
 		Mix_Music* music = nullptr;
 		std::vector<Mix_Chunk*>	m_FXList;
 
-		float m_DefaultFadeTime;
-
 		// 0% - 100% Range
 		uint m_MasterVol = 100;
 		uint m_MusicVol = 100;

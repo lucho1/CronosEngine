@@ -24,6 +24,8 @@ namespace Cronos {
 	// Load assets
 	bool Scene::OnStart()
 	{
+		App->renderer3D->SetOpenGLSettings();
+
 		LOG("Loading Intro assets");
 		bool ret = true;
 
@@ -123,10 +125,12 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
 		m_FloorPlane.Render();
+		//vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
 		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
@@ -141,8 +145,7 @@ namespace Cronos {
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
 			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+		
 
 		
 		glm::vec3 axis_vec = vmodelxd->GetModelAxis();

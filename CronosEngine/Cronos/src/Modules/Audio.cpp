@@ -86,7 +86,6 @@ namespace Cronos {
 		JSONFile["Audio"]["MasterVolume"] = m_MasterVol;
 		JSONFile["Audio"]["MusicVolume"] = m_MusicVol;
 		JSONFile["Audio"]["SFXVolume"] = m_SFXVol;
-		JSONFile["Audio"]["DefaultMusicFadeTime"] = m_DefaultFadeTime;
 	}
 
 	void  Audio::LoadModuleData(json& JSONFile)
@@ -94,7 +93,6 @@ namespace Cronos {
 		m_MasterVol = JSONFile["Audio"]["MasterVolume"];
 		m_MusicVol = JSONFile["Audio"]["MusicVolume"];
 		m_SFXVol = JSONFile["Audio"]["SFXVolume"];
-		m_DefaultFadeTime = JSONFile["Audio"]["DefaultMusicFadeTime"];
 	}
 
 	// Play a music file

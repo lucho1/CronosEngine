@@ -31,7 +31,7 @@ namespace Cronos {
 		SetNearPlane(m_NearPlane);
 		SetFarPlane(m_FarPlane);
 
-		Look(m_Position, m_Reference);
+		Look(m_Position, m_Reference, true);
 		return true;
 	}
 

@@ -75,12 +75,6 @@
     <ClInclude Include="src\ImGui\ImGuiLayer.h">
       <Filter>src\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h">
-      <Filter>src\ImGui\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h">
-      <Filter>src\ImGui\OpenGL</Filter>
-    </ClInclude>
     <ClInclude Include="src\ImGui\imnodes.h">
       <Filter>src\ImGui</Filter>
     </ClInclude>
@@ -1272,6 +1266,8 @@
     <ClInclude Include="vendor\Assimp\include\Compiler\pstdint.h" />
     <ClInclude Include="vendor\Assimp\include\Compiler\pushpack1.h" />
     <ClInclude Include="src\Renderer\Model.h" />
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h" />
+    <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1297,12 +1293,6 @@
     </ClCompile>
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp">
       <Filter>src\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp">
-      <Filter>src\ImGui\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp">
-      <Filter>src\ImGui\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\imnodes.cpp">
       <Filter>src\ImGui</Filter>
@@ -1350,6 +1340,8 @@
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vendor\Assimp\include\color4.inl" />

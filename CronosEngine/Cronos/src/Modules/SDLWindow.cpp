@@ -45,11 +45,11 @@ namespace Cronos {
 				screen_surface = SDL_GetWindowSurface(window);
 			}
 
-			SetWindowFullscreen(m_Data.WindowFullscreen);
-			SetWindowResizable(m_Data.WindowResizable);
-			SetWindowBorderless(m_Data.WindowBorderless);
-			SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
-			SetWindowBright(m_Data.WindowBright);
+			//SetWindowFullscreen(m_Data.WindowFullscreen);
+			//SetWindowResizable(m_Data.WindowResizable);
+			//SetWindowBorderless(m_Data.WindowBorderless);
+			//SetWindowDesktopFullscreen(m_Data.WindowDesktopFullscreen);
+			//SetWindowBright(m_Data.WindowBright);
 		}
 
 		return ret;
@@ -120,8 +120,8 @@ namespace Cronos {
  		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
 		App->engineCamera->CalculateProjection();
-		SetWindowFullscreen(false);
-		SetWindowDesktopFullscreen(false);
+		//SetWindowFullscreen(false);
+		//SetWindowDesktopFullscreen(false);
 	}
 
 
