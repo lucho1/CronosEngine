@@ -53,9 +53,12 @@ namespace Cronos
 			case PrimitiveType::CLOSED_CYLINDER:
 				CreateCylinder(size, figure_slices, figure_stacks);
 				return;
-			case PrimitiveType::CONE:
+			case PrimitiveType::EMPTY_CONE:
 				ParshapeMesh = par_shapes_create_cone(figure_slices, figure_stacks);
 				break;
+			case PrimitiveType::CLOSED_CONE:
+				CreateCone(size, figure_slices, figure_stacks);
+				return;
 			case PrimitiveType::SPHERE:
 				ParshapeMesh = par_shapes_create_parametric_sphere(figure_slices, figure_stacks);
 				break;
@@ -118,15 +121,15 @@ namespace Cronos
 			par_shapes_scale(Cyl_PrShM, size.x, size.y, size.z);
 
 			//Now create 2 disks around the cylinder (since x, y and z are the same, we can just pick x)
-			float center_arr[3] = { 0, 0, size.z };
 			float normal[3] = { 0, 0, 1 };
-			float center_arr2[3] = { 0, 0, 1 };
-			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x, figure_slices, center_arr, normal);
-			par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(size.x, figure_slices, center_arr2, normal);
+			float center_axis[3] = { 0, 0, size.z };
+			float center_axis2[3] = { 0, 0, 1 };
+			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x, figure_slices, center_axis, normal);
+			par_shapes_mesh* Disk2_PrShM = par_shapes_create_disk(size.x, figure_slices, center_axis2, normal);
 
 			//Rotate one of the disks (to make it see outside the cylinder) -- A translation is needed (I don't know why, ParShapes stuff \_O_/, guess it has to do wit Rot. Axis)
-			float RotAx[3] = { 1, 0, 0 };
-			par_shapes_rotate(Disk2_PrShM, PI, RotAx);
+			float RotAxis[3] = { 1, 0, 0 };
+			par_shapes_rotate(Disk2_PrShM, PI, RotAxis);
 			par_shapes_translate(Disk2_PrShM, 0, 0, 1);
 
 			//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
@@ -134,6 +137,42 @@ namespace Cronos
 			par_shapes_merge_and_free(ParshapeMesh, Cyl_PrShM);
 			par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
 			par_shapes_merge_and_free(ParshapeMesh, Disk2_PrShM);
+		}
+		else
+		{
+			CreateCylinder(glm::vec3(1, 1, 1), figure_slices, figure_slices);
+			ScaleModel(size);
+			return;
+		}
+
+		//At the end, call the translation function
+		ParShapeToPrimitive(size);
+	}
+
+	void CronosPrimitive::CreateCone(glm::vec3 size, int figure_slices, int figure_stacks)
+	{
+		//Same method for cylinder but with one disk
+		if (size.x == size.y &&  size.x == size.z)
+		{
+			//First, create a normal cone and put it at (0,0,0)
+			par_shapes_mesh* Cone_PrShM = par_shapes_create_cone(figure_slices, figure_stacks);
+			par_shapes_translate(Cone_PrShM, 0, 0, 0);
+			par_shapes_scale(Cone_PrShM, size.x, size.y, size.z);
+
+			//Now create a disk
+			float normal[3] = { 0, 0, 1 };
+			float center_axis[3] = { 0, 0, 1 };
+			par_shapes_mesh* Disk_PrShM = par_shapes_create_disk(size.x, figure_slices, center_axis, normal);
+
+			//Rotate the disk to make it see outside the cone -- A translation is needed (I don't know why, ParShapes stuff \_O_/, guess it has to do wit Rot. Axis)
+			float RotAx[3] = { 1, 0, 0 };
+			par_shapes_rotate(Disk_PrShM, PI, RotAx);
+			par_shapes_translate(Disk_PrShM, 0, 0, 1);
+
+			//Finally, set the class' mesh to an Empty ParShape, merge to it the 3 meshes
+			ParshapeMesh = par_shapes_create_empty();
+			par_shapes_merge_and_free(ParshapeMesh, Cone_PrShM);
+			par_shapes_merge_and_free(ParshapeMesh, Disk_PrShM);
 		}
 		else
 		{

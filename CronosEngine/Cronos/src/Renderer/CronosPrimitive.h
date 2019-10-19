@@ -11,7 +11,7 @@ namespace Cronos {
 
 	typedef struct par_shapes_mesh_s;
 	enum class PrimitiveType	{	NONE = -1, CUBE, TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON,			//Very Simple primitives (for par shapes)
-									EMPTY_CYLINDER, CLOSED_CYLINDER, CONE, SPHERE, PLANE,							//Simple primitives for par shapes (slices, stacks)
+									EMPTY_CYLINDER, CLOSED_CYLINDER, EMPTY_CONE, CLOSED_CONE, SPHERE, PLANE,		//Simple primitives for par shapes (slices, stacks)
 									SEMI_SPHERE, TORUS, TREFOIL_KNOT, KLEIN_BOTTLE,
 									DISK, ROCK, SUBDIVIDED_SPHERE, EMPTY											//More complex primitives (with seeds and divisions)
 								};				
@@ -35,6 +35,7 @@ namespace Cronos {
 
 		void ParShapeToPrimitive(glm::vec3 size);
 		void CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks);
+		void CreateCone(glm::vec3 size, int figure_slices, int figure_stacks);
 
 		CronosMesh *m_PrimitiveMesh = nullptr;
 		PrimitiveType m_PrimitiveType = PrimitiveType::NONE;
