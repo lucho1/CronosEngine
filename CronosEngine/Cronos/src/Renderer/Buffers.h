@@ -98,6 +98,24 @@ namespace Cronos {
 		uint m_ID;
 
 	};
+
+	class FrameBuffer {
+	public:
+		FrameBuffer();
+		~FrameBuffer();
+
+		void Init(int Width, int Height);
+		void PreUpdate();
+		void PostUpdate();
+
+		void CleanUp();
+
+	private:
+		uint m_FB;
+		uint m_Text;
+
+	};
+
 }
 
 #endif

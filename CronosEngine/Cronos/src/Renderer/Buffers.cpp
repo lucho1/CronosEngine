@@ -98,4 +98,47 @@ namespace Cronos {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+
+
+	FrameBuffer::FrameBuffer()
+	{
+	}
+
+	FrameBuffer::~FrameBuffer()
+	{
+	}
+
+	void FrameBuffer::Init(int Width, int Height)
+	{
+		glGenFramebuffers(1,&m_FB);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FB);
+
+		glGenTextures(1, &m_Text);
+		glBindTexture(GL_TEXTURE_2D, m_Text);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Text, 0);
+		uint renderBufferoutput;
+		glGenRenderbuffers(1, &renderBufferoutput);
+		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferoutput);
+		//glRenderbufferStorage()
+
+	}
+
+	void FrameBuffer::PreUpdate()
+	{
+	}
+
+	void FrameBuffer::PostUpdate()
+	{
+	}
+
+	void FrameBuffer::CleanUp()
+	{
+	}
+
 }
