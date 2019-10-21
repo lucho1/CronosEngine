@@ -52,7 +52,8 @@ namespace Cronos {
 		{
 			vec3 newPos(0.0f, 0.0f, 0.0f);
 			newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
-			newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
+			newPos += -m_Y * App->input->GetMouseYMotion() / 2.0f * dt;
+			//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
 			m_Position += newPos;
 			m_Reference += newPos;
