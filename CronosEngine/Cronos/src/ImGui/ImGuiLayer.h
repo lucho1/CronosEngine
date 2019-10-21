@@ -10,6 +10,14 @@ namespace Cronos {
 
 	class FrameBuffer;
 
+	enum class ShadingMode
+	{
+		Shaded = 0,
+		Wireframe,
+		ShadedWireframe,
+		MaxElements
+	};
+
 	enum class ConfigMenus {
 		Application = 0,
 		Window,
@@ -79,7 +87,7 @@ namespace Cronos {
 
 	private:
 
-		FrameBuffer* m_GameWindow = nullptr;
+		FrameBuffer* m_SceneWindow = nullptr;
 
 		float m_Time = 0.0f;
 		bool ShowMainMenu = true;
@@ -96,6 +104,9 @@ namespace Cronos {
 		bool ShowExitOpitonsPopUp = false;
 
 		bool HoverGameWin = false;
+
+		ShadingMode m_currentShadingMode;
+		std::string m_ShadingModesLabel[3];
 
 		update_status current_status= update_status::UPDATE_CONTINUE;
 

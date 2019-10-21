@@ -23,13 +23,6 @@ namespace Cronos {
 
 	};
 
-
-
-
-
 }
 
-
-
-
-#endif // !1
+#endif // !_TEXTURE_HANDLER_H

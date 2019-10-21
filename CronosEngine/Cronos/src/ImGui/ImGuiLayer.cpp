@@ -25,11 +25,7 @@ namespace Cronos {
 
 	static ImGuiDockNodeFlags dockspace_flags;
 	ImGuiWindowFlags window_flags;
-
-
-	int my_image_width = 504, my_image_height = 507;
-	//unsigned char* my_image_data = stbi_load("../Hazel/src/Textures/Texture_Sample.jpg", &my_image_width, &my_image_height, NULL, 4);
-	GLuint my_opengl_texture;
+	//static char currShaderMode[20];
 
 #define TOTEX (void*)(intptr_t)
 
@@ -69,28 +65,30 @@ namespace Cronos {
 		ImGui_ImplOpenGL3_Init();
 
 		ImGuiIO& io = ImGui::GetIO();
-
 		std::string File = "../Cronos/vendor/imgui/misc/fonts/DroidSans.ttf";
 		io.Fonts->AddFontFromFileTTF(File.c_str(), 14.0f);
-
-
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableSetMousePos | ImGuiConfigFlags_NavEnableKeyboard;
 
 		setDocking();
-		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
 
-		m_GameWindow = new FrameBuffer();
-		m_GameWindow->Init(1280, 720);
+		//Setting FrameBuffer for gameWindow;
+		m_SceneWindow = new FrameBuffer();
+		m_SceneWindow->Init(1280, 720);
+		
+		m_ShadingModesLabel[(int)ShadingMode::Shaded] = "Shaded";
+		m_ShadingModesLabel[(int)ShadingMode::ShadedWireframe] = "Shaded Wireframe";
+		m_ShadingModesLabel[(int)ShadingMode::Wireframe] = "Wireframe";
+		m_currentShadingMode = ShadingMode::Shaded;
 
+		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
+		//Reading License
 		FILE* fp = fopen("../../LICENSE", "r");
-
-		int c; // note: int, not char, required to handle EOF
-		while ((c = fgetc(fp)) != EOF) { // standard C I/O file reading loop
-			//char a = putchar(c);
+		int c; 
+		while ((c = fgetc(fp)) != EOF) { 
 			LicenseString += c;
 		}
 
-
+		//Setting temporary root
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
 
@@ -116,7 +114,7 @@ namespace Cronos {
 
 	update_status ImGuiLayer::OnPreUpdate(float dt) {
 		if (ShowDrawGameWindow)		   
-			m_GameWindow->PreUpdate();
+			m_SceneWindow->PreUpdate();
 
 		return current_status;
 	}
@@ -208,28 +206,49 @@ namespace Cronos {
 	
 	void ImGuiLayer::GUIDrawSceneWindow() 
 	{
+		//static int selected = 0;
+		//ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		//ImGui::BeginChild("left pane", ImVec2(150, 0), true);
+
+
+		//if (ImGui::Selectable("Application", selected == 0)) {
+		//	currentMenu = ConfigMenus::Application;
+		//	selected = 0;
+		//}
+
+
 		static ImGuiWindowFlags GameWindow_flags= ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_MenuBar;
 		
 		static ImVec2 SizeGame;
 		static ImVec2 LastSize = SizeGame;
 
+
 		ImGui::Begin("GameWindow",nullptr,GameWindow_flags); 
 		{
-
 			if (ImGui::BeginMenuBar()) {
-				if (ImGui::BeginMenu("Shaded")) {
-					ImGui::MenuItem("Hola");
+		
+				if (ImGui::BeginMenu(m_ShadingModesLabel[(int)m_currentShadingMode].c_str())) {
+
+					for (int i = 0; i < (int)ShadingMode::MaxElements; i++) {
+
+						if (ImGui::MenuItem(m_ShadingModesLabel[i].c_str()))
+							m_currentShadingMode = (ShadingMode)i;
+					}
 					ImGui::EndMenu();
 				}
+			
+				
+
 				ImGui::EndMenuBar();
 			}
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
-				m_GameWindow->OnResize(SizeGame.x, SizeGame.y);
+				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
 				
 				LastSize = SizeGame;
 			}
-			ImGui::Image((void*)m_GameWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 		}
 		if (ImGui::IsItemHovered()) {
 			HoverGameWin = true;
@@ -237,7 +256,7 @@ namespace Cronos {
 		else
 			HoverGameWin = false;
 
-		m_GameWindow->PostUpdate();
+		m_SceneWindow->PostUpdate();
 		ImGui::End();
 	}
 
@@ -447,7 +466,7 @@ namespace Cronos {
 			//ImGui::AlignTextToFramePadding();
 			ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
 
-			if (ImGui::ImageButton(TOTEX my_opengl_texture, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
+			if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
 				ImGui::OpenPopup("Context");
 			}
 			ImGui::SameLine();
