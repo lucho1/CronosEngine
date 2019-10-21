@@ -12,6 +12,7 @@ namespace Cronos {
 		Application = 0,
 		Window,
 		Hardware,
+		Software,
 		Renderer,
 		Input,
 		Audio,
@@ -56,10 +57,12 @@ namespace Cronos {
 		void GUIDrawPerformancePanel();
 		void GUIDrawSupportExitOptions();
 		void GUIDrawAboutPanel();
+
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
 		void GUIDrawConfigHardwareMenu();
+		void GUIDrawConfigSoftwareMenu();
 		void GUIDrawConfigRendererMenu();
 		void GUIDrawConfigInputMenu();
 		void GUIDrawConfigAudioMenu();

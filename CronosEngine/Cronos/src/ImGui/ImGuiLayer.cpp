@@ -737,22 +737,27 @@ namespace Cronos {
 				currentMenu = ConfigMenus::Hardware;
 				selected = 2;
 			}
-			else if (ImGui::Selectable("Renderer", selected == 3)){
-				currentMenu = ConfigMenus::Renderer;
+			else if (ImGui::Selectable("Software", selected == 3)) {
+				currentMenu = ConfigMenus::Software;
 				selected = 3;
 			}
-			else if (ImGui::Selectable("Input", selected == 4)) {
-				currentMenu = ConfigMenus::Input;
+			else if (ImGui::Selectable("Renderer", selected == 4)){
+				currentMenu = ConfigMenus::Renderer;
 				selected = 4;
 			}
-			else if (ImGui::Selectable("Audio", selected == 5)) {
-				currentMenu = ConfigMenus::Audio;
+			else if (ImGui::Selectable("Input", selected == 5)) {
+				currentMenu = ConfigMenus::Input;
 				selected = 5;
 			}
-			else if (ImGui::Selectable("Texture", selected == 6)) {
-				currentMenu = ConfigMenus::Texture;
+			else if (ImGui::Selectable("Audio", selected == 6)) {
+				currentMenu = ConfigMenus::Audio;
 				selected = 6;
 			}
+			else if (ImGui::Selectable("Texture", selected == 7)) {
+				currentMenu = ConfigMenus::Texture;
+				selected = 7;
+			}
+			
 
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
@@ -773,6 +778,9 @@ namespace Cronos {
 					break;
 				case Cronos::ConfigMenus::Hardware:
 					GUIDrawConfigHardwareMenu();
+					break;
+				case Cronos::ConfigMenus::Software:
+					GUIDrawConfigSoftwareMenu();
 					break;
 				case Cronos::ConfigMenus::Renderer:
 					GUIDrawConfigRendererMenu();
@@ -806,9 +814,26 @@ namespace Cronos {
 		ImGui::Text("Application");
 		ImGui::Separator();
 		ImGui::Text ("App Name : "); ImGui::SameLine();
+
+		//setting app name
+		static char buf1[64];
+		strcpy(buf1, App->GetAppTitle().c_str());
+		if (ImGui::InputText("###Name", buf1, 50, ImGuiInputTextFlags_CharsNoBlank)) {
+			App->SetAppTitle(buf1);
+		}sameLine;
+		//setting Version
+		static char buf3[10];
+		strcpy(buf3, App->GetAppVersion().c_str());
+		if (ImGui::InputText("###version", buf3, 5, ImGuiInputTextFlags_CharsNoBlank)) {
+			App->SetAppVersion(buf3);
+		}
+
 		ImGui::TextColored(Color, (App->GetAppTitle() + " " + App->GetAppVersion()).c_str());
 		ImGui::Text("Organization: "); ImGui::SameLine();
-		ImGui::TextColored(Color, (App->GetAppOrganization() + "\n Authors: " + App->GetAppAuthors()).c_str());
+		static char buf2[64];
+		ImGui::TextColored(Color, App->GetAppOrganization().c_str());
+		ImGui::Text("Authors: "); ImGui::SameLine();
+		ImGui::TextColored(Color, (App->GetAppAuthors()).c_str());
 		ImGui::Separator();
 		ImGui::Text("");
 		ImGui::Text("Performance here"); ImGui::SameLine();
@@ -869,23 +894,120 @@ namespace Cronos {
 		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 		ImGui::Text("Hardware");
 		ImGui::Separator();
-		ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());
 		ImGui::Separator();
-		ImGui::Text("CPU cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCores()).c_str()); sameLine; ImGui::TextColored(Color, " (Cache : "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCacheLine1Size()).c_str());
-		sameLine; ImGui::TextColored(Color, " kb)");
-		ImGui::Text("System Ram: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()).c_str()); sameLine; ImGui::TextColored(Color, "Gb");
-		ImGui::Text("Caps: "); sameLine; ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetCPUInstructionSet().c_str());
+
+
+		ImGui::Text("MEMORY");
 		ImGui::Separator();
-		ImGui::Text("GPU: "); sameLine; ImGui::TextColored(Color, "vendor "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUVendor).c_str()); sameLine; ImGui::TextColored(Color, " Device"); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
-		ImGui::Text("Brand: "); sameLine; ImGui::TextColored(Color, info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUBrand.c_str());
-		ImGui::Text("VRam Budget: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
-		ImGui::Text("VRam Usage: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
-		ImGui::Text("VRam Aviable: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
-		ImGui::Text("VRam Reserved: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+
+		ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()) + " GB").c_str()));
+		ImGui::Text("Total Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPhysicalMemory()) + " GB").c_str()));
+		ImGui::Text("Available Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetFreePhysicalMemory()) + " GB").c_str()));
+		ImGui::Text("Used Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetUsedPhysicalMemory()) + " GB").c_str()));
+		ImGui::Text("Percentage of Memory Load: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPercentageOfMemoryLoad()) + " " + '%').c_str()));
+		ImGui::Text("");
+		ImGui::Text("Physical Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPhysMemoryUsedByProcess()) + " GB").c_str()));
+		ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetVirtualMemoryUsedByProcess()) + " GB").c_str()));
+		
+		ImGui::Text(" MMGR Memory Statistics"); ImGui::SameLine(); ImGui::Separator();
+		ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalReportedMemory()) + " GB").c_str()));
+		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalActualMemory()) + " GB").c_str()));
+		ImGui::Text("Peak Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakReportedMemory()) + " GB").c_str()));
+		ImGui::Text("Peak Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakActualMemory()) + " GB").c_str()));
+		ImGui::Text("Accumulated Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedReportedMemory()) + " GB").c_str()));
+		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedActualMemory()) + " GB").c_str()));
+
+		ImGui::Text(" MMGR Allocated Unit Count Statistics"); ImGui::SameLine(); ImGui::Separator();
+		ImGui::Text("Total Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalAllocUnitCount()).c_str()));
+		ImGui::Text("Peak Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakAllocUnitCount()).c_str()));
+		ImGui::Text("Accumulated Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedAllocUnitCount()).c_str()));
+		
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("PROCESSOR");
+		ImGui::Separator();
+
+		ImGui::Text("CPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, (info.GetCPUHardwareInfo().GetCPUBrand().c_str()));
+		ImGui::Text("CPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, (info.GetCPUHardwareInfo().GetCPUVendor().c_str()));
+		ImGui::Text("CPU Arhitecture: "); ImGui::SameLine(); ImGui::TextColored(Color, (info.GetCPUHardwareInfo().GetCPUArchitecture().c_str()));
+		ImGui::SameLine(); ImGui::Text("    CPU Cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCores()).c_str());
+		ImGui::SameLine(); ImGui::Text("    CPU Processors: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetNumberOfProcessors().c_str());
+		ImGui::Text("");
+		ImGui::Text("CPU Revision: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetProcessorRevision().c_str());
+		ImGui::Text("CPU Line L1 Cache Size: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetCPUHardwareInfo().GetCPUCacheLine1Size()) + " Bytes").c_str());
+		ImGui::Text("");
+		ImGui::Text("CPU Instructions Set (CAPS): "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetCPUInstructionSet().c_str());
+
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::Text("GRAPHICS CARD");
+		ImGui::Separator();
+
+		ImGui::Text("GPU Benchmark: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(info.GetGPUHardwareInfo().GetGPUBenchmark()));
+		ImGui::Text("GPU Brand: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUBrand.c_str());
+		ImGui::Text("GPU Model: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(info.GetGPUHardwareInfo().GetGPUModel()));
+		ImGui::Text("GPU Vendor: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUVendor).c_str());
+		ImGui::SameLine(); ImGui::Text("   GPU ID: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
+
+		ImGui::Text("GPU VRAM"); ImGui::SameLine(); ImGui::Separator();
+		ImGui::Text("Total VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB) + " MB").c_str());
+		ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " MB").c_str());
+		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " MB").c_str());
+		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " MB").c_str());
+
+
+		//ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());
+		//ImGui::Separator();
+		//ImGui::Text("CPU cores: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCores()).c_str()); sameLine; ImGui::TextColored(Color, " (Cache : "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetCPUHardwareInfo().GetCPUCacheLine1Size()).c_str());
+		//sameLine; ImGui::TextColored(Color, " kb)");
+		//ImGui::Text("System Ram: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()).c_str()); sameLine; ImGui::TextColored(Color, "Gb");
+		//ImGui::Text("Caps: "); sameLine; ImGui::TextColored(Color, info.GetCPUHardwareInfo().GetCPUInstructionSet().c_str());
+		//ImGui::Separator();
+		//ImGui::Text("GPU: "); sameLine; ImGui::TextColored(Color, "vendor "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUVendor).c_str()); sameLine; ImGui::TextColored(Color, " Device"); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
+		//ImGui::Text("Brand: "); sameLine; ImGui::TextColored(Color, info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUBrand.c_str());
+		//ImGui::Text("VRam Budget: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		//ImGui::Text("VRam Usage: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		//ImGui::Text("VRam Aviable: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
+		//ImGui::Text("VRam Reserved: "); sameLine; ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB).c_str()); sameLine; ImGui::TextColored(Color, " Mb");
 
 		
 		ImGui::PopStyleVar();
 	};
+
+	void ImGuiLayer::GUIDrawConfigSoftwareMenu() {
+
+		SystemInfo info;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+		ImGui::Text("Software");
+		ImGui::Separator();
+		ImGui::Separator();
+		
+		ImGui::Text("Compilation Date: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetCompilationDate().c_str());
+		ImGui::SameLine(); ImGui::Text("   and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetCompilationTime().c_str());
+		ImGui::Text(info.GetSoftwareInfo().MultithreadedSpecified().c_str());
+
+		ImGui::Separator();
+		ImGui::Text("OS Windows Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetWindowsVersion().c_str());
+		ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());
+		ImGui::Text("OpenGL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(info.GetSoftwareInfo().GetOGLVersion()));
+		ImGui::SameLine(); ImGui::Text("   OpenGL Shading Version: "); ImGui::SameLine(); ImGui::TextColored(Color, (const char*)(info.GetSoftwareInfo().GetOGLShadingVersion()));
+
+		ImGui::Text(" C++ Programming Language"); ImGui::SameLine(); ImGui::Separator();
+		ImGui::Text("C++ Version Implemented by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetCppVersionImplementedByCompiler().c_str());
+		ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetCPPNumericalVersion().c_str()); ImGui::SameLine(); ImGui::Text(")");
+		
+		//const std::string cpp_str = (info.GetSoftwareInfo().GetCppCompilerVersion());
+
+		//ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, cpp_str);
+		ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetVSCompilerVersion().c_str());
+
+
+		ImGui::PopStyleVar();
+
+	};
+
 	void ImGuiLayer::GUIDrawConfigRendererMenu() {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));

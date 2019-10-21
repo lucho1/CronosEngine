@@ -51,7 +51,7 @@ namespace Cronos
 		const std::string GetCppCompilerVersion();
 
 		const std::string GetVSCompilerVersion()				const	{ return (std::to_string(_MSC_VER)); }
-		const std::string MultithreadedSpecified()				const	{ return std::string((_MT ? "" : "Not ")) + " Multithreaded Specified"; }
+		const std::string MultithreadedSpecified()				const	{ return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
 
 		const std::string GetCompilationDate()					const	{ return __DATE__; }
 		const std::string GetCompilationTime()					const	{ return __TIME__; }
@@ -60,7 +60,6 @@ namespace Cronos
 
 
 	//--------------------------- MEMORY INFO ---------------------------//
-	//TODO: FALTA LO DE RICK
 	class MemoryHardware
 	{
 	private:
@@ -223,8 +222,7 @@ namespace Cronos
 
 
 	//--------------------------- SYSTEM INFO ---------------------------//
-	//This will handle all the hardware and software info classes to have
-	//it all unified
+	//This will handle all the hardware and software info classes to have it all unified
 	class SystemInfo
 	{
 	private:

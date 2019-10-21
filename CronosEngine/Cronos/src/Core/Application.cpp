@@ -240,10 +240,10 @@ namespace Cronos {
 		aux_JSONFile["Application"]["Name"] = m_AppName;
 		aux_JSONFile["Application"]["Version"] = m_AppVersion;
 
-		m_JSONConfigFile["Application"]["Organization"] = m_AppOrganization;
-		m_JSONConfigFile["Application"]["Authors"] = m_AppAuthors;
-		m_JSONConfigFile["Application"]["FPS Cap"] = m_FPSCap;
-		m_JSONConfigFile["Application"]["SaveTime"] = SaveTime;
+		aux_JSONFile["Application"]["Organization"] = m_AppOrganization;
+		aux_JSONFile["Application"]["Authors"] = m_AppAuthors;
+		aux_JSONFile["Application"]["FPS Cap"] = m_FPSCap;
+		aux_JSONFile["Application"]["SaveTime"] = SaveTime;
 
 		//Call modules to Save into json aux file
 		for (auto element : m_ModulesList)
@@ -266,6 +266,9 @@ namespace Cronos {
 
 	void Application::SetFPSCap(int FPScap)
 	{
+		if (FPScap > 70)
+			int a = 0;
+
 		if (FPScap > 0) {
 			m_CappedMS = 1000 / FPScap;
 			m_FPSCap = FPScap;
