@@ -14,8 +14,10 @@
 
 Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho Suaya and Roger Leon) of the Degree in Videogames Design and Development of Universitat Politècnica de Catalunya for the Videogames Engines subject of 3rd course.
 
+![](https://raw.githubusercontent.com/lucho1/CronosEngine/Cronos_development/CronosEngine/Cronos/res/Icons/Cronos_Engine_Logo.png)
+
 We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and GLAD.
-**[TODO]** Put the logo image here and links to these libs!
+**[TODO]** Links to these libs!
 
 ## Innovating Features
 * Extensive Filesystem with good UX Functionalities
