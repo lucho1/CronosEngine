@@ -11,6 +11,7 @@
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
 #include "Providers/SystemInfo.h"
+#include "Renderer/Buffers.h"
 //#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
@@ -34,7 +35,7 @@ namespace Cronos {
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
 
-	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"),ms_log(100),fps_log(100)
+	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"), ms_log(100), fps_log(100)
 	{
 
 	}
@@ -59,7 +60,7 @@ namespace Cronos {
 
 	bool ImGuiLayer::OnStart()
 	{
-
+		
 		ImGui::CreateContext();
 		ImGui::StyleColorsCustom();
 		imnodes::Initialize();
@@ -77,6 +78,9 @@ namespace Cronos {
 
 		setDocking();
 		//m_RootDirectory = std::filesystem::path("D:/Documentos/Desktop");
+
+		m_GameWindow = new FrameBuffer();
+		m_GameWindow->Init(1280, 720);
 
 		FILE* fp = fopen("../../LICENSE", "r");
 
@@ -110,13 +114,20 @@ namespace Cronos {
 		}
 	}
 
+	update_status ImGuiLayer::OnPreUpdate(float dt) {
+		if (ShowDrawGameWindow)		   
+			m_GameWindow->PreUpdate();
+
+		return current_status;
+	}
+
 	update_status ImGuiLayer::OnUpdate(float dt)
 	{
 		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(App->window->GetWidth(), App->window->GetHeight());
-		io.WantCaptureKeyboard=true;
+		io.WantCaptureKeyboard = true;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -143,6 +154,7 @@ namespace Cronos {
 
 
 		GUIDrawMainBar();
+		
 		if (ShowInspectorPanel)			GUIDrawInspectorMenu();
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowAssetMenu)				GUIDrawAssetPanel();
@@ -152,7 +164,7 @@ namespace Cronos {
 		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
 		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
 		if (ShowAboutPanel)				GUIDrawAboutPanel();
-
+		if (ShowDrawGameWindow)		    GUIDrawSceneWindow();
 
 		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
 		ImGui::End();
@@ -186,14 +198,47 @@ namespace Cronos {
 
 	}
 
-
-
 	void ImGuiLayer::UpdateDocking() {
 
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
+	}
+	
+	void ImGuiLayer::GUIDrawSceneWindow() 
+	{
+		static ImGuiWindowFlags GameWindow_flags= ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_MenuBar;
+		
+		static ImVec2 SizeGame;
+		static ImVec2 LastSize = SizeGame;
+
+		ImGui::Begin("GameWindow",nullptr,GameWindow_flags); 
+		{
+
+			if (ImGui::BeginMenuBar()) {
+				if (ImGui::BeginMenu("Shaded")) {
+					ImGui::MenuItem("Hola");
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenuBar();
+			}
+			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
+			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
+				m_GameWindow->OnResize(SizeGame.x, SizeGame.y);
+				
+				LastSize = SizeGame;
+			}
+			ImGui::Image((void*)m_GameWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
+		}
+		if (ImGui::IsItemHovered()) {
+			HoverGameWin = true;
+		}
+		else
+			HoverGameWin = false;
+
+		m_GameWindow->PostUpdate();
+		ImGui::End();
 	}
 
 	void ImGuiLayer::GUIDrawMainBar()
@@ -224,12 +269,15 @@ namespace Cronos {
 			}
 
 			if (ImGui::BeginMenu("Edit")) {
-				ImGui::MenuItem("New");
+				ImGui::MenuItem("Undo","CTRL+Z");
+				ImGui::MenuItem("Redo", "CTRL+Y");
+
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Asset")) {
-				ImGui::MenuItem("New");
-				ImGui::EndMenu();
+				if (ImGui::MenuItem("")) {
+					ImGui::EndMenu();
+				}
 			}
 			if (ImGui::BeginMenu("View")) {
 

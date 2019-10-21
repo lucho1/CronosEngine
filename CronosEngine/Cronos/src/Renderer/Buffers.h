@@ -107,7 +107,9 @@ namespace Cronos {
 		void Init(int Width, int Height);
 		void PreUpdate();
 		void PostUpdate();
+		void OnResize(int Width, int Height);
 
+		uint GetWindowFrame() const { return m_Text; };
 		void CleanUp();
 
 	private:

@@ -8,6 +8,8 @@ struct ImGuiTextBuffer;
 
 namespace Cronos {
 
+	class FrameBuffer;
+
 	enum class ConfigMenus {
 		Application = 0,
 		Window,
@@ -26,8 +28,10 @@ namespace Cronos {
 		ImGuiLayer(Application* app, bool start_enabled=true);
 		~ImGuiLayer();
 		
+		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnUpdate(float dt) override;
-		
+		//virtual update_status OnPostUpdate(float dt) override;
+
 		virtual bool OnStart() override;
 
 		void AssetImguiIterator(Directories a);
@@ -38,6 +42,8 @@ namespace Cronos {
 
 		void GetInput(uint key, uint state, bool mouse=false);
 		void AddLog(std::string log);
+		
+		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
 	private:
 
@@ -56,6 +62,7 @@ namespace Cronos {
 		void GUIDrawPerformancePanel();
 		void GUIDrawSupportExitOptions();
 		void GUIDrawAboutPanel();
+		void GUIDrawSceneWindow();
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
@@ -72,8 +79,11 @@ namespace Cronos {
 
 	private:
 
+		FrameBuffer* m_GameWindow = nullptr;
+
 		float m_Time = 0.0f;
 		bool ShowMainMenu = true;
+		bool ShowDrawGameWindow = true;
 		bool ShowInspectorPanel = true;
 		bool ShowHierarchyMenu = true;
 		bool ShowAssetMenu = true;
@@ -84,6 +94,8 @@ namespace Cronos {
 		bool ShowAboutPanel = false;
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
+
+		bool HoverGameWin = false;
 
 		update_status current_status= update_status::UPDATE_CONTINUE;
 

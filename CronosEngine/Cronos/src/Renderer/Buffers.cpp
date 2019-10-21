@@ -110,35 +110,69 @@ namespace Cronos {
 
 	void FrameBuffer::Init(int Width, int Height)
 	{
+		uint renderBufferoutput;
+		//Gen And Bind frameBuffer
 		glGenFramebuffers(1,&m_FB);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FB);
-
+		//Gen and Bind Text
 		glGenTextures(1, &m_Text);
 		glBindTexture(GL_TEXTURE_2D, m_Text);
-
+		//Copy Textures
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_2D, 0);
-
+		//Texture to FrameBuffers
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Text, 0);
-		uint renderBufferoutput;
+		//Prepare RenderBuffers
 		glGenRenderbuffers(1, &renderBufferoutput);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferoutput);
-		//glRenderbufferStorage()
+		//Data to renderBuffer
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Width, Height);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferoutput);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	}
 
+	void FrameBuffer::OnResize(int Width, int Height) 
+	{
+		uint TempRendBuff;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FB);
+		glBindTexture(GL_TEXTURE_2D, m_Text);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Text, 0);
+		glGenRenderbuffers(1, &TempRendBuff);
+		glBindRenderbuffer(GL_RENDERBUFFER, TempRendBuff);
+
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Width, Height);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, TempRendBuff);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	}
+	
 	void FrameBuffer::PreUpdate()
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FB);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void FrameBuffer::PostUpdate()
 	{
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void FrameBuffer::CleanUp()
 	{
+		glDeleteBuffers(1, &m_FB);
 	}
 
 }
