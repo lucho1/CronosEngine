@@ -1,0 +1,59 @@
+{
+    "Application": {
+        "Authors": "Lucho Suaya Leiro and Roger Leon Borras",
+        "FPS Cap": 60.0,
+        "Name": "Cronos Engine",
+        "Organization": "UPC - CITM (Tech Talent Center, Barcelona)",
+        "SaveTime": 300.0,
+        "Version": "v0.1"
+    },
+    "Audio": {
+        "MasterVolume": 100,
+        "MusicVolume": 100,
+        "SFXVolume": 100
+    },
+    "EngineCamera": {
+        "CameraMoveSpeed": 5.0,
+        "CameraScrollSpeed": 20.0,
+        "FOV": 60.0,
+        "FarPlane": 512.0,
+        "InitialLookAt": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "InitialPosition": [
+            6.0,
+            4.0,
+            6.0
+        ],
+        "NearPlane": 0.125
+    },
+    "Renderer": {
+        "AntialiasedLPSmooth": false,
+        "Blend": true,
+        "ClipDistance": false,
+        "ColorDither": false,
+        "DepthTest": false,
+        "FaceCulling": true,
+        "GL_ColorMaterial": true,
+        "GL_Lighting": true,
+        "Multisampling": false,
+        "OpenGL_MajorV": 4,
+        "OpenGL_MinorV": 3,
+        "ScissorTest": false,
+        "StencilTest": false,
+        "VSYNC": true,
+        "WireframeDraw": false
+    },
+    "Window": {
+        "Borderless": false,
+        "Bright": 60.0,
+        "DesktopFullscreen": false,
+        "Fullscreen": false,
+        "Resizable": true,
+        "ScreenHeight": 720,
+        "ScreenSize": 1,
+        "ScreenWidth": 1024
+    }
+}
