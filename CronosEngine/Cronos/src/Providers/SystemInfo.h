@@ -96,8 +96,8 @@ namespace Cronos
 		const uint64 GetPageFileMemory()							const	{ return (uint64)m_MemoryInfo.ullTotalPageFile / BTOGB; } //In GB
 		const uint64 GetFreePageFileMemory()						const	{ return (uint64)m_MemoryInfo.ullAvailPageFile / BTOGB; } //In GB
 
-		const uint GetVirtualMemoryUsedByProcess()					const { return(uint)mProcess_vMemUsed / BTOMB; } //In MB
-		const uint GetPhysMemoryUsedByProcess()						const { return(uint)mProcess_physMemUsed / BTOMB; } //In MB
+		const uint GetVirtualMemoryUsedByProcess()					const { return(uint)mProcess_vMemUsed / BTOMB; } //In GB
+		const uint GetPhysMemoryUsedByProcess()						const { return(uint)mProcess_physMemUsed / BTOMB; } //In GB
 
 		//Getting Stats of Memory from MMRG
 		const uint GetMemStatsFromMMGR_TotalReportedMemory()		const;

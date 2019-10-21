@@ -125,74 +125,74 @@ namespace Cronos {
 	}
 
 
-	void SDLWindow::SetWindowFullscreen(bool setStatus)
-	{
-		m_Data.WindowFullscreen = setStatus;
-		if (setStatus == true) {
+	//void SDLWindow::SetWindowFullscreen(bool setStatus)
+	//{
+	//	m_Data.WindowFullscreen = setStatus;
+	//	if (setStatus == true) {
 
-			SetWindowDesktopFullscreen(false);
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-			m_WindowFlags |= SDL_WINDOW_FULLSCREEN;
-		}
-		else
-			SDL_SetWindowFullscreen(window, 0);				
+	//		SetWindowDesktopFullscreen(false);
+	//		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+	//		m_WindowFlags |= SDL_WINDOW_FULLSCREEN;
+	//	}
+	//	else
+	//		SDL_SetWindowFullscreen(window, 0);				
 
-		OnResize(m_Data.Width, m_Data.Height);
-	}
+	//	OnResize(m_Data.Width, m_Data.Height);
+	//}
 
-	void SDLWindow::SetWindowResizable(bool setStatus)
-	{
-		//if (setStatus != m_Data.WindowResizable) {
-		//
-		//	m_Data.WindowResizable = setStatus;
-		//	SDL_SetWindowResizable(window, (SDL_bool)setStatus);
-		//
-		//	if(setStatus == true)
-		//		m_WindowFlags |= SDL_WINDOW_RESIZABLE;
-		//}
-	}
+	//void SDLWindow::SetWindowResizable(bool setStatus)
+	//{
+	//	//if (setStatus != m_Data.WindowResizable) {
+	//	//
+	//	//	m_Data.WindowResizable = setStatus;
+	//	//	SDL_SetWindowResizable(window, (SDL_bool)setStatus);
+	//	//
+	//	//	if(setStatus == true)
+	//	//		m_WindowFlags |= SDL_WINDOW_RESIZABLE;
+	//	//}
+	//}
 
-	void SDLWindow::SetWindowBorderless(bool setStatus)
-	{
-		m_Data.WindowBorderless = setStatus;
-		SDL_SetWindowBordered(window, (SDL_bool)!setStatus);
+	//void SDLWindow::SetWindowBorderless(bool setStatus)
+	//{
+	//	m_Data.WindowBorderless = setStatus;
+	//	SDL_SetWindowBordered(window, (SDL_bool)!setStatus);
 
-		if(setStatus == true)
-			m_WindowFlags |= SDL_WINDOW_BORDERLESS;
-	}
+	//	if(setStatus == true)
+	//		m_WindowFlags |= SDL_WINDOW_BORDERLESS;
+	//}
 
-	void SDLWindow::SetWindowDesktopFullscreen(bool setStatus)
-	{
-		m_Data.WindowDesktopFullscreen = setStatus;
-		if(setStatus == true)
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		else
-			SDL_SetWindowFullscreen(window, 0);
-		/*if (setStatus == true) {
+	//void SDLWindow::SetWindowDesktopFullscreen(bool setStatus)
+	//{
+	//	m_Data.WindowDesktopFullscreen = setStatus;
+	//	if(setStatus == true)
+	//		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	//	else
+	//		SDL_SetWindowFullscreen(window, 0);
+	//	/*if (setStatus == true) {
 
-			SetWindowFullscreen(false);
-			SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			m_WindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		}
-		else
-			SDL_SetWindowFullscreen(window, 0);		*/	
-	}
+	//		SetWindowFullscreen(false);
+	//		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	//		m_WindowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	//	}
+	//	else
+	//		SDL_SetWindowFullscreen(window, 0);		*/	
+	//}
 
-	void SDLWindow::SetWindowBright(float BrightValue)
-	{
-		if (BrightValue < 0.0f || BrightValue > 100.0f) {
-		
-			CRONOS_WARN((BrightValue < 0.0f || BrightValue > 100.0f), "Couldn't change Brighteness. Bright Value must be between 0 and 100!!");
-			return;
-		}
-		else
-			BrightValue /= 100;
+	//void SDLWindow::SetWindowBright(float BrightValue)
+	//{
+	//	if (BrightValue < 0.0f || BrightValue > 100.0f) {
+	//	
+	//		CRONOS_WARN((BrightValue < 0.0f || BrightValue > 100.0f), "Couldn't change Brighteness. Bright Value must be between 0 and 100!!");
+	//		return;
+	//	}
+	//	else
+	//		BrightValue /= 100;
 
-		m_Data.WindowBright = BrightValue;
+	//	m_Data.WindowBright = BrightValue;
 
-		if (SDL_SetWindowBrightness(window, BrightValue) != 0)
-			LOG("Could not change window brightness: %s\n", SDL_GetError());
-	}
+	//	if (SDL_SetWindowBrightness(window, BrightValue) != 0)
+	//		LOG("Could not change window brightness: %s\n", SDL_GetError());
+	//}
 
 	void SDLWindow::SetTitle(const char* title)
 	{

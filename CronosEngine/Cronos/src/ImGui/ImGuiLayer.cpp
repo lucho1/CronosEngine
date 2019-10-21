@@ -900,14 +900,14 @@ namespace Cronos {
 		ImGui::Text("MEMORY");
 		ImGui::Separator();
 
-		ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetRAMSize()) + " GB").c_str()));
+		ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetRAMSizeFromSDL()) + " GB").c_str()));
 		ImGui::Text("Total Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPhysicalMemory()) + " GB").c_str()));
 		ImGui::Text("Available Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetFreePhysicalMemory()) + " GB").c_str()));
 		ImGui::Text("Used Physical Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetUsedPhysicalMemory()) + " GB").c_str()));
-		ImGui::Text("Percentage of Memory Load: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPercentageOfMemoryLoad()) + " " + '%').c_str()));
+		ImGui::Text("Percentage of Memory Load: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPercentageOfMemoryLoad()) + " " + "%%").c_str()));
 		ImGui::Text("");
-		ImGui::Text("Physical Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPhysMemoryUsedByProcess()) + " GB").c_str()));
-		ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetVirtualMemoryUsedByProcess()) + " GB").c_str()));
+		ImGui::Text("Physical Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetPhysMemoryUsedByProcess()) + " MB").c_str()));
+		ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetVirtualMemoryUsedByProcess()) + " MB").c_str()));
 		
 		ImGui::Text(" MMGR Memory Statistics"); ImGui::SameLine(); ImGui::Separator();
 		ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalReportedMemory()) + " GB").c_str()));
@@ -950,10 +950,10 @@ namespace Cronos {
 		ImGui::SameLine(); ImGui::Text("   GPU ID: "); ImGui::SameLine(); ImGui::TextColored(Color, std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().m_GPUID).c_str());
 
 		ImGui::Text("GPU VRAM"); ImGui::SameLine(); ImGui::Separator();
-		ImGui::Text("Total VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB) + " MB").c_str());
-		ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " MB").c_str());
-		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " MB").c_str());
-		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " MB").c_str());
+		ImGui::Text("Total VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_TotalVRAM_MB) + " GB").c_str());
+		ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " GB").c_str());
+		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
+		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
 
 
 		//ImGui::Text("SDL Version: "); ImGui::SameLine(); ImGui::TextColored(Color, info.GetSoftwareInfo().GetSDLVersion().c_str());

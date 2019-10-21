@@ -217,10 +217,10 @@ namespace Cronos {
 			//If you prefer that in a char[] variable type, use:
 			//sprintf_s(char[], char[] size, "%S", tmp_GPUBrand_WString.c_str());
 
-			tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOMB;
-			tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOMB;
-			tmp.mPI_GPUDet_CurrentVRAM_MB = tmp.mPI_GPUDet_CurrentVRAM_Bytes / BTOMB;
-			tmp.mPI_GPUDet_VRAMReserved_MB = tmp.mPI_GPUDet_VRAMReserved_Bytes / BTOMB;
+			tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOGB;
+			tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOGB;
+			tmp.mPI_GPUDet_CurrentVRAM_MB = tmp.mPI_GPUDet_CurrentVRAM_Bytes / BTOGB;
+			tmp.mPI_GPUDet_VRAMReserved_MB = tmp.mPI_GPUDet_VRAMReserved_Bytes / BTOGB;
 
 			m_PI_GPUDet_GPUInfo = tmp;
 		}

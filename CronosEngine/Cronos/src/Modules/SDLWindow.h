@@ -42,11 +42,11 @@ namespace Cronos {
 
 		//Setters
 		void SetTitle(const char* title);
-		void SetWindowFullscreen(bool setStatus);
-		void SetWindowResizable(bool setStatus);
-		void SetWindowBorderless(bool setStatus);
-		void SetWindowDesktopFullscreen(bool setStatus);
-		void SetWindowBright(float brightValue);
+		//void SetWindowFullscreen(bool setStatus);
+		//void SetWindowResizable(bool setStatus);
+		//void SetWindowBorderless(bool setStatus);
+		//void SetWindowDesktopFullscreen(bool setStatus);
+		//void SetWindowBright(float brightValue);
 
 	private:
 
