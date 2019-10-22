@@ -448,13 +448,30 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawAssetLabelInspector() 
 	{
-
-		
+		ImGui::BeginChild("test");
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
 
-		
-		if (ImGui::CollapsingHeader(m_CurrentAssetSelected->GetDetails().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		static int WinPosition = 0;
+		static bool DragWindow = false;
+
+		ImGui::SetCursorPosY(WinPosition);
+
+		bool open = ImGui::CollapsingHeader(m_CurrentAssetSelected->GetDetails().c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+
+		if (ImGui::IsItemClicked()) {
+			DragWindow = true;
+		}
+		if (DragWindow) {
+			//if(App->input->GetMouseY()>)
+			WinPosition = App->input->GetMouseY() - ImGui::GetWindowPos().y;
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP) {
+				DragWindow = false;
+			}
+		}
+
+		if (open) {
+			
 			ImGui::BeginChild("AssetInspectorLabel");
 			
 			int AvSizeX = ImGui::GetWindowWidth();
@@ -465,10 +482,13 @@ namespace Cronos {
 			else if (AvSizeX > AvSizeY) {
 				AvSizeX = AvSizeY;
 			}
-			
+
 			static float aspectRatio = m_CurrentAssetSelected->GetResolution().x / m_CurrentAssetSelected->GetResolution().y;
 			ImGui::SameLine(ImGui::GetWindowWidth() / 2 - AvSizeX / 2);
-			ImGui::SetCursorPosY(ImGui::GetWindowHeight()/2-AvSizeY/2);
+
+			int CenterY = AvSizeY - (ImGui::GetWindowHeight() / 2 + AvSizeX / 2);
+			ImGui::SetCursorPosY(CenterY);
+
 			ImGui::Image(TOTEX m_CurrentAssetSelected->GetIconTexture(), ImVec2(AvSizeX, AvSizeX*aspectRatio));
 
 			ImGui::EndChild();
@@ -476,7 +496,7 @@ namespace Cronos {
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
-	
+		ImGui::EndChild();
 	}
 
 	void ImGuiLayer::GUIDrawMaterialsMenu()
