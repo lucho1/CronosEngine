@@ -201,7 +201,7 @@ namespace Cronos {
 		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar| ImGuiWindowFlags_NoMove;
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
-		ImGui::ImageButton()
+		//ImGui::ImageButton()
 		ImGui::End();
 	}
 	void ImGuiLayer::UpdateDocking() {
@@ -483,9 +483,41 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawHierarchyPanel()
 	{
-
-		ImGui::Begin("Hierarchy", &ShowHierarchyMenu);
+		
+		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
+			if (ImGui::BeginMenuBar()) {
+
+				if (ImGui::BeginMenu("Create")) {
+
+					if (ImGui::MenuItem("Empty Object")) {}
+					if (ImGui::BeginMenu("3D Object"))
+					{
+						ImGui::MenuItem("Cube");
+						ImGui::MenuItem("Sphere");
+						ImGui::MenuItem("Cone");
+						if (ImGui::BeginMenu("More.."))
+						{
+							ImGui::MenuItem("Hello");
+							ImGui::MenuItem("Sailor");
+							if (ImGui::BeginMenu("Recurse.."))
+							{
+							
+								ImGui::EndMenu();
+							}
+							ImGui::EndMenu();
+						}
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenu();
+				}
+
+
+
+				ImGui::EndMenuBar();
+			}
+
+
 			if (ImGui::TreeNode("Tree"))
 			{
 				for (int x = 0; x < 3; x++)
