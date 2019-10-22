@@ -10,7 +10,7 @@
 //#include "Assimp/include/postprocess.h"
 //#include "Assimp/include/cfileio.h"
 
-#include "imgui.h"
+
 
 namespace Cronos {
 
@@ -66,10 +66,21 @@ namespace Cronos {
 		}
 		else if (m_Extension == ".png" ) {
 			type = ItemType::ITEM_TEXTURE_PNG;
-			m_IconTex = App->textureManager->CreateTexture(m_Path.c_str());
+			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(),m_Resolution);
+			m_Details += std::to_string((int)m_Resolution.x);
+			m_Details += "x";
+			m_Details += std::to_string((int)m_Resolution.y);
+			m_Details += " ";
+			m_Details += m_AssetFullName;
 		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
+			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(), m_Resolution);
+			m_Details += m_Resolution.x;
+			m_Details += "x";
+			m_Details += m_Resolution.y;
+			m_Details += " ";
+			m_Details += m_AssetFullName;
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
@@ -109,6 +120,9 @@ namespace Cronos {
 		}
 		else
 			refresh_time = 0.0f;
+		if (ImGui::IsItemClicked()) {
+			App->EditorGUI->m_CurrentAssetSelected = this;
+		}
 
 		if (ImGui::IsItemClicked(1)) {
 			ImGui::OpenPopup(labelID);
@@ -228,46 +242,6 @@ namespace Cronos {
 			a->Clear();
 		}
 	}
-
-	//bool Filesystem::LoadAssimpMesh(const char* filePath) {
-	//	
-	//	
-	//	IndexBuffer* testIndex;
-
-	//	VertexData TestData;
-
-	//	bool ret = true;
-	//	const aiScene* scene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
-
-	//	if (scene != nullptr&&scene->HasMeshes()) {
-	//		
-	//		for (int a = 0; a < scene->mNumMeshes; ++a) {
-	//			aiMesh mMesh = aiMesh
-	//			TestData.num_vertex = scene->mMeshes[a]->mNumVertices;
-	//			TestData.vertex = new float[TestData.num_vertex * 3];
-	//			memcpy(TestData.vertex, scene->mMeshes[a]->mVertices, sizeof(float)*TestData.num_vertex * 3);
-
-	//			if (scene->mMeshes[a]->HasFaces()) {
-	//				TestData.num_index = scene->mMeshes[a]->mNumFaces * 3;
-	//				TestData.index = new uint[TestData.num_index];
-	//				for (uint i = 0; i < scene->mMeshes[a]->mNumFaces; ++i) {
-	//					memcpy(&TestData.index[i * 3], scene->mMeshes[a]->mFaces[i].mIndices, 3 * sizeof(uint));
-	//				}
-	//			}
-	//		}
-	//		VertexBuffer* testVertex = new VertexBuffer(TestData.vertex,sizeof(TestData.vertex));
-	//		//testVertex->SetLayout(Cronos::)
-
-	//		aiReleaseImport(scene);
-	//	}
-	//	else {
-	//		LOG("Error loading scene %s", filePath);
-	//		ret = false;
-	//	}
-	//	
-	//	return ret;
-	//}
-
 
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
 

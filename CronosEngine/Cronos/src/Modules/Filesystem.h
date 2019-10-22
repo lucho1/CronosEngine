@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
+#include "imgui.h"
+
 
 
 namespace Cronos {
@@ -51,22 +53,27 @@ namespace Cronos {
 
 		int GetElementSize();
 		ItemType GetType() const { return type; }
+		uint GetIconTexture() const { return m_IconTex; }
+		ImVec2 GetResolution() const { return m_Resolution; }
+		
 
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		std::string GetAssetPath() const { return m_Path; }
 		std::string GetExtension() const { return m_Extension; }
+		std::string GetDetails() const { return m_Details; }
 
 		Directories* folderDirectory;
 		
 	private:
-		
-		GLuint m_IconTex;
 		std::string m_Extension;
 		int m_ElementSize;
 		char labelID[150];
 		bool hovered;
 		std::string m_Path;
-		
+		std::string m_Details;
+		//For Images
+		GLuint m_IconTex;
+		ImVec2 m_Resolution;
 	};
 
 	class Directories {

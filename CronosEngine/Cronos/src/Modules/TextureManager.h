@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
+#include "imgui.h"
 
 namespace Cronos {
 
@@ -17,7 +18,7 @@ namespace Cronos {
 		virtual bool OnCleanUp() override;
 
 		uint CreateTexture(const char* path);
-
+		uint CreateTextureAndData(const char* path,ImVec2& resolution);
 
 		virtual update_status OnUpdate(float dt) override;
 

@@ -45,6 +45,8 @@ namespace Cronos {
 		void AssetImguiIterator(Directories a);
 
 		Directories* m_CurrentDir;
+		AssetItems* m_CurrentAssetSelected = nullptr;
+
 
 		std::stringstream TestLog;
 
@@ -62,6 +64,7 @@ namespace Cronos {
 
 		void GUIDrawMainBar();
 		void GUIDrawInspectorMenu();
+		void GUIDrawAssetLabelInspector();
 		void GUIDrawTransformPMenu();
 		void GUIDrawMaterialsMenu();
 		void GUIDrawHierarchyPanel();
@@ -105,6 +108,7 @@ namespace Cronos {
 		bool ShowAboutPanel = false;
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
+		bool AssetLabelInspector = false;
 
 		bool HoverGameWin = false;
 
@@ -127,6 +131,7 @@ namespace Cronos {
 		std::string LicenseString;
 
 		std::vector <Directories*> DirectoriesArray;
+
 
 		ConfigMenus currentMenu= ConfigMenus::Application;
 

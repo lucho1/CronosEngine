@@ -103,8 +103,9 @@ namespace Cronos {
 
 			std::string temp = c->m_Directories.filename().string();
 			bool open = ImGui::TreeNodeEx(temp.c_str());
-			if (ImGui::IsItemClicked())
+			if (ImGui::IsItemClicked()) {
 				m_CurrentDir = c;
+			}
 
 			if (open) {
 				AssetImguiIterator(*c);
@@ -249,7 +250,7 @@ namespace Cronos {
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
 				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
-				
+				App->window->OnResize(SizeGame.x, SizeGame.y);
 				LastSize = SizeGame;
 			}
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
@@ -415,6 +416,9 @@ namespace Cronos {
 
 			GUIDrawTransformPMenu();
 			GUIDrawMaterialsMenu();
+			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
+				GUIDrawAssetLabelInspector();
+			}
 
 		ImGui::End();
 
@@ -426,20 +430,53 @@ namespace Cronos {
 		{
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text("Position               "); ImGui::SameLine();
+			ImGui::Text("Position");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &f0, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &f1, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &f2, 0.1f);
-			ImGui::Text("Rotation              "); ImGui::SameLine();
+			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &f0, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &f1, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &f2, 0.1f);
-			ImGui::Text("Scale                    "); ImGui::SameLine();
+			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &f0, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &f1, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &f2, 0.1f);
 		}
 		ImGui::Separator();
+	}
+
+	void ImGuiLayer::GUIDrawAssetLabelInspector() 
+	{
+
+		
+		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.1f, 0.1f, 0.1f, 1.0f));
+
+		
+		if (ImGui::CollapsingHeader(m_CurrentAssetSelected->GetDetails().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::BeginChild("AssetInspectorLabel");
+			
+			int AvSizeX = ImGui::GetWindowWidth();
+			int AvSizeY = ImGui::GetWindowHeight();
+			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x) {
+				AvSizeX = m_CurrentAssetSelected->GetResolution().x;
+			}
+			else if (AvSizeX > AvSizeY) {
+				AvSizeX = AvSizeY;
+			}
+			
+			static float aspectRatio = m_CurrentAssetSelected->GetResolution().x / m_CurrentAssetSelected->GetResolution().y;
+			ImGui::SameLine(ImGui::GetWindowWidth() / 2 - AvSizeX / 2);
+			ImGui::SetCursorPosY(ImGui::GetWindowHeight()/2-AvSizeY/2);
+			ImGui::Image(TOTEX m_CurrentAssetSelected->GetIconTexture(), ImVec2(AvSizeX, AvSizeX*aspectRatio));
+
+			ImGui::EndChild();
+		}
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
+	
 	}
 
 	void ImGuiLayer::GUIDrawMaterialsMenu()
@@ -636,7 +673,6 @@ namespace Cronos {
 				ImGui::SameLine(ImGui::GetWindowWidth() - 30);
 				if (ImGui::ImageButton("", ImVec2(20, 20), ImVec2(0, 0), ImVec2(0, 0), 2))
 					m_CurrentDir = m_CurrentDir->GetParentDirectory();
-
 			}
 	/*		if(ImGui::Button("CreateDirectory")){
 				std::string Tempcreate = m_CurrentDir->m_LabelDirectories;
@@ -682,12 +718,10 @@ namespace Cronos {
 	{
 		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2);
-		if (ImGui::Begin("Node Editor", &ShowNodeEditorPanel)) {
+		if (ImGui::Begin("Node Editor", &ShowNodeEditorPanel,ImGuiWindowFlags_NoDocking)) {
 			const int hardcoded_node_id = 1;
 			imnodes::BeginNodeEditor();
 			{
-
-
 				/*	imnodes::SetNodeName(hardcoded_node_id, "output node");
 					imnodes::BeginNode(hardcoded_node_id);
 					const int output_attr_id = 2;
