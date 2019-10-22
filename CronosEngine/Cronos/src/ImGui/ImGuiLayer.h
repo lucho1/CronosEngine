@@ -111,6 +111,8 @@ namespace Cronos {
 		ShadingMode m_currentShadingMode;
 		std::string m_ShadingModesLabel[3];
 
+		uint PlayPauseTempImage;
+
 		update_status current_status= update_status::UPDATE_CONTINUE;
 
 		ImGuiTextBuffer LogBuffer;

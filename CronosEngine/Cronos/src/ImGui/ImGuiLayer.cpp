@@ -80,6 +80,7 @@ namespace Cronos {
 		m_ShadingModesLabel[(int)ShadingMode::Wireframe] = "Wireframe";
 		m_currentShadingMode = ShadingMode::Shaded;
 
+		PlayPauseTempImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icons.png");
 		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
 		//Reading License
 		FILE* fp = fopen("../../LICENSE", "r");
@@ -197,12 +198,18 @@ namespace Cronos {
 	}
 
 	void ImGuiLayer::GUIDrawWidgetMenu() {
-	
-		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar| ImGuiWindowFlags_NoMove;
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar| ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse;
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
-		//ImGui::ImageButton()
+		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
+		ImGui::ImageButton(TOTEX PlayPauseTempImage, ImVec2(172*0.5, 46*0.5), ImVec2(0,0), ImVec2(1, 1),-1);
 		ImGui::End();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleColor();
 	}
 	void ImGuiLayer::UpdateDocking() {
 
@@ -290,17 +297,25 @@ namespace Cronos {
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Asset")) {
-				if (ImGui::MenuItem("")) {
-					ImGui::EndMenu();
-				}
+			if (ImGui::BeginMenu("GameObject")) {
+				if (ImGui::MenuItem("Empty Object")) {}
+				if (ImGui::BeginMenu("3D Object"))
+					{
+						ImGui::MenuItem("Cube");
+						ImGui::MenuItem("Sphere");
+						ImGui::MenuItem("Cone");
+						ImGui::EndMenu();
+					}
+				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("View")) {
 
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Debug")) {
-				ImGui::MenuItem("New");
+				if (ImGui::MenuItem("Clear Console")) {
+					LogBuffer.clear();
+				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("Window")) {
