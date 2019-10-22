@@ -152,7 +152,7 @@ namespace Cronos {
 
 
 		GUIDrawMainBar();
-		
+		GUIDrawWidgetMenu();
 		if (ShowInspectorPanel)			GUIDrawInspectorMenu();
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowAssetMenu)				GUIDrawAssetPanel();
@@ -196,6 +196,14 @@ namespace Cronos {
 
 	}
 
+	void ImGuiLayer::GUIDrawWidgetMenu() {
+	
+		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar| ImGuiWindowFlags_NoMove;
+		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+		ImGui::Begin("##none",nullptr,WidgetFlags);
+		ImGui::ImageButton()
+		ImGui::End();
+	}
 	void ImGuiLayer::UpdateDocking() {
 
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -206,25 +214,14 @@ namespace Cronos {
 	
 	void ImGuiLayer::GUIDrawSceneWindow() 
 	{
-		//static int selected = 0;
-		//ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
-		//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
-		//ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-
-
-		//if (ImGui::Selectable("Application", selected == 0)) {
-		//	currentMenu = ConfigMenus::Application;
-		//	selected = 0;
-		//}
-
 
 		static ImGuiWindowFlags GameWindow_flags= ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_MenuBar;
 		
 		static ImVec2 SizeGame;
 		static ImVec2 LastSize = SizeGame;
 
-
-		ImGui::Begin("GameWindow",nullptr,GameWindow_flags); 
+		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Scene",nullptr,GameWindow_flags); 
 		{
 			if (ImGui::BeginMenuBar()) {
 		

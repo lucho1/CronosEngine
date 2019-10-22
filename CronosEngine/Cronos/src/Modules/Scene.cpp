@@ -126,6 +126,7 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
+		
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
@@ -136,6 +137,18 @@ namespace Cronos {
 		//cbe.Render();
 		//vmeshxd->Draw();
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+
+
+
 		vmodelxd->Draw();
 		//vmodelxd->DrawTextureCoordinates();
 		//vmodelxd->DrawVerticesNormals();

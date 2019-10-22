@@ -49,6 +49,8 @@ namespace Cronos {
 		std::stringstream TestLog;
 
 		void GetInput(uint key, uint state, bool mouse=false);
+		ShadingMode GetCurrentShading() const { return m_currentShadingMode; }
+
 		void AddLog(std::string log);
 		
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
@@ -71,6 +73,7 @@ namespace Cronos {
 		void GUIDrawSupportExitOptions();
 		void GUIDrawAboutPanel();
 		void GUIDrawSceneWindow();
+		void GUIDrawWidgetMenu();
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
