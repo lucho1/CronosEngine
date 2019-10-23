@@ -1224,8 +1224,6 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
-    <ClInclude Include="vendor\mmgr\mmgr.h" />
-    <ClInclude Include="vendor\mmgr\nommgr.h" />
     <ClInclude Include="vendor\gpudetect\DeviceId.h" />
     <ClInclude Include="vendor\gpudetect\dxgi1_4.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
@@ -1268,6 +1266,9 @@
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
+    <ClInclude Include="src\Renderer\CronosPrimitive.h" />
+    <ClInclude Include="vendor\mmgr\mmgr.h" />
+    <ClInclude Include="vendor\mmgr\nommgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1336,12 +1337,13 @@
     <ClCompile Include="src\Renderer\VertexArray.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
+    <ClCompile Include="src\Renderer\CronosPrimitive.cpp" />
+    <ClCompile Include="vendor\mmgr\mmgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vendor\Assimp\include\color4.inl" />

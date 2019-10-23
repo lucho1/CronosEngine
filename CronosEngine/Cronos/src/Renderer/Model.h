@@ -10,7 +10,10 @@
 #include <Assimp/include/scene.h>
 #include <Assimp/include/postprocess.h>
 
+
 namespace Cronos {
+
+	class CronosPrimitive;
 
 	struct CronosVertex
 	{
@@ -36,8 +39,9 @@ namespace Cronos {
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
-		void ScaleMesh(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
-		void MoveMesh(glm::vec3 Unitary_moveAxis, float moveMagnitude);
+		void ScaleMesh(glm::vec3 ScaleMagnitude);
+		void MoveMesh(glm::vec3 MoveAxis, float moveMagnitude);
+		void RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis);
 
 		const std::vector<CronosTexture> GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
@@ -59,18 +63,22 @@ namespace Cronos {
 
 	class CronosModel
 	{
-	public:
 		friend class AssimpCronosTranslator;
+		friend class CronosPrimitive;
 
+	public:
+		
 		CronosModel(const std::string& filepath);
+		CronosModel(CronosPrimitive* primitive) {}
 		~CronosModel();
 
 		void Draw();
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
-		void ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude);
-		void MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude);
+		void ScaleModel(glm::vec3 ScaleMagnitude);
+		void MoveModel(glm::vec3 MoveAxis, float moveMagnitude);
+		void RotateModel(float RotDegrees, glm::vec3 RotAxis);
 		
 		const glm::vec3 GetModelAxis() const { return m_ModelAxis; }
 
