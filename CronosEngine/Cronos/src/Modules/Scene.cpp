@@ -122,15 +122,15 @@ namespace Cronos {
 	{
 		LOG("Unloading Intro scene");
 		//VAO->~VertexArray();
-		delete vmeshxd;
-		if (vmeshxd != nullptr) vmeshxd = nullptr;
-		vmodelxd->~CronosModel();
-		delete vmodelxd;
-		if (vmodelxd != nullptr)
-			vmodelxd = nullptr;
-		vCubePrimitivexd->~CronosPrimitive();
-		if (vCubePrimitivexd != nullptr)
-			vCubePrimitivexd = nullptr;
+		//delete vmeshxd;
+		//if (vmeshxd != nullptr) vmeshxd = nullptr;
+		//vmodelxd->~CronosModel();
+		////delete vmodelxd;
+		////if (vmodelxd != nullptr)
+		////	vmodelxd = nullptr;
+		//vCubePrimitivexd->~CronosPrimitive();
+		//if (vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd = nullptr;
 
 		return true;
 	}

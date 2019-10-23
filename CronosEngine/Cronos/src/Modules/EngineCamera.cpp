@@ -56,9 +56,12 @@ namespace Cronos {
 			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 			{
 				vec3 newPos(0.0f, 0.0f, 0.0f);
-				newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
-				newPos += -m_Y * App->input->GetMouseYMotion() / 2.0f * dt;
+				newPos += m_X * App->input->GetMouseXMotion() * dt * m_CameraMoveSpeed/2.0f;
+				newPos += -m_Y * App->input->GetMouseYMotion() * dt * m_CameraMoveSpeed/2.0f;
 				//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
+
+				m_Position += newPos;
+				m_Reference += newPos;
 			}
 
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {

@@ -13,8 +13,8 @@
         "SFXVolume": 100
     },
     "EngineCamera": {
-        "CameraMoveSpeed": 5.0,
-        "CameraScrollSpeed": 20.0,
+        "CameraMoveSpeed": 15.0,
+        "CameraScrollSpeed": 76.0,
         "FOV": 60.0,
         "FarPlane": 512.0,
         "InitialLookAt": [
