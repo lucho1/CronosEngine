@@ -18,14 +18,15 @@
 #define COMPILATIONLOGINFO Cronos::LogCompilationFirstMessage()
 
 namespace Cronos {
-	
+
 	void Log(const char file[], int line, const char* format, ...);
 	void LogCompilationFirstMessage();
 }
 // -------------------------------------------------------------------------------
 
 // ERROR HANDLING ----------------------------------------------------------------
-#define CRONOS_ASSERT(x, ...) if(!(x)) {std::cout << "ASSERION FAILED: " << __VA_ARGS__ << std::endl; __debugbreak(); }
+#define CRONOS_ASSERT(x, ...) if(!(x)) {std::cout << "CRONOS ERROR ASSERT: " << __VA_ARGS__ << std::endl; __debugbreak(); }
+#define CRONOS_WARN(x, ...) if(!(x)) {std::cout << "CRONOS WARN: " << __VA_ARGS__ << std::endl; }
 
 #ifdef _DEBUG
 	#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
@@ -65,16 +66,16 @@ namespace Cronos {
 #define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())
 
 /// Configuration
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 720
-#define SCREEN_SIZE 1
-#define WIN_FULLSCREEN false
-#define WIN_RESIZABLE true
-#define WIN_BORDERLESS false
-#define WIN_FULLSCREEN_DESKTOP false
-#define VSYNC true
-#define TITLE "Cronos Engine"
-#define ORGANIZATION "UPC CITM - TECH TALENT CENTER, BCN"
+//#define SCREEN_WIDTH 1024
+//#define SCREEN_HEIGHT 720
+//#define SCREEN_SIZE 1
+//#define WIN_FULLSCREEN false
+//#define WIN_RESIZABLE true
+//#define WIN_BORDERLESS false
+//#define WIN_FULLSCREEN_DESKTOP false
+//#define VSYNC true
+//#define TITLE "Cronos Engine"
+//#define ORGANIZATION "UPC CITM - TECH TALENT CENTER, BCN"
 
 // -------------------------------------------------------------------------------
 

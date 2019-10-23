@@ -1,9 +1,10 @@
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
 
 #include "Providers/Globals.h"
 #include "Application.h"
 #include "EngineCamera.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 
@@ -27,6 +28,11 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
+		SetFOV(m_FOV);
+		SetNearPlane(m_NearPlane);
+		SetFarPlane(m_FarPlane);
+
+		Look(m_Position, m_Reference, true);
 		return true;
 	}
 
@@ -40,19 +46,19 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status EngineCamera::OnUpdate(float dt)
 	{
+
 		if (App->EditorGUI->isHoveringWinGame()) {
-			if (App->input->isMouseScrolling())
-				Zoom(dt);
 
-			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
-			{
-				vec3 newPos(0.0f, 0.0f, 0.0f);
-				newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
-				newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
-				m_Position += newPos;
-				m_Reference += newPos;
-			}
+		if (App->input->isMouseScrolling())
+			Zoom(dt);
+
+		if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
+		{
+			vec3 newPos(0.0f, 0.0f, 0.0f);
+			newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
+			newPos += -m_Y * App->input->GetMouseYMotion() / 2.0f * dt;
+			//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
 
@@ -96,7 +102,7 @@ namespace Cronos {
 		}
 		// Recalculate matrix -------------
 		CalculateViewMatrix();
-
+	}
 		return UPDATE_CONTINUE;
 	}
 
@@ -202,7 +208,6 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void EngineCamera::CalculateProjection()
 	{
-
 		if (m_FOV < MIN_FOV)
 			m_FOV = MIN_FOV;
 		else if (m_FOV > MAX_FOV)
@@ -223,6 +228,44 @@ namespace Cronos {
 		}
 	}
 
+	// -----------------------------------------------------------------
+	//Save/Load
+	void EngineCamera::SaveModuleData(json& JSONFile) const
+	{
+		JSONFile["EngineCamera"]["CameraMoveSpeed"] = m_CameraMoveSpeed;
+		JSONFile["EngineCamera"]["CameraScrollSpeed"] = m_CameraScrollSpeed;
+		JSONFile["EngineCamera"]["FOV"] = m_FOV;
+		JSONFile["EngineCamera"]["NearPlane"] = m_NearPlane;
+		JSONFile["EngineCamera"]["FarPlane"] = m_FarPlane;
+
+		JSONFile["EngineCamera"]["InitialPosition"][0] = m_Position.x;
+		JSONFile["EngineCamera"]["InitialPosition"][1] = m_Position.y;
+		JSONFile["EngineCamera"]["InitialPosition"][2] = m_Position.z;
+
+		JSONFile["EngineCamera"]["InitialLookAt"][0] = m_Reference.x;
+		JSONFile["EngineCamera"]["InitialLookAt"][1] = m_Reference.y;
+		JSONFile["EngineCamera"]["InitialLookAt"][2] = m_Reference.z;
+	}
+
+	void EngineCamera::LoadModuleData(json& JSONFile)
+	{
+		vec3 initialPos = vec3(	JSONFile["EngineCamera"]["InitialPosition"][0],
+								JSONFile["EngineCamera"]["InitialPosition"][1],
+								JSONFile["EngineCamera"]["InitialPosition"][2]);
+
+		vec3 initialRefence = vec3(	JSONFile["EngineCamera"]["InitialLookAt"][0],
+									JSONFile["EngineCamera"]["InitialLookAt"][1],
+									JSONFile["EngineCamera"]["InitialLookAt"][2]);
+
+		m_CameraMoveSpeed = JSONFile["EngineCamera"]["CameraMoveSpeed"];
+		m_CameraScrollSpeed = JSONFile["EngineCamera"]["CameraScrollSpeed"];
+		m_FOV = JSONFile["EngineCamera"]["FOV"];
+		m_NearPlane = JSONFile["EngineCamera"]["NearPlane"];
+		m_FarPlane = JSONFile["EngineCamera"]["FarPlane"];
+
+		m_Reference = initialRefence;
+		m_Position = initialPos;
+	}
 
 	// -----------------------------------------------------------------
 	void EngineCamera::SetFOV(float FOV)

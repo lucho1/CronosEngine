@@ -1,9 +1,10 @@
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
 
 #include "Providers/Globals.h"
 #include "Application.h"
 #include "Audio.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 
@@ -48,14 +49,17 @@ namespace Cronos {
 			ret = false;
 		}
 
+
 		SetMasterVolume(m_MasterVol);
+		SetMusicVolume(m_MusicVol);
+		SetSFXVolume(m_SFXVol);
+
 		return ret;
 	}
 
 	// Called before quitting
 	bool Audio::OnCleanUp()
 	{
-
 		if (!m_ModuleActive)
 			return true;
 
@@ -75,6 +79,21 @@ namespace Cronos {
 		Mix_Quit();
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
 		return true;
+	}
+
+	//Save & Load
+	void  Audio::SaveModuleData(json& JSONFile) const
+	{
+		JSONFile["Audio"]["MasterVolume"] = m_MasterVol;
+		JSONFile["Audio"]["MusicVolume"] = m_MusicVol;
+		JSONFile["Audio"]["SFXVolume"] = m_SFXVol;
+	}
+
+	void  Audio::LoadModuleData(json& JSONFile)
+	{
+		m_MasterVol = JSONFile["Audio"]["MasterVolume"];
+		m_MusicVol = JSONFile["Audio"]["MusicVolume"];
+		m_SFXVol = JSONFile["Audio"]["SFXVolume"];
 	}
 
 	// Play a music file
@@ -177,11 +196,10 @@ namespace Cronos {
 	bool Audio::MusicPlaying() {
 
 		return (Mix_PlayingMusic());
-
 	}
 
 	//Volume Control -------------------------------------------------------------------
-	void Audio::SetMasterVolume(uint vol)
+	void Audio::SetMasterVolume(uint vol) //Set the volume of the master (of the whole audio stuff)
 	{
 		if (vol > 100)
 			vol = 100;
@@ -197,17 +215,19 @@ namespace Cronos {
 	}
 
 
-	void Audio::SetMusicVolume(uint vol)
+	void Audio::SetMusicVolume(uint vol) //Set volume for the music
 	{
+		if (vol > 100)
+			vol = 100;
+
 		m_MusicVol = vol;
 		uint PercentageValueVolume = PERCENTAGE_MODIFIER_VALUE(m_MusicVol) * m_MasterVol;
 		Mix_VolumeMusic(PERCENTAGE_VOL_VALUE_TO_SDL(PercentageValueVolume));
 	}
 
 
-	void Audio::SetChannelVolume(uint vol, int channel)
+	void Audio::SetChannelVolume(uint vol, int channel) //Set volume for a channel (or for all of them by putting -1 in channel)
 	{
-
 		if (vol > 100)
 			vol = 100;
 
@@ -230,7 +250,10 @@ namespace Cronos {
 	}
 
 
-	void Audio::SetSFXVolume(uint vol) {
+	void Audio::SetSFXVolume(uint vol) { //Set the volume for all sfx
+
+		if (vol > 100)
+			vol = 100;
 
 		m_SFXVol = vol;
 
@@ -253,9 +276,8 @@ namespace Cronos {
 	}
 
 
-	void Audio::SetSFXChunkVolume(uint vol, int id)
+	void Audio::SetSFXChunkVolume(uint vol, int id) //Set the volume of one chunk
 	{
-
 		if (id > 0 && id < (int)m_FXList.size()) {
 
 			if (vol > 100)

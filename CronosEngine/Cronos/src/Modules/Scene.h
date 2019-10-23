@@ -25,7 +25,7 @@ namespace Cronos {
 	private:
 
 		Plane m_FloorPlane;
-		VertexArray* VAO; //To test
+		//VertexArray* VAO; //To test
 
 	};
 

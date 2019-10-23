@@ -134,6 +134,7 @@
 // ---------------------------------------------------------------------------------------------------------------------------------
 
 //#define	TEST_MEMORY_MANAGER
+#define MEMLEAK_FILE_REPORT false
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 // -DOC- Enable this sucker if you really want to stress-test your app's memory usage, or to help find hard-to-find bugs
@@ -245,7 +246,7 @@ static		sMStats		stats;
 static	const	char		*sourceFile            = "??";
 static	const	char		*sourceFunc            = "??";
 static		unsigned int	sourceLine             = 0;
-static		bool		staticDeinitTime       = false;
+static		bool		staticDeinitTime       = MEMLEAK_FILE_REPORT;
 static		sAllocUnit	**reservoirBuffer      = NULL;
 static		unsigned int	reservoirBufferSize    = 0;
 static const	char		*memoryLogFile         = "memory.log";

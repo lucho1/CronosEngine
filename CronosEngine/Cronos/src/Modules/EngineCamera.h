@@ -50,6 +50,10 @@ namespace Cronos {
 
 		void CalculateProjection();
 
+		//Save/Load
+		virtual void SaveModuleData(json& JSONFile) const override;
+		virtual void LoadModuleData(json& JSONFile) override;
+
 	private:
 
 		void CalculateViewMatrix();
@@ -63,12 +67,12 @@ namespace Cronos {
 		mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
 		mat4x4 m_ProjectionMatrix;
 
-		float m_CameraMoveSpeed = 5.0f;
-		float m_CameraScrollSpeed = 20.0f;
+		float m_CameraMoveSpeed;
+		float m_CameraScrollSpeed;
 
-		float m_NearPlane = 0.125f;
-		float m_FarPlane = 512.0f;
-		float m_FOV = 60.0f;
+		float m_NearPlane;
+		float m_FarPlane;
+		float m_FOV;
 	};
 }
 

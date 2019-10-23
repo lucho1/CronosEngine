@@ -55,7 +55,6 @@ namespace Cronos {
 		}
 
 	private:
-
 		std::vector<BufferData> m_BufferLayoutData;
 		uint m_BufferLayoutStride;
 	};
@@ -74,7 +73,6 @@ namespace Cronos {
 		void SetLayout(const BufferLayout& bufferLayout) { m_VBLayout = bufferLayout; }
 
 	private:
-
 		uint m_ID;
 		BufferLayout m_VBLayout;
 	};
@@ -93,10 +91,8 @@ namespace Cronos {
 		inline const uint GetCount() const { return m_Count; }
 	
 	private:
-
 		uint m_Count;
 		uint m_ID;
-
 	};
 
 	class FrameBuffer {

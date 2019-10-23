@@ -117,9 +117,9 @@
     <ClInclude Include="src\Helpers\Timers\Timer.h" />
     <ClInclude Include="src\Helpers\glmath.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="src\ImGui\imnodes.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
-    <ClInclude Include="src\ImGui\imnodes.h" />
     <ClInclude Include="src\Modules\Audio.h" />
     <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
@@ -132,6 +132,7 @@
     <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
+    <ClInclude Include="src\Renderer\CronosPrimitive.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
@@ -520,9 +521,9 @@
     <ClCompile Include="src\Helpers\Timers\Timer.cpp" />
     <ClCompile Include="src\Helpers\glmath.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\ImGui\imnodes.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
-    <ClCompile Include="src\ImGui\imnodes.cpp" />
     <ClCompile Include="src\Modules\Audio.cpp" />
     <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
@@ -536,6 +537,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Renderer\Buffers.cpp" />
+    <ClCompile Include="src\Renderer\CronosPrimitive.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />

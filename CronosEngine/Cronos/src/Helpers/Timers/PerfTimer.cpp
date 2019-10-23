@@ -4,11 +4,11 @@
 // ----------------------------------------------------
 #include "Providers/cnpch.h"
 
-#include "mmgr/mmgr.h"
-
 #include "PerfTimer.h"
 
 #include "SDL\include\SDL_timer.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 

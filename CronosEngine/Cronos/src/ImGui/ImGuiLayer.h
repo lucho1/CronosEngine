@@ -22,6 +22,7 @@ namespace Cronos {
 		Application = 0,
 		Window,
 		Hardware,
+		Software,
 		Renderer,
 		Input,
 		Audio,
@@ -35,7 +36,7 @@ namespace Cronos {
 
 		ImGuiLayer(Application* app, bool start_enabled=true);
 		~ImGuiLayer();
-		
+
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnUpdate(float dt) override;
 		//virtual update_status OnPostUpdate(float dt) override;
@@ -54,7 +55,7 @@ namespace Cronos {
 		ShadingMode GetCurrentShading() const { return m_currentShadingMode; }
 
 		void AddLog(std::string log);
-		
+
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
 	private:
@@ -81,6 +82,7 @@ namespace Cronos {
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
 		void GUIDrawConfigHardwareMenu();
+		void GUIDrawConfigSoftwareMenu();
 		void GUIDrawConfigRendererMenu();
 		void GUIDrawConfigInputMenu();
 		void GUIDrawConfigAudioMenu();
@@ -149,7 +151,7 @@ namespace Cronos {
 		std::unordered_map<int, float> float_nodes_;
 		std::unordered_map<int, Color3> color_nodes_;
 		std::unordered_map<int, Link> links_;
-	
+
 	};
 
 

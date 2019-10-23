@@ -1,11 +1,11 @@
 #include "Providers/cnpch.h"
 
-
 #include "Application.h"
 #include "Scene.h"
 
 #include "Renderer/Buffers.h"
 #include "Renderer/Model.h"
+#include "Renderer/CronosPrimitive.h"
 
 #include "mmgr/mmgr.h"
 
@@ -13,6 +13,7 @@ namespace Cronos {
 
 	static CronosMesh* vmeshxd; //To test
 	static CronosModel* vmodelxd;
+	static CronosPrimitive* vCubePrimitivexd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{
@@ -24,14 +25,13 @@ namespace Cronos {
 	// Load assets
 	bool Scene::OnStart()
 	{
+		App->renderer3D->SetOpenGLSettings();
+
 		LOG("Loading Intro assets");
 		bool ret = true;
 
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
-
-		App->engineCamera->Move(vec3(1.0f, 1.0f, 0.0f)); //Camera begins one unit up in Y and one unit to the right
-		App->engineCamera->LookAt(vec3(0.0f, 0.0f, 0.0f)); //To look at center
 
 
 		//---------------- TEST ----------------//
@@ -72,11 +72,16 @@ namespace Cronos {
 			VertexVec[i].Position = pos;
 			iter += 3;
 		}
-		
+
 		std::vector<uint> indvec;
 		indvec.assign(cbeIndices, cbeIndices + (6*6));
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CLOSED_CONE, { 1, 1, 1 });
+
+		//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
+	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE
+
 		//vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.1f);
 
 		//uint va;
@@ -116,9 +121,16 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
-		VAO->~VertexArray();
+		//VAO->~VertexArray();
 		delete vmeshxd;
 		if (vmeshxd != nullptr) vmeshxd = nullptr;
+		vmodelxd->~CronosModel();
+		delete vmodelxd;
+		if (vmodelxd != nullptr)
+			vmodelxd = nullptr;
+		vCubePrimitivexd->~CronosPrimitive();
+		if (vCubePrimitivexd != nullptr)
+			vCubePrimitivexd = nullptr;
 
 		return true;
 	}
@@ -126,11 +138,9 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-		
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		// "Floor" Plane
 		m_FloorPlane.Render();
+		glColor3f(White.r, White.g, White.b);
 		//glDrawArrays(GL_TRIANGLES, 0, 8);
 		//VAO->Bind();
 		//Cube cbe = Cube(5, 5, 5);
@@ -149,33 +159,42 @@ namespace Cronos {
 
 
 
-		vmodelxd->Draw();
+	//	vmodelxd->Draw();
 		//vmodelxd->DrawTextureCoordinates();
 		//vmodelxd->DrawVerticesNormals();
-		vmodelxd->DrawPlanesNormals();
+		//vmodelxd->DrawPlanesNormals();
 
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-			vmodelxd->ScaleModel(glm::vec3(1, 1, 1), 0.9f);
+		if(vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->Draw();
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1.0f);
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
 
-		
-		glm::vec3 axis_vec = vmodelxd->GetModelAxis();
-		glLineWidth(2.0f);
-		glBegin(GL_LINES);
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
-			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-			glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
-		glEnd();
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->MoveModel(glm::vec3(1, 0, 0), 1);
 
-		
+		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->RotateModel(45.0, glm::vec3(0, 1, 0));
+
+		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vCubePrimitivexd->CreateDisk();
+
+		if (vCubePrimitivexd != nullptr) {
+			glm::vec3 axis_vec = vCubePrimitivexd->GetModelAxis();
+			glLineWidth(2.0f);
+			glBegin(GL_LINES);
+				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+				glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+			glEnd();
+		}
+
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);
 		//REMEMBER THAT CULL FACE IS ACTIVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -4,8 +4,8 @@
 #include "Application.h"
 #include "Modules/TextureManager.h"
 
+#include "glm/gtx/transform.hpp"
 #include "mmgr/mmgr.h"
-
 
 namespace Cronos {
 
@@ -31,7 +31,7 @@ namespace Cronos {
 
 	void CronosMesh::Draw()
 	{
-		
+
 		//gltexture
 		//glActiveTexture(GL_TEXTURE0);
 		for (uint i = 0; i < m_TexturesVector.size(); i++)
@@ -50,7 +50,6 @@ namespace Cronos {
 	void CronosMesh::DrawVerticesNormals()
 	{
 		float linelength = 0.000002f;
-
 		glLineWidth(2.0f);
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
@@ -60,14 +59,14 @@ namespace Cronos {
 			//glm::vec3 norm = (*item).Normal + (*item).Position;
 			glm::vec3 pos = (*item).Position;
 			glm::vec3 norm = (*item).Position + (*item).Normal;
-			
+
 			glBegin(GL_LINES);
-			glVertex3f(pos.x, pos.y, pos.z);
-			glVertex3f(norm.x + linelength, norm.y, norm.z);
-			glVertex3f(pos.x, pos.y, pos.z);
-			glVertex3f(norm.x, norm.y + linelength, norm.z);
-			glVertex3f(pos.x, pos.y, pos.z);
-			glVertex3f(norm.x, norm.y, norm.z + linelength);
+				glVertex3f(pos.x, pos.y, pos.z);
+				glVertex3f(norm.x + linelength, norm.y, norm.z);
+				glVertex3f(pos.x, pos.y, pos.z);
+				glVertex3f(norm.x, norm.y + linelength, norm.z);
+				glVertex3f(pos.x, pos.y, pos.z);
+				glVertex3f(norm.x, norm.y, norm.z + linelength);
 			glEnd();
 		}
 	}
@@ -124,47 +123,48 @@ namespace Cronos {
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
 	}
 
-	void CronosMesh::ScaleMesh(glm::vec3 Unitary_scaleAxis, float scaleMagnitude)
+	void CronosMesh::ScaleMesh(glm::vec3 ScaleMagnitude)
 	{
-		if (Unitary_scaleAxis.x == 1.0f)
+		glm::mat4 translation = glm::mat4(1.0f);
+		translation = glm::scale(translation, ScaleMagnitude);
+
+		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+		for (; item != m_VertexVector.end(); item++)
 		{
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.x *= scaleMagnitude;
-		}
-		if (Unitary_scaleAxis.y == 1.0f)
-		{
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.y *= scaleMagnitude;
-		}
-		if (Unitary_scaleAxis.z == 1.0f)
-		{
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.z *= scaleMagnitude;
+			glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
+			(*item).Position = translation * pos;
 		}
 	}
 
-	void CronosMesh::MoveMesh(glm::vec3 Unitary_moveAxis, float moveMagnitude)
+	void CronosMesh::MoveMesh(glm::vec3 MoveAxis, float moveMagnitude)
 	{
-		if (Unitary_moveAxis.x == 1.0f)
+		if ((MoveAxis.x == 0.0f || MoveAxis.x == 1.0f) && (MoveAxis.y == 0.0f || MoveAxis.y == 1.0f) && (MoveAxis.z == 0.0f || MoveAxis.z == 1.0f))
 		{
+			MoveAxis *= moveMagnitude;
+			glm::mat4 translation = glm::mat4(1.0f);
+			translation = glm::translate(translation, MoveAxis);
+
 			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.x += moveMagnitude;
+			{
+				glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
+				(*item).Position = translation * pos;
+			}
 		}
-		if (Unitary_moveAxis.y == 1.0f)
+		else
+			LOG("Couldn't Move Model! Axis must be formed by 0s and 1s!"); return;
+	}
+
+	void CronosMesh::RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis)
+	{
+		glm::mat4 translation = glm::mat4(1.0f);
+		translation = glm::rotate(translation, glm::radians(RotDegrees), RotAxis);
+
+		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+		for (; item != m_VertexVector.end(); item++)
 		{
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.y += moveMagnitude;
-		}
-		if (Unitary_moveAxis.z == 1.0f)
-		{
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-				(*item).Position.z += moveMagnitude;
+			glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
+			(*item).Position = translation * pos;
 		}
 	}
 
@@ -212,54 +212,87 @@ namespace Cronos {
 
 
 	//TODO: Change this, is not optimal!
-	void CronosModel::ScaleModel(glm::vec3 Unitary_scaleAxis, float scaleMagnitude)
+	void CronosModel::ScaleModel(glm::vec3 ScaleMagnitude)
 	{
-		if ((Unitary_scaleAxis.x == 0.0f || Unitary_scaleAxis.x == 1.0f) &&
-			(Unitary_scaleAxis.y == 0.0f || Unitary_scaleAxis.y == 1.0f) &&
-			(Unitary_scaleAxis.z == 0.0f || Unitary_scaleAxis.z == 1.0f) &&
-			scaleMagnitude >= 0.0f)
+		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+		while (item != m_ModelMeshesVector.end())
 		{
+			(*item)->ScaleMesh(ScaleMagnitude);
+			CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());
+			(*item)->~CronosMesh();
 
-			std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
-			for (; item != m_ModelMeshesVector.end(); item++)
+			if (item == (m_ModelMeshesVector.end() - 1))
 			{
-				(*item)->ScaleMesh(Unitary_scaleAxis, scaleMagnitude);
-				CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());;
-				(*item)->~CronosMesh();
-				(*item) = nullptr;
-				*item = tmpMesh;
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				break;
 			}
-
-			CalculateModelAxis();
+			else
+			{
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				item = item++;
+			}
 		}
-		else
-			LOG("Couldn't Scale Model. Axis must only contain 0s or 1s and scaleMagnitude must be bigger or equal than 0!");
+
+		CalculateModelAxis();
 	}
 
 	//TODO: Change this, is not optimal!
-	void CronosModel::MoveModel(glm::vec3 Unitary_moveAxis, float moveMagnitude)
+	void CronosModel::MoveModel(glm::vec3 MoveAxis, float moveMagnitude)
 	{
-		if ((Unitary_moveAxis.x == 0.0f || Unitary_moveAxis.x == 1.0f) &&
-			(Unitary_moveAxis.y == 0.0f || Unitary_moveAxis.y == 1.0f) &&
-			(Unitary_moveAxis.z == 0.0f || Unitary_moveAxis.z == 1.0f))
+		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+		while (item != m_ModelMeshesVector.end())
 		{
+			(*item)->MoveMesh(MoveAxis, moveMagnitude);
+			CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());
+			(*item)->~CronosMesh();
 
-			std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
-			for (; item != m_ModelMeshesVector.end(); item++)
+			if (item == (m_ModelMeshesVector.end() - 1))
 			{
-				(*item)->MoveMesh(Unitary_moveAxis, moveMagnitude);
-				CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());;
-				(*item)->~CronosMesh();
-				(*item) = nullptr;
-				*item = tmpMesh;
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				break;
 			}
-
-			CalculateModelAxis();
+			else
+			{
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				item = item++;
+			}
 		}
-		else
-			LOG("Couldn't Move Model. Axis must only contain 0s or 1s!");
+
+		CalculateModelAxis();
 	}
 
+	//TODO: Change this, is not optimal!
+	void CronosModel::RotateModel(float RotDegrees, glm::vec3 RotAxis)
+	{
+		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+		while (item != m_ModelMeshesVector.end())
+		{
+			(*item)->RotateMesh(RotDegrees, RotAxis, GetModelAxis());
+			CronosMesh* tmpMesh = new CronosMesh((*item)->GetVertexVector(), (*item)->GetIndexVector(), (*item)->GetTexturesVector());
+			(*item)->~CronosMesh();
+
+			if (item == (m_ModelMeshesVector.end() - 1))
+			{
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				break;
+			}
+			else
+			{
+				m_ModelMeshesVector.erase(item);
+				m_ModelMeshesVector.push_back(tmpMesh);
+				item = item++;
+			}
+		}
+
+		CalculateModelAxis();
+	}
+
+	//TODO: Change this, is not optimal!
 	void CronosModel::CalculateModelAxis()
 	{
 		glm::vec3 new_axis = glm::vec3(0, 0, 0);
@@ -361,7 +394,7 @@ namespace Cronos {
 				tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
 			tmp_VertexVector.push_back(tmpVertex);
-		} 
+		}
 		//Process mesh's indices
 		for (uint i = 0; i < as_mesh->mNumFaces; i++)
 		{
