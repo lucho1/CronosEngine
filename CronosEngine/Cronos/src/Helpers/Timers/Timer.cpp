@@ -3,8 +3,8 @@
 // Body for CPU Tick Timer class
 // ----------------------------------------------------
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
 #include "Timer.h"
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 

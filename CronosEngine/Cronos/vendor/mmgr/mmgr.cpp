@@ -245,7 +245,7 @@ static		sMStats		stats;
 static	const	char		*sourceFile            = "??";
 static	const	char		*sourceFunc            = "??";
 static		unsigned int	sourceLine             = 0;
-static		bool		staticDeinitTime       = false;
+static		bool		staticDeinitTime       = true;
 static		sAllocUnit	**reservoirBuffer      = NULL;
 static		unsigned int	reservoirBufferSize    = 0;
 static const	char		*memoryLogFile         = "memory.log";

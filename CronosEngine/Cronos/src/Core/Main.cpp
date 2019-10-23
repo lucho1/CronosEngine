@@ -1,11 +1,10 @@
 #include "Providers/cnpch.h"
 
-#include "mmgr/mmgr.h"
-
 #include "Providers/Globals.h"
 #include "Application.h"
 
 #include "SDL/include/SDL.h"
+#include "mmgr/mmgr.h"
 
 #ifdef _WIN32
 //else: Use GPU by default.

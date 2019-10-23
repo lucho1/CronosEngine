@@ -115,9 +115,9 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
-		VAO->~VertexArray();
-		delete vmeshxd;
-		if (vmeshxd != nullptr) vmeshxd = nullptr;
+		//VAO->~VertexArray();
+		//delete vmeshxd;
+		//if (vmeshxd != nullptr) vmeshxd = nullptr;
 
 		return true;
 	}

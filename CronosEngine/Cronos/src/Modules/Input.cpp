@@ -1,11 +1,12 @@
 #include "Providers/cnpch.h"
-#include "mmgr/mmgr.h"
 
 #include "Providers/Globals.h"
 #include "Application.h"
 #include "ImGui/ImGuiLayer.h"
 #include "ImGui/OpenGL/imgui_impl_sdl.h"
 #include "Input.h"
+
+#include "mmgr/mmgr.h"
 
 namespace Cronos {
 

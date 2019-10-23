@@ -41,7 +41,7 @@ namespace Cronos {
 	{
 		for (auto& element : m_ModulesList)
 			if (element)
-				delete element; //TODO: Does this work?
+				delete element;
 	}
 
 	bool Application::OnInit()
