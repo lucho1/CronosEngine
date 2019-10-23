@@ -59,50 +59,52 @@ namespace Cronos {
 				newPos += m_X * App->input->GetMouseXMotion() / 2.0f * dt;
 				newPos += -m_Y * App->input->GetMouseYMotion() / 2.0f * dt;
 				//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
-
-				if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
-
-					//Aplying extra impulse if LShift is pressed
-					if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
-						m_CameraMoveSpeed *= 2.0f;
-					else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
-						m_CameraMoveSpeed /= 2.0f;
-
-					// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
-					vec3 newPos(0.0f, 0.0f, 0.0f);
-					if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
-					if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
-
-					// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
-					if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Z * m_CameraMoveSpeed * dt;
-					if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += m_Z * m_CameraMoveSpeed * dt;
-
-					if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= m_X * m_CameraMoveSpeed * dt;
-					if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += m_X * m_CameraMoveSpeed * dt;
-
-					m_Position += newPos;
-					m_Reference += newPos;
-
-					// Moving camera position orbiting
-					m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
-
-					// Finally, we look to the reference
-					LookAt(m_Reference);
-				}
-
-				if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-
-					// Orbiting around center --- CalculateMouseRotation() is the reference postion
-					m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
-					OrbitAroundReference(vec3(0, 0, 0));
-				}
-
-				if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-					LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
 			}
-			// Recalculate matrix -------------
-			CalculateViewMatrix();
+
+			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
+
+				//Aplying extra impulse if LShift is pressed
+				if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
+					m_CameraMoveSpeed *= 2.0f;
+				else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
+					m_CameraMoveSpeed /= 2.0f;
+
+				// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
+				vec3 newPos(0.0f, 0.0f, 0.0f);
+				if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
+
+				// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
+				if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Z * m_CameraMoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += m_Z * m_CameraMoveSpeed * dt;
+
+				if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= m_X * m_CameraMoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += m_X * m_CameraMoveSpeed * dt;
+
+				m_Position += newPos;
+				m_Reference += newPos;
+
+				// Moving camera position orbiting
+				m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
+
+				// Finally, we look to the reference
+				LookAt(m_Reference);
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT) {
+
+				// Orbiting around center --- CalculateMouseRotation() is the reference postion
+				m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
+				OrbitAroundReference(vec3(0, 0, 0));
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+				LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
+
 		}
+
+		// Recalculate matrix -------------
+		CalculateViewMatrix();
 		return UPDATE_CONTINUE;
 	}
 
