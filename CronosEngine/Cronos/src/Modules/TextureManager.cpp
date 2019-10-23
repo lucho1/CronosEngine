@@ -31,8 +31,6 @@ namespace Cronos {
 
 	bool TextureManager::OnStart()
 	{
-
-		uint default_tex = CreateTexture("res/Baker_house.png");
 		return true;
 	}
 

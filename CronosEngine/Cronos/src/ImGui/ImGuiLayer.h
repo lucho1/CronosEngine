@@ -39,7 +39,6 @@ namespace Cronos {
 
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnUpdate(float dt) override;
-		//virtual update_status OnPostUpdate(float dt) override;
 
 		virtual bool OnStart() override;
 

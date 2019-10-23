@@ -175,7 +175,6 @@ namespace Cronos {
 		return current_status;
 	}
 
-
 	void ImGuiLayer::setDocking() {
 
 		static bool opt_fullscreen_persistant = true;

@@ -6,6 +6,7 @@
 #include "Renderer/Buffers.h"
 #include "Renderer/Model.h"
 #include "Renderer/CronosPrimitive.h"
+#include "TextureManager.h"
 
 #include "mmgr/mmgr.h"
 
@@ -78,6 +79,51 @@ namespace Cronos {
 		vmeshxd = new CronosMesh(VertexVec, indvec, TextureVec);
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
 		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CLOSED_CONE, { 1, 1, 1 });
+
+
+
+
+		std::string vertexShader = R"(
+			#version 330 core
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec3 a_Normal;
+			layout(location = 2) in vec2 a_TexCoords;
+
+			uniform mat4 u_View;
+			uniform mat4 u_Proj;
+			uniform mat4 u_Model;
+
+			out vec2 v_TexCoords;
+
+			void main()
+			{
+				gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
+				v_TexCoords = a_TexCoords;
+			}
+		)";
+		std::string fragmentShader = R"(
+			#version 330 core
+
+			out vec4 color;
+			in vec2 v_TexCoords;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				vec4 texColor = texture(u_Texture, v_TexCoords) * vec4(1.0,1.0,1.0,1.0);;
+				color = texColor;
+			}
+		)";
+
+		default_tex = App->textureManager->CreateTexture("res/Baker_house.png");
+		BasicTestShader = new Shader(vertexShader, fragmentShader);
+		BasicTestShader->Bind();
+
+		mat4x4 modelDef = mat4x4(); 
+		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
+		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
+		BasicTestShader->SetUniformMat4f("u_Model", modelDef);
 
 		//TETRAHEDRON, OCTAHEDRON, DODECAHEDRON, ICOSAHEDRON
 	//CYLINDER, CONE, SPHERE, SEMI_SPHERE, PLANE, KLEIN_BOTTLE
@@ -159,41 +205,88 @@ namespace Cronos {
 
 
 
-	//	vmodelxd->Draw();
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vmodelxd != nullptr)
+			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1);
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vmodelxd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
+		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
+			vmodelxd->RotateModel(45.0, glm::vec3(0, 1, 0));
+
+
+		BasicTestShader->Bind();
+		
+		glActiveTexture(GL_TEXTURE0 + default_tex);
+		BasicTestShader->SetUniform1i("u_Texture", default_tex);
+		glBindTexture(GL_TEXTURE_2D, default_tex);
+		
+		mat4x4 modelDef = mat4x4();
+		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
+		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
+		BasicTestShader->SetUniformMat4f("u_Model", modelDef);
+
+		vmodelxd->Draw();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+		BasicTestShader->Unbind();
+
+		
 		//vmodelxd->DrawTextureCoordinates();
 		//vmodelxd->DrawVerticesNormals();
 		//vmodelxd->DrawPlanesNormals();
+		
 
-		if(vCubePrimitivexd != nullptr)
-			vCubePrimitivexd->Draw();
+		/*
+		m_Texture->Bind();
 
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vCubePrimitivexd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
+		//Set the model matrix to modify (live) the texture we have
+		glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), m_translationA);
+		glm::mat4 MVP_mat = m_projMat * m_viewMat * modelMat;
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vCubePrimitivexd->MoveModel(glm::vec3(1, 0, 0), 1);
+		m_Shader->Bind();
+		m_Shader->SetUniformMat4f("u_MVP", MVP_mat);
+		renderer.Draw(*m_VAO, *m_IBO, *m_Shader);
 
-		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vCubePrimitivexd->RotateModel(45.0, glm::vec3(0, 1, 0));
+		//2nd Draw
+		modelMat = glm::translate(glm::mat4(1.0f), m_translationB);
+		MVP_mat = m_projMat * m_viewMat * modelMat;
 
-		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vCubePrimitivexd->CreateDisk();
+		m_Shader->Bind();
+		m_Shader->SetUniformMat4f("u_MVP", MVP_mat);
+		renderer.Draw(*m_VAO, *m_IBO, *m_Shader);
+		*/
 
-		if (vCubePrimitivexd != nullptr) {
-			glm::vec3 axis_vec = vCubePrimitivexd->GetModelAxis();
-			glLineWidth(2.0f);
-			glBegin(GL_LINES);
-				glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-				glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
-				glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-				glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
-				glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
-				glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
-			glEnd();
-		}
+
+
+		//if(vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd->Draw();
+
+		//if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
+
+		//if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd->MoveModel(glm::vec3(1, 0, 0), 1);
+
+		//if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd->RotateModel(45.0, glm::vec3(0, 1, 0));
+
+		//if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && vCubePrimitivexd != nullptr)
+		//	vCubePrimitivexd->CreateDisk();
+
+		//if (vCubePrimitivexd != nullptr) {
+		//	glm::vec3 axis_vec = vCubePrimitivexd->GetModelAxis();
+		//	glLineWidth(2.0f);
+		//	glBegin(GL_LINES);
+		//		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		//		glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//		glVertex3f(axis_vec.x + 2, axis_vec.y, axis_vec.z);
+		//		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+		//		glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//		glVertex3f(axis_vec.x, axis_vec.y + 2, axis_vec.z);
+		//		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		//		glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z);
+		//		glVertex3f(axis_vec.x, axis_vec.y, axis_vec.z + 2);
+		//	glEnd();
+		//}
 
 
 		//glDrawElements(GL_TRIANGLES, 6 * 6, GL_UNSIGNED_INT, nullptr);

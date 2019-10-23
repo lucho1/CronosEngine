@@ -99,7 +99,7 @@ namespace Cronos {
 	}
 
 
-
+	//-------------- FRAME BUFFER ------------------------------------------------
 	FrameBuffer::FrameBuffer()
 	{
 	}

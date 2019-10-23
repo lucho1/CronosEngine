@@ -5,6 +5,7 @@
 #include "Providers/Globals.h"
 #include "Renderer/Primitive.h"
 #include "Renderer/VertexArray.h"
+#include "Renderer/Shaders.h"
 
 namespace Cronos {
 
@@ -26,6 +27,8 @@ namespace Cronos {
 
 		Plane m_FloorPlane;
 		//VertexArray* VAO; //To test
+		Shader* BasicTestShader;
+		uint default_tex;
 
 	};
 
