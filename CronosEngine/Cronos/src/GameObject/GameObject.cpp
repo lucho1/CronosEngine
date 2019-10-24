@@ -5,12 +5,12 @@
 
 namespace Cronos {
 
-	GameObject::GameObject(std::string name, bool start_enabled,glm::vec3 position,glm::vec3 rotation,glm::vec3 Scale):m_Name(name),m_Active(start_enabled)
+	GameObject::GameObject(std::string name, bool start_enabled,glm::vec3 position,glm::vec3 rotation,glm::vec3 scale):m_Name(name),m_Active(start_enabled)
 	{
 		Component* Comp = CreateComponent(ComponentType::Transform);
 		((ComponentTransform*)(Comp))->setPosition(position);
-		((ComponentTransform*)(Comp))->setRotation(position);
-		((ComponentTransform*)(Comp))->setScale(position);
+		((ComponentTransform*)(Comp))->setRotation(rotation);
+		((ComponentTransform*)(Comp))->setScale(scale);
 		m_Components.push_back(Comp);
 	}
 

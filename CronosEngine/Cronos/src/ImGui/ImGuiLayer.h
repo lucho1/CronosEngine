@@ -134,6 +134,9 @@ namespace Cronos {
 
 		std::vector <Directories*> DirectoriesArray;
 
+		void HierarchyIterator(GameObject GameObjects);
+		ImGuiTreeNodeFlags Treenode_flags;
+
 		ShadingMode m_currentShadingMode;
 		GameObject* CurrentGameObject=nullptr;
 		ConfigMenus currentMenu= ConfigMenus::Application;

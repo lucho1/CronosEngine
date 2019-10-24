@@ -26,6 +26,8 @@ namespace Cronos {
 		inline glm::vec3 GetRotation() const { return m_Rotation; };
 		inline glm::vec3 GetScale() const { return m_Scale; };
 
+		static ComponentType GetType() { return ComponentType::Transform; };
+
 	public:
 
 		glm::vec3 m_Position;

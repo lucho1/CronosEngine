@@ -73,6 +73,8 @@ namespace Cronos {
 
 		setDocking();
 
+		Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
 		//Setting FrameBuffer for gameWindow;
 		m_SceneWindow = new FrameBuffer();
 		m_SceneWindow->Init(1280, 720);
@@ -105,13 +107,28 @@ namespace Cronos {
 		for (auto& c : a.childs) {
 
 			std::string temp = c->m_Directories.filename().string();
-			bool open = ImGui::TreeNodeEx(temp.c_str());
+			bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
 			if (ImGui::IsItemClicked()) {
 				m_CurrentDir = c;
 			}
 
 			if (open) {
 				AssetImguiIterator(*c);
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	void ImGuiLayer::HierarchyIterator(GameObject GameObjects)
+	{
+		for (auto& go : GameObjects.m_Childs) {
+			std::string temp = go->GetName();
+			bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
+			if (ImGui::IsItemClicked()) {
+				CurrentGameObject = go;
+			}
+			if (open) {
+				HierarchyIterator(*go);
 				ImGui::TreePop();
 			}
 		}
@@ -413,12 +430,19 @@ namespace Cronos {
 	{
 		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
-			ImGui::Checkbox(" ", &ShowInspectorPanel); ImGui::SameLine();
-			static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-			ImGui::Separator();
 
-			GUIDrawTransformPMenu(CurrentGameObject);
-			GUIDrawMaterialsMenu();
+			if (CurrentGameObject != nullptr) {
+				ImGui::Checkbox(" ", &CurrentGameObject->setActive()); ImGui::SameLine();
+
+				static char buf1[64];
+				strcpy(buf1, CurrentGameObject->GetName().c_str());
+				if (ImGui::InputText("###", buf1, 64)) {
+					CurrentGameObject->SetName(buf1);
+				}
+				ImGui::Separator();
+				GUIDrawTransformPMenu(CurrentGameObject);
+				GUIDrawMaterialsMenu();
+			}
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
 			}
@@ -431,21 +455,28 @@ namespace Cronos {
 	{
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			CurrentGameObject->GetComponent<ComponentTransform>(ComponentType::Transform);
+			glm::vec3 TempPos = CurrentGameObject->GetComponent<ComponentTransform>()->GetPosition();
+			glm::vec3 TempRot = CurrentGameObject->GetComponent<ComponentTransform>()->GetRotation();
+			glm::vec3 TempScale = CurrentGameObject->GetComponent<ComponentTransform>()->GetScale();
+
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &f0, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &f1, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &f2, 0.1f);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &TempPos.x, 0.1f); ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &TempPos.y, 0.1f); ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f);
+			CurrentGameObject->GetComponent<ComponentTransform>()->setPosition(TempPos);
 			ImGui::Text("Rotation");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &f0, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &f1, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &f2, 0.1f);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
+			CurrentGameObject->GetComponent<ComponentTransform>()->setRotation(TempRot);
 			ImGui::Text("Scale");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &f0, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &f1, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &f2, 0.1f);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &TempScale.z, 0.1f);
+			CurrentGameObject->GetComponent<ComponentTransform>()->setScale(TempScale);
+
 		}
 		ImGui::Separator();
 	}
@@ -578,7 +609,6 @@ namespace Cronos {
 							ImGui::MenuItem("Sailor");
 							if (ImGui::BeginMenu("Recurse.."))
 							{
-							
 								ImGui::EndMenu();
 							}
 							ImGui::EndMenu();
@@ -593,33 +623,16 @@ namespace Cronos {
 				ImGui::EndMenuBar();
 			}
 
-
-			if (ImGui::TreeNode("Tree"))
-			{
-				for (int x = 0; x < 3; x++)
-				{
-					bool open1 = ImGui::TreeNode((void*)(intptr_t)x, "Node%d", x);
-
-					if (open1)
-					{
-						for (int y = 0; y < 3; y++)
-						{
-							bool open2 = ImGui::TreeNode((void*)(intptr_t)y, "Node%d.%d", x, y);
-							if (open2)
-							{
-								ImGui::Text("Even more contents");
-								if (ImGui::TreeNode("Tree in column"))
-								{
-									ImGui::TreePop();
-								}
-							}
-							if (open2)
-								ImGui::TreePop();
-						}
-						ImGui::TreePop();
-					}
+			for (auto&go : App->scene->m_GameObjects) {
+				std::string temp = go->GetName();
+				bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
+				if (ImGui::IsItemClicked()) {
+					CurrentGameObject = go;
 				}
-				ImGui::TreePop();
+				if (open) {
+					HierarchyIterator(*go);
+					ImGui::TreePop();
+				}
 			}
 		}
 		ImGui::End();
@@ -645,7 +658,7 @@ namespace Cronos {
 
 			ImGui::BeginChild("left panel", ImVec2(150, 0),true,window_flags);
 
-			bool open = ImGui::TreeNodeEx(App->filesystem->GetLabelAssetRoot().c_str());
+			bool open = ImGui::TreeNodeEx(App->filesystem->GetLabelAssetRoot().c_str(),Treenode_flags);
 			if (ImGui::IsItemClicked())
 				m_CurrentDir = AssetDirectories;
 

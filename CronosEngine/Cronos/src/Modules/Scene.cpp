@@ -60,7 +60,11 @@ namespace Cronos {
 		CronosTexture defT = { 0, "TEXTURENONE" };
 
 		GameObject* Test = new GameObject("Test");
-
+		GameObject* TestChild = new GameObject("TestChild");
+		Test->m_Childs.push_back(TestChild);
+		m_GameObjects.push_back(Test);
+	
+		
 		for (int i = 0; i < 8; i++)
 		{
 			TextureVec.push_back(defT);

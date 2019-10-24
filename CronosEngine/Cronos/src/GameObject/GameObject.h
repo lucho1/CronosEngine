@@ -23,17 +23,19 @@ namespace Cronos {
 		void Disable();
 
 		inline bool isActive() const { return m_Active; }
+		inline std::string GetName() const { return m_Name; }
+		void SetName(const std::string name) { m_Name = name; }
+		bool &setActive() { return m_Active; }
 		Component* CreateComponent(ComponentType type);
+		std::list<GameObject*> m_Childs;
 
 		template <typename T>
 		T* GetComponent()
 		{
-			T::GetType()//TODO do it on every class 
+			ComponentType type = T::GetType();
 			for (auto& comp : m_Components) {
-				if (comp->GetComponentType == type)
-					return ((T*)(comp));
-
-				
+				if (comp->GetComponentType() == type)
+					return ((T*)(comp));			
 			}
 			return nullptr;
 		}
@@ -42,10 +44,8 @@ namespace Cronos {
 
 		bool m_Active;
 		std::string m_Name;
-		ComponentTransform* a;
 		std::vector<Component*> m_Components;
-		
-		std::list<GameObject*> m_Childs;
+
 	};
 
 }
