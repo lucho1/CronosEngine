@@ -15,7 +15,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Cronos</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -112,6 +112,7 @@
     <ClInclude Include="src\Core\Module.h" />
     <ClInclude Include="src\GameObject\Components\Component.h" />
     <ClInclude Include="src\GameObject\Components\ComponentTransform.h" />
+    <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
@@ -125,7 +126,6 @@
     <ClInclude Include="src\Modules\Audio.h" />
     <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
-    <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\Modules\Input.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
@@ -518,6 +518,7 @@
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
     <ClCompile Include="src\GameObject\Components\ComponentTransform.cpp" />
+    <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
@@ -531,7 +532,6 @@
     <ClCompile Include="src\Modules\Audio.cpp" />
     <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
-    <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\Modules\Input.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />

@@ -2,6 +2,7 @@
 #define _GAMEOBJECT_H_
 
 #include "Components/Component.h"
+#include "glm/glm.hpp"
 
 namespace Cronos {
 
@@ -10,16 +11,18 @@ namespace Cronos {
 	class GameObject
 	{
 	public:
+		
+		GameObject(std::string name,bool start_enabled = true,glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
+			glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
-		GameObject(std::string name,bool start_enabled = true);
 		~GameObject();
 
-		void Update();
+		void Update(float dt);
 		void Enable();
 		void Disable();
 
 		inline bool isActive() const { return m_Active; }
-		void CreateComponent(ComponentType type);
+		Component* CreateComponent(ComponentType type);
 		std::vector<Component*> GetComponents() { return m_Components; }
 
 	private:
@@ -27,7 +30,7 @@ namespace Cronos {
 		bool m_Active;
 		std::string m_Name;
 		std::vector<Component*> m_Components;
-
+		std::list<GameObject*> m_Childs;
 	};
 
 }

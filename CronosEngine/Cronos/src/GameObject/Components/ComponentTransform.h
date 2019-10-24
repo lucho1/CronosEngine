@@ -12,11 +12,21 @@ namespace Cronos {
 	{
 	public:
 
-		ComponentTransform(glm::vec3 pos,glm::vec3 rot,glm::vec3 scale,bool active = true);
+		ComponentTransform(GameObject* parentGo, bool active = true);
 		~ComponentTransform();
 
 		virtual void OnStart() override;
-		virtual void Update() override ;
+		virtual void Update(float dt) override ;
+
+		void setPosition(glm::vec3 pos) { m_Position = pos; }
+		void setRotation(glm::vec3 rot) { m_Position = rot; }
+		void setScale(glm::vec3 scale) { m_Position = scale; }
+
+		inline glm::vec3 GetPosition() const { return m_Position; };
+		inline glm::vec3 GetRotation() const { return m_Rotation; };
+		inline glm::vec3 GetScale() const { return m_Scale; };
+
+	public:
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

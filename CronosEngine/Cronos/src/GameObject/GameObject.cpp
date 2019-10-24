@@ -5,9 +5,13 @@
 
 namespace Cronos {
 
-	GameObject::GameObject(std::string name, bool start_enabled):m_Name(name),m_Active(start_enabled)
+	GameObject::GameObject(std::string name, bool start_enabled,glm::vec3 position,glm::vec3 rotation,glm::vec3 Scale):m_Name(name),m_Active(start_enabled)
 	{
-
+		Component* Comp = CreateComponent(ComponentType::Transform);
+		((ComponentTransform*)(Comp))->setPosition(position);
+		((ComponentTransform*)(Comp))->setRotation(position);
+		((ComponentTransform*)(Comp))->setScale(position);
+		m_Components.push_back(Comp);
 	}
 
 	GameObject::~GameObject()
@@ -37,22 +41,22 @@ namespace Cronos {
 		}
 	}
 
-	void GameObject::Update() 
+	void GameObject::Update(float dt) 
 	{
 		for (auto& comp : m_Components) {
-			comp->Update();
+			comp->Update(dt);
 		}
 	}
 
-	void GameObject::CreateComponent(ComponentType type) 
+	Component* GameObject::CreateComponent(ComponentType type) 
 	{
+		Component* ret = nullptr;
 		switch (type)
 		{
 		case Cronos::ComponentType::none:
 			break;
 		case Cronos::ComponentType::Transform:
-			Component* ret = new ComponentTransform();
-			m_Components.push_back(ret);
+			ret = new ComponentTransform(this);
 			break;
 		case Cronos::ComponentType::Mesh:
 			break;
@@ -63,7 +67,7 @@ namespace Cronos {
 		default:
 			break;
 		}
-
+		return ret;
 	}
-
+	
 }

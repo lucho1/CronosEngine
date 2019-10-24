@@ -19,15 +19,15 @@ namespace Cronos {
 	public:
 
 		GameObject* m_Parent;
-		bool m_Active;
 		ComponentType m_Type;
+		bool m_Active;
 
 	public:
 
-		Component(ComponentType type, bool start_enabled = true):m_Type(type),m_Active(start_enabled) {};
+		Component(ComponentType type, GameObject* parentGO, bool start_enabled = true):m_Type(type),m_Parent(parentGO),m_Active(start_enabled) {};
 
-		virtual void OnStart() = 0;
-		virtual void Update() = 0;
+		virtual void OnStart() {};
+		virtual void Update(float dt) {};
 
 		virtual void Enable() { m_Active = true; }
 		virtual void Disable() { m_Active = false; }
