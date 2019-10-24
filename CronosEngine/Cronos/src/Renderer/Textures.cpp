@@ -8,7 +8,8 @@
 
 namespace Cronos {
 
-	Texture::Texture(const std::string& path) : m_ID(0), m_Width(0), m_Height(0), m_BPP(0), m_Format(0), m_Data(nullptr), m_Filepath(path)
+	Texture::Texture(const std::string& path, TextureType textype)
+		: m_ID(0), m_Width(0), m_Height(0), m_BPP(0), m_Format(0), m_Data(nullptr), m_Filepath(path), m_TextureType(textype)
 	{
 		ILuint TempTexImage;
 		ilGenImages(1, &TempTexImage);

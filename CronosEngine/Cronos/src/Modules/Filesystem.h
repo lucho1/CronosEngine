@@ -11,18 +11,6 @@ namespace Cronos {
 
 	class Directories;
 
-	//struct VertexData {
-	//
-	//	uint id_index = 0; // index in VRAM
-	//	uint num_index = 0;
-	//
-	//	uint* index = nullptr;
-	//	uint id_vertex = 0; // unique vertex in VRAM
-	//	uint num_vertex = 0;
-	//	float* vertex = nullptr;
-	//
-	//};
-
 	enum class ItemType
 	{
 		ITEM_NONE = 0,
@@ -77,6 +65,7 @@ namespace Cronos {
 	};
 
 	class Directories {
+
 	public:
 
 		Directories() {};
@@ -94,21 +83,24 @@ namespace Cronos {
 		std::list<Directories*>childs;
 
 		inline Directories* GetParentDirectory() const { return parentDirectory; }
-	private:
-		Directories* parentDirectory;
-		
-		
 
+	private:
+
+		Directories* parentDirectory;
 	};
 
 
 	class Filesystem : public Module
 	{
 	public:
+
 		Filesystem(Application* app, bool start_enabled = true) ;
 		~Filesystem() {};
 		
 		virtual bool OnStart() override;
+		virtual bool OnCleanUp() override;
+
+	public:
 
 		Directories *LoadCurrentDirectories(std::filesystem::path filepath);
 		void UpdateDirectories();
@@ -120,8 +112,6 @@ namespace Cronos {
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
-		//bool LoadAssimpMesh(const char* filePath);
-		//aiScene* aiImportFile(const char* filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 
 	private:
 		std::vector <AssetItems*> AssetArray;

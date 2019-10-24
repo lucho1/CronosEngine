@@ -280,8 +280,8 @@ namespace Cronos
 			tmpIndicesVector.push_back(ParshapeMesh->triangles[i]);
 
 
-		std::vector<CronosTexture>tmpTextureVector;
-		CronosTexture defT = { 0, "TEXTURENONE" };
+		std::vector<Texture*>tmpTextureVector;
+		Texture* defT = nullptr;
 		tmpTextureVector.push_back(defT);
 
 		m_PrimitiveMesh = new CronosMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);

@@ -15,14 +15,9 @@ namespace Cronos {
 		~TextureManager();
 
 		virtual bool OnInit() override;
-		//virtual bool OnStart() override;
 		virtual bool OnCleanUp() override;
 
-		Texture* CreateTexture(const char* path);
-		uint CreateTextureAndData(const char* path,ImVec2& resolution);
-
-		//virtual update_status OnUpdate(float dt) override;
-
+		Texture* CreateTexture(const char* path, TextureType textype);
 	};
 
 }

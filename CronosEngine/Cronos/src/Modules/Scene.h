@@ -4,9 +4,7 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "Renderer/Primitive.h"
-#include "Renderer/VertexArray.h"
 #include "Renderer/Shaders.h"
-#include "Renderer/Textures.h"
 
 namespace Cronos {
 
@@ -24,16 +22,13 @@ namespace Cronos {
 		virtual update_status OnUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
 
+
+		Shader* BasicTestShader; //To test
+
 	private:
 
 		Plane m_FloorPlane;
-		//VertexArray* VAO; //To test
-		Shader* BasicTestShader;
-		Texture* default_tex;
-		Texture* test_tex;
-	//	mat4x4 modelDef = mat4x4();
-		glm::mat4 modelDef = glm::mat4(1.0f);
-
+		glm::mat4 modelMatDef = glm::mat4(1.0f);
 	};
 
 }
