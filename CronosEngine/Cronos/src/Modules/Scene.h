@@ -30,6 +30,9 @@ namespace Cronos {
 		//VertexArray* VAO; //To test
 		Shader* BasicTestShader;
 		Texture* default_tex;
+		Texture* test_tex;
+	//	mat4x4 modelDef = mat4x4();
+		glm::mat4 modelDef = glm::mat4(1.0f);
 
 	};
 

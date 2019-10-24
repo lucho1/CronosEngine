@@ -5,6 +5,7 @@
 #include "Modules/TextureManager.h"
 
 #include "glm/gtx/transform.hpp"
+#include <glm/gtx/matrix_decompose.hpp>
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
@@ -31,20 +32,8 @@ namespace Cronos {
 
 	void CronosMesh::Draw()
 	{
-
-		//gltexture
-		////glActiveTexture(GL_TEXTURE0);
-		//for (uint i = 0; i < m_TexturesVector.size(); i++)
-		//{
-		//	glActiveTexture(GL_TEXTURE0 + i);
-		//	glBindTexture(GL_TEXTURE_2D, m_TexturesVector[i].m_TextureID);
-		//}
-		//glActiveTexture(GL_TEXTURE0);
-
 		m_MeshVAO->Bind();
-		//glBindTexture(GL_TEXTURE_2D, m_TexturesVector.at(0).m_TextureID);
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-		//glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void CronosMesh::DrawVerticesNormals()
@@ -125,7 +114,16 @@ namespace Cronos {
 
 	void CronosMesh::ScaleMesh(glm::vec3 ScaleMagnitude)
 	{
-		glm::mat4 translation = glm::mat4(1.0f);
+		//glm::mat4 scale = glm::mat4(1.0f);
+		//scale = glm::scale(ScaleMagnitude);
+		//m_Transformation *= scale;
+		//DecomposeTransformation();
+
+		m_Transformation = glm::scale(m_Transformation, ScaleMagnitude);
+		DecomposeTransformation();
+
+		//ModelMatrix = glm::scale(ModelMatrix, Scale);
+		/*glm::mat4 translation = glm::mat4(1.0f);
 		translation = glm::scale(translation, ScaleMagnitude);
 
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
@@ -133,39 +131,46 @@ namespace Cronos {
 		{
 			glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
 			(*item).Position = translation * pos;
-		}
+		}*/
 	}
 
 	void CronosMesh::MoveMesh(glm::vec3 MoveAxis, float moveMagnitude)
 	{
-		if ((MoveAxis.x == 0.0f || MoveAxis.x == 1.0f) && (MoveAxis.y == 0.0f || MoveAxis.y == 1.0f) && (MoveAxis.z == 0.0f || MoveAxis.z == 1.0f))
-		{
-			MoveAxis *= moveMagnitude;
-			glm::mat4 translation = glm::mat4(1.0f);
-			translation = glm::translate(translation, MoveAxis);
+		//glm::mat4 translation = glm::mat4(1.0f);
+		//translation = glm::translate(translation, MoveAxis);
 
-			std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-			for (; item != m_VertexVector.end(); item++)
-			{
-				glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-				(*item).Position = translation * pos;
-			}
-		}
-		else
-			LOG("Couldn't Move Model! Axis must be formed by 0s and 1s!"); return;
+		m_Transformation = glm::translate(m_Transformation, MoveAxis);
+
+		//m_Transformation += translation;
+		DecomposeTransformation();
+
+		//MoveAxis *= moveMagnitude;
+		//glm::mat4 translation = glm::mat4(1.0f);
+		//translation = glm::translate(translation, MoveAxis);
+		//
+		//std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
+		//for (; item != m_VertexVector.end(); item++)
+		//{
+		//	glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
+		//	(*item).Position = translation * pos;
+		//}
+
 	}
 
 	void CronosMesh::RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis)
 	{
-		glm::mat4 translation = glm::mat4(1.0f);
-		translation = glm::rotate(translation, glm::radians(RotDegrees), RotAxis);
+		glm::mat4 rot = glm::mat4(1.0f);
+		rot = glm::rotate(rot, glm::radians(RotDegrees), RotAxis);
+		m_Transformation *= rot;
+		DecomposeTransformation();
+	}
 
-		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-		for (; item != m_VertexVector.end(); item++)
-		{
-			glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-			(*item).Position = translation * pos;
-		}
+	void CronosMesh::DecomposeTransformation()
+	{
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::decompose(m_Transformation, m_Scale, m_Rotation, m_Translation, skew, perspective);
+		m_Rotation = glm::conjugate(m_Rotation);
 	}
 
 
@@ -214,22 +219,12 @@ namespace Cronos {
 	//TODO: Change this, is not optimal!
 	void CronosModel::ScaleModel(glm::vec3 ScaleMagnitude)
 	{
-		std::vector<CronosMesh*> tmpMeshVec;
-		glm::vec3 axis = GetModelAxis();
-
-
-		for (auto& element : m_ModelMeshesVector)
+		//Scale all Meshes
+		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
 		{
-			element->ScaleMesh(ScaleMagnitude);
-			CronosMesh* tmpMesh = new CronosMesh(element->GetVertexVector(), element->GetIndexVector(), element->GetTexturesVector());
-			tmpMeshVec.push_back(tmpMesh);
-
-			element->~CronosMesh();
+			m_ModelMeshesVector[i]->ScaleMesh(ScaleMagnitude);
+			m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
 		}
-
-		m_ModelMeshesVector.clear();
-		m_ModelMeshesVector = tmpMeshVec;
-		tmpMeshVec.clear();
 
 		CalculateModelAxis();
 	}
@@ -237,44 +232,25 @@ namespace Cronos {
 	//TODO: Change this, is not optimal!
 	void CronosModel::MoveModel(glm::vec3 MoveAxis, float moveMagnitude)
 	{
-		std::vector<CronosMesh*> tmpMeshVec;
-
-		for (auto& element : m_ModelMeshesVector)
+		//Move all Meshes
+		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
 		{
-			element->MoveMesh(MoveAxis, moveMagnitude);
-			CronosMesh* tmpMesh = new CronosMesh(element->GetVertexVector(), element->GetIndexVector(), element->GetTexturesVector());
-			tmpMeshVec.push_back(tmpMesh);
-
-			element->~CronosMesh();
+			m_ModelMeshesVector[i]->MoveMesh(MoveAxis, moveMagnitude);
+			m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
 		}
-
-		m_ModelMeshesVector.clear();
-		m_ModelMeshesVector = tmpMeshVec;
-		tmpMeshVec.clear();
 
 		CalculateModelAxis();
 	}
 
-	//TODO: Change this, is not optimal!
 	void CronosModel::RotateModel(float RotDegrees, glm::vec3 RotAxis)
 	{
-		std::vector<CronosMesh*> tmpMeshVec;
-		glm::vec3 axis = GetModelAxis();
-
-
-		for (auto& element : m_ModelMeshesVector)
+		//Rotate all Meshes
+		for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
 		{
-			element->RotateMesh(RotDegrees, RotAxis, axis);
-			CronosMesh* tmpMesh = new CronosMesh(element->GetVertexVector(), element->GetIndexVector(), element->GetTexturesVector());
-			tmpMeshVec.push_back(tmpMesh);
-
-			element->~CronosMesh();
+			m_ModelMeshesVector[i]->RotateMesh(RotDegrees, RotAxis, glm::vec3(1.0f));
+			m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
 		}
-
-		m_ModelMeshesVector.clear();
-		m_ModelMeshesVector = tmpMeshVec;
-		tmpMeshVec.clear();
-
+		
 		CalculateModelAxis();
 	}
 

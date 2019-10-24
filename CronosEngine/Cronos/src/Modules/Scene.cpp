@@ -8,6 +8,8 @@
 #include "Renderer/CronosPrimitive.h"
 #include "TextureManager.h"
 
+#include "glm/gtx/transform.hpp"
+
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
@@ -117,10 +119,11 @@ namespace Cronos {
 		)";
 
 		default_tex = App->textureManager->CreateTexture("res/Baker_house.png");
+		test_tex = App->textureManager->CreateTexture("res/Icons/Cronos_Engine_Logo.png");
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
 
-		mat4x4 modelDef = mat4x4(); 
+		
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", modelDef);
@@ -204,29 +207,45 @@ namespace Cronos {
 		}
 
 
+		static float move = 0.0f;
+		static float angle = 0.0f;
+		static float scale = 1.0f;
+		static glm::mat4 translation = glm::mat4(1.0f);
+		
+	
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+			vmodelxd->MoveModel(glm::vec3(1, 0, 1), 0);
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN && vmodelxd != nullptr)
-			vmodelxd->MoveModel(glm::vec3(1, 0, 0), 1);
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vmodelxd->ScaleModel(glm::vec3(0.9f, 0.9f, 0.9f));
-		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN && vCubePrimitivexd != nullptr)
-			vmodelxd->RotateModel(45.0, glm::vec3(0, 1, 0));
-
+		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+		{
+			vmodelxd->ScaleModel(glm::vec3(scale));
+			scale -= 0.1f;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+		{
+			vmodelxd->RotateModel(angle, glm::vec3(0, 1, 0));
+			angle += 10.0f;
+		}
 
 		BasicTestShader->Bind();
 		default_tex->Bind(default_tex->GetTextureID());
 		
-		//glActiveTexture(GL_TEXTURE0 + default_tex);
 		BasicTestShader->SetUniform1i("u_Texture", default_tex->GetTextureID());
-	//	glBindTexture(GL_TEXTURE_2D, default_tex);
 		
-		mat4x4 modelDef = mat4x4();
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-		BasicTestShader->SetUniformMat4f("u_Model", modelDef);
+		BasicTestShader->SetUniformMat4f("u_Model", vmodelxd->GetTransformation());
 
-		//glEnable(GL_DEPTH_TEST);
+		
 		vmodelxd->Draw();
+
+
+		test_tex->Bind(test_tex->GetTextureID());
+		BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
+		BasicTestShader->SetUniform1i("u_Texture", test_tex->GetTextureID());
+
+		vmodelxd->Draw();
+		vCubePrimitivexd->Draw();
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		BasicTestShader->Unbind();

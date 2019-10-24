@@ -2,6 +2,7 @@
 #define _MODEL_H_
 
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include "VertexArray.h"
 
 #include <Assimp/include/cimport.h>
@@ -46,10 +47,13 @@ namespace Cronos {
 		const std::vector<CronosTexture> GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
 		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
+		
+		const glm::mat4 GetTransformation() const { return m_Transformation; }
 
 	private:
 
 		void SetupMesh();
+		void DecomposeTransformation();
 
 		std::vector<CronosTexture> m_TexturesVector;
 		std::vector<CronosVertex> m_VertexVector;
@@ -58,6 +62,12 @@ namespace Cronos {
 		VertexArray* m_MeshVAO;
 		VertexBuffer* m_MeshVBO;
 		IndexBuffer* m_MeshIBO;
+
+
+		glm::mat4 m_Transformation = glm::mat4(1.0f); // your transformation matrix.
+		glm::vec3 m_Scale;
+		glm::quat m_Rotation;
+		glm::vec3 m_Translation;
 	};
 
 
@@ -81,6 +91,7 @@ namespace Cronos {
 		void RotateModel(float RotDegrees, glm::vec3 RotAxis);
 		
 		const glm::vec3 GetModelAxis() const { return m_ModelAxis; }
+		const glm::mat4 GetTransformation() const { return m_Transformation; }
 
 	private:
 		
@@ -89,6 +100,9 @@ namespace Cronos {
 		std::vector<CronosMesh*> m_ModelMeshesVector;
 		std::string m_ModelDirectoryPath;
 		glm::vec3 m_ModelAxis;
+
+
+		glm::mat4 m_Transformation = glm::mat4(1.0f);
 	};
 
 
