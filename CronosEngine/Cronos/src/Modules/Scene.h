@@ -5,6 +5,7 @@
 #include "Providers/Globals.h"
 #include "Renderer/Primitive.h"
 #include "Renderer/VertexArray.h"
+#include "GameObject/GameObject.h"
 
 namespace Cronos {
 
@@ -22,9 +23,12 @@ namespace Cronos {
 		virtual update_status OnUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
 
+		std::vector<GameObject*>m_GameObjects;
+
 	private:
 
 		Plane m_FloorPlane;
+
 		//VertexArray* VAO; //To test
 
 	};

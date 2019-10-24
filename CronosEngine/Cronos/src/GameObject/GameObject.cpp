@@ -1,6 +1,6 @@
 #include "Providers/cnpch.h"
 #include "GameObject.h"
-#include "Components/ComponentTransform.h"
+
 
 
 namespace Cronos {

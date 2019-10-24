@@ -19,8 +19,8 @@ namespace Cronos {
 		virtual void Update(float dt) override ;
 
 		void setPosition(glm::vec3 pos) { m_Position = pos; }
-		void setRotation(glm::vec3 rot) { m_Position = rot; }
-		void setScale(glm::vec3 scale) { m_Position = scale; }
+		void setRotation(glm::vec3 rot) { m_Rotation = rot; }
+		void setScale(glm::vec3 scale) { m_Scale= scale; }
 
 		inline glm::vec3 GetPosition() const { return m_Position; };
 		inline glm::vec3 GetRotation() const { return m_Rotation; };

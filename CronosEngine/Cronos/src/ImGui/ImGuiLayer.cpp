@@ -12,6 +12,8 @@
 #include "Modules/SDLWindow.h"
 #include "Providers/SystemInfo.h"
 #include "Renderer/Buffers.h"
+#include "GameObject/Components/Component.h"
+#include "GameObject/Components/ComponentTransform.h"
 //#include "SDL/include/SDL.h"
 #include <glad/glad.h>
 
@@ -93,6 +95,7 @@ namespace Cronos {
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
 
+		CurrentGameObject = App->scene->m_GameObjects[0];
 
 		return true;
 	}
@@ -155,7 +158,7 @@ namespace Cronos {
 
 		GUIDrawMainBar();
 		GUIDrawWidgetMenu();
-		if (ShowInspectorPanel)			GUIDrawInspectorMenu();
+		if (ShowInspectorPanel)			GUIDrawInspectorMenu(CurrentGameObject);
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowAssetMenu)				GUIDrawAssetPanel();
 		if (ShowNodeEditorPanel)		GUIDrawNodeEditorPanel();
@@ -406,7 +409,7 @@ namespace Cronos {
 		ImGui::End();
 	}
 
-	void ImGuiLayer::GUIDrawInspectorMenu()
+	void ImGuiLayer::GUIDrawInspectorMenu(GameObject* CurrentGameObject)
 	{
 		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
@@ -414,7 +417,7 @@ namespace Cronos {
 			static char buf1[64] = "Target"; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
 			ImGui::Separator();
 
-			GUIDrawTransformPMenu();
+			GUIDrawTransformPMenu(CurrentGameObject);
 			GUIDrawMaterialsMenu();
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
@@ -424,10 +427,11 @@ namespace Cronos {
 
 	}
 
-	void ImGuiLayer::GUIDrawTransformPMenu()
+	void ImGuiLayer::GUIDrawTransformPMenu(GameObject* CurrentGameObject)
 	{
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			CurrentGameObject->GetComponent<ComponentTransform>(ComponentType::Transform);
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");

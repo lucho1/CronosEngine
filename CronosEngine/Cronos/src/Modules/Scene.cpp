@@ -59,6 +59,8 @@ namespace Cronos {
 		CronosVertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
 		CronosTexture defT = { 0, "TEXTURENONE" };
 
+		GameObject* Test = new GameObject("Test");
+
 		for (int i = 0; i < 8; i++)
 		{
 			TextureVec.push_back(defT);

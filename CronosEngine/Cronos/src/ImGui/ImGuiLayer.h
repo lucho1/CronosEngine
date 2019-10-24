@@ -3,6 +3,7 @@
 #include "Core/Module.h"
 #include "imgui.h"
 #include "Modules/Filesystem.h"
+#include "GameObject/GameObject.h"
 
 struct ImGuiTextBuffer;
 
@@ -64,9 +65,9 @@ namespace Cronos {
 		void UpdateDocking();
 
 		void GUIDrawMainBar();
-		void GUIDrawInspectorMenu();
+		void GUIDrawInspectorMenu(GameObject* CurrentGameObject);
 		void GUIDrawAssetLabelInspector();
-		void GUIDrawTransformPMenu();
+		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu();
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
@@ -114,7 +115,6 @@ namespace Cronos {
 
 		bool HoverGameWin = false;
 
-		ShadingMode m_currentShadingMode;
 		std::string m_ShadingModesLabel[3];
 
 		uint PlayPauseTempImage;
@@ -134,7 +134,8 @@ namespace Cronos {
 
 		std::vector <Directories*> DirectoriesArray;
 
-
+		ShadingMode m_currentShadingMode;
+		GameObject* CurrentGameObject=nullptr;
 		ConfigMenus currentMenu= ConfigMenus::Application;
 
 		struct Link
