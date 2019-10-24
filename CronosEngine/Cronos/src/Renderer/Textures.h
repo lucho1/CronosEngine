@@ -7,11 +7,9 @@ namespace Cronos {
 	{
 
 	public:
+
 		Textures();
 		~Textures();
-
-
-
 
 	};
 }

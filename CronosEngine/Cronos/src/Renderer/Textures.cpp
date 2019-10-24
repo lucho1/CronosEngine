@@ -5,11 +5,12 @@ namespace Cronos {
 
 	Textures::Textures()
 	{
-	}
 
+	}
 
 	Textures::~Textures()
 	{
+
 	}
 
 }
