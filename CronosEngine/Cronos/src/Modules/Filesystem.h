@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "imgui.h"
-
+#include "Renderer/Textures.h"
 
 
 namespace Cronos {
@@ -119,7 +119,7 @@ namespace Cronos {
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
-		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]; }
+		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 		//bool LoadAssimpMesh(const char* filePath);
 		//aiScene* aiImportFile(const char* filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 
@@ -130,7 +130,7 @@ namespace Cronos {
 		std::string m_LabelRootDirectory;
 
 		Directories* m_AssetRoot;
-		GLuint ArrayIconTextures[(int)ItemType::MAX_ITEMS];
+		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
 
 	};
 

@@ -206,7 +206,7 @@ namespace Cronos {
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
-		ImGui::ImageButton(TOTEX PlayPauseTempImage, ImVec2(172*0.5, 46*0.5), ImVec2(0,0), ImVec2(1, 1),-1);
+		ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172*0.5, 46*0.5), ImVec2(0,0), ImVec2(1, 1),-1);
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();

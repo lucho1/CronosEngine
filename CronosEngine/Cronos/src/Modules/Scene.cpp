@@ -214,16 +214,18 @@ namespace Cronos {
 
 
 		BasicTestShader->Bind();
+		default_tex->Bind(default_tex->GetTextureID());
 		
-		glActiveTexture(GL_TEXTURE0 + default_tex);
-		BasicTestShader->SetUniform1i("u_Texture", default_tex);
-		glBindTexture(GL_TEXTURE_2D, default_tex);
+		//glActiveTexture(GL_TEXTURE0 + default_tex);
+		BasicTestShader->SetUniform1i("u_Texture", default_tex->GetTextureID());
+	//	glBindTexture(GL_TEXTURE_2D, default_tex);
 		
 		mat4x4 modelDef = mat4x4();
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", modelDef);
 
+		//glEnable(GL_DEPTH_TEST);
 		vmodelxd->Draw();
 
 		glBindTexture(GL_TEXTURE_2D, 0);

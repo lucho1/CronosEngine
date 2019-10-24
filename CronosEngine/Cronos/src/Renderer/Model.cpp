@@ -390,7 +390,7 @@ namespace Cronos {
 		}
 
 		CronosTexture defT;
-		defT.m_TextureID = App->textureManager->CreateTexture("res/Icons/Test.png");
+		defT.m_TextureID = App->textureManager->CreateTexture("res/Icons/Test.png")->GetTextureID();
 		tmp_TextureVector.push_back(defT);
 
 		return new CronosMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);

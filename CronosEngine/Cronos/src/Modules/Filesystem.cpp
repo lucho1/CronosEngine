@@ -65,22 +65,28 @@ namespace Cronos {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".png" ) {
-			type = ItemType::ITEM_TEXTURE_PNG;
-			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(),m_Resolution);
-			m_Details += std::to_string((int)m_Resolution.x);
+			type = ItemType::ITEM_TEXTURE_PNG; 
+			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str());
+			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
+			m_IconTex = temp->GetTextureID();
+			m_Details += std::to_string((int)temp->GetWidth());
 			m_Details += "x";
-			m_Details += std::to_string((int)m_Resolution.y);
+			m_Details += std::to_string((int)temp->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
+			delete temp;
 		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
-			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(), m_Resolution);
-			m_Details += m_Resolution.x;
+			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str());
+			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
+			m_IconTex = temp->GetTextureID();
+			m_Details += std::to_string((int)temp->GetWidth());
 			m_Details += "x";
-			m_Details += m_Resolution.y;
+			m_Details += std::to_string((int)temp->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
+			delete temp;
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
@@ -116,7 +122,6 @@ namespace Cronos {
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
-			
 		}
 		else
 			refresh_time = 0.0f;

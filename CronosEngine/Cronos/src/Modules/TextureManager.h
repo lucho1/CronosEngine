@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
+#include "Renderer/Textures.h"
 #include "imgui.h"
 
 namespace Cronos {
@@ -14,13 +15,13 @@ namespace Cronos {
 		~TextureManager();
 
 		virtual bool OnInit() override;
-		virtual bool OnStart() override;
+		//virtual bool OnStart() override;
 		virtual bool OnCleanUp() override;
 
-		uint CreateTexture(const char* path);
+		Texture* CreateTexture(const char* path);
 		uint CreateTextureAndData(const char* path,ImVec2& resolution);
 
-		virtual update_status OnUpdate(float dt) override;
+		//virtual update_status OnUpdate(float dt) override;
 
 	};
 

@@ -6,6 +6,7 @@
 #include "Renderer/Primitive.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shaders.h"
+#include "Renderer/Textures.h"
 
 namespace Cronos {
 
@@ -28,7 +29,7 @@ namespace Cronos {
 		Plane m_FloorPlane;
 		//VertexArray* VAO; //To test
 		Shader* BasicTestShader;
-		uint default_tex;
+		Texture* default_tex;
 
 	};
 
