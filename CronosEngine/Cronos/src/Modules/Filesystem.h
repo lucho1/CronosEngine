@@ -120,8 +120,7 @@ namespace Cronos {
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]; }
-		//bool LoadAssimpMesh(const char* filePath);
-		//aiScene* aiImportFile(const char* filePath, aiProcessPreset_TargetRealtime_MaxQuality);
+
 
 	private:
 		std::vector <AssetItems*> AssetArray;

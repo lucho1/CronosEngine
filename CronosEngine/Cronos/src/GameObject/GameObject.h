@@ -11,18 +11,22 @@ namespace Cronos {
 	{
 	public:
 
-		GameObject();
+		GameObject(std::string name,bool start_enabled = true);
 		~GameObject();
 
 		void Update();
+		void Enable();
+		void Disable();
+
+		inline bool isActive() const { return m_Active; }
 		void CreateComponent(ComponentType type);
+		std::vector<Component*> GetComponents() { return m_Components; }
 
 	private:
 
-		bool Active;
+		bool m_Active;
 		std::string m_Name;
-
-		std::vector<Component*> Components;
+		std::vector<Component*> m_Components;
 
 	};
 

@@ -43,6 +43,7 @@ namespace Cronos {
 
 	uint TextureManager::CreateTexture(const char * path)
 	{
+	
 		uint TempTex;
 		ILuint TempImage;
 		ilGenImages(1,&TempImage);
@@ -147,13 +148,6 @@ namespace Cronos {
 		}
 
 		return TempTex;
-	}
-
-	update_status TextureManager::OnUpdate(float dt)
-	{
-
-
-		return UPDATE_CONTINUE;
 	}
 
 }

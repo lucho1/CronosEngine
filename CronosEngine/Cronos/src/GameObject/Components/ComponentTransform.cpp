@@ -15,10 +15,12 @@ namespace Cronos {
 
 	void ComponentTransform::OnStart()
 	{
+
 	}
 
 	void ComponentTransform::Update()
 	{
+
 	}
 
 }

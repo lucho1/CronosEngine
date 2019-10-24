@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "imgui.h"
-
+#include "Renderer/Textures.h"
 namespace Cronos {
 
 	class TextureManager : public Module 
@@ -20,7 +20,6 @@ namespace Cronos {
 		uint CreateTexture(const char* path);
 		uint CreateTextureAndData(const char* path,ImVec2& resolution);
 
-		virtual update_status OnUpdate(float dt) override;
 
 	};
 

@@ -3,12 +3,12 @@
 
 namespace Cronos {
 
-	Textures::Textures()
+	Texture::Texture(uint texture_iD)
 	{
 
 	}
 
-	Textures::~Textures()
+	Texture::~Texture()
 	{
 
 	}
