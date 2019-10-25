@@ -3,6 +3,7 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
+#include "Helpers/RNGen.h"
 #include "Renderer/Primitive.h"
 #include "Renderer/VertexArray.h"
 #include "GameObject/GameObject.h"
@@ -30,7 +31,6 @@ namespace Cronos {
 		Plane m_FloorPlane;
 
 		//VertexArray* VAO; //To test
-
 	};
 
 }

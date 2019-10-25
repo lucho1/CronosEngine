@@ -21,70 +21,70 @@ namespace Cronos
 
 		switch (primitve_type)
 		{
-			default:
-				CRONOS_ASSERT(false, "Invalid Primitive Type!!");
-				return;
-			case PrimitiveType::NONE:
-				CRONOS_ASSERT(false, "Invalid Primitive Type!!");
-				return;
-			case PrimitiveType::EMPTY:
-				ParshapeMesh = par_shapes_create_empty();
-				return;
-		//Very Simple primitives (for par shapes)
-			case PrimitiveType::CUBE:
-				ParshapeMesh = par_shapes_create_cube();
+		default:
+			CRONOS_ASSERT(false, "Invalid Primitive Type!!");
+			return;
+		case PrimitiveType::NONE:
+			CRONOS_ASSERT(false, "Invalid Primitive Type!!");
+			return;
+		case PrimitiveType::EMPTY:
+			ParshapeMesh = par_shapes_create_empty();
+			return;
+			//Very Simple primitives (for par shapes)
+		case PrimitiveType::CUBE:
+			ParshapeMesh = par_shapes_create_cube();
+			break;
+		case PrimitiveType::TETRAHEDRON:
+			ParshapeMesh = par_shapes_create_tetrahedron();
+			break;
+		case PrimitiveType::OCTAHEDRON:
+			ParshapeMesh = par_shapes_create_octahedron();
+			break;
+		case PrimitiveType::DODECAHEDRON:
+			ParshapeMesh = par_shapes_create_dodecahedron();
+			break;
+		case PrimitiveType::ICOSAHEDRON:
+			ParshapeMesh = par_shapes_create_icosahedron();
+			break;
+			//Simple primitives for par shapes (slices, stacks)
+		case PrimitiveType::EMPTY_CYLINDER:
+			ParshapeMesh = par_shapes_create_cylinder(figure_slices, figure_stacks);
+			break;
+		case PrimitiveType::CLOSED_CYLINDER:
+			CreateCylinder(size, figure_slices, figure_stacks);
+			return;
+		case PrimitiveType::EMPTY_CONE:
+			ParshapeMesh = par_shapes_create_cone(figure_slices, figure_stacks);
+			break;
+		case PrimitiveType::CLOSED_CONE:
+			CreateCone(size, figure_slices, figure_stacks);
+			return;
+		case PrimitiveType::SPHERE:
+			ParshapeMesh = par_shapes_create_parametric_sphere(figure_slices, figure_stacks);
+			break;
+		case PrimitiveType::SEMI_SPHERE:
+			ParshapeMesh = par_shapes_create_hemisphere(figure_slices, figure_stacks);
+			break;
+		case PrimitiveType::PLANE:
+			ParshapeMesh = par_shapes_create_plane(figure_slices, figure_stacks);
+			break;
+		case PrimitiveType::KLEIN_BOTTLE:
+			ParshapeMesh = par_shapes_create_klein_bottle(figure_slices, figure_stacks);
+			break;
+		case  PrimitiveType::TREFOIL_KNOT:
+			if (radius >= 0.5f && radius <= 3.0f) {
+				ParshapeMesh = par_shapes_create_trefoil_knot(figure_slices, figure_stacks, radius);
 				break;
-			case PrimitiveType::TETRAHEDRON:
-				ParshapeMesh = par_shapes_create_tetrahedron();
+			}
+			else
+				LOG("Couldn't Create Trefoil Knot! Radius Must be between 0.5 and 3.0!!"); return;
+		case PrimitiveType::TORUS:
+			if (radius >= 0.1f && radius <= 1.0f) {
+				ParshapeMesh = par_shapes_create_torus(figure_slices, figure_stacks, radius);
 				break;
-			case PrimitiveType::OCTAHEDRON:
-				ParshapeMesh = par_shapes_create_octahedron();
-				break;
-			case PrimitiveType::DODECAHEDRON:
-				ParshapeMesh = par_shapes_create_dodecahedron();
-				break;
-			case PrimitiveType::ICOSAHEDRON:
-				ParshapeMesh = par_shapes_create_icosahedron();
-				break;
-		//Simple primitives for par shapes (slices, stacks)
-			case PrimitiveType::EMPTY_CYLINDER:
-				ParshapeMesh = par_shapes_create_cylinder(figure_slices, figure_stacks);
-				break;
-			case PrimitiveType::CLOSED_CYLINDER:
-				CreateCylinder(size, figure_slices, figure_stacks);
-				return;
-			case PrimitiveType::EMPTY_CONE:
-				ParshapeMesh = par_shapes_create_cone(figure_slices, figure_stacks);
-				break;
-			case PrimitiveType::CLOSED_CONE:
-				CreateCone(size, figure_slices, figure_stacks);
-				return;
-			case PrimitiveType::SPHERE:
-				ParshapeMesh = par_shapes_create_parametric_sphere(figure_slices, figure_stacks);
-				break;
-			case PrimitiveType::SEMI_SPHERE:
-				ParshapeMesh = par_shapes_create_hemisphere(figure_slices, figure_stacks);
-				break;
-			case PrimitiveType::PLANE:
-				ParshapeMesh = par_shapes_create_plane(figure_slices, figure_stacks);
-				break;
-			case PrimitiveType::KLEIN_BOTTLE:
-				ParshapeMesh = par_shapes_create_klein_bottle(figure_slices, figure_stacks);
-				break;
-			case  PrimitiveType::TREFOIL_KNOT:
-				if (radius >= 0.5f && radius <= 3.0f) {
-					ParshapeMesh = par_shapes_create_trefoil_knot(figure_slices, figure_stacks, radius);
-					break;
-				}
-				else
-					LOG("Couldn't Create Trefoil Knot! Radius Must be between 0.5 and 3.0!!"); return;
-			case PrimitiveType::TORUS:
-				if (radius >= 0.1f && radius <= 1.0f) {
-					ParshapeMesh = par_shapes_create_torus(figure_slices, figure_stacks, radius);
-					break;
-				}
-				else
-					LOG("Couldn't Create Torus! Radius Must be between 0.1 and 1.0!!"); return;
+			}
+			else
+				LOG("Couldn't Create Torus! Radius Must be between 0.1 and 1.0!!"); return;
 		}
 
 
@@ -97,17 +97,15 @@ namespace Cronos
 		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
 		for (; item != m_ModelMeshesVector.end(); item++)
 		{
-			(*item)->~CronosMesh();
+			//(*item)->~CronosMesh();
+			RELEASE(*item);
 			m_ModelMeshesVector.erase(item);
 		}
 
 		m_ModelMeshesVector.clear();
 
 		if (m_PrimitiveMesh != nullptr)
-		{
-			delete m_PrimitiveMesh;
-			m_PrimitiveMesh = nullptr;
-		}
+			RELEASE(m_PrimitiveMesh);
 	}
 
 	void CronosPrimitive::CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks)

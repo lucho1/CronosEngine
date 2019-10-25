@@ -60,15 +60,10 @@ namespace Cronos {
 	// Called before quitting
 	bool Audio::OnCleanUp()
 	{
-		if (!m_ModuleActive)
-			return true;
-
 		LOG("Freeing sound FX, closing Mixer and Audio subsystem");
 
 		if (music != nullptr)
-		{
 			Mix_FreeMusic(music);
-		}
 
 		for (auto& element : m_FXList)
 			if (element != nullptr)

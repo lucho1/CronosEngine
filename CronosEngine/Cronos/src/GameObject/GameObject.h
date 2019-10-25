@@ -13,7 +13,7 @@ namespace Cronos {
 	{
 	public:
 		
-		GameObject(std::string name, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
+		GameObject(std::string name, int gameObjectID, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
 			glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
 		~GameObject();
@@ -48,7 +48,7 @@ namespace Cronos {
 		bool m_Active;
 		std::string m_Name;
 		std::vector<Component*> m_Components;
-
+		int m_GameObjectID;
 	};
 
 }

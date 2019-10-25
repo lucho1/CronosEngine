@@ -1,7 +1,6 @@
 #include "Providers/cnpch.h"
 
 #include "Application.h"
-#include "Helpers/RNGen.h"
 
 #include "mmgr/mmgr.h"
 
@@ -39,17 +38,16 @@ namespace Cronos {
 
 	Application::~Application()
 	{
-		for (auto& element : m_ModulesList)
-			if (element)
-				delete element;
+		for (auto&& element : m_ModulesList)
+			RELEASE(element);
+
+		m_ModulesList.clear();
 	}
 
 	bool Application::OnInit()
 	{
 		bool ret = true;
 		COMPILATIONLOGINFO;
-		//Not a Module!
-		//SystemInfo AppSystemInfo;
 
 		//Loading...
 		m_DefaultConfigurationFilepath = "res/configuration/config.json";
@@ -70,10 +68,6 @@ namespace Cronos {
 				ret = element->OnStart();
 
 		mt_StartingTime.Start();
-
-		//Not a Module!
-		//SystemInfo AppSystemInfo;
-
 		return ret;
 	}
 

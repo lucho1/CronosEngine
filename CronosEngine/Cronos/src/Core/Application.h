@@ -40,6 +40,10 @@ namespace Cronos {
 		Filesystem* filesystem;
 		TextureManager* textureManager;
 
+
+
+		RNGen m_RandomNumGenerator; //Random number generator
+
 	private: //Time stuff
 
 		std::vector<Module*> m_ModulesList;

@@ -59,8 +59,8 @@ namespace Cronos {
 		CronosVertex defV = { glm::vec3(1.0, 1.0, 1.0), glm::vec3(1.0, 1.0, 1.0), glm::vec2(1.0, 1.0) };
 		CronosTexture defT = { 0, "TEXTURENONE" };
 
-		GameObject* Test = new GameObject("Test");
-		GameObject* TestChild = new GameObject("TestChild");
+		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN());
+		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN());
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
 	

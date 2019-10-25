@@ -2,10 +2,10 @@
 #include "GameObject.h"
 
 
-
 namespace Cronos {
 
-	GameObject::GameObject(std::string name, bool start_enabled, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) : m_Name(name), m_Active(start_enabled)
+	GameObject::GameObject(std::string name, int gameObjectID, bool start_enabled, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+		: m_Name(name), m_GameObjectID(gameObjectID), m_Active(start_enabled)
 	{
 		Component* Comp = CreateComponent(ComponentType::TRANSFORM);
 		((ComponentTransform*)(Comp))->SetPosition(position);

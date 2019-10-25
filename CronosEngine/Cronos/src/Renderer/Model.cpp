@@ -21,12 +21,16 @@ namespace Cronos {
 
 	CronosMesh::~CronosMesh()
 	{
-		if (m_MeshVAO != nullptr)
-			m_MeshVAO->~VertexArray();
-		if (m_MeshIBO != nullptr)
-			m_MeshIBO->~IndexBuffer();
-		if (m_MeshVBO != nullptr)
-			m_MeshVBO->~VertexBuffer();
+		RELEASE(m_MeshVAO);
+		RELEASE(m_MeshIBO);
+		RELEASE(m_MeshVBO);
+
+		//if (m_MeshVAO != nullptr)
+		//	m_MeshVAO->~VertexArray();
+		//if (m_MeshIBO != nullptr)
+		//	m_MeshIBO->~IndexBuffer();
+		//if (m_MeshVBO != nullptr)
+		//	m_MeshVBO->~VertexBuffer();
 	}
 
 	void CronosMesh::Draw()
@@ -182,7 +186,8 @@ namespace Cronos {
 		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
 		for (; item != m_ModelMeshesVector.end(); item++)
 		{
-			(*item)->~CronosMesh();
+			//(*item)->~CronosMesh();
+			RELEASE(*item);
 			m_ModelMeshesVector.erase(item);
 		}
 
