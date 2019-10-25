@@ -131,7 +131,7 @@ namespace Cronos {
 		vmodelxd->Draw(BasicTestShader, true);
 		vmodelxd->DrawModelAxis();
 
-		//vmodelxd->DrawPlanesNormals();
+		vmodelxd->DrawPlanesNormals();
 		glColor3f(White.r, White.g, White.b);
 		vCubePrimitivexd->Draw(BasicTestShader, false);
 

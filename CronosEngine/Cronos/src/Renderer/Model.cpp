@@ -91,7 +91,7 @@ namespace Cronos {
 	void CronosMesh::DrawPlanesNormals()
 	{
 		float linelength = 0.2f;
-		glColor4f(0.6f, 0.4f, 0.2f, 1.0f);
+		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 		for (uint i = 0; i < m_IndicesVector.size(); i += 3)
 		{
 			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
@@ -100,7 +100,7 @@ namespace Cronos {
 
 			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
 			glm::normalize(PlaneNormal);
-			PlaneNormal *= linelength;
+			//PlaneNormal /= abs(PlaneNormal);
 
 			glm::vec3 TriCenter = { 0, 0, 0 };
 			TriCenter.x = (p1.x + p2.x + p3.x) / 3;
@@ -108,7 +108,6 @@ namespace Cronos {
 			TriCenter.z = (p1.z + p2.z + p3.z) / 3;
 
 			glBegin(GL_LINES);
-				glColor4f(0.0f, 0.2f, 1.0f, 0.5f);
 				glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
 				glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
 			glEnd();
