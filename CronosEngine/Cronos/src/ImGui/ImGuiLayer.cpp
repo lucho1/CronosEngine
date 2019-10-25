@@ -1067,7 +1067,7 @@ namespace Cronos {
 		ImGui::Separator();
 
 
-		/*ImGui::Text("MEMORY");
+		ImGui::Text("MEMORY");
 		ImGui::Separator();
 
 		ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetRAMSizeFromSDL()) + " GB").c_str()));
@@ -1080,12 +1080,12 @@ namespace Cronos {
 		ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetVirtualMemoryUsedByProcess()) + " MB").c_str()));
 		
 		ImGui::Text(" MMGR Memory Statistics"); ImGui::SameLine(); ImGui::Separator();
-		ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalReportedMemory()) + " GB").c_str()));
-		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalActualMemory()) + " GB").c_str()));
-		ImGui::Text("Peak Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakReportedMemory()) + " GB").c_str()));
-		ImGui::Text("Peak Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakActualMemory()) + " GB").c_str()));
-		ImGui::Text("Accumulated Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedReportedMemory()) + " GB").c_str()));
-		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedActualMemory()) + " GB").c_str()));
+		ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalReportedMemory()) + " Bytes").c_str()));
+		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalActualMemory()) + " Bytes").c_str()));
+		ImGui::Text("Peak Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakReportedMemory()) + " Bytes").c_str()));
+		ImGui::Text("Peak Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakActualMemory()) + " Bytes").c_str()));
+		ImGui::Text("Accumulated Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedReportedMemory())).c_str()));
+		ImGui::Text("Accumulated Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedActualMemory())).c_str()));
 
 		ImGui::Text(" MMGR Allocated Unit Count Statistics"); ImGui::SameLine(); ImGui::Separator();
 		ImGui::Text("Total Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalAllocUnitCount()).c_str()));
@@ -1124,7 +1124,7 @@ namespace Cronos {
 		ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " GB").c_str());
 		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
 		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
-*/
+
 		ImGui::PopStyleVar();
 	};
 
