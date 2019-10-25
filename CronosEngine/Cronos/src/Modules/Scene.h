@@ -3,10 +3,9 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "Helpers/RNGen.h"
 #include "Renderer/Primitive.h"
-#include "Renderer/VertexArray.h"
 #include "GameObject/GameObject.h"
+#include "Renderer/Shaders.h"
 
 namespace Cronos {
 
@@ -26,11 +25,12 @@ namespace Cronos {
 
 		std::vector<GameObject*>m_GameObjects;
 
+		Shader* BasicTestShader; //To test
+
 	private:
 
 		Plane m_FloorPlane;
-
-		//VertexArray* VAO; //To test
+		glm::mat4 modelMatDef = glm::mat4(1.0f);
 	};
 
 }

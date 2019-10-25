@@ -34,7 +34,7 @@
         "Blend": true,
         "ClipDistance": false,
         "ColorDither": false,
-        "DepthTest": false,
+        "DepthTest": true,
         "FaceCulling": true,
         "GL_ColorMaterial": true,
         "GL_Lighting": true,

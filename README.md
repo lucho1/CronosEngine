@@ -1,4 +1,4 @@
-ï»¿# CronosEngine
+# CronosEngine
 [![License](https://img.shields.io/github/license/lucho1/CronosEngine?color=red&label=License&style=plastic)](https://github.com/lucho1/CronosEngine/blob/master/LICENSE)
 [![Version](https://img.shields.io/github/v/tag/lucho1/CronosEngine?color=blue&label=Version&style=plastic)](https://github.com/lucho1/CronosEngine/releases)
 ![Last Commit](https://img.shields.io/github/last-commit/lucho1/CronosEngine?color=blue&label=Last%20Commit&style=plastic)
@@ -12,11 +12,11 @@
 ![Watchers](https://img.shields.io/github/watchers/lucho1/CronosEngine?style=social)
 ![Forks](https://img.shields.io/github/forks/lucho1/CronosEngine?style=social)
 
-Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho Suaya and Roger Leon) of the Degree in Videogames Design and Development of Universitat PolitÃ¨cnica de Catalunya for the Videogames Engines subject of 3rd course.
+Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho Suaya and Roger Leon) of the Degree in Videogames Design and Development of Universitat Politècnica de Catalunya for the Videogames Engines subject of 3rd course.
 
 ![](https://raw.githubusercontent.com/lucho1/CronosEngine/Cronos_development/CronosEngine/Cronos/res/Icons/Cronos_Engine_Logo.png)
 
-We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and GLAD.
+We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, MMRG, ParShapes, Assimp Devil and JSON for Modern C++.
 **[TODO]** Links to these libs!
 
 ## Innovating Features
@@ -27,12 +27,21 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and G
 	-Renaming of Assets
 	-Creation/Deletion of Assets and Folders
 	-Names of Assets are 10 chars max but the full name appears when the mouse is on top
+	-Icons with textures
 
 * Started the implementation of node System
+* Many different types of primitives creation
+* Shaders usage with Vertex Arrays and a good abstraction for buffers and textures classes
+* Engine Icon
+
+* Namespaced Engine code
+* OpenGL Automatic Error Handler and logger (check out Errors.h!) and with possibility of calling GLCall() for every OGL Function to get possible errors with OGL functions/methods (through glGetError()) with extensive information
 * Extensive System Info Read (on GPU, CPU, Memory and Software!)
+
 * Cronos Engine will detect if you have a dedicated NVIDIA or AMD Graphics Card and will use it automatically!
 * Usage of Precompiled Header to imporve build performance
-* Engine's Project built with a Premake file
+* Engine's Project built with a Premake file and Project.bat generator to automatize build process
+
 
 ## Usage
 **Camera Controls**
@@ -41,12 +50,17 @@ We used SDL, SDL_Mixer, STL, OpenGL4, ImGui, Premake, GLM, GPUDetect, MMRG and G
 * Alt + Left Click:		Orbit object (by now, orbit center)
 * Alt + Left Click + WASD:	Orbit object (by now, orbit center) and move around it.
 * Shift while Moving:		Duplicate camera moving speed.
-* T, G:				Move camera up and down.
+* Right Click + T, G:		Move camera up and down.
 * Mouse Wheel:			Zoom in/out.
 * F:					Focus camera at object (by now, focus center)
 
 ## Changelog
 v0.1 **[TODO]** Fill this
+* Many different types of primitives creation
+* Models Load, including textures.
+* 3D Renderer
+* Game Objects and Components Hierarchy
+* Shaders usage with Vertex Arrays and a good abstraction for buffers and textures classes
 * Camera Movement
 * Engine's basic GUI
    * Implemented Asset Panel
@@ -62,16 +76,17 @@ v0.1 **[TODO]** Fill this
 				->Hierarchy (Under Construction)
 				->Configuration Panel
 * Filesystem Implemented
-* Hardware's Log Window - Extensive System Info Read (on GPU, CPU, Memory and Software)
+* Hardware's Log Window - Extensive System Info Read (on GPU, CPU, Memory and Software, using GPUDetect library to get CPU/GPU information)
 * Performance Window to track useful info (Memory, FPS, ...)
 * Detection of a dedicated NVIDIA or AMD Graphics Card - automatic usage
 * Implementation of MMRG to track memory leaks and usage (for internal purposes by now)
-* Usage of GPUDetect library to get CPU/GPU information
 * Usage of Precompiled Header to imporve build performance
-* Engine's Project built with a Premake file
+* Engine's Project built with a Premake file and a Generate.bat file.
+* OpenGL Automatic Error Handler and logger (check out Errors.h!) and with possibility of calling GLCall() for every OGL Function to get possible errors with OGL functions/methods (through glGetError()) with extensive information
+* Engine Icon
 
 ## Credits
-Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc GarrigÃ³ Garcia [@markitus18].
+Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrigó Garcia [@markitus18].
 
 **[TODO]** Put devs fotos. And what each did.
 

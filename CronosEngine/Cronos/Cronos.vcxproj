@@ -139,6 +139,7 @@
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
     <ClInclude Include="src\Renderer\Model.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
+    <ClInclude Include="src\Renderer\Shaders.h" />
     <ClInclude Include="src\Renderer\Textures.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -546,6 +547,7 @@
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
     <ClCompile Include="src\Renderer\Model.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
+    <ClCompile Include="src\Renderer\Shaders.cpp" />
     <ClCompile Include="src\Renderer\Textures.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />

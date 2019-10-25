@@ -11,7 +11,6 @@
 
 namespace Cronos
 {
-	
 	//-------------------------- SOFTWARE INFO --------------------------//
 	class SoftwareInfo
 	{
@@ -163,8 +162,7 @@ namespace Cronos
 		const GLint GetGPUTotalVRAM();  // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		const GLint GetGPUCurrentVRAM(); // In MB... Only for NVIDIA GPUs, otherwise returns 0
 		
-		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }
-		
+		const GPUPrimaryInfo_IntelGPUDetect GetGPUInfo_GPUDet() const { return m_PI_GPUDet_GPUInfo; }		
 	};
 
 

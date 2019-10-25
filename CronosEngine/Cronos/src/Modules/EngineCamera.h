@@ -23,16 +23,18 @@ namespace Cronos {
 
 	public:
 
-		inline const float* GetViewMatrix()			const { return &m_ViewMatrix;		}
-		inline const float* GetProjectionMatrix()	const { return &m_ProjectionMatrix;	}
+		inline const float* GetViewMatrix()				const { return &m_ViewMatrix;		}
+		inline const float* GetProjectionMatrix()		const { return &m_ProjectionMatrix;	}
+														
+		inline const vec3 GetX()						const { return m_X;					}
+		inline const vec3 GetY()						const { return m_Y;					}
+		inline const vec3 GetZ()						const { return m_Z;					}
+		inline const vec3 GetPosition()					const { return m_Position;			}
+		inline const vec3 GetReference()				const { return m_Reference;			}
+		inline const mat4x4 GetProjectionMatrixMAT4()	const { return m_ProjectionMatrix;	}
+		inline const mat4x4 GetViewMatrixMAT4()			const { return m_ViewMatrix; }
 
-		inline const vec3 GetX()					const { return m_X;					}
-		inline const vec3 GetY()					const { return m_Y;					}
-		inline const vec3 GetZ()					const { return m_Z;					}
-		inline const vec3 GetPosition()				const { return m_Position;			}
-		inline const vec3 GetReference()			const { return m_Reference;			}
-
-		inline const float GetCameraMoveSpeed()		const { return m_CameraMoveSpeed;	}
+		inline const float GetCameraMoveSpeed()			const { return m_CameraMoveSpeed;	}
 
 	public:
 

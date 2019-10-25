@@ -4,14 +4,6 @@
 #include "Application.h"
 #include "TextureManager.h"
 
-//#include "Renderer/Buffers.h"
-//#include "Assimp/include/cimport.h"
-//#include "Assimp/include/scene.h"
-//#include "Assimp/include/postprocess.h"
-//#include "Assimp/include/cfileio.h"
-
-
-
 namespace Cronos {
 
 	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled) {
@@ -21,19 +13,25 @@ namespace Cronos {
 	bool Filesystem::OnStart() {
 
 		//loader Icons -> this needs to be loaded with JSON
-
-		ArrayIconTextures[(int)ItemType::ITEM_FBX] = App->textureManager->CreateTexture("res/Icons/Fbx_Icon.png");
-		ArrayIconTextures[(int)ItemType::ITEM_FOLDER] = App->textureManager->CreateTexture("res/Icons/Folder_Icon.png");
-		ArrayIconTextures[(int)ItemType::ITEM_MATERIAL] = App->textureManager->CreateTexture("res/Icons/Material_Icon.png");
-		ArrayIconTextures[(int)ItemType::ITEM_OBJ] = App->textureManager->CreateTexture("res/Icons/Obj_Icon.png");
-		ArrayIconTextures[(int)ItemType::ITEM_SCRIPT] = App->textureManager->CreateTexture("res/Icons/Script_Icon.png");
-		ArrayIconTextures[(int)ItemType::ITEM_SHADER] = App->textureManager->CreateTexture("res/Icons/Shader_Icon.png");
+		ArrayIconTextures[(int)ItemType::ITEM_FBX] = App->textureManager->CreateTexture("res/Icons/Fbx_Icon.png", TextureType::ICON);
+		ArrayIconTextures[(int)ItemType::ITEM_FOLDER] = App->textureManager->CreateTexture("res/Icons/Folder_Icon.png", TextureType::ICON);
+		ArrayIconTextures[(int)ItemType::ITEM_MATERIAL] = App->textureManager->CreateTexture("res/Icons/Material_Icon.png", TextureType::ICON);
+		ArrayIconTextures[(int)ItemType::ITEM_OBJ] = App->textureManager->CreateTexture("res/Icons/Obj_Icon.png", TextureType::ICON);
+		ArrayIconTextures[(int)ItemType::ITEM_SCRIPT] = App->textureManager->CreateTexture("res/Icons/Script_Icon.png", TextureType::ICON);
+		ArrayIconTextures[(int)ItemType::ITEM_SHADER] = App->textureManager->CreateTexture("res/Icons/Shader_Icon.png", TextureType::ICON);
 
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory);
+		
+		return true;
+	}
 
-	
+	bool Filesystem::OnCleanUp()
+	{
+		for (uint i = 0; i < (uint)ItemType::MAX_ITEMS; i++)
+			if(ArrayIconTextures[i] != nullptr)
+				ArrayIconTextures[i] = nullptr;
 		
 		return true;
 	}
@@ -65,22 +63,28 @@ namespace Cronos {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".png" ) {
-			type = ItemType::ITEM_TEXTURE_PNG;
-			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(),m_Resolution);
-			m_Details += std::to_string((int)m_Resolution.x);
+			type = ItemType::ITEM_TEXTURE_PNG; 
+			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
+			m_IconTex = temp->GetTextureID();
+			m_Details += std::to_string((int)temp->GetWidth());
 			m_Details += "x";
-			m_Details += std::to_string((int)m_Resolution.y);
+			m_Details += std::to_string((int)temp->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
+			delete temp;
 		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
-			m_IconTex = App->textureManager->CreateTextureAndData(m_Path.c_str(), m_Resolution);
-			m_Details += m_Resolution.x;
+			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
+			m_IconTex = temp->GetTextureID();
+			m_Details += std::to_string((int)temp->GetWidth());
 			m_Details += "x";
-			m_Details += m_Resolution.y;
+			m_Details += std::to_string((int)temp->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
+			delete temp;
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
@@ -116,7 +120,6 @@ namespace Cronos {
 				ImGui::PopTextWrapPos();
 				ImGui::EndTooltip();
 			}
-			
 		}
 		else
 			refresh_time = 0.0f;
@@ -138,7 +141,6 @@ namespace Cronos {
 					App->filesystem->RenameFile(this,buf1);
 				}
 				
-			
 			/*	while (ImGui::MenuItem("Renameit")) {
 					static char buf1[64] = { (char)m_AssetNameNoExtension.c_str() }; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
 					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
@@ -156,7 +158,6 @@ namespace Cronos {
 		m_ElementSize = ImGui::GetItemRectSize().x;
 		
 		ImGui::EndGroup();
-
 	}
 
 	int AssetItems::GetElementSize() {
@@ -244,8 +245,6 @@ namespace Cronos {
 	}
 
 	Directories* Filesystem::LoadCurrentDirectories(std::filesystem::path filepath) {
-
-		//LoadAssimpMesh("res/warrior.fbx");
 
 		static int LastDepth = 0;
 		static int ID = 0;

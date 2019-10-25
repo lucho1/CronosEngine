@@ -6,7 +6,6 @@
 
 #include "mmgr/mmgr.h"
 
-
 namespace Cronos {
 
 	static sMStats m_MemoryInfo_StatsFromMMRG;
@@ -157,6 +156,11 @@ namespace Cronos {
 		DetectSystemProperties();
 	}
 
+	/*
+	BTOGB
+	KBTOMB
+	BTOMB
+	*/
 
 	//Getting Stats of Memory from MMRG
 	const uint MemoryHardware::GetMemStatsFromMMGR_TotalReportedMemory()		const { return m_MemoryInfo_StatsFromMMRG.totalReportedMemory; }
@@ -179,7 +183,7 @@ namespace Cronos {
 	{
 		GetGPUTotalVRAM();
 		GetGPUCurrentVRAM();
-		GPUDetect_ExtractGPUInfo();
+		GPUDetect_ExtractGPUInfo(); //MEMORY LEAK HERE!
 	}
 
 	
@@ -207,15 +211,17 @@ namespace Cronos {
 	{
 		GPUPrimaryInfo_IntelGPUDetect tmp;
 		std::wstring tmp_GPUBrand_WString;
+		char GPUStr[100];
 
 		if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes))
 		{
 			//Converting the WSTRING variable into a std::string
-			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-			tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
-
+			//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			//tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
+			
 			//If you prefer that in a char[] variable type, use:
-			//sprintf_s(char[], char[] size, "%S", tmp_GPUBrand_WString.c_str());
+			sprintf_s(GPUStr, std::size(GPUStr), "%S", tmp_GPUBrand_WString.c_str());
+			tmp.m_GPUBrand = std::string(GPUStr);
 
 			tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOGB;
 			tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOGB;

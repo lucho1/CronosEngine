@@ -4,24 +4,12 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "imgui.h"
-
+#include "Renderer/Textures.h"
 
 
 namespace Cronos {
 
 	class Directories;
-
-	//struct VertexData {
-	//
-	//	uint id_index = 0; // index in VRAM
-	//	uint num_index = 0;
-	//
-	//	uint* index = nullptr;
-	//	uint id_vertex = 0; // unique vertex in VRAM
-	//	uint num_vertex = 0;
-	//	float* vertex = nullptr;
-	//
-	//};
 
 	enum class ItemType
 	{
@@ -37,7 +25,7 @@ namespace Cronos {
 		ITEM_TEXTURE_JPEG,
 		MAX_ITEMS
 	};
-	
+
 	class AssetItems {
 	public:
 		AssetItems(std::filesystem::path m_path,ItemType mtype=ItemType::ITEM_NONE);
@@ -55,7 +43,7 @@ namespace Cronos {
 		ItemType GetType() const { return type; }
 		uint GetIconTexture() const { return m_IconTex; }
 		ImVec2 GetResolution() const { return m_Resolution; }
-		
+
 
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		std::string GetAssetPath() const { return m_Path; }
@@ -63,7 +51,7 @@ namespace Cronos {
 		std::string GetDetails() const { return m_Details; }
 
 		Directories* folderDirectory;
-		
+
 	private:
 		std::string m_Extension;
 		int m_ElementSize;
@@ -77,6 +65,7 @@ namespace Cronos {
 	};
 
 	class Directories {
+
 	public:
 
 		Directories() {};
@@ -94,21 +83,24 @@ namespace Cronos {
 		std::list<Directories*>childs;
 
 		inline Directories* GetParentDirectory() const { return parentDirectory; }
-	private:
-		Directories* parentDirectory;
-		
-		
 
+	private:
+
+		Directories* parentDirectory;
 	};
 
 
 	class Filesystem : public Module
 	{
 	public:
+
 		Filesystem(Application* app, bool start_enabled = true) ;
 		~Filesystem() {};
-		
+
 		virtual bool OnStart() override;
+		virtual bool OnCleanUp() override;
+
+	public:
 
 		Directories *LoadCurrentDirectories(std::filesystem::path filepath);
 		void UpdateDirectories();
@@ -119,8 +111,7 @@ namespace Cronos {
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
-		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]; }
-
+		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 
 	private:
 		std::vector <AssetItems*> AssetArray;
@@ -129,7 +120,7 @@ namespace Cronos {
 		std::string m_LabelRootDirectory;
 
 		Directories* m_AssetRoot;
-		GLuint ArrayIconTextures[(int)ItemType::MAX_ITEMS];
+		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
 
 	};
 
