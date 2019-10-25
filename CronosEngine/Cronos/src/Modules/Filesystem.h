@@ -50,7 +50,7 @@ namespace Cronos {
 		std::string GetExtension() const { return m_Extension; }
 		std::string GetDetails() const { return m_Details; }
 
-		Directories* folderDirectory;
+		Directories* folderDirectory = nullptr;
 
 	private:
 		std::string m_Extension;
@@ -86,7 +86,7 @@ namespace Cronos {
 
 	private:
 
-		Directories* parentDirectory;
+		Directories* parentDirectory = nullptr;
 	};
 
 
@@ -119,7 +119,7 @@ namespace Cronos {
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
 
-		Directories* m_AssetRoot;
+		Directories* m_AssetRoot = nullptr;
 		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
 
 	};

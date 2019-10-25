@@ -56,9 +56,9 @@ namespace Cronos {
 		std::vector<CronosVertex> m_VertexVector;
 		std::vector<uint> m_IndicesVector;
 
-		VertexArray* m_MeshVAO;
-		VertexBuffer* m_MeshVBO;
-		IndexBuffer* m_MeshIBO;
+		VertexArray* m_MeshVAO = nullptr;
+		VertexBuffer* m_MeshVBO = nullptr;
+		IndexBuffer* m_MeshIBO = nullptr;
 
 		glm::mat4 m_Transformation = glm::mat4(1.0f); // your transformation matrix.
 		glm::vec3 m_Scale;
@@ -117,7 +117,7 @@ namespace Cronos {
 		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType);
 
 	private:
-		CronosModel* m_CronosModel;
+		CronosModel* m_CronosModel = nullptr;
 	};
 
 }

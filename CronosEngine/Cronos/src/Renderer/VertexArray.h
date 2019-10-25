@@ -27,7 +27,7 @@ namespace Cronos {
 		GLenum ConvertToOpenGLDataType(VertexDataType type);
 
 		uint m_ID;
-		IndexBuffer* m_IBuffer;
+		IndexBuffer* m_IBuffer = nullptr;
 		std::vector<VertexBuffer*> m_VBuffers_List;
 
 	};

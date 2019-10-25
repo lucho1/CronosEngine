@@ -24,7 +24,7 @@ namespace Cronos {
 	// Load assets
 	bool Scene::OnStart()
 	{
-		LOG("Loading Intro assets");
+		LOG("Loading Scene");
 		bool ret = true;
 		App->renderer3D->SetOpenGLSettings();
 
@@ -36,9 +36,10 @@ namespace Cronos {
 
 		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN());
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN());
+
+		
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
-
 
 		std::string vertexShader = R"(
 			#version 330 core

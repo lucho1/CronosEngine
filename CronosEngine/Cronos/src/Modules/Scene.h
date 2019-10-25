@@ -25,7 +25,7 @@ namespace Cronos {
 
 		std::vector<GameObject*>m_GameObjects;
 
-		Shader* BasicTestShader; //To test
+		Shader* BasicTestShader = nullptr; //To test
 
 	private:
 

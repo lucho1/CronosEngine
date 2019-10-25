@@ -208,8 +208,7 @@ namespace Cronos {
 
 
 	void GPUHardware::GPUDetect_ExtractGPUInfo() const
-	{
-		
+	{	
 		GPUPrimaryInfo_IntelGPUDetect tmp;
 		std::wstring tmp_GPUBrand_WString;
 

@@ -24,6 +24,7 @@ namespace Cronos {
 		va_end(ap);
 		sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 
+		//std::cout << tmp_string2 << std::endl;
 		OutputDebugStringA(tmp_string2);
 	}
 

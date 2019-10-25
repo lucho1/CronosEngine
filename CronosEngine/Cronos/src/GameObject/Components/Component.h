@@ -19,7 +19,7 @@ namespace Cronos {
 		friend class GameObject;
 	private:
 
-		GameObject* m_Parent;
+		GameObject* m_Parent = nullptr;
 		ComponentType m_Type;
 		bool m_Active;
 

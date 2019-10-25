@@ -54,19 +54,24 @@ namespace Cronos {
 		LoadJsonFile(m_DefaultConfigurationFilepath.c_str());
 		mt_SaveTimer.Start();
 
+		int i = 0;
 		//Init all Modules
 		for (auto& element : m_ModulesList)
+		{
 			if (ret) {
 				EditorGUI->AddLog(("Initializing Module" + element->m_ModuleName));
 				ret = element->OnInit();
 			}
+		}
 
 		// After all Init calls we call Start() in all modules
 		LOG("Application Start --------------");
+		i = 0;
 		for (auto& element : m_ModulesList)
+		{
 			if (ret)
 				ret = element->OnStart();
-
+		}
 		mt_StartingTime.Start();
 		return ret;
 	}
@@ -116,17 +121,22 @@ namespace Cronos {
 		update_status ret = UPDATE_CONTINUE;
 		PrepareUpdate();
 
+		LOG("APP UPDATE");
 		for (auto& element : m_ModulesList)
-			if (ret==UPDATE_CONTINUE)
+		{
+			if (ret == UPDATE_CONTINUE)
 				ret = element->OnPreUpdate(m_Timestep);
-
+		}
 		for (auto& element : m_ModulesList)
+		{
 			if (ret == UPDATE_CONTINUE)
 				ret = element->OnUpdate(m_Timestep);
-
+		}
 		for (auto& element : m_ModulesList)
+		{
 			if (ret == UPDATE_CONTINUE)
 				ret = element->OnPostUpdate(m_Timestep);
+		}
 
 		FinishUpdate();
 		return ret;

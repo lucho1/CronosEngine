@@ -12,7 +12,6 @@ namespace Cronos
 	CronosPrimitive::CronosPrimitive(PrimitiveType primitve_type, glm::vec3 size, float radius, int figure_slices, int figure_stacks)
 		: CronosModel(this), m_PrimitiveType(primitve_type)
 	{
-
 		if (primitve_type == PrimitiveType::DISK || primitve_type == PrimitiveType::ROCK || primitve_type == PrimitiveType::SUBDIVIDED_SPHERE)
 		{
 			CRONOS_ASSERT(false, "Complex Primitives are not created thorugh this constructor!!");

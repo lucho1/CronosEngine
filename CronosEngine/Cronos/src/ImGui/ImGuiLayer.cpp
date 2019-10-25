@@ -53,7 +53,6 @@ namespace Cronos {
 
 	bool ImGuiLayer::OnStart()
 	{
-		
 		ImGui::CreateContext();
 		ImGui::StyleColorsCustom();
 		imnodes::Initialize();
@@ -62,7 +61,9 @@ namespace Cronos {
 		ImGui_ImplOpenGL3_Init();
 
 		ImGuiIO& io = ImGui::GetIO();
-		std::string File = "../Cronos/vendor/imgui/misc/fonts/DroidSans.ttf";
+		//std::string File = "../Cronos/vendor/imgui/misc/fonts/DroidSans.ttf";
+		std::string File = "res/fonts/DroidSans.ttf";
+		//std::string File = "vendor/imgui/misc/fonts/DroidSans.ttf";
 		io.Fonts->AddFontFromFileTTF(File.c_str(), 14.0f);
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableSetMousePos | ImGuiConfigFlags_NavEnableKeyboard;
 
@@ -82,16 +83,17 @@ namespace Cronos {
 		PlayPauseTempImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icons.png", TextureType::ICON);
 		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
 		//Reading License
-		FILE* fp = fopen("../../LICENSE", "r");
+		FILE* fp = fopen("LICENSE", "r");
 		int c; 
 		while ((c = fgetc(fp)) != EOF) { 
 			LicenseString += c;
 		}
+		//LicenseString = std::string("sadasf");
 
 		//Setting temporary root
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
-
+		LOG("	Asset Dir: %s \n	Current Dir: %s", AssetDirectories, m_CurrentDir);
 		CurrentGameObject = App->scene->m_GameObjects[0];
 
 		HardwareInfo = SystemInfo(true);

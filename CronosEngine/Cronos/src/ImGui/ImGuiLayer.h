@@ -46,7 +46,7 @@ namespace Cronos {
 
 		void AssetImguiIterator(Directories a);
 
-		Directories* m_CurrentDir;
+		Directories* m_CurrentDir = nullptr;
 		AssetItems* m_CurrentAssetSelected = nullptr;
 
 
@@ -117,7 +117,7 @@ namespace Cronos {
 
 		std::string m_ShadingModesLabel[3];
 
-		Texture* PlayPauseTempImage;
+		Texture* PlayPauseTempImage = nullptr;
 
 		update_status current_status= update_status::UPDATE_CONTINUE;
 
@@ -127,8 +127,8 @@ namespace Cronos {
 		std::vector<float>ms_log;
 		std::vector<float>fps_log;
 
-		Directories* AssetDirectories;
-		Directories* LastDir;
+		Directories* AssetDirectories = nullptr;
+		Directories* LastDir = nullptr;
 
 		std::string LicenseString;
 
@@ -138,7 +138,7 @@ namespace Cronos {
 		ImGuiTreeNodeFlags Treenode_flags;
 
 		ShadingMode m_currentShadingMode;
-		GameObject* CurrentGameObject=nullptr;
+		GameObject* CurrentGameObject = nullptr;
 		ConfigMenus currentMenu= ConfigMenus::Application;
 
 		struct Link

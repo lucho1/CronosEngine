@@ -156,6 +156,9 @@
     <ClInclude Include="src\Renderer\Primitive.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer\Shaders.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Renderer\Textures.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
@@ -1278,7 +1281,6 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1368,6 +1370,9 @@
     <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\Shaders.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Renderer\Textures.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
@@ -1380,6 +1385,5 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\Shaders.cpp" />
   </ItemGroup>
 </Project>

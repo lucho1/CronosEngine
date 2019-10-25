@@ -31,15 +31,15 @@ namespace Cronos {
 
 	public: //Modules
 
-		SDLWindow* window;
-		Input* input;
-		Audio* audio;
-		Scene* scene;
-		GLRenderer3D* renderer3D;
-		EngineCamera* engineCamera;
-		ImGuiLayer* EditorGUI;
-		Filesystem* filesystem;
-		TextureManager* textureManager;
+		SDLWindow* window = nullptr;
+		Input* input = nullptr;
+		Audio* audio = nullptr;
+		Scene* scene = nullptr;
+		GLRenderer3D* renderer3D = nullptr;
+		EngineCamera* engineCamera = nullptr;
+		ImGuiLayer* EditorGUI = nullptr;
+		Filesystem* filesystem = nullptr;
+		TextureManager* textureManager = nullptr;
 
 
 

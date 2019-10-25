@@ -361,7 +361,7 @@ namespace Cronos {
 
 	void AssimpCronosTranslator::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene)
 	{
-		LOG("	Processing Model Mesh");
+		LOG("	Processing Assimp Node");
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
