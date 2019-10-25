@@ -179,7 +179,7 @@ namespace Cronos {
 	{
 		GetGPUTotalVRAM();
 		GetGPUCurrentVRAM();
-		GPUDetect_ExtractGPUInfo();
+		//GPUDetect_ExtractGPUInfo(); //MEMORY LEAK HERE!
 	}
 
 	

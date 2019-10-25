@@ -11,7 +11,6 @@
 
 namespace Cronos
 {
-	
 	//-------------------------- SOFTWARE INFO --------------------------//
 	class SoftwareInfo
 	{

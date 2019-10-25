@@ -17,9 +17,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define sameLine ImGui::SameLine()
-//#include <Hazel/stb_image.h>
-
-//#define SRC_DIR "C:/Users/rleon/Documents/Dev/Engine/Hazel"
 
 namespace Cronos {
 
@@ -1065,12 +1062,12 @@ namespace Cronos {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 15));
 		ImVec4 Color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-		ImGui::Text("Hardware");
+		ImGui::Text("HARDWARE");
 		ImGui::Separator();
 		ImGui::Separator();
 
 
-		ImGui::Text("MEMORY");
+		/*ImGui::Text("MEMORY");
 		ImGui::Separator();
 
 		ImGui::Text("Total System RAM: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(info.GetMemoryHardwareInfo().GetRAMSizeFromSDL()) + " GB").c_str()));
@@ -1127,7 +1124,7 @@ namespace Cronos {
 		ImGui::Text("Actual/Real VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_CurrentVRAM_MB) + " GB").c_str());
 		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
 		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(info.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
-
+*/
 		ImGui::PopStyleVar();
 	};
 
