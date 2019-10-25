@@ -34,11 +34,6 @@ namespace Cronos {
 		std::string m_Filepath;
 		unsigned char* m_Data;
 		int m_Width, m_Height, m_BPP, m_Format;
-
-	private:
-		uint m_ID;
-		ImVec2 m_Resolution;
-
 	};
 }
 

@@ -6,6 +6,7 @@
 #include "Providers/SystemInfo.h"
 
 #include "Providers/Globals.h" //TODO: DEL
+#include "Helpers/RNGen.h"
 
 #include "Modules/SDLWindow.h"
 #include "Modules/Input.h"
