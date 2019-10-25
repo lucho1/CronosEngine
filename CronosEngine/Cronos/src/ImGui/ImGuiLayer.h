@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "Modules/Filesystem.h"
 #include "GameObject/GameObject.h"
+#include "Providers/SystemInfo.h"
 
 struct ImGuiTextBuffer;
 
@@ -155,6 +156,9 @@ namespace Cronos {
 		std::unordered_map<int, Color3> color_nodes_;
 		std::unordered_map<int, Link> links_;
 
+		//System Info
+		SystemInfo HardwareInfo;
+		SystemInfo SoftwareInfo;
 	};
 
 

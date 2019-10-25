@@ -16,12 +16,16 @@ namespace Cronos {
 	//-------------------------------------------------------------------//
 	//--------------------------- SYSTEM INFO ---------------------------//
 	//-------------------------------------------------------------------//
-	SystemInfo::SystemInfo()
+	SystemInfo::SystemInfo(bool GetHardware)
 	{
-		mSoftware_Info.DetectSystemProperties();
-		mHardware_MemoryInfo.DetectSystemProperties();
-		mHardware_GPUInfo.DetectSystemProperties();
-		mHardware_CPUInfo.DetectSystemProperties();
+		if (GetHardware)
+		{
+			mHardware_MemoryInfo.DetectSystemProperties();
+			mHardware_GPUInfo.DetectSystemProperties();
+			mHardware_CPUInfo.DetectSystemProperties();
+		}
+		else
+			mSoftware_Info.DetectSystemProperties();
 	}
 
 
@@ -31,6 +35,7 @@ namespace Cronos {
 	void SoftwareInfo::DetectSystemProperties()
 	{
 		mSoftware_CppVersion =	ExtractCppVersion(__cplusplus);
+		mSoftware_LANGCppVersion = ExtractCppVersion(_MSVC_LANG);
 		mSoftware_WindowsVersion =	ExtractWindowsVersion();
 		mSoftware_SDLVersion =	ExtractSDLVersion();
 	}
@@ -120,9 +125,9 @@ namespace Cronos {
 	}
 
 
-	const std::string SoftwareInfo::GetCppCompilerVersion()
+	const std::string SoftwareInfo::GetCppCompilerVersion() const
 	{
-		return (std::to_string(_MSVC_LANG) + " (" + ExtractCppVersion(_MSVC_LANG) + ")");
+		return (mSoftware_LANGCppVersion + " (" + std::to_string(_MSVC_LANG) + ")");
 	}
 
 
@@ -154,13 +159,8 @@ namespace Cronos {
 	void MemoryHardware::RecalculateRAMParameters()
 	{
 		DetectSystemProperties();
+		RecalculateMemStatisticsFromMMGR();
 	}
-
-	/*
-	BTOGB
-	KBTOMB
-	BTOMB
-	*/
 
 	//Getting Stats of Memory from MMRG
 	const uint MemoryHardware::GetMemStatsFromMMGR_TotalReportedMemory()		const { return m_MemoryInfo_StatsFromMMRG.totalReportedMemory; }
@@ -209,19 +209,18 @@ namespace Cronos {
 
 	void GPUHardware::GPUDetect_ExtractGPUInfo() const
 	{
+		
 		GPUPrimaryInfo_IntelGPUDetect tmp;
 		std::wstring tmp_GPUBrand_WString;
-		char GPUStr[100];
 
 		if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes))
 		{
 			//Converting the WSTRING variable into a std::string
-			//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-			//tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
+			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+			tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
 			
-			//If you prefer that in a char[] variable type, use:
-			sprintf_s(GPUStr, std::size(GPUStr), "%S", tmp_GPUBrand_WString.c_str());
-			tmp.m_GPUBrand = std::string(GPUStr);
+			//If you prefer that in a char[] variable type, use (being GPUStr a char[50] for instance):
+			//sprintf_s(GPUStr, std::size(GPUStr), "%S", tmp_GPUBrand_WString.c_str());
 
 			tmp.mPI_GPUDet_TotalVRAM_MB = tmp.mPI_GPUDet_TotalVRAM_Bytes / BTOGB;
 			tmp.mPI_GPUDet_VRAMUsage_MB = tmp.mPI_GPUDet_VRAMUsage_Bytes / BTOGB;

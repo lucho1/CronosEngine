@@ -47,41 +47,46 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
 							unsigned __int64* VideoMemoryAvailable,
 							unsigned __int64* VideoMemoryReserved)
 {
-	//
 	// DXGI is supported on Windows Vista and later. Define a function pointer to the
 	// CreateDXGIFactory function. DXGIFactory1 is supported by Windows Store Apps so
 	// try that first.
-	//
 	HMODULE hDXGI = LoadLibrary(L"dxgi.dll");
-	if (hDXGI == NULL) {
+	if (hDXGI == NULL)
 		return false;
-	}
+	
 
 	typedef HRESULT(WINAPI*LPCREATEDXGIFACTORY)(REFIID riid, void** ppFactory);
-
 	LPCREATEDXGIFACTORY pCreateDXGIFactory = (LPCREATEDXGIFACTORY)GetProcAddress(hDXGI, "CreateDXGIFactory1");
 	if (pCreateDXGIFactory == NULL) {
-		pCreateDXGIFactory = (LPCREATEDXGIFACTORY)GetProcAddress(hDXGI, "CreateDXGIFactory");
 
+		pCreateDXGIFactory = (LPCREATEDXGIFACTORY)GetProcAddress(hDXGI, "CreateDXGIFactory");
 		if (pCreateDXGIFactory == NULL) {
 			FreeLibrary(hDXGI);
 			return false;
 		}
 	}
+	
 
-	//
 	// We have the CreateDXGIFactory function so use it to actually create the factory and enumerate
 	// through the adapters. Here, we are specifically looking for the Intel gfx adapter. 
-	//
-	IDXGIAdapter*     pAdapter;
-	IDXGIFactory*     pFactory;
+	IDXGIAdapter*     pAdapter = nullptr;
+	IDXGIFactory1*     pFactory = nullptr;
 	DXGI_ADAPTER_DESC AdapterDesc;
-	if (FAILED((*pCreateDXGIFactory)(__uuidof(IDXGIFactory), (void**)(&pFactory)))) {
+
+	//_Return_type_success_(return >= 0) long
+	//if((((_Return_type_success_(return >= 0) long)((*pCreateDXGIFactory)(__uuidof(IDXGIFactory), (void**)(&pFactory)))) < 0)) {
+	//if (FAILED((*pCreateDXGIFactory)(__uuidof(IDXGIFactory), (void**)(&pFactory)))) {
+//	CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory));
+	
+	if (((*pCreateDXGIFactory)(__uuidof(IDXGIFactory1), (void**)(&pFactory)))) {
+		pFactory->Release();
 		FreeLibrary(hDXGI);
 		return false;
 	}
 
 	if (FAILED(pFactory->EnumAdapters(0, (IDXGIAdapter**)&pAdapter))) {
+		pFactory->Release();
+		pAdapter->Release();
 		FreeLibrary(hDXGI);
 		return false;
 	}
@@ -95,21 +100,21 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
 		intelAdapterIndex++;
 	}
 
-	if (pAdapter == NULL) {
+	if (pAdapter == nullptr || pAdapter == NULL) {
+		pFactory->Release();
 		FreeLibrary(hDXGI);
 		return false;
 	}
 
-	//
+	pFactory->Release();
+
 	// If we are on Windows 10 then the Adapter3 interface should be available. This is recommended over using
 	// the AdapterDesc for getting the amount of memory available.
-	//
 	IDXGIAdapter3* pAdapter3;
 	pAdapter->QueryInterface(IID_IDXGIAdapter3, (void**)&pAdapter3);
 	if (pAdapter3) {
 		DXGI_QUERY_VIDEO_MEMORY_INFO memInfo;
 		pAdapter3->QueryVideoMemoryInfo(intelAdapterIndex, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
-		//*VideoMemory = memInfo.AvailableForReservation;
 		*VideoMemoryBudget = memInfo.Budget;
 		*VideoMemoryCurrentUsage = memInfo.CurrentUsage;
 		*VideoMemoryAvailable = memInfo.AvailableForReservation;
@@ -130,6 +135,8 @@ bool getGraphicsDeviceInfo( unsigned int* VendorId,
 	if(GFXBrand != nullptr)
 		*GFXBrand = AdapterDesc.Description;
 
+
+	pFactory->Release();
 	pAdapter->Release();
 	FreeLibrary(hDXGI);
 	return true;

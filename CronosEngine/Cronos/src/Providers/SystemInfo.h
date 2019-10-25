@@ -18,6 +18,7 @@ namespace Cronos
 
 		//Don't use this, they are just class variables, use the getters instead
 		mutable std::string mSoftware_CppVersion;
+		mutable std::string mSoftware_LANGCppVersion;
 		mutable std::string mSoftware_WindowsVersion;
 		mutable std::string mSoftware_SDLVersion;
 
@@ -47,7 +48,8 @@ namespace Cronos
 		///201703L (C++17)
 		const std::string GetCppVersionImplementedByCompiler()	const	{ return mSoftware_CppVersion; }
 		const std::string GetCPPNumericalVersion()				const	{ return std::to_string(__cplusplus); }
-		const std::string GetCppCompilerVersion();
+		const std::string GetCppCompilerVersion()				const;
+
 
 		const std::string GetVSCompilerVersion()				const	{ return (std::to_string(_MSC_VER)); }
 		const std::string MultithreadedSpecified()				const	{ return ("Multithreaded Specified: " + std::string(_MT ? "YES" : "NO")); }
@@ -74,9 +76,9 @@ namespace Cronos
 	public:
 
 		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
-		//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
 		void RecalculateRAMParameters();
-
+		//void RecalculateRAMParameters()										{ ExtractMemoryInfo(); m_MemoryInfo_StatsFromMMRG = m_getMemoryStatistics(); }
+		
 		const float GetRAMSizeFromSDL()								const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
 
 		//Getting Stats of Memory from MEMORYSTATUSEX
@@ -155,7 +157,7 @@ namespace Cronos
 
 		void DetectSystemProperties(); //DON'T USE THIS FUNCTION, IS JUST FOR CLASS PURPOSES!!!
 		void RecalculateGPUParameters() const { GPUDetect_ExtractGPUInfo(); }
-
+		
 		const auto GetGPUBenchmark()	const { return glGetString(GL_VENDOR); }
 		const auto GetGPUModel()		const { return glGetString(GL_RENDERER); }
 
@@ -232,13 +234,16 @@ namespace Cronos
 
 	public:
 
-		SystemInfo();
+		SystemInfo(bool GetHardware);
+		SystemInfo() {}
 		~SystemInfo() {}
 
 		const SoftwareInfo GetSoftwareInfo()			const { return mSoftware_Info; }
 		const MemoryHardware GetMemoryHardwareInfo()	const { return mHardware_MemoryInfo; }
 		const ProcessorHardware GetCPUHardwareInfo()	const { return mHardware_CPUInfo; }
 		const GPUHardware GetGPUHardwareInfo()			const { return mHardware_GPUInfo; }
+
+		void RecalculateParameters() {	mHardware_MemoryInfo.RecalculateRAMParameters(); mHardware_GPUInfo.RecalculateGPUParameters();	}
 
 	};
 	
