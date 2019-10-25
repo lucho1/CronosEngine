@@ -65,6 +65,16 @@ namespace Cronos {
 #define PERF_START(timer) timer.Start()
 #define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())
 
+/// Releasing Memory
+#define RELEASE( x )\
+    {\
+       if( x != nullptr )\
+       {\
+         delete x;\
+	     x = nullptr;\
+       }\
+    }
+
 /// Configuration
 //#define SCREEN_WIDTH 1024
 //#define SCREEN_HEIGHT 720

@@ -432,7 +432,7 @@ namespace Cronos {
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
 
 			if (CurrentGameObject != nullptr) {
-				ImGui::Checkbox(" ", &CurrentGameObject->setActive()); ImGui::SameLine();
+				ImGui::Checkbox(" ", &CurrentGameObject->SetActive()); ImGui::SameLine();
 
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
@@ -465,17 +465,17 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &TempPos.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &TempPos.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->setPosition(TempPos);
+			CurrentGameObject->GetComponent<ComponentTransform>()->SetPosition(TempPos);
 			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->setRotation(TempRot);
+			CurrentGameObject->GetComponent<ComponentTransform>()->SetRotation(TempRot);
 			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &TempScale.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->setScale(TempScale);
+			CurrentGameObject->GetComponent<ComponentTransform>()->SetScale(TempScale);
 
 		}
 		ImGui::Separator();

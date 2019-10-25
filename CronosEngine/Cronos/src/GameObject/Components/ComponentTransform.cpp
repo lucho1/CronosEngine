@@ -5,12 +5,14 @@ namespace Cronos {
 
 
 	ComponentTransform::ComponentTransform(GameObject* parentGo, bool active)
-		:Component(ComponentType::Transform,parentGo,active)
+		: Component(ComponentType::TRANSFORM, parentGo, active)
 	{
+
 	}
 
 	ComponentTransform::~ComponentTransform()
 	{
+
 	}
 
 	void ComponentTransform::OnStart()
@@ -22,5 +24,4 @@ namespace Cronos {
 	{
 
 	}
-
 }

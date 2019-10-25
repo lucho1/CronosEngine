@@ -7,16 +7,17 @@ namespace Cronos {
 
 	enum class ComponentType 
 	{
-		none = -1,
-		Transform,
-		Mesh,
-		MeshRenderer,
-		Material		
+		NONE = -1,
+		TRANSFORM,
+		MESH,
+		MESH_RENDERER,
+		MATERIAL		
 	};
 
 	class Component 
 	{
-	public:
+		friend class GameObject;
+	private:
 
 		GameObject* m_Parent;
 		ComponentType m_Type;
@@ -24,7 +25,8 @@ namespace Cronos {
 
 	public:
 
-		Component(ComponentType type, GameObject* parentGO, bool start_enabled = true):m_Type(type),m_Parent(parentGO),m_Active(start_enabled) {};
+		Component(ComponentType type, GameObject* parentGO, bool start_enabled = true)
+			: m_Type(type), m_Parent(parentGO), m_Active(start_enabled) {};
 
 		virtual void OnStart() {};
 		virtual void Update(float dt) {};
@@ -36,7 +38,6 @@ namespace Cronos {
 		inline GameObject* GetParent() const { return m_Parent; }
 		inline ComponentType GetComponentType() const { return m_Type; }
 		inline bool isEnabled() const { return m_Active; }
-
 	};
 
 }

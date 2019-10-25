@@ -16,19 +16,19 @@ namespace Cronos {
 		~ComponentTransform();
 
 		virtual void OnStart() override;
-		virtual void Update(float dt) override ;
+		virtual void Update(float dt) override;
 
-		void setPosition(glm::vec3 pos) { m_Position = pos; }
-		void setRotation(glm::vec3 rot) { m_Rotation = rot; }
-		void setScale(glm::vec3 scale) { m_Scale= scale; }
+		void SetPosition(glm::vec3 pos) { m_Position = pos; }
+		void SetRotation(glm::vec3 rot) { m_Rotation = rot; }
+		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 
 		inline glm::vec3 GetPosition() const { return m_Position; };
 		inline glm::vec3 GetRotation() const { return m_Rotation; };
 		inline glm::vec3 GetScale() const { return m_Scale; };
 
-		static ComponentType GetType() { return ComponentType::Transform; };
+		static ComponentType GetType() { return ComponentType::TRANSFORM; };
 
-	public:
+	private:
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;
