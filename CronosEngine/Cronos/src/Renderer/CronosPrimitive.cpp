@@ -262,13 +262,14 @@ namespace Cronos
 				tmpVertex.Normal = glm::vec3(x, y, z);
 			}
 
-			//if (ParshapeMesh.tcoords != nullptr)
-			//{
-			//	x = ParshapeMesh.tcoords[j];
-			//	y = ParshapeMesh.tcoords[j + 1];
-			//
-			//	tmpVertex.TexCoords = glm::vec2(x, y);
-			//}
+			if (ParshapeMesh->tcoords != nullptr && j <= ParshapeMesh->npoints * 2)
+			{
+				x = ParshapeMesh->tcoords[j];
+				y = ParshapeMesh->tcoords[j + 1];
+				tmpVertex.TexCoords = glm::vec2(x, y);
+			}
+			else
+				tmpVertex.TexCoords = glm::vec2(0, 0);
 
 			tmpVertexVector.push_back(tmpVertex);
 			j += 3;

@@ -32,7 +32,7 @@ namespace Cronos {
 		m_FloorPlane.axis = true; //Enable axis render
 
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CLOSED_CONE, { 1, 1, 1 });
+		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
 
 		std::string vertexShader = R"(
 			#version 330 core
