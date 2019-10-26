@@ -10,8 +10,8 @@ namespace Cronos {
 	static par_shapes_mesh* ParshapeMesh;
 
 	// --------------------------------- PRIMITIVE MODEL ---------------------------------
-	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, glm::vec3 size, float radius, int figure_slices, int figure_stacks)
-		: GameObject("Primitive GameObject", App->m_RandomNumGenerator.GetIntRN(), ""), m_PrimitiveType(primitve_type)
+	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, glm::vec3 size, const std::string& name, float radius, int figure_slices, int figure_stacks)
+		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), ""), m_PrimitiveType(primitve_type)
 	{
 		if (primitve_type == PrimitiveType::DISK || primitve_type == PrimitiveType::ROCK || primitve_type == PrimitiveType::SUBDIVIDED_SPHERE)
 		{

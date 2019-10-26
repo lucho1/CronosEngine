@@ -48,7 +48,7 @@ namespace Cronos {
 
 		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
 		m_GameObjects.push_back(vmodelxd);
-		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE);
+		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, "PRGO");
 		m_GameObjects.push_back(vCubePrimitivexd);
 		
 		Test->m_Childs.push_back(TestChild);
