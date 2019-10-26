@@ -103,6 +103,10 @@ namespace Cronos {
 		m_Data.WindowBright = JSONFile["Window"]["Bright"];
 
 		m_WindowFlags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN;
+
+		if (m_Data.WindowResizable == true)
+			m_WindowFlags |= SDL_WINDOW_RESIZABLE;
+
 		//SetWindowFullscreen(m_Data.WindowFullscreen);
 		//SetWindowResizable(m_Data.WindowResizable);
 		//SetWindowBorderless(m_Data.WindowBorderless);
@@ -121,6 +125,8 @@ namespace Cronos {
  		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
 		App->engineCamera->CalculateProjection();
+		m_Data.Width = width; 
+		m_Data.Height = height;
 		//SetWindowFullscreen(false);
 		//SetWindowDesktopFullscreen(false);
 	}

@@ -5,8 +5,6 @@
 #include "Providers/Globals.h"
 #include "glmath.h"
 
-#define MIN_FOV 15.0f
-#define MAX_FOV 120.0f
 
 namespace Cronos {
 
@@ -35,6 +33,11 @@ namespace Cronos {
 		inline const mat4x4 GetViewMatrixMAT4()			const { return m_ViewMatrix; }
 
 		inline const float GetCameraMoveSpeed()			const { return m_CameraMoveSpeed;	}
+		inline const float GetCameraScrollSpeed()		const { return m_CameraScrollSpeed; }
+		inline const float GetFOV()						const { return m_FOV; }
+		inline const float GetNearPlane()				const { return m_NearPlane; }
+		inline const float GetFarPlane()				const { return m_FarPlane; }
+
 
 	public:
 

@@ -61,6 +61,10 @@ namespace Cronos {
 #define MID_STR		255
 #define HUGE_STR	8192
 
+/// Camera Settings
+#define MIN_FOV 15.0f
+#define MAX_FOV 120.0f
+
 /// Performance macros
 #define PERF_START(timer) timer.Start()
 #define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())

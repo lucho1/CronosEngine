@@ -268,7 +268,8 @@ namespace Cronos {
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
 				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
-				App->window->OnResize(SizeGame.x, SizeGame.y);
+				App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
+				//App->window->OnResize(SizeGame.x, SizeGame.y);
 				LastSize = SizeGame;
 			}
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
@@ -294,7 +295,9 @@ namespace Cronos {
 				ImGui::MenuItem("New Scene");
 				ImGui::MenuItem("Open Scene");
 				ImGui::Separator();
-				ImGui::MenuItem("Save");
+				if (ImGui::MenuItem("Save")) {
+					App->SaveEngineData();
+				}
 				ImGui::MenuItem("Save As...");
 				ImGui::Separator();
 				ImGui::MenuItem("New Project");
@@ -372,7 +375,7 @@ namespace Cronos {
 				if (ImGui::MenuItem("Report a bug")) {
 					App->RequestBrowser("https://github.com/lucho1/CronosEngine/issues");
 				}
-				if (ImGui::MenuItem("About (OnConstruction)")) {
+				if (ImGui::MenuItem("About")) {
 					ShowAboutPanel = !ShowAboutPanel;
 				}
 
@@ -522,7 +525,7 @@ namespace Cronos {
 			int CenterY = AvSizeY - (ImGui::GetWindowHeight() / 2 + AvSizeX / 2);
 			ImGui::SetCursorPosY(CenterY);
 
-			ImGui::Image(TOTEX m_CurrentAssetSelected->GetIconTexture(), ImVec2(AvSizeX, AvSizeX*aspectRatio));
+			ImGui::Image(TOTEX (m_CurrentAssetSelected->GetIconTexture()-1), ImVec2(AvSizeX, AvSizeX*aspectRatio),ImVec2(0,1),ImVec2(1,0));
 
 			ImGui::EndChild();
 		}
@@ -554,31 +557,35 @@ namespace Cronos {
 			ImGui::Text("\n   Albedo"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 			ImVec2 FramePadding(100.0f, 3.0f);
-			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, FramePadding); ImGui::SameLine();
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
+			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
+			static int  test = ImGui::GetCursorPosY();
+			
+			ImGui::SetCursorPosY(test+15);
+	
 			ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags);
-			ImGui::PopStyleVar();
+			//ImGui::PopStyleVar();
 
 
 			ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
 			//ImGui::AlignTextToFramePadding();
 			ImGui::Text("\n   Specular"); ImGui::SameLine();
 			static float SpecIntensity = 1.0f;
-			//ImGui::DragFloatRange2("range", &begin, &end, 0.25f, 0.0f, 100.0f, "Min: %.1f %%", "Max: %.1f %%");
-			//ImGui::AlignTextToFramePadding();
+			static int  test2 = ImGui::GetCursorPosY();
+			ImGui::SetCursorPosY(test2 + 13);
+		
 			ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
 
-			if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
-				ImGui::OpenPopup("Context");
-			}
-			ImGui::SameLine();
-			ImGui::Text("\n   Metallic");
+			//if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
+			//	ImGui::OpenPopup("Context");
+			//}
+			//ImGui::SameLine();
+			//ImGui::Text("\n   Metallic");
 
-			ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
-			ImGui::Text("\n   Roughtness");
-			if (ImGui::Button("Hello")) {
-				ImGui::OpenPopup("Context");
-			}
+			//ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
+			//ImGui::Text("\n   Roughtness");
+			//if (ImGui::Button("Hello")) {
+			//	ImGui::OpenPopup("Context");
+			//}
 
 			ImGui::PopStyleColor();
 			ImGui::PopStyleColor();
@@ -930,17 +937,21 @@ namespace Cronos {
 				currentMenu = ConfigMenus::Renderer;
 				selected = 4;
 			}
-			else if (ImGui::Selectable("Input", selected == 5)) {
-				currentMenu = ConfigMenus::Input;
+			else if (ImGui::Selectable("Viewport", selected == 5)) {
+				currentMenu = ConfigMenus::Viewport;
 				selected = 5;
 			}
-			else if (ImGui::Selectable("Audio", selected == 6)) {
-				currentMenu = ConfigMenus::Audio;
+			else if (ImGui::Selectable("Input", selected == 6)) {
+				currentMenu = ConfigMenus::Input;
 				selected = 6;
 			}
-			else if (ImGui::Selectable("Texture", selected == 7)) {
-				currentMenu = ConfigMenus::Texture;
+			else if (ImGui::Selectable("Audio", selected == 7)) {
+				currentMenu = ConfigMenus::Audio;
 				selected = 7;
+			}
+			else if (ImGui::Selectable("Texture", selected == 8)) {
+				currentMenu = ConfigMenus::Texture;
+				selected = 8;
 			}
 			
 
@@ -969,6 +980,9 @@ namespace Cronos {
 					break;
 				case Cronos::ConfigMenus::Renderer:
 					GUIDrawConfigRendererMenu();
+					break;
+				case Cronos::ConfigMenus::Viewport:
+					GUIDrawConfigViewPortMenu();
 					break;
 				case Cronos::ConfigMenus::Input:
 					GUIDrawConfigInputMenu();
@@ -1042,11 +1056,11 @@ namespace Cronos {
 			SDL_SetWindowBrightness(App->window->window, brightnesTest);
 		}
 
-		ImGui::Text("Width"); ImGui::SameLine();
+		ImGui::Text("Height"); ImGui::SameLine();
 		if (ImGui::SliderInt("##hidelabel", &Height, 100, 1080,"%d")) {
 			SDL_SetWindowSize(App->window->window, Width, Height);
 		}
-		ImGui::Text("Height"); ImGui::SameLine();
+		ImGui::Text("Width"); ImGui::SameLine();
 		if (ImGui::SliderInt("##hidelabel2", &Width, 100, 1920)) {
 			SDL_SetWindowSize(App->window->window, Width, Height);
 		}
@@ -1054,7 +1068,7 @@ namespace Cronos {
 		static Uint32 flagsFullscreen=NULL;
 		static Uint32 flagsFullWindowed = NULL;
 
-		static bool resizable = true;
+		static bool resizable = App->window->m_Data.WindowResizable;
 		static bool borderless = false;
 		if(ImGui::CheckboxFlags("Fullscreen", &(unsigned int )flagsFullscreen,SDL_WINDOW_FULLSCREEN)){
 			SDL_SetWindowFullscreen(App->window->window, flagsFullscreen);
@@ -1065,12 +1079,11 @@ namespace Cronos {
 		}
 		if (ImGui::CheckboxFlags("Full Windowed", &(unsigned int)flagsFullWindowed,SDL_WINDOW_FULLSCREEN_DESKTOP)) {
 			SDL_SetWindowFullscreen(App->window->window, flagsFullWindowed);
-			//SDL_Setwindowfu
 		}ImGui::SameLine();
 		if (ImGui::Checkbox("Resizable", &resizable)) {
-			// NOT WORKING TODO: ASK MARC
-			//SDL_SetWindowResizable(App->window->window, (SDL_bool)resizable);
-		}
+			App->window->m_Data.WindowResizable = resizable;
+		}ImGui::SameLine(); HelpMarker("Restart to apply");
+
 		ImGui::PopStyleVar();
 
 	}
@@ -1185,6 +1198,63 @@ namespace Cronos {
 		ImGui::PopStyleVar();
 
 	};
+	void ImGuiLayer::GUIDrawConfigViewPortMenu() {
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		static float CameraMoveSpeed= App->engineCamera->GetCameraMoveSpeed();
+		static float CameraScrollSpeed = App->engineCamera->GetCameraScrollSpeed();
+		static float CameraFieldOfView = App->engineCamera->GetFOV();
+		static float CameraNearPlane = App->engineCamera->GetNearPlane();
+		static float CameraFarPlane = App->engineCamera->GetFarPlane();
+		ImGui::Text("Viewport");
+		ImGui::Separator();
+		ImGui::Text("Viewport Camera Options");
+		ImGui::BeginChild("Camera Options");
+		ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
+		if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
+		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
+		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+			App->engineCamera->SetFOV(CameraFieldOfView);
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Viewing Frustum: "); 
+		ImGui::NewLine();
+		ImGui::SameLine(30);
+		ImGui::SetNextItemWidth(100);
+		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
+			App->engineCamera->SetNearPlane(CameraNearPlane);
+		sameLine;
+		ImGui::SetNextItemWidth(100);
+
+		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
+			App->engineCamera->SetFarPlane(CameraFarPlane);
+
+		if (ImGui::Button("Default")) {
+			CameraMoveSpeed = 5.0;
+			CameraScrollSpeed = 20.0;
+			CameraFieldOfView = 60;
+			CameraNearPlane = 0.125;
+			CameraFarPlane = 512.0;
+			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+			App->engineCamera->SetFOV(CameraFieldOfView);
+			App->engineCamera->SetNearPlane(CameraNearPlane);
+			App->engineCamera->SetFarPlane(CameraFarPlane);
+		
+		}
+			
+
+
+		//ImGui::Text("Camera ")
+		
+		ImGui::EndChild();
+		ImGui::PopStyleVar();
+	}
 
 	void ImGuiLayer::GUIDrawConfigInputMenu() {
 

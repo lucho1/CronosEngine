@@ -26,6 +26,7 @@ namespace Cronos {
 		Hardware,
 		Software,
 		Renderer,
+		Viewport,
 		Input,
 		Audio,
 		Texture
@@ -83,6 +84,7 @@ namespace Cronos {
 		void GUIDrawConfigApplicationMenu();
 		void GUIDrawConfigWindowMenu();
 		void GUIDrawConfigHardwareMenu();
+		void GUIDrawConfigViewPortMenu();
 		void GUIDrawConfigSoftwareMenu();
 		void GUIDrawConfigRendererMenu();
 		void GUIDrawConfigInputMenu();
