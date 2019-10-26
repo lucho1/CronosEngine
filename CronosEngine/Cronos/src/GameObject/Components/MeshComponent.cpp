@@ -58,16 +58,14 @@ namespace Cronos {
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
 	}
 
-	void MeshComponent::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
+	void MeshComponent::SetTextures(std::vector<Texture*> newTexture, TextureType textureType)
 	{
-		std::vector<Texture*>::iterator item = m_TexturesVector.begin();
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+		for (uint i = 0; i < m_TexturesVector.size() && m_TexturesVector[i] != nullptr; i++)
 		{
-			if ((*item)->GetTextureType() == textureType)
+			if (m_TexturesVector[i]->GetTextureType() == textureType)
 			{
-				(*item)->~Texture();
-				delete (*item);
-				m_TexturesVector.erase(item);
+				RELEASE(m_TexturesVector[i]);
+				m_TexturesVector.erase(m_TexturesVector.begin() + i);
 			}
 		}
 

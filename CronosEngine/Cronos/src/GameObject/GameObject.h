@@ -41,8 +41,9 @@ namespace Cronos {
 			ComponentType type = T::GetType();
 			for (auto& comp : m_Components)
 				if (comp->GetComponentType() == type)
-					return ((T*)(comp));			
+					return ((T*)(comp));
 			
+			LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
 

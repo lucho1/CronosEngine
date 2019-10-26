@@ -16,6 +16,7 @@ namespace Cronos {
 	static GameObject* vmodelxd;
 	//static CronosModel* NanoSuitModel;
 	static PrimitiveGameObject* vCubePrimitivexd;
+	static std::vector<Texture*> newVecText;
 
 	/*
 	AssimpCronosTranslator m_ACT(this);
@@ -47,12 +48,26 @@ namespace Cronos {
 
 
 		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
+
 		m_GameObjects.push_back(vmodelxd);
 		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, "PRGO");
 		m_GameObjects.push_back(vCubePrimitivexd);
 		
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
+
+
+		//std::string path = std::string("res/miface/Mi_Face_baseTexBaked.png");
+		Texture* text = App->textureManager->CreateTexture("res/miface/Mi_Face_baseTexBaked.png", TextureType::DIFFUSE);
+		newVecText.push_back(text);
+
+		/*
+		
+		std::string path = motherGameObj->GetPath() + '/' + str.C_Str();
+			Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
+			ret.push_back(tex);
+		
+		*/
 
 		std::string vertexShader = R"(
 			#version 330 core
@@ -155,6 +170,20 @@ namespace Cronos {
 	//	else
 	//		vmodelxd->Draw(BasicTestShader, true);
 		
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+		{
+			auto comp = vmodelxd->GetComponent<MeshComponent>();
+			if (comp != nullptr)
+				comp->SetTextures(newVecText, TextureType::DIFFUSE);
+
+			for (auto child : vmodelxd->m_Childs)
+			{
+				comp = child->GetComponent<MeshComponent>();
+				if (comp != nullptr)
+					comp->SetTextures(newVecText, TextureType::DIFFUSE);
+			}
+		}
+			
 
 		//BasicTestShader->Bind();
 		vmodelxd->Update(dt);
@@ -165,7 +194,6 @@ namespace Cronos {
 		//	(*listItem)->Update();
 		//}
 		
-
 
 	//	//NanoSuitModel->Draw(BasicTestShader, true);
 		//vmodelxd->DrawModelAxis();
