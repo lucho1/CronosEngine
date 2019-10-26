@@ -35,6 +35,8 @@ namespace Cronos {
 		virtual void Disable() { m_Active = false; }
 
 		void SetParent(GameObject* parent) { m_Parent = parent; }
+
+		//Getters
 		inline GameObject* GetParent() const { return m_Parent; }
 		inline ComponentType GetComponentType() const { return m_Type; }
 		inline bool isEnabled() const { return m_Active; }

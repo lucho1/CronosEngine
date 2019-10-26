@@ -47,7 +47,7 @@ namespace Cronos {
 /// Conversors
 #define DEGTORAD	0.0174532925199432957f
 #define RADTODEG	57.295779513082320876f
-#define PI			3.14159265359
+#define PI			3.14159265359f
 #define TO_BOOL( a )  ( (a != 0) ? true : false )
 
 /// Useful helpers, InRange checker, min, max and clamp

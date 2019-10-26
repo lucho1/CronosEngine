@@ -1,5 +1,4 @@
 #include "Providers/cnpch.h"
-#include <codecvt> //To convert wstring to string (For GPU info)
 
 #include "Providers/Globals.h"
 #include "Primitive.h"
@@ -12,7 +11,7 @@
 namespace Cronos {
 
 	// ------------------------------------------------------------
-	Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
+	Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Null)
 	{}
 
 	// ------------------------------------------------------------
@@ -101,128 +100,6 @@ namespace Cronos {
 	void Primitive::Scale(float x, float y, float z)
 	{
 		transform.scale(x, y, z);
-	}
-
-	// CUBE ============================================
-	Cube::Cube() : Primitive(), size(1.0f, 1.0f, 1.0f)
-	{
-		type = PrimitiveTypes::Primitive_Cube;
-	}
-
-	Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
-	{
-		type = PrimitiveTypes::Primitive_Cube;
-	}
-
-	void Cube::InnerRender() const
-	{
-		float sx = size.x * 0.5f;
-		float sy = size.y * 0.5f;
-		float sz = size.z * 0.5f;
-
-		glBegin(GL_QUADS);
-
-		glNormal3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(-sx, -sy, sz);
-		glVertex3f(sx, -sy, sz);
-		glVertex3f(sx, sy, sz);
-		glVertex3f(-sx, sy, sz);
-
-		glNormal3f(0.0f, 0.0f, -1.0f);
-		glVertex3f(sx, -sy, -sz);
-		glVertex3f(-sx, -sy, -sz);
-		glVertex3f(-sx, sy, -sz);
-		glVertex3f(sx, sy, -sz);
-
-		glNormal3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(sx, -sy, sz);
-		glVertex3f(sx, -sy, -sz);
-		glVertex3f(sx, sy, -sz);
-		glVertex3f(sx, sy, sz);
-
-		glNormal3f(-1.0f, 0.0f, 0.0f);
-		glVertex3f(-sx, -sy, -sz);
-		glVertex3f(-sx, -sy, sz);
-		glVertex3f(-sx, sy, sz);
-		glVertex3f(-sx, sy, -sz);
-
-		glNormal3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(-sx, sy, sz);
-		glVertex3f(sx, sy, sz);
-		glVertex3f(sx, sy, -sz);
-		glVertex3f(-sx, sy, -sz);
-
-		glNormal3f(0.0f, -1.0f, 0.0f);
-		glVertex3f(-sx, -sy, -sz);
-		glVertex3f(sx, -sy, -sz);
-		glVertex3f(sx, -sy, sz);
-		glVertex3f(-sx, -sy, sz);
-
-		glEnd();
-	}
-
-	// SPHERE ============================================
-	Sphere::Sphere() : Primitive(), radius(1.0f)
-	{
-		type = PrimitiveTypes::Primitive_Sphere;
-	}
-
-	Sphere::Sphere(float radius) : Primitive(), radius(radius)
-	{
-		type = PrimitiveTypes::Primitive_Sphere;
-	}
-
-	void Sphere::InnerRender() const
-	{
-		glutSolidSphere(radius, 25, 25);
-	}
-
-
-	// CYLINDER ============================================
-	Cylinder::Cylinder() : Primitive(), radius(1.0f), height(1.0f)
-	{
-		type = PrimitiveTypes::Primitive_Cylinder;
-	}
-
-	Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
-	{
-		type = PrimitiveTypes::Primitive_Cylinder;
-	}
-
-	void Cylinder::InnerRender() const
-	{
-		int n = 30;
-
-		// Cylinder Bottom
-		glBegin(GL_POLYGON);
-
-		for (int i = 360; i >= 0; i -= (360 / n))
-		{
-			float a = i * M_PI / 180; // degrees to radians
-			glVertex3f(-height * 0.5f, radius * cos(a), radius * sin(a));
-		}
-		glEnd();
-
-		// Cylinder Top
-		glBegin(GL_POLYGON);
-		glNormal3f(0.0f, 0.0f, 1.0f);
-		for (int i = 0; i <= 360; i += (360 / n))
-		{
-			float a = i * M_PI / 180; // degrees to radians
-			glVertex3f(height * 0.5f, radius * cos(a), radius * sin(a));
-		}
-		glEnd();
-
-		// Cylinder "Cover"
-		glBegin(GL_QUAD_STRIP);
-		for (int i = 0; i < 480; i += (360 / n))
-		{
-			float a = i * M_PI / 180; // degrees to radians
-
-			glVertex3f(height*0.5f, radius * cos(a), radius * sin(a));
-			glVertex3f(-height * 0.5f, radius * cos(a), radius * sin(a));
-		}
-		glEnd();
 	}
 
 	// LINE ==================================================

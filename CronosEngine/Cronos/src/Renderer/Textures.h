@@ -5,7 +5,7 @@
 
 namespace Cronos {
 
-	enum class TextureType { NONE = -1, ICON, DIFFUSE, SPECULAR};
+	enum class TextureType { NONE = -1, ICON, AMBIENT, DIFFUSE, SPECULAR, NORMALMAP, HEIGHTMAP, LIGHTMAP};
 
 	class Texture
 	{
@@ -21,6 +21,7 @@ namespace Cronos {
 		inline int GetHeight() const { return m_Height; }
 		inline int GetBPP() const { return m_BPP; }
 		inline int GetFormat() const { return m_Format; }
+		const inline std::string& GetTexturePath() const { return m_Filepath; }
 
 		inline uint GetTextureID() const { return m_ID; }
 		inline TextureType GetTextureType() const { return m_TextureType; }

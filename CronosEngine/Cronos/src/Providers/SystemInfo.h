@@ -82,23 +82,23 @@ namespace Cronos
 		const float GetRAMSizeFromSDL()								const	{ return (float)SDL_GetSystemRAM() / KBTOMB; } //In GB
 
 		//Getting Stats of Memory from MEMORYSTATUSEX
-		const uint32 GetRAMSize()									const	{ return (uint32)m_MemoryInfo.dwLength; } //In GB
-		const uint32 GetPercentageOfMemoryLoad()					const	{ return (uint32)m_MemoryInfo.dwMemoryLoad; } //In %
+		const uint32 GetRAMSize()									const	{ return (uint32)(m_MemoryInfo.dwLength); } //In GB
+		const uint32 GetPercentageOfMemoryLoad()					const	{ return (uint32)(m_MemoryInfo.dwMemoryLoad); } //In %
 		
-		const uint64 GetPhysicalMemory()							const	{ return (uint64)m_MemoryInfo.ullTotalPhys/BTOGB; } //In GB
-		const uint64 GetFreePhysicalMemory()						const	{ return (uint64)m_MemoryInfo.ullAvailPhys/BTOGB; } //In GB
-		const uint64 GetUsedPhysicalMemory()						const	{ return (uint64)((m_MemoryInfo.ullTotalPhys - m_MemoryInfo.ullAvailPhys)/BTOGB); } //In GB
+		const uint64 GetPhysicalMemory()							const	{ return (uint64)(m_MemoryInfo.ullTotalPhys / BTOGB); } //In GB
+		const uint64 GetFreePhysicalMemory()						const	{ return (uint64)(m_MemoryInfo.ullAvailPhys / BTOGB); } //In GB
+		const uint64 GetUsedPhysicalMemory()						const	{ return (uint64)((m_MemoryInfo.ullTotalPhys - m_MemoryInfo.ullAvailPhys) / BTOGB); } //In GB
 		
-		const uint64 GetVirtualMemory()								const	{ return (uint64)m_MemoryInfo.ullTotalVirtual/BTOGB; } //In GB
-		const uint64 GetFreeVirtualMemory()							const	{ return (uint64)m_MemoryInfo.ullAvailVirtual/BTOGB; } //In GB
+		const uint64 GetVirtualMemory()								const	{ return (uint64)(m_MemoryInfo.ullTotalVirtual / BTOGB); } //In GB
+		const uint64 GetFreeVirtualMemory()							const	{ return (uint64)(m_MemoryInfo.ullAvailVirtual / BTOGB); } //In GB
 		
-		const uint64 GetFreeExtendedMemory()						const	{ return (uint64)m_MemoryInfo.ullAvailExtendedVirtual/BTOMB; } //In MB
+		const uint64 GetFreeExtendedMemory()						const	{ return (uint64)(m_MemoryInfo.ullAvailExtendedVirtual/BTOMB); } //In MB
 		
-		const uint64 GetPageFileMemory()							const	{ return (uint64)m_MemoryInfo.ullTotalPageFile / BTOGB; } //In GB
-		const uint64 GetFreePageFileMemory()						const	{ return (uint64)m_MemoryInfo.ullAvailPageFile / BTOGB; } //In GB
-
-		const uint GetVirtualMemoryUsedByProcess()					const { return(uint)mProcess_vMemUsed / BTOMB; } //In GB
-		const uint GetPhysMemoryUsedByProcess()						const { return(uint)mProcess_physMemUsed / BTOMB; } //In GB
+		const uint64 GetPageFileMemory()							const	{ return (uint64)(m_MemoryInfo.ullTotalPageFile / BTOGB); } //In GB
+		const uint64 GetFreePageFileMemory()						const	{ return (uint64)(m_MemoryInfo.ullAvailPageFile / BTOGB); } //In GB
+																							 
+		const uint GetVirtualMemoryUsedByProcess()					const { return(uint)(mProcess_vMemUsed / BTOMB); } //In GB
+		const uint GetPhysMemoryUsedByProcess()						const { return(uint)(mProcess_physMemUsed / BTOMB); } //In GB
 
 		//Getting Stats of Memory from MMRG
 		const uint GetMemStatsFromMMGR_TotalReportedMemory()		const;
