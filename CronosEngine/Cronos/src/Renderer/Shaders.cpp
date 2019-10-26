@@ -25,73 +25,102 @@ namespace Cronos {
 		glUseProgram(0);
 	}
 
+	int Shader::GetUniformLocation(const std::string & name)
+	{
+		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+			return m_UniformLocationCache[name];
+
+		int loc = glGetUniformLocation(m_ID, name.c_str());
+
+		if (loc == -1)
+			std::cout << "Warning! Uniform '" << name << "' doesn't exist! (loc == -1)" << std::endl;
+
+		m_UniformLocationCache[name] = loc;
+		return loc;
+	}
+
 	void Shader::SetUniformVec3f(const std::string& name, glm::vec3& vector3f)
 	{
-		glUniform3f(glGetUniformLocation(m_ID, name.c_str()), vector3f.x, vector3f.y, vector3f.z);
+		glUniform3f(GetUniformLocation(name), vector3f.x, vector3f.y, vector3f.z);
 	}
 
 	void Shader::SetUniformMat4f(const std::string& name, const mat4x4& mat)
 	{
-		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat/*&mat[0][0]*/);
+		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat);
 	}
 
 	void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& mat)
 	{
-		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
 	}
 
 	void Shader::SetUniform1i(const std::string & name, int value)
 	{
-		glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+		glUniform1i(GetUniformLocation(name), value);
 	}
 
+
+	//Shader Creation
 	uint Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		//Vertex
-		uint vShader = glCreateShader(GL_VERTEX_SHADER);
-		const char* sSource = vertexShader.c_str();
-		glShaderSource(vShader, 1, &sSource, NULL);
-		glCompileShader(vShader);
+		uint program = glCreateProgram();
+		uint vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+		uint fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-		int success;
-		char info[512];
-		glGetShaderiv(vShader, GL_COMPILE_STATUS, &success);
-		if (!success)
-		{
-			glGetShaderInfoLog(vShader, 512, NULL, info);
-			LOG("Error in VShader compilation: ", info);
+		glAttachShader(program, vs);
+		glAttachShader(program, fs);
+		glLinkProgram(program);
+		glValidateProgram(program);
+
+		int result;
+		glGetProgramiv(program, GL_COMPILE_STATUS, &result);
+
+		if (result == GL_FALSE) {
+
+			int length;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+			char *message = (char*)alloca(length * sizeof(char));
+
+			glGetShaderInfoLog(program, length, &length, message);
+			LOG("Error in Shader Program Linking: %s", message);
 		}
 
-		//Fragment
-		uint fShader = glCreateShader(GL_FRAGMENT_SHADER);
-		sSource = fragmentShader.c_str();
-		glShaderSource(fShader, 1, &sSource, NULL);
-		glCompileShader(fShader);
-		
-		glGetShaderiv(fShader, GL_COMPILE_STATUS, &success);
-		if (!success)
+		glDetachShader(program, vs);
+		glDetachShader(program, fs);
+		glDeleteShader(vs);
+		glDeleteShader(fs);
+
+		if (result == GL_FALSE)
 		{
-			glGetShaderInfoLog(fShader, 512, NULL, info);
-			LOG("Error in FShader compilation: ", info);
+			glDeleteProgram(program);
+			return 0;
 		}
 
-		
-		//Shader Link
-		uint ShaderProgram = glCreateProgram();
-		glAttachShader(ShaderProgram, vShader);
-		glAttachShader(ShaderProgram, fShader);
-		glLinkProgram(ShaderProgram);
+		return program;
+	}
 
-		glGetProgramiv(ShaderProgram, GL_LINK_STATUS, &success);
-		if (!success)
-		{
-			glGetProgramInfoLog(ShaderProgram, 512, NULL, info);
-			LOG("Error in Shader Linking: ", info);
+	uint Shader::CompileShader(uint type, const std::string& source)
+	{
+		uint id = glCreateShader(type);
+		const char* src = source.c_str();
+		glShaderSource(id, 1, &src, nullptr);
+		glCompileShader(id);
+
+		int result;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+
+		if (result == GL_FALSE) {
+
+			int length;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+			char *message = (char*)alloca(length * sizeof(char));
+
+			glGetShaderInfoLog(id, length, &length, message);
+			LOG("Error in %s Shader compilation: %s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), message);
+			glDeleteShader(id);
+			return 0;
 		}
 
-		glDeleteShader(vShader);
-		glDeleteShader(fShader);
-
-		return ShaderProgram;
+		return id;
 	}
 }

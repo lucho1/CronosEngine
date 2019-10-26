@@ -121,7 +121,6 @@ namespace Cronos {
 		update_status ret = UPDATE_CONTINUE;
 		PrepareUpdate();
 
-		LOG("APP UPDATE");
 		for (auto& element : m_ModulesList)
 		{
 			if (ret == UPDATE_CONTINUE)
