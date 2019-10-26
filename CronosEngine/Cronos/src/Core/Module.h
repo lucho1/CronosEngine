@@ -36,7 +36,6 @@ namespace Cronos {
 
 		virtual void SaveModuleData(json& JSONFile) const {}
 		virtual void LoadModuleData(json& JSONFile) {}
-
 	};
 
 }

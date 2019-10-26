@@ -1,12 +1,12 @@
 #include "Providers/cnpch.h"
 
-#include "Model.h"
+#include "AssimpImporter.h"
 #include "Application.h"
-#include "Modules/TextureManager.h"
-#include "Modules/Scene.h"
+//#include "Modules/TextureManager.h"
+//#include "Modules/Scene.h"
 
-#include "glm/gtx/transform.hpp"
-#include <glm/gtx/matrix_decompose.hpp>
+//#include "glm/gtx/transform.hpp"
+//#include <glm/gtx/matrix_decompose.hpp>
 
 
 #include "mmgr/mmgr.h"
@@ -14,124 +14,6 @@
 namespace Cronos {
 
 	// ---------------------------------- CRONOS MESHES ----------------------------------
-	//CronosMesh::CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*>& textures)
-	//{
-	//	m_VertexVector = vertices;
-	//	m_IndicesVector = indices;
-	//	m_TexturesVector = textures;
-
-	//	SetupMesh();
-	//}
-
-	//CronosMesh::~CronosMesh()
-	//{
-	//	RELEASE(m_MeshVAO);
-	//	RELEASE(m_MeshIBO);
-	//	RELEASE(m_MeshVBO);
-	//}
-
-	//void CronosMesh::Draw(Shader* shader, bool bindShader)
-	//{
-	//	m_MeshVAO->Bind();
-
-	//	if (bindShader)
-	//	{
-	//		shader->Bind();
-	//		shader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-	//		shader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-	//		shader->SetUniformMat4f("u_Model", GetTransformation());
-	//	}
-
-	//	std::vector< Texture*>::iterator item = m_TexturesVector.begin();
-	//	for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-	//	{
-	//		(*item)->Bind((*item)->GetTextureID());
-
-	//		if ((*item)->GetTextureType() == TextureType::AMBIENT)
-	//			shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
-	//		if((*item)->GetTextureType() == TextureType::DIFFUSE)
-	//			shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
-	//		if ((*item)->GetTextureType() == TextureType::SPECULAR)
-	//			shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
-	//		if ((*item)->GetTextureType() == TextureType::NORMALMAP)
-	//			shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
-	//		if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
-	//			shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
-	//		if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
-	//			shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
-	//		//else
-	//		//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
-	//	}
-
-
-	//	glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-	//	for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-	//		(*item)->Unbind();
-
-	//	shader->Unbind();
-	//}
-
-	//void CronosMesh::DrawVerticesNormals()
-	//{
-	//	glLineWidth(2.0f);
-	//	float linelength = 0.2f;
-	//	glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
-	//	std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-	//	for (; item != m_VertexVector.end(); item++)
-	//	{
-	//		glm::vec3 pos = (*item).Position;
-	//		glm::vec3 norm = (*item).Position + (*item).Normal * linelength;
-
-	//		glBegin(GL_LINES);
-	//			glVertex3f(pos.x, pos.y, pos.z);
-	//			glVertex3f(norm.x, norm.y, norm.z);
-	//		glEnd();
-	//	}
-	//}
-
-	//void CronosMesh::DrawPlanesNormals()
-	//{
-	//	glLineWidth(2.0f);
-	//	float linelength = 0.2f;
-	//	glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
-	//	for (uint i = 0; i < m_IndicesVector.size(); i += 3)
-	//	{
-	//		glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
-	//		glm::vec3 p2 = m_VertexVector[m_IndicesVector[i + 1]].Position;
-	//		glm::vec3 p3 = m_VertexVector[m_IndicesVector[i + 2]].Position;
-
-	//		glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
-	//		PlaneNormal = glm::normalize(PlaneNormal);
-	//		PlaneNormal *= linelength;
-
-	//		glm::vec3 TriCenter = { 0, 0, 0 };
-	//		TriCenter.x = (p1.x + p2.x + p3.x) / 3;
-	//		TriCenter.y = (p1.y + p2.y + p3.y) / 3;
-	//		TriCenter.z = (p1.z + p2.z + p3.z) / 3;
-
-	//		glBegin(GL_LINES);
-	//		glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-	//		glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
-	//		glEnd();
-	//	}
-	//}
-
-	//void CronosMesh::SetupMesh()
-	//{
-	//	m_MeshVAO = new VertexArray();
-	//	m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
-
-	//	m_MeshVBO->SetLayout({
-	//		{Cronos::VertexDataType::VEC3F, "a_Position"},
-	//		{Cronos::VertexDataType::VEC3F, "a_Normal"},
-	//		{Cronos::VertexDataType::VEC2F, "a_TexCoords"}
-	//	});
-	//	m_MeshVAO->AddVertexBuffer(*m_MeshVBO);
-
-	//	m_MeshIBO = new IndexBuffer(&m_IndicesVector[0], m_IndicesVector.size());
-	//	m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
-	//}
-
 	//void CronosMesh::ScaleMesh(glm::vec3 ScaleMagnitude)
 	//{
 	//	//glm::mat4 scale = glm::mat4(1.0f);
@@ -193,142 +75,17 @@ namespace Cronos {
 	//	m_Rotation = glm::conjugate(m_Rotation);
 	//}
 
-	//void CronosMesh::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
-	//{
-	//	std::vector<Texture*>::iterator item = m_TexturesVector.begin();
-	//	for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-	//	{
-	//		if ((*item)->GetTextureType() == textureType)
-	//		{
-	//			(*item)->~Texture();
-	//			delete (*item);
-	//			m_TexturesVector.erase(item);
-	//		}
-	//	}
-
-	//	m_TexturesVector.insert(m_TexturesVector.end(), newTexture.begin(), newTexture.end());
-	//}
-
-
-	// ---------------------------------- CRONOS MODELS ----------------------------------
-	CronosModel::CronosModel(const std::string& filepath)
-	{
-		//AssimpCronosTranslator m_ACT(this);
-		//m_ACT.LoadModel(filepath);
-		//CalculateModelAxis();
-	}
-
-	CronosModel::~CronosModel()
-	{
-		//std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
-		//for (; item != m_ModelMeshesVector.end(); item++)
-		//{
-		//	//(*item)->~CronosMesh();
-		//	RELEASE(*item);
-		//	m_ModelMeshesVector.erase(item);
-		//}
-		//
-		//m_ModelMeshesVector.clear();
-	}
-
-	//void CronosModel::Draw(Shader* shader, bool bindShader)
-	//{
-	//	//Just iterate all model's meshes and draw them
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//		m_ModelMeshesVector[i]->Draw(shader, bindShader);
-	//}
-
-	//void CronosModel::DrawVerticesNormals()
-	//{
-	//	//Just iterate all model's meshes and draw them
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//		m_ModelMeshesVector[i]->DrawVerticesNormals();
-	//}
-
-	//void CronosModel::DrawPlanesNormals()
-	//{
-	//	//Just iterate all model's meshes and draw them
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//		m_ModelMeshesVector[i]->DrawPlanesNormals();
-	//}
-
-
-	////TODO: Change this, is not optimal!
-	//void CronosModel::ScaleModel(glm::vec3 ScaleMagnitude)
-	//{
-	//	//Scale all Meshes
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//	{
-	//		m_ModelMeshesVector[i]->ScaleMesh(ScaleMagnitude);
-	//		m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
-	//	}
-
-	//	CalculateModelAxis();
-	//}
-
-	////TODO: Change this, is not optimal!
-	//void CronosModel::MoveModel(glm::vec3 MoveAxis, float moveMagnitude)
-	//{
-	//	//Move all Meshes
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//	{
-	//		m_ModelMeshesVector[i]->MoveMesh(MoveAxis, moveMagnitude);
-	//		m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
-	//	}
-
-	//	CalculateModelAxis();
-	//}
-
-	//void CronosModel::RotateModel(float RotDegrees, glm::vec3 RotAxis)
-	//{
-	//	//Rotate all Meshes
-	//	for (uint i = 0; i < m_ModelMeshesVector.size(); i++)
-	//	{
-	//		m_ModelMeshesVector[i]->RotateMesh(RotDegrees, RotAxis, glm::vec3(1.0f));
-	//		m_Transformation *= m_ModelMeshesVector[i]->GetTransformation();
-	//	}
-
-	//	CalculateModelAxis();
-	//}
-
-	////TODO: Change this, is not optimal!
-	//void CronosModel::CalculateModelAxis()
-	//{
-	//	//glm::vec3 new_axis = (m_ModelMaxVertexPos - m_ModelMinVertexPos) / 2.0f;
-	//	//m_ModelAxis = new_axis;
-	//}
-
-	//void CronosModel::DrawModelAxis()
-	//{
-	//	glm::vec3 axis = GetModelAxis();
-	//	float linelength = 1.0f;
-	//	glLineWidth(2.0f);
-	//	glBegin(GL_LINES);
-	//		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-	//		glVertex3f(axis.x, axis.y, axis.z);
-	//		glVertex3f(axis.x + linelength, axis.y, axis.z);
-	//		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-	//		glVertex3f(axis.x, axis.y, axis.z);
-	//		glVertex3f(axis.x, axis.y + linelength, axis.z);
-	//		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-	//		glVertex3f(axis.x, axis.y, axis.z);
-	//		glVertex3f(axis.x, axis.y, axis.z + linelength);
-	//	glEnd();
-	//}
-
 
 	// ---------------------------------- ASSIMP-CRONOS MODEL TRANSLATOR ----------------------------------
-	AssimpCronosTranslator::AssimpCronosTranslator(/*CronosModel* Cr_Model*/)
+	AssimpCronosImporter::AssimpCronosImporter()
 	{
 		// Stream log messages to Debug window
 		struct aiLogStream stream;
 		stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 		aiAttachLogStream(&stream);
-
-		//m_CronosModel = Cr_Model;
 	}
 
-	GameObject* AssimpCronosTranslator::LoadModel(const std::string& filepath)
+	GameObject* AssimpCronosImporter::LoadModel(const std::string& filepath)
 	{
 		//Generate an Assimp Importer & Call ReadFile() to actually read the model file
 		//aiProcess_Triangulate makes all the model's primitive shapes to be triangles if they aren't
@@ -361,7 +118,7 @@ namespace Cronos {
 		return mother_GO;
 	}
 
-	void AssimpCronosTranslator::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
+	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Assimp Node");
 		//Process node's meshes if there are
@@ -378,7 +135,7 @@ namespace Cronos {
 			ProcessAssimpNode(as_node->mChildren[i], as_scene, motherGameObj);
 	}
 
-	void AssimpCronosTranslator::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)
+	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Model Mesh");
 		std::vector<CronosVertex>tmp_VertexVector;
@@ -471,7 +228,7 @@ namespace Cronos {
 		LOG("Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
 	}
 
-	std::vector<Texture*> AssimpCronosTranslator::LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType TexType, GameObject* motherGameObj)
+	std::vector<Texture*> AssimpCronosImporter::LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType TexType, GameObject* motherGameObj)
 	{
 		std::vector<Texture*> ret;
 		for (unsigned int i = 0; i < material->GetTextureCount(Texturetype); i++)

@@ -5,9 +5,10 @@
 #include "Providers/Globals.h"
 #include "Renderer/Primitive.h"
 #include "GameObject/GameObject.h"
+#include "GameObject/PrimitiveGameObject.h"
 #include "Renderer/Shaders.h"
 
-#include "Renderer/Model.h"
+#include "Providers/AssimpImporter.h"
 
 namespace Cronos {
 
@@ -36,7 +37,7 @@ namespace Cronos {
 		Plane m_FloorPlane;
 		glm::mat4 modelMatDef = glm::mat4(1.0f);
 
-		AssimpCronosTranslator m_ACT;
+		AssimpCronosImporter m_CNAssimp_Importer;
 	};
 
 }

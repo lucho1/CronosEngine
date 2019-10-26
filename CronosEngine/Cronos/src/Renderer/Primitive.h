@@ -8,12 +8,9 @@ namespace Cronos {
 
 	enum PrimitiveTypes
 	{
-		Primitive_Point,
+		Null,
 		Primitive_Line,
-		Primitive_Plane,
-		Primitive_Cube,
-		Primitive_Sphere,
-		Primitive_Cylinder
+		Primitive_Plane
 	};
 
 	class Primitive
@@ -37,40 +34,6 @@ namespace Cronos {
 
 	protected:
 		PrimitiveTypes type;
-	};
-
-	// ============================================
-	class Cube : public Primitive
-	{
-	public:
-		Cube();
-		Cube(float sizeX, float sizeY, float sizeZ);
-		void InnerRender() const;
-	public:
-		vec3 size;
-	};
-
-	// ============================================
-	class Sphere : public Primitive
-	{
-	public:
-		Sphere();
-		Sphere(float radius);
-		void InnerRender() const;
-	public:
-		float radius;
-	};
-
-	// ============================================
-	class Cylinder : public Primitive
-	{
-	public:
-		Cylinder();
-		Cylinder(float radius, float height);
-		void InnerRender() const;
-	public:
-		float radius;
-		float height;
 	};
 
 	// ============================================

@@ -10,6 +10,7 @@ namespace Cronos {
 
 	class GameObject
 	{
+		friend class PrimitiveGameObject;
 	public:
 		
 		GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
@@ -17,7 +18,7 @@ namespace Cronos {
 
 		~GameObject();
 
-		void Update(float dt);
+		virtual void Update(float dt);
 		void Enable();
 		void Disable();
 		void CleanUp();
@@ -45,9 +46,11 @@ namespace Cronos {
 			return nullptr;
 		}
 
-	private:
+	public:
 
-		
+		bool m_IsPrimitive = false;
+
+	private:
 
 		std::string m_Name;
 		std::string m_Path;

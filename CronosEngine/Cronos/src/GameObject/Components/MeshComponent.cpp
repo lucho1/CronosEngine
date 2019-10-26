@@ -56,8 +56,6 @@ namespace Cronos {
 
 		m_MeshIBO = new IndexBuffer(&m_IndicesVector[0], m_IndicesVector.size());
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
-
-		//SetTextures(textures);
 	}
 
 	void MeshComponent::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
@@ -86,6 +84,9 @@ namespace Cronos {
 	{
 		if (!isEnabled())
 			return;
+
+		if (GetParent()->m_IsPrimitive == true)
+			bindShader = false;
 
 		m_MeshVAO->Bind();
 		if (bindShader)
@@ -126,7 +127,6 @@ namespace Cronos {
 
 		shader->Unbind();
 		
-		m_DebugDraw = true;
 		if (m_DebugDraw)
 		{
 			DrawVerticesNormals();

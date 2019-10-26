@@ -141,13 +141,7 @@
     <ClInclude Include="src\Renderer\Buffers.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer\CronosPrimitive.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Model.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Primitive.h">
@@ -1282,6 +1276,10 @@
     <ClInclude Include="src\GameObject\Components\TransformComponent.h">
       <Filter>src\GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
+    <ClInclude Include="src\Providers\AssimpImporter.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1356,13 +1354,7 @@
     <ClCompile Include="src\Renderer\Buffers.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Renderer\CronosPrimitive.cpp">
-      <Filter>src\Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
-      <Filter>src\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Model.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Primitive.cpp">
@@ -1386,6 +1378,10 @@
     <ClCompile Include="src\GameObject\Components\MeshComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp">
       <Filter>src\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
+    <ClCompile Include="src\Providers\AssimpImporter.cpp">
+      <Filter>src\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

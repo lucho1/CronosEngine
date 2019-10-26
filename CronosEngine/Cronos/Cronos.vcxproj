@@ -111,6 +111,7 @@
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Module.h" />
     <ClInclude Include="src\GameObject\Components\Component.h" />
+    <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\Components\MeshComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
@@ -136,9 +137,8 @@
     <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
-    <ClInclude Include="src\Renderer\CronosPrimitive.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
-    <ClInclude Include="src\Renderer\Model.h" />
+    <ClInclude Include="src\Providers\AssimpImporter.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
     <ClInclude Include="src\Renderer\Shaders.h" />
     <ClInclude Include="src\Renderer\Textures.h" />
@@ -519,6 +519,7 @@
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
+    <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\MeshComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
@@ -545,9 +546,8 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Renderer\Buffers.cpp" />
-    <ClCompile Include="src\Renderer\CronosPrimitive.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
-    <ClCompile Include="src\Renderer\Model.cpp" />
+    <ClCompile Include="src\Providers\AssimpImporter.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
     <ClCompile Include="src\Renderer\Shaders.cpp" />
     <ClCompile Include="src\Renderer\Textures.cpp" />

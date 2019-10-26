@@ -23,11 +23,10 @@ namespace Cronos {
 		MeshComponent(GameObject* GObjAttached);
 		~MeshComponent();
 
-		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
-		void Draw(Shader* shader, bool bindShader);
-		void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
-
 		virtual void Update(float dt) override;
+
+		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
+		void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
 
 		//Getters
 		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
@@ -37,6 +36,8 @@ namespace Cronos {
 		static ComponentType GetType() { return ComponentType::MESH; };
 
 		void RecalculateNormals() { m_NormalsCalculated = false; }
+
+		void Draw(Shader* shader, bool bindShader);
 
 	private:
 

@@ -4,7 +4,7 @@
 #include "Application.h"
 
 //#include "Renderer/Model.h"
-#include "Renderer/CronosPrimitive.h"
+//#include "Renderer/CronosPrimitive.h"
 
 #include <glm/gtx/transform.hpp>
 
@@ -15,7 +15,7 @@ namespace Cronos {
 	//static CronosModel* vmodelxd;
 	static GameObject* vmodelxd;
 	//static CronosModel* NanoSuitModel;
-	//static CronosPrimitive* vCubePrimitivexd;
+	static PrimitiveGameObject* vCubePrimitivexd;
 
 	/*
 	AssimpCronosTranslator m_ACT(this);
@@ -46,9 +46,10 @@ namespace Cronos {
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN(), "");
 
 
-		vmodelxd = m_ACT.LoadModel(std::string("res/BakerHouse.fbx"));
+		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
 		m_GameObjects.push_back(vmodelxd);
-
+		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE);
+		m_GameObjects.push_back(vCubePrimitivexd);
 		
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
@@ -157,7 +158,7 @@ namespace Cronos {
 
 		//BasicTestShader->Bind();
 		vmodelxd->Update(dt);
-
+		vCubePrimitivexd->Update(dt);
 		//std::list<GameObject*>::iterator listItem = vmodelxd->m_Childs.begin();
 		//for (; listItem != vmodelxd->m_Childs.end(); listItem++)
 		//{
