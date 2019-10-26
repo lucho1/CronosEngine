@@ -13,6 +13,7 @@
 namespace Cronos {
 
 	static CronosModel* vmodelxd;
+	static CronosModel* NanoSuitModel;
 	static CronosPrimitive* vCubePrimitivexd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
@@ -33,6 +34,7 @@ namespace Cronos {
 
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
 		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
+		NanoSuitModel = new CronosModel("res/nanosuit/nanosuit.obj");
 
 		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN());
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN());
@@ -65,8 +67,12 @@ namespace Cronos {
 			out vec4 color;
 			in vec2 v_TexCoords;
 
+			uniform sampler2D u_AmbientTexture;
 			uniform sampler2D u_DiffuseTexture;
 			uniform sampler2D u_SpecularTexture;
+			uniform sampler2D u_NormalMap;
+			uniform sampler2D u_HeightMap;
+			uniform sampler2D u_LightMap;
 
 			void main()
 			{
@@ -138,10 +144,10 @@ namespace Cronos {
 		//BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		//BasicTestShader->SetUniformMat4f("u_Model", vmodelxd->GetTransformation());
 		//BasicTestShader->Unbind();
-
+		NanoSuitModel->Draw(BasicTestShader, true);
+		
 		vmodelxd->Draw(BasicTestShader, true);
 		vmodelxd->DrawModelAxis();
-
 		vmodelxd->DrawPlanesNormals();
 		glColor3f(White.r, White.g, White.b);
 		vCubePrimitivexd->Draw(BasicTestShader, false);

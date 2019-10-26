@@ -52,10 +52,18 @@ namespace Cronos {
 		{
 			(*item)->Bind((*item)->GetTextureID());
 
+			if ((*item)->GetTextureType() == TextureType::AMBIENT)
+				shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
 			if((*item)->GetTextureType() == TextureType::DIFFUSE)
 				shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
 			if ((*item)->GetTextureType() == TextureType::SPECULAR)
 				shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
+			if ((*item)->GetTextureType() == TextureType::NORMALMAP)
+				shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
+			if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
+				shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
+			if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
+				shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
 			//else
 			//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
 		}
@@ -104,7 +112,7 @@ namespace Cronos {
 
 			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
 			glm::normalize(PlaneNormal);
-			//PlaneNormal /= abs(PlaneNormal);
+			PlaneNormal *= linelength;
 
 			glm::vec3 TriCenter = { 0, 0, 0 };
 			TriCenter.x = (p1.x + p2.x + p3.x) / 3;
@@ -423,11 +431,23 @@ namespace Cronos {
 		{
 			aiMaterial *material = as_scene->mMaterials[as_mesh->mMaterialIndex];
 
+			std::vector<Texture*> ambientMaps = LoadTextures(material, aiTextureType_AMBIENT, TextureType::AMBIENT);
+			tmp_TextureVector.insert(tmp_TextureVector.end(), ambientMaps.begin(), ambientMaps.end());
+
 			std::vector<Texture*> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
 			tmp_TextureVector.insert(tmp_TextureVector.end(), diffuseMaps.begin(), diffuseMaps.end());
 
 			std::vector<Texture*> specularMaps = LoadTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
 			tmp_TextureVector.insert(tmp_TextureVector.end(), specularMaps.begin(), specularMaps.end());
+
+			std::vector<Texture*> normalMaps = LoadTextures(material, aiTextureType_NORMALS, TextureType::NORMALMAP);
+			tmp_TextureVector.insert(tmp_TextureVector.end(), normalMaps.begin(), normalMaps.end());	
+
+			std::vector<Texture*> heightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::HEIGHTMAP);
+			tmp_TextureVector.insert(tmp_TextureVector.end(), heightMaps.begin(), heightMaps.end());
+
+			std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::LIGHTMAP);
+			tmp_TextureVector.insert(tmp_TextureVector.end(), lightMaps.begin(), lightMaps.end());
 		}
 
 		//m_CronosModel->m_ModelMaxVertexPos = maxPos;
@@ -445,13 +465,26 @@ namespace Cronos {
 			aiString str;
 			material->GetTexture(Texturetype, i, &str);
 
-			//std::string path = m_CronosModel->m_ModelDirectoryPath.c_str();
-			//const char* charsss = m_CronosModel->m_ModelDirectoryPath.c_str();
-			//path += charsss;
+			/*bool skip = false;
+			for (unsigned int j = 0; j < textures_loaded.size(); j++)
+			{
+				if (std::strcmp(textures_loaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
+				{
+					textures_loaded.push_back(textures_loaded[j]);
+					skip = true;
+					break;
+				}
+			}
 
-			//if (path.size() != 0)
-			//	path.append("\\");
-			//path.append(str.C_Str());
+			if (!skip)
+			{
+				std::string path = m_CronosModel->m_ModelDirectoryPath + '/' + str.C_Str();
+
+				Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
+				ret.push_back(tex);
+				textures_loaded.push_back(tex);
+			}*/
+
 			std::string path = m_CronosModel->m_ModelDirectoryPath + '/' + str.C_Str();
 
 			Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
