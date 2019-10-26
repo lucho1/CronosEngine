@@ -1,5 +1,5 @@
-#ifndef _COMPONENTTRANSFORM_H_
-#define _COMPONENTTRANSFORM_H_
+#ifndef _TRANSFORMCOMPONENT_H_
+#define _TRANSFORMCOMPONENT_H_
 
 #include "glm/glm.hpp"
 #include "Component.h"
@@ -8,12 +8,12 @@ namespace Cronos {
 
 	class GameObject;
 
-	class ComponentTransform : public Component
+	class TransformComponent : public Component
 	{
 	public:
 
-		ComponentTransform(GameObject* parentGo, bool active = true);
-		~ComponentTransform();
+		TransformComponent(GameObject* parentGo, bool active = true);
+		~TransformComponent();
 
 		virtual void OnStart() override;
 		virtual void Update(float dt) override;

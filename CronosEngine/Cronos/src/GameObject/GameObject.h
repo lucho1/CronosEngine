@@ -2,7 +2,7 @@
 #define _GAMEOBJECT_H_
 
 #include "Components/Component.h"
-#include "Components/ComponentTransform.h"
+#include "Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
 namespace Cronos {

@@ -13,7 +13,7 @@
 namespace Cronos {
 
 	static CronosModel* vmodelxd;
-	static CronosModel* NanoSuitModel;
+	//static CronosModel* NanoSuitModel;
 	static CronosPrimitive* vCubePrimitivexd;
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
@@ -34,7 +34,7 @@ namespace Cronos {
 
 		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
 		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
-		NanoSuitModel = new CronosModel("res/nanosuit/nanosuit.obj");
+	//	NanoSuitModel = new CronosModel("res/nanosuit/nanosuit.obj");
 
 		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN());
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN());
@@ -83,10 +83,10 @@ namespace Cronos {
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
-
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", modelMatDef);
+		BasicTestShader->Unbind();
 
 		return ret;
 	}
@@ -110,14 +110,13 @@ namespace Cronos {
 		glColor3f(White.r, White.g, White.b);
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
 		{
+			glLineWidth(0.5f);
+			glColor3f(White.r, White.g, White.b);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
-
 
 		static float move = 0.0f;
 		static float angle = 0.0f;
@@ -139,16 +138,18 @@ namespace Cronos {
 			angle += 10.0f;
 		}
 
-		//BasicTestShader->Bind();
-		//BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-		//BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-		//BasicTestShader->SetUniformMat4f("u_Model", vmodelxd->GetTransformation());
-		//BasicTestShader->Unbind();
-		NanoSuitModel->Draw(BasicTestShader, true);
+		bool wireDrawing = (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe ? true : false);
+		if (wireDrawing)
+			vmodelxd->Draw(BasicTestShader, false);
+		else
+			vmodelxd->Draw(BasicTestShader, true);
 		
-		vmodelxd->Draw(BasicTestShader, true);
+
+	//	NanoSuitModel->Draw(BasicTestShader, true);
 		vmodelxd->DrawModelAxis();
-		vmodelxd->DrawPlanesNormals();
+		//vmodelxd->DrawPlanesNormals();
+		vmodelxd->DrawVerticesNormals();
+
 		glColor3f(White.r, White.g, White.b);
 		vCubePrimitivexd->Draw(BasicTestShader, false);
 

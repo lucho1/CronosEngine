@@ -12,8 +12,8 @@
 #include "Modules/SDLWindow.h"
 #include "Renderer/Buffers.h"
 #include "GameObject/Components/Component.h"
-#include "GameObject/Components/ComponentTransform.h"
-//#include "SDL/include/SDL.h"
+#include "GameObject/Components/TransformComponent.h"
+
 #include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -453,9 +453,9 @@ namespace Cronos {
 	{
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			glm::vec3 TempPos = CurrentGameObject->GetComponent<ComponentTransform>()->GetPosition();
-			glm::vec3 TempRot = CurrentGameObject->GetComponent<ComponentTransform>()->GetRotation();
-			glm::vec3 TempScale = CurrentGameObject->GetComponent<ComponentTransform>()->GetScale();
+			glm::vec3 TempPos = CurrentGameObject->GetComponent<TransformComponent>()->GetPosition();
+			glm::vec3 TempRot = CurrentGameObject->GetComponent<TransformComponent>()->GetRotation();
+			glm::vec3 TempScale = CurrentGameObject->GetComponent<TransformComponent>()->GetScale();
 
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
@@ -463,17 +463,17 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &TempPos.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &TempPos.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->SetPosition(TempPos);
+			CurrentGameObject->GetComponent<TransformComponent>()->SetPosition(TempPos);
 			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->SetRotation(TempRot);
+			CurrentGameObject->GetComponent<TransformComponent>()->SetRotation(TempRot);
 			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &TempScale.z, 0.1f);
-			CurrentGameObject->GetComponent<ComponentTransform>()->SetScale(TempScale);
+			CurrentGameObject->GetComponent<TransformComponent>()->SetScale(TempScale);
 
 		}
 		ImGui::Separator();

@@ -78,30 +78,29 @@ namespace Cronos {
 
 	void CronosMesh::DrawVerticesNormals()
 	{
-		float linelength = 0.000002f;
 		glLineWidth(2.0f);
+		float linelength = 0.2f;
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
 		{
-
-			//glm::vec3 norm = (*item).Normal + (*item).Position;
 			glm::vec3 pos = (*item).Position;
-			glm::vec3 norm = (*item).Position + (*item).Normal;
+			glm::vec3 norm = (*item).Position + (*item).Normal * linelength;
 
 			glBegin(GL_LINES);
 				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x + linelength, norm.y, norm.z);
-				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x, norm.y + linelength, norm.z);
-				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x, norm.y, norm.z + linelength);
+				glVertex3f(norm.x, norm.y, norm.z);
+				//glVertex3f(pos.x, pos.y, pos.z);
+				//glVertex3f(norm.x, norm.y, norm.z);
+				//glVertex3f(pos.x, pos.y, pos.z);
+				//glVertex3f(norm.x, norm.y, norm.z);
 			glEnd();
 		}
 	}
 
 	void CronosMesh::DrawPlanesNormals()
 	{
+		glLineWidth(2.0f);
 		float linelength = 0.2f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 		for (uint i = 0; i < m_IndicesVector.size(); i += 3)
@@ -111,7 +110,7 @@ namespace Cronos {
 			glm::vec3 p3 = m_VertexVector[m_IndicesVector[i + 2]].Position;
 
 			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
-			glm::normalize(PlaneNormal);
+			PlaneNormal = glm::normalize(PlaneNormal);
 			PlaneNormal *= linelength;
 
 			glm::vec3 TriCenter = { 0, 0, 0 };
@@ -120,8 +119,8 @@ namespace Cronos {
 			TriCenter.z = (p1.z + p2.z + p3.z) / 3;
 
 			glBegin(GL_LINES);
-				glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-				glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
+			glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
+			glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
 			glEnd();
 		}
 	}

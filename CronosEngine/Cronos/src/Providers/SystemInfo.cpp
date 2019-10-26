@@ -193,7 +193,7 @@ namespace Cronos {
 		glGetIntegerv(0x9048, &tmp_GPUTotalVRAM);
 
 		m_GPUTotalVRAM = tmp_GPUTotalVRAM;
-		return m_GPUTotalVRAM/KBTOMB;
+		return m_GPUTotalVRAM/(GLint)KBTOMB;
 	}
 
 
@@ -203,7 +203,7 @@ namespace Cronos {
 		glGetIntegerv(0x9049, &tmp_GPUCurrentVRAM);
 
 		m_GPUCurrentVRAM = tmp_GPUCurrentVRAM;
-		return tmp_GPUCurrentVRAM/KBTOMB;
+		return tmp_GPUCurrentVRAM/(GLint)KBTOMB;
 	}
 
 
@@ -211,11 +211,11 @@ namespace Cronos {
 	{	
 		GPUPrimaryInfo_IntelGPUDetect tmp;
 		std::wstring tmp_GPUBrand_WString;
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
 		if (getGraphicsDeviceInfo(&tmp.m_GPUVendor, &tmp.m_GPUID, &tmp_GPUBrand_WString, &tmp.mPI_GPUDet_TotalVRAM_Bytes, &tmp.mPI_GPUDet_VRAMUsage_Bytes, &tmp.mPI_GPUDet_CurrentVRAM_Bytes, &tmp.mPI_GPUDet_VRAMReserved_Bytes))
 		{
 			//Converting the WSTRING variable into a std::string
-			std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 			tmp.m_GPUBrand = converter.to_bytes(tmp_GPUBrand_WString);
 			
 			//If you prefer that in a char[] variable type, use (being GPUStr a char[50] for instance):
@@ -284,27 +284,27 @@ namespace Cronos {
 
 	void ProcessorHardware::CheckForCPUInstructionsSet()
 	{
-		if (SDL_Has3DNow() == true)
+		if ((bool)SDL_Has3DNow() == true)
 			m_CPUInstructionSet.Available_3DNow = true;
-		if (SDL_HasRDTSC() == true)
+		if ((bool)SDL_HasRDTSC() == true)
 			m_CPUInstructionSet.RDTSC_Available = true;
-		if (SDL_HasAltiVec() == true)
+		if ((bool)SDL_HasAltiVec() == true)
 			m_CPUInstructionSet.AltiVec_Available = true;
-		if (SDL_HasAVX() == true)
+		if ((bool)SDL_HasAVX() == true)
 			m_CPUInstructionSet.AVX_Available = true;
-		if (SDL_HasAVX2() == true)
+		if ((bool)SDL_HasAVX2() == true)
 			m_CPUInstructionSet.AVX2_Available = true;
-		if (SDL_HasMMX() == true)
+		if ((bool)SDL_HasMMX() == true)
 			m_CPUInstructionSet.MMX_Available = true;
-		if (SDL_HasSSE() == true)
+		if ((bool)SDL_HasSSE() == true)
 			m_CPUInstructionSet.SSE_Available = true;
-		if (SDL_HasSSE2() == true)
+		if ((bool)SDL_HasSSE2() == true)
 			m_CPUInstructionSet.SSE2_Available = true;
-		if (SDL_HasSSE3() == true)
+		if ((bool)SDL_HasSSE3() == true)
 			m_CPUInstructionSet.SSE3_Available = true;
-		if (SDL_HasSSE41() == true)
+		if ((bool)SDL_HasSSE41() == true)
 			m_CPUInstructionSet.SSE41_Available = true;
-		if (SDL_HasSSE42() == true)
+		if ((bool)SDL_HasSSE42() == true)
 			m_CPUInstructionSet.SSE42_Available = true;
 	}
 

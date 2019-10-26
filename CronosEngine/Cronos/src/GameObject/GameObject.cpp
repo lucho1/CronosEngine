@@ -8,9 +8,9 @@ namespace Cronos {
 		: m_Name(name), m_GameObjectID(gameObjectID), m_Active(start_enabled)
 	{
 		Component* Comp = CreateComponent(ComponentType::TRANSFORM);
-		((ComponentTransform*)(Comp))->SetPosition(position);
-		((ComponentTransform*)(Comp))->SetRotation(rotation);
-		((ComponentTransform*)(Comp))->SetScale(scale);
+		((TransformComponent*)(Comp))->SetPosition(position);
+		((TransformComponent*)(Comp))->SetRotation(rotation);
+		((TransformComponent*)(Comp))->SetScale(scale);
 		m_Components.push_back(Comp);
 	}
 
@@ -71,7 +71,7 @@ namespace Cronos {
 			case Cronos::ComponentType::NONE:
 				break;
 			case Cronos::ComponentType::TRANSFORM:
-				ret = new ComponentTransform(this);
+				ret = new TransformComponent(this);
 				break;
 			case Cronos::ComponentType::MESH:
 				break;
