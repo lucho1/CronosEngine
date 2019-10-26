@@ -20,22 +20,26 @@ namespace Cronos {
 	{
 	public:
 
-		MeshComponent(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*>& textures);
+		MeshComponent(GameObject* GObjAttached);
 		~MeshComponent();
 
+		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
 		void Draw(Shader* shader, bool bindShader);
 		void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
+
+		virtual void Update(float dt) override;
 
 		//Getters
 		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
-		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }		
+		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
+
+		static ComponentType GetType() { return ComponentType::MESH; };
 
 		void RecalculateNormals() { m_NormalsCalculated = false; }
 
 	private:
 
-		void SetupMesh();
 		void CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions);
 
 		void DrawVerticesNormals();
@@ -51,7 +55,7 @@ namespace Cronos {
 		VertexBuffer* m_MeshVBO = nullptr;
 		IndexBuffer* m_MeshIBO = nullptr;
 
-		bool m_DebugDraw;
+		bool m_DebugDraw = false;
 		bool m_NormalsCalculated = false;
 	};
 }

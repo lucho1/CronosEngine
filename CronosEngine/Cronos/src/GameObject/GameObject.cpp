@@ -2,10 +2,13 @@
 #include "GameObject.h"
 
 
+#include "Components/TransformComponent.h"
+#include "Components/MeshComponent.h"
+
 namespace Cronos {
 
-	GameObject::GameObject(std::string name, int gameObjectID, bool start_enabled, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-		: m_Name(name), m_GameObjectID(gameObjectID), m_Active(start_enabled)
+	GameObject::GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+		: m_Name(name), m_GameObjectID(gameObjectID), m_Active(start_enabled), m_Path(path)
 	{
 		Component* Comp = CreateComponent(ComponentType::TRANSFORM);
 		((TransformComponent*)(Comp))->SetPosition(position);
@@ -56,11 +59,16 @@ namespace Cronos {
 		}
 	}
 
-	void GameObject::Update(float dt) 
+	void GameObject::Update(float dt)
 	{
-		if(m_Active == true)
+		if (m_Active == true)
+		{
 			for (auto& comp : m_Components)
 				comp->Update(dt);
+
+			for (auto& child : m_Childs)
+				child->Update(dt);
+		}
 	}
 
 	Component* GameObject::CreateComponent(ComponentType type) 
@@ -74,6 +82,7 @@ namespace Cronos {
 				ret = new TransformComponent(this);
 				break;
 			case Cronos::ComponentType::MESH:
+				ret = new MeshComponent(this);
 				break;
 			case Cronos::ComponentType::MESH_RENDERER:
 				break;

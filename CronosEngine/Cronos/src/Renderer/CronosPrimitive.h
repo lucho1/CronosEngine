@@ -37,7 +37,7 @@ namespace Cronos {
 		void CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks);
 		void CreateCone(glm::vec3 size, int figure_slices, int figure_stacks);
 
-		CronosMesh *m_PrimitiveMesh = nullptr;
+		//CronosMesh *m_PrimitiveMesh = nullptr;
 		PrimitiveType m_PrimitiveType = PrimitiveType::NONE;
 	};
 }

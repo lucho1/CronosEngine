@@ -3,7 +3,7 @@
 
 #include "Application.h"
 
-#include "Renderer/Model.h"
+//#include "Renderer/Model.h"
 #include "Renderer/CronosPrimitive.h"
 
 #include <glm/gtx/transform.hpp>
@@ -12,9 +12,15 @@
 
 namespace Cronos {
 
-	static CronosModel* vmodelxd;
+	//static CronosModel* vmodelxd;
+	static GameObject* vmodelxd;
 	//static CronosModel* NanoSuitModel;
-	static CronosPrimitive* vCubePrimitivexd;
+	//static CronosPrimitive* vCubePrimitivexd;
+
+	/*
+	AssimpCronosTranslator m_ACT(this);
+		m_ACT.LoadModel(filepath);
+	*/
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{}
@@ -32,12 +38,16 @@ namespace Cronos {
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
 
-		vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
+		//vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
+		//vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
 	//	NanoSuitModel = new CronosModel("res/nanosuit/nanosuit.obj");
 
-		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN());
-		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN());
+		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN(), "");
+		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN(), "");
+
+
+		vmodelxd = m_ACT.LoadModel(std::string("res/BakerHouse.fbx"));
+		m_GameObjects.push_back(vmodelxd);
 
 		
 		Test->m_Childs.push_back(TestChild);
@@ -86,7 +96,7 @@ namespace Cronos {
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", modelMatDef);
-		BasicTestShader->Unbind();
+		//BasicTestShader->Unbind();
 
 		return ret;
 	}
@@ -124,7 +134,7 @@ namespace Cronos {
 		static glm::mat4 translation = glm::mat4(1.0f);
 
 
-		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+		/*if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
 			vmodelxd->MoveModel(glm::vec3(1, 0, 1), 0);
 
 		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
@@ -136,22 +146,33 @@ namespace Cronos {
 		{
 			vmodelxd->RotateModel(angle, glm::vec3(0, 1, 0));
 			angle += 10.0f;
-		}
+		}*/
 
-		bool wireDrawing = (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe ? true : false);
-		if (wireDrawing)
-			vmodelxd->Draw(BasicTestShader, false);
-		else
-			vmodelxd->Draw(BasicTestShader, true);
+	//	bool wireDrawing = (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe ? true : false);
+	//	if (wireDrawing)
+	//		vmodelxd->Draw(BasicTestShader, false);
+	//	else
+	//		vmodelxd->Draw(BasicTestShader, true);
 		
 
-	//	NanoSuitModel->Draw(BasicTestShader, true);
-		vmodelxd->DrawModelAxis();
-		//vmodelxd->DrawPlanesNormals();
-		vmodelxd->DrawVerticesNormals();
+		//BasicTestShader->Bind();
+		vmodelxd->Update(dt);
+
+		//std::list<GameObject*>::iterator listItem = vmodelxd->m_Childs.begin();
+		//for (; listItem != vmodelxd->m_Childs.end(); listItem++)
+		//{
+		//	(*listItem)->Update();
+		//}
+		
+
+
+	//	//NanoSuitModel->Draw(BasicTestShader, true);
+		//vmodelxd->DrawModelAxis();
+		////vmodelxd->DrawPlanesNormals();
+		//vmodelxd->DrawVerticesNormals();
 
 		glColor3f(White.r, White.g, White.b);
-		vCubePrimitivexd->Draw(BasicTestShader, false);
+		//vCubePrimitivexd->Draw(BasicTestShader, false);
 
 		return UPDATE_CONTINUE;
 	}

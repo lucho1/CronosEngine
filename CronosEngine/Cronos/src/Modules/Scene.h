@@ -7,7 +7,11 @@
 #include "GameObject/GameObject.h"
 #include "Renderer/Shaders.h"
 
+#include "Renderer/Model.h"
+
 namespace Cronos {
+
+	class AssimpCronosTranslator;
 
 	class Scene : public Module
 	{
@@ -31,6 +35,8 @@ namespace Cronos {
 
 		Plane m_FloorPlane;
 		glm::mat4 modelMatDef = glm::mat4(1.0f);
+
+		AssimpCronosTranslator m_ACT;
 	};
 
 }

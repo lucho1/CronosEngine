@@ -4,6 +4,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include "VertexArray.h"
+#include "GameObject/Components/MeshComponent.h"
+#include "GameObject/GameObject.h"
 #include "Renderer/Textures.h"
 #include "Renderer/Shaders.h"
 
@@ -18,58 +20,58 @@ namespace Cronos {
 
 	class CronosPrimitive;
 
-	struct CronosVertex
+	/*struct CronosVertex
 	{
 		glm::vec3 Position;
 		glm::vec3 Normal;
 		glm::vec2 TexCoords;
-	};
+	};*/
 
-	class CronosMesh
-	{
-	public:
-		
-		CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*>& textures);
-		~CronosMesh();
+	//class CronosMesh
+	//{
+	//public:
+	//	
+	//	CronosMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*>& textures);
+	//	~CronosMesh();
 
-		void Draw(Shader* shader, bool bindShader);
-		void DrawVerticesNormals();
-		void DrawPlanesNormals();
+	//	void Draw(Shader* shader, bool bindShader);
+	//	void DrawVerticesNormals();
+	//	void DrawPlanesNormals();
 
-		void ScaleMesh(glm::vec3 ScaleMagnitude);
-		void MoveMesh(glm::vec3 MoveAxis, float moveMagnitude);
-		void RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis);
+	//	void ScaleMesh(glm::vec3 ScaleMagnitude);
+	//	void MoveMesh(glm::vec3 MoveAxis, float moveMagnitude);
+	//	void RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis);
 
-		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
-		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
-		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
-		
-		const glm::mat4 GetTransformation() const { return m_Transformation; }
-		void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
+	//	const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
+	//	const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
+	//	const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
+	//	
+	//	const glm::mat4 GetTransformation() const { return m_Transformation; }
+	//	void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
 
-	private:
+	//private:
 
-		void SetupMesh();
-		void DecomposeTransformation();
+	//	void SetupMesh();
+	//	void DecomposeTransformation();
 
-		std::vector<Texture*> m_TexturesVector;
-		std::vector<CronosVertex> m_VertexVector;
-		std::vector<uint> m_IndicesVector;
+	//	std::vector<Texture*> m_TexturesVector;
+	//	std::vector<CronosVertex> m_VertexVector;
+	//	std::vector<uint> m_IndicesVector;
 
-		VertexArray* m_MeshVAO = nullptr;
-		VertexBuffer* m_MeshVBO = nullptr;
-		IndexBuffer* m_MeshIBO = nullptr;
+	//	VertexArray* m_MeshVAO = nullptr;
+	//	VertexBuffer* m_MeshVBO = nullptr;
+	//	IndexBuffer* m_MeshIBO = nullptr;
 
-		glm::mat4 m_Transformation = glm::mat4(1.0f); // your transformation matrix.
-		glm::vec3 m_Scale;
-		glm::quat m_Rotation;
-		glm::vec3 m_Translation;
-	};
+	//	glm::mat4 m_Transformation = glm::mat4(1.0f); // your transformation matrix.
+	//	glm::vec3 m_Scale;
+	//	glm::quat m_Rotation;
+	//	glm::vec3 m_Translation;
+	//};
 
 
 	class CronosModel
 	{
-		friend class AssimpCronosTranslator;
+		//friend class AssimpCronosTranslator;
 		friend class CronosPrimitive;
 
 	public:
@@ -78,7 +80,7 @@ namespace Cronos {
 		CronosModel(CronosPrimitive* primitive) {}
 		~CronosModel();
 
-		void Draw(Shader* shader, bool bindShader);
+		/*void Draw(Shader* shader, bool bindShader);
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 		void DrawModelAxis();
@@ -88,13 +90,13 @@ namespace Cronos {
 		void RotateModel(float RotDegrees, glm::vec3 RotAxis);
 		
 		const glm::vec3 GetModelAxis() const { return m_ModelAxis; }
-		const glm::mat4 GetTransformation() const { return m_Transformation; }
+		const glm::mat4 GetTransformation() const { return m_Transformation; }*/
 
 	private:
 		
-		void CalculateModelAxis();
+		//void CalculateModelAxis();
 
-		std::vector<CronosMesh*> m_ModelMeshesVector;
+		//std::vector<CronosMesh*> m_ModelMeshesVector;
 		std::string m_ModelDirectoryPath;
 		glm::vec3 m_ModelAxis;
 
@@ -106,18 +108,19 @@ namespace Cronos {
 
 	class AssimpCronosTranslator
 	{
-	private:
-		friend class CronosModel;
+	public:
+	//	friend class CronosModel;
 
-		AssimpCronosTranslator(CronosModel* Cr_Model);
-		
-		void LoadModel(const std::string& filepath);
-		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene);
-		CronosMesh* ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene);
-		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType);
+		AssimpCronosTranslator(/*CronosModel* Cr_Model*/);
+		GameObject* LoadModel(const std::string& filepath);
+
+		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj);
+		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj);
+
+		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType, GameObject* motherGameObj);
 
 	private:
-		CronosModel* m_CronosModel = nullptr;
+		//GameObject* m_CronosModel = nullptr;
 	};
 
 }

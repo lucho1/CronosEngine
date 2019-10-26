@@ -2,7 +2,6 @@
 #define _GAMEOBJECT_H_
 
 #include "Components/Component.h"
-#include "Components/TransformComponent.h"
 #include "glm/glm.hpp"
 
 namespace Cronos {
@@ -13,7 +12,7 @@ namespace Cronos {
 	{
 	public:
 		
-		GameObject(std::string name, int gameObjectID, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
+		GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
 			glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
 		~GameObject();
@@ -26,11 +25,14 @@ namespace Cronos {
 		inline bool isActive() const { return m_Active; }
 		bool &SetActive() { return m_Active; }
 
-		inline std::string GetName() const { return m_Name; }
+		inline const std::string GetName() const { return m_Name; }
+		inline const std::string GetPath() const { return m_Path; }
 		void SetName(const std::string name) { m_Name = name; }
+		void SetPath(const std::string path) { m_Path = path; }
 		
 		Component* CreateComponent(ComponentType type);
 		std::list<GameObject*> m_Childs;
+		std::vector<Component*> m_Components;
 
 		template <typename T>
 		T* GetComponent()
@@ -45,9 +47,11 @@ namespace Cronos {
 
 	private:
 
-		bool m_Active;
+		
+
 		std::string m_Name;
-		std::vector<Component*> m_Components;
+		std::string m_Path;
+		bool m_Active;
 		int m_GameObjectID;
 	};
 

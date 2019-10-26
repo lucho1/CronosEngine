@@ -17,6 +17,7 @@ namespace Cronos
 			CRONOS_ASSERT(false, "Complex Primitives are not created thorugh this constructor!!");
 			return;
 		}
+		return;
 
 		switch (primitve_type)
 		{
@@ -88,23 +89,23 @@ namespace Cronos
 
 
 		ParShapeToPrimitive(size);
-		CalculateModelAxis();
+		//CalculateModelAxis();
 	}
 
 	CronosPrimitive::~CronosPrimitive()
 	{
-		std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
-		for (; item != m_ModelMeshesVector.end(); item++)
-		{
-			//(*item)->~CronosMesh();
-			RELEASE(*item);
-			m_ModelMeshesVector.erase(item);
-		}
+		//std::vector<CronosMesh*>::iterator item = m_ModelMeshesVector.begin();
+		//for (; item != m_ModelMeshesVector.end(); item++)
+		//{
+		//	//(*item)->~CronosMesh();
+		//	RELEASE(*item);
+		//	m_ModelMeshesVector.erase(item);
+		//}
 
-		m_ModelMeshesVector.clear();
+		//m_ModelMeshesVector.clear();
 
-		if (m_PrimitiveMesh != nullptr)
-			RELEASE(m_PrimitiveMesh);
+		//if (m_PrimitiveMesh != nullptr)
+		//	RELEASE(m_PrimitiveMesh);
 	}
 
 	void CronosPrimitive::CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks)
@@ -138,7 +139,7 @@ namespace Cronos
 		else
 		{
 			CreateCylinder(glm::vec3(1, 1, 1), figure_slices, figure_slices);
-			ScaleModel(size);
+			//ScaleModel(size);
 			return;
 		}
 
@@ -174,7 +175,7 @@ namespace Cronos
 		else
 		{
 			CreateCylinder(glm::vec3(1, 1, 1), figure_slices, figure_slices);
-			ScaleModel(size);
+			//ScaleModel(size);
 			return;
 		}
 
@@ -282,7 +283,7 @@ namespace Cronos
 		Texture* defT = nullptr;
 		tmpTextureVector.push_back(defT);
 
-		m_PrimitiveMesh = new CronosMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);
-		m_ModelMeshesVector.push_back(m_PrimitiveMesh);
+		//m_PrimitiveMesh = new CronosMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);
+		//m_ModelMeshesVector.push_back(m_PrimitiveMesh);
 	}
 }

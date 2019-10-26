@@ -5,14 +5,9 @@
 
 namespace Cronos {
 
-	MeshComponent::MeshComponent(std::vector<CronosVertex> vertices, std::vector<uint> indices, std::vector<Texture*>& textures) :
-		Component(ComponentType::MESH , nullptr)
+	MeshComponent::MeshComponent(GameObject* GObjAttached) :
+		Component(ComponentType::MESH , GObjAttached)
 	{
-		m_VertexVector = vertices;
-		m_IndicesVector = indices;
-		m_TexturesVector = textures;
-
-		SetupMesh();
 	}
 
 	MeshComponent::~MeshComponent()
@@ -36,8 +31,19 @@ namespace Cronos {
 		RELEASE(m_MeshVBO);
 	}
 
-	void MeshComponent::SetupMesh()
+	void MeshComponent::SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures)
 	{
+		CRONOS_ASSERT(vertices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE VERTEX VECTOR! \n Try Calling function()");
+		CRONOS_ASSERT(indices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE INDICES VECTOR! \n Try Calling function()");
+		CRONOS_WARN(m_MeshVAO == nullptr, "Warning! Mesh VAO being created is not nullptr!");
+		CRONOS_WARN(m_MeshVBO == nullptr, "Warning! Mesh VBO being created is not nullptr!");
+		CRONOS_WARN(m_MeshIBO == nullptr, "Warning! Mesh IBO being created is not nullptr!");
+
+
+		m_VertexVector = vertices;
+		m_IndicesVector = indices;
+		m_TexturesVector = textures;
+
 		m_MeshVAO = new VertexArray();
 		m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
 
@@ -50,6 +56,8 @@ namespace Cronos {
 
 		m_MeshIBO = new IndexBuffer(&m_IndicesVector[0], m_IndicesVector.size());
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
+
+		//SetTextures(textures);
 	}
 
 	void MeshComponent::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
@@ -68,6 +76,12 @@ namespace Cronos {
 		m_TexturesVector.insert(m_TexturesVector.end(), newTexture.begin(), newTexture.end());
 	}
 
+
+	void MeshComponent::Update(float dt)
+	{
+		Draw(App->scene->BasicTestShader, true);
+	}
+
 	void MeshComponent::Draw(Shader* shader, bool bindShader)
 	{
 		if (!isEnabled())
@@ -79,7 +93,7 @@ namespace Cronos {
 			shader->Bind();
 			shader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 			shader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-			shader->SetUniformMat4f("u_Model", glm::mat4(1.0f)/*GetTransformation()*/);
+			shader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
 		std::vector< Texture*>::iterator item = m_TexturesVector.begin();
@@ -105,94 +119,64 @@ namespace Cronos {
 
 
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+		item = m_TexturesVector.begin();
 		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
 			(*item)->Unbind();
 
+		shader->Unbind();
+		
+		m_DebugDraw = true;
 		if (m_DebugDraw)
 		{
 			DrawVerticesNormals();
 			DrawPlanesNormals();
-		}
-
-		shader->Unbind();
+		}		
 	}
 
 	void MeshComponent::DrawVerticesNormals()
 	{
-		float linelength = 0.03f;
 		glLineWidth(2.0f);
+		float linelength = 0.2f;
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
-
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
 		{
 			glm::vec3 pos = (*item).Position;
-			glm::vec3 norm = (*item).Position + (*item).Normal;
+			glm::vec3 norm = (*item).Position + (*item).Normal * linelength;
 
 			glBegin(GL_LINES);
-				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x + linelength, norm.y, norm.z);
-				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x, norm.y + linelength, norm.z);
-				glVertex3f(pos.x, pos.y, pos.z);
-				glVertex3f(norm.x, norm.y, norm.z + linelength);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glVertex3f(norm.x, norm.y, norm.z);
 			glEnd();
 		}
 	}
 
 	void MeshComponent::DrawPlanesNormals()
 	{
-		float linelength = 0.2f;
+		glLineWidth(2.0f);
+		float linelength = 0.5f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
-
-		static std::vector<glm::vec3> Normals;
-		static  std::vector<glm::vec3> Positions;
-
-		if (!m_NormalsCalculated)
+		for (uint i = 0; i < m_IndicesVector.size(); i += 3)
 		{
-			CalculateNormals(Normals, Positions);
-			m_NormalsCalculated = true;
-		}
+			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
+			glm::vec3 p2 = m_VertexVector[m_IndicesVector[i + 1]].Position;
+			glm::vec3 p3 = m_VertexVector[m_IndicesVector[i + 2]].Position;
 
-		for (uint i = 0; i < Normals.size(); i++)
-		{
+			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
+			PlaneNormal = glm::normalize(PlaneNormal);
+			PlaneNormal *= linelength;
+
+			glm::vec3 TriCenter = { 0, 0, 0 };
+			TriCenter.x = (p1.x + p2.x + p3.x) / 3;
+			TriCenter.y = (p1.y + p2.y + p3.y) / 3;
+			TriCenter.z = (p1.z + p2.z + p3.z) / 3;
+
 			glBegin(GL_LINES);
-				glVertex3f(Positions[i].x, Positions[i].y, Positions[i].z);
-				glVertex3f(Normals[i].x + linelength, Normals[i].y, Normals[i].z);
-				glVertex3f(Positions[i].x, Positions[i].y, Positions[i].z);
-				glVertex3f(Normals[i].x, Normals[i].y + linelength, Normals[i].z);
-				glVertex3f(Positions[i].x, Positions[i].y, Positions[i].z);
-				glVertex3f(Normals[i].x, Normals[i].y, Normals[i].z + linelength);
+			glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
+			glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
 			glEnd();
 		}
-
-		//for (uint i = 0; i < m_IndicesVector.size(); i += 3)
-		//{
-		//	glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
-		//	glm::vec3 p2 = m_VertexVector[m_IndicesVector[i + 1]].Position;
-		//	glm::vec3 p3 = m_VertexVector[m_IndicesVector[i + 2]].Position;
-
-		//	glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
-		//	glm::normalize(PlaneNormal);
-		//	//PlaneNormal *= linelength;
-
-		//	glm::vec3 TriCenter = { 0, 0, 0 };
-		//	TriCenter.x = (p1.x + p2.x + p3.x) / 3;
-		//	TriCenter.y = (p1.y + p2.y + p3.y) / 3;
-		//	TriCenter.z = (p1.z + p2.z + p3.z) / 3;
-
-		//	glBegin(GL_LINES);
-		//	//glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-		//	//glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
-
-		//		glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-		//		glVertex3f(PlaneNormal.x + linelength, PlaneNormal.y, PlaneNormal.z);
-		//		glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-		//		glVertex3f(PlaneNormal.x, PlaneNormal.y + linelength, PlaneNormal.z);
-		//		glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-		//		glVertex3f(PlaneNormal.x, PlaneNormal.y, PlaneNormal.z + linelength);
-		//	glEnd();
-		//}
 	}
 
 	void MeshComponent::CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions)
@@ -200,12 +184,12 @@ namespace Cronos {
 		//Clear Vectors passed
 		if (normals.size() > 0 || positions.size() > 0)
 		{
-			std::vector<glm::vec3>::iterator item = normals.begin();
-			for (; item != normals.end(); item++)
-				normals.erase(item);
-			item = positions.begin();
-			for (; item != positions.end(); item++)
-				positions.erase(item);
+			//std::vector<glm::vec3>::iterator item = normals.begin();
+			//for (; item != normals.end(); item++)
+			//	normals.erase(item);
+			//item = positions.begin();
+			//for (; item != positions.end(); item++)
+			//	positions.erase(item);
 
 			positions.clear();
 			normals.clear();
