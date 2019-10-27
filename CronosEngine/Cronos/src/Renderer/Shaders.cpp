@@ -33,7 +33,7 @@ namespace Cronos {
 		int loc = glGetUniformLocation(m_ID, name.c_str());
 
 		if (loc == -1)
-			std::cout << "Warning! Uniform '" << name << "' doesn't exist! (loc == -1)" << std::endl;
+			LOG("Warning! Uniform '%s' doesn't exist! (loc == -1)", name.c_str());
 
 		m_UniformLocationCache[name] = loc;
 		return loc;

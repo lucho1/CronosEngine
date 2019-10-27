@@ -47,10 +47,17 @@ namespace Cronos {
 
 				ilBindImage(0);
 				ilDeleteImage(TempTexImage);
-				LOG("Successfully Loaded a %ix%i Texture of %i BPP and Format %i from %s. ID: %i Type: %s ", m_Width, m_Height, m_BPP, m_Format, path.c_str(), m_ID, TypeStr[(int)m_TextureType].c_str());
+
+				std::string LOGPath = path.c_str();
+				if(LOGPath.find("Cronos") != LOGPath.npos)
+					LOGPath = path.substr(path.rfind("Cronos"));
+
+				//LOGPath = LOGPath.substr(LOGPath.find_first_of(""), );
+
+				LOG("	Successfully Loaded a %ix%i Texture of %i BPP \n	and Format %i from %s. ID: %i Type: %s ", m_Width, m_Height, m_BPP, m_Format, LOGPath.c_str(), m_ID, TypeStr[(int)m_TextureType].c_str());
 			}
 			else
-				LOG("Failed to load the Texture data of %s", path.c_str());
+				LOG("	Failed to load the Texture data of %s", path.c_str());
 		}
 		else
 			ilDeleteImage(TempTexImage);

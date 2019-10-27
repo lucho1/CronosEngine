@@ -93,11 +93,13 @@ namespace Cronos {
 		//Setting temporary root
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
-		LOG("	Asset Dir: %s \n	Current Dir: %s", AssetDirectories, m_CurrentDir);
-		CurrentGameObject = nullptr;
+		const char* LogString1 = AssetDirectories->m_LabelDirectories.c_str();
+		const char* LogString2 = m_CurrentDir->m_LabelDirectories.c_str();
+		LOG("	Asset Dir: %s \n	Current Dir: %s", LogString1, LogString2);
 
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
+		CurrentGameObject = nullptr;
 		return true;
 	}
 

@@ -12,6 +12,7 @@ namespace Cronos {
 
 	bool Filesystem::OnStart() {
 
+		LOG("LOADING FILESYSTEM ICONS");
 		//loader Icons -> this needs to be loaded with JSON
 		ArrayIconTextures[(int)ItemType::ITEM_FBX] = App->textureManager->CreateTexture("res/Icons/Fbx_Icon.png", TextureType::ICON);
 		ArrayIconTextures[(int)ItemType::ITEM_FOLDER] = App->textureManager->CreateTexture("res/Icons/Folder_Icon.png", TextureType::ICON);
@@ -63,7 +64,7 @@ namespace Cronos {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".png" ) {
-			type = ItemType::ITEM_TEXTURE_PNG; 
+			type = ItemType::ITEM_TEXTURE_PNG;
 			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
 			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
 			m_IconTex = temp->GetTextureID();

@@ -95,8 +95,7 @@ namespace Cronos {
 
 
 		ParShapeToPrimitive(size, position);
-		LOG("Created Primitive of Radius %i and Size (%i, %i, %i) with %i Slices and %i Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
-		//CalculateModelAxis();
+		LOG("Created Primitive of Radius %.2f and Size (%.2f, %.2f, %.2f) with %d Slices and %d Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
 	}
 
 	//Translation from ParShape to Cronos Primitive

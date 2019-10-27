@@ -22,7 +22,6 @@ namespace Cronos {
 	// Called before render is available
 	bool SDLWindow::OnInit()
 	{
-		App->EditorGUI->AddLog("Init SDL window & surface");
 		LOG("Init SDL window & surface");
 		bool ret = true;
 

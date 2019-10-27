@@ -95,7 +95,7 @@ namespace Cronos {
 		//Report an error if the model data is incomplete
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
-			std::cout << "Error in Assimp, " << importer.GetErrorString() << std::endl;
+			LOG("Error in Assimp, %s", importer.GetErrorString());
 			return nullptr;
 		}
 
@@ -117,6 +117,8 @@ namespace Cronos {
 		// detach log stream
 		aiDetachAllLogStreams();
 
+		LOG("FINISHED LOADING MODEL -- Model With %i Meshes", MeshNum);
+		MeshNum = 0;
 		return mother_GO;
 	}
 
@@ -139,6 +141,7 @@ namespace Cronos {
 	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Model Mesh");
+		MeshNum++;
 		std::vector<CronosVertex>tmp_VertexVector;
 		std::vector<uint>tmp_IndicesVector;
 		std::vector<Texture*>tmp_TextureVector;
@@ -201,7 +204,7 @@ namespace Cronos {
 		GO->m_Components.push_back(meshComp);
 		motherGameObj->m_Childs.push_back(GO);
 
-		LOG("Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
+		LOG("	Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
 	}
 
 

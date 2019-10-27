@@ -1,9 +1,9 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-//#include "glut/glut.h"
 #include <glad/glad.h>
 #include "Errors.h"
+#include <Windows.h>
 
 //Just in case -- Null redefinition
 #ifdef NULL
@@ -14,33 +14,37 @@
 
 
 // LOGGING -----------------------------------------------------------------------
-#define LOG(format, ...) Cronos::Log(__FILE__, __LINE__, format, __VA_ARGS__);
+#ifdef _DEBUG
+	#define LOG(format, ...) Cronos::DebugLog(__FILE__, __LINE__, format, __VA_ARGS__);
+#else
+	#define LOG(format, ...) Cronos::ReleaseLog(__FILE__, __LINE__, format, __VA_ARGS__);
+#endif
 #define COMPILATIONLOGINFO Cronos::LogCompilationFirstMessage()
 
 namespace Cronos {
 
-	void Log(const char file[], int line, const char* format, ...);
+	void DebugLog(const char file[], int line, const char* format, ...);
+	void ReleaseLog(const char file[], int line, const char* format, ...);
 	void LogCompilationFirstMessage();
 }
 // -------------------------------------------------------------------------------
 
 // ERROR HANDLING ----------------------------------------------------------------
-#define CRONOS_ASSERT(x, ...) if(!(x)) {std::cout << "CRONOS ERROR ASSERT: " << __VA_ARGS__ << std::endl; __debugbreak(); }
-#define CRONOS_WARN(x, ...) if(!(x)) {std::cout << "CRONOS WARN: " << __VA_ARGS__ << std::endl; }
-
 #ifdef _DEBUG
 	#define GLCall(x) GLClearError(); x; CRONOS_ASSERT(GLLogCall(#x, __FILE__, __LINE__));
 	#define GL_SETERRORHANDLER(majV, minV) SetErrorHandler(majV, minV);
+	#define CRONOS_ASSERT(x, ...) if(!(x)) {std::cout << "CRONOS ERROR ASSERT: " << __VA_ARGS__ << std::endl; __debugbreak(); }
+	#define CRONOS_WARN(x, ...) if(!(x)) {std::cout << "CRONOS WARN: " << __VA_ARGS__ << std::endl; }
 #else
 	#define GLCall(x) x;
-	#define GL_SETERRORHANDLER(majV, minV) std::cout << "GL_SETERROHANDLER (glDebugMessageCallback) not Available: NOT IN DEBUG CONTEXT" << std::endl;
+	#define GL_SETERRORHANDLER(majV, minV) LOG("GL_SETERROHANDLER (glDebugMessageCallback) not Available: NOT IN DEBUG CONTEXT");
+	#define CRONOS_ASSERT(x, ...) if(!(x)) { LOG("CRONOS ERROR ASSERT: ", __VA_ARGS__); __debugbreak(); }
+	#define CRONOS_WARN(x, ...) if(!(x)) { LOG("CRONOS WARN: ",  __VA_ARGS__) }
+	//HWND hWnd = GetConsoleWindow();
+	//ShowWindow(hWnd, SW_HIDE);
 #endif
 
 // -------------------------------------------------------------------------------
-
-// DEFINES -----------------------------------------------------------------------
-#define CN_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1) //TODO: Delete this
-
 /// Keep a value between 0.0f and 1.0f
 #define CAP(n) ((n <= 0.0f) ? n = 0.0f : (n >= 1.0f) ? n = 1.0f : n = n)
 

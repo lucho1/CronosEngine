@@ -19,7 +19,6 @@ namespace Cronos {
 	// Called before render is available
 	bool GLRenderer3D::OnInit()
 	{
-		App->EditorGUI->AddLog("Creating 3D Render context");
 		LOG("Creating 3D Renderer context");
 		bool ret = true;
 
