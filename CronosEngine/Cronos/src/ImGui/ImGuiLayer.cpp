@@ -29,6 +29,7 @@ namespace Cronos {
 #define TOTEX (void*)(intptr_t)
 
 	inline int make_id(int node, int attribute) { return (node << 16) | attribute; } //temporary
+	void PrimitivesMenu();
 
 	ImGuiLayer::ImGuiLayer(Application* app, bool start_enabled) : Module(app, "ImGuiLayer"), ms_log(100), fps_log(100)
 	{
@@ -386,6 +387,8 @@ namespace Cronos {
 		ImGui::End();
 	}
 
+
+
 	void ImGuiLayer::GUIDrawMainBar()
 	{
 		ImGui::BeginMainMenuBar();
@@ -424,58 +427,7 @@ namespace Cronos {
 				if (ImGui::MenuItem("Empty Object")) {}
 				if (ImGui::BeginMenu("3D Object"))
 					{
-					if (ImGui::MenuItem("Cube")) 
-					{
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", {1,1,1});
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::MenuItem("Sphere"))
-					{
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SPHERE, "Sphere");
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::MenuItem("Cone")) {
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CONE, "Cone");
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::MenuItem("Torus")) {
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TORUS, "Torus");
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::MenuItem("Cylinder")) {
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CYLINDER, "Cylinder");
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::MenuItem("Plane")) {
-						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
-						App->scene->m_GameObjects.push_back(ret);
-					}
-					if (ImGui::BeginMenu("Complex")) {
-						ImGui::EndMenu();
-
-						if (ImGui::MenuItem("Tetrahedron")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TETRAHEDRON, "Tetrahedron");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Octahedron")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::OCTAHEDRON, "Octahedron");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("DodeCahedron")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::DODECAHEDRON, "Dodecahedron");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Icosahedron")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::ICOSAHEDRON, "Icosahedron");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Empty Cylinder")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY_CYLINDER, "Emp");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-
-
-					}
+					PrimitivesMenu();
 					ImGui::EndMenu();
 					}
 				ImGui::EndMenu();
@@ -777,32 +729,7 @@ namespace Cronos {
 					if (ImGui::MenuItem("Empty Object")) {}
 					if (ImGui::BeginMenu("3D Object"))
 					{
-						if (ImGui::MenuItem("Cube"))
-						{
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", { 1,1,1 });
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Sphere"))
-						{
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SPHERE, "Sphere");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Cone")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CONE, "Cone");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Torus")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TORUS, "Torus");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Cylinder")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CYLINDER, "Cylinder");
-							App->scene->m_GameObjects.push_back(ret);
-						}
-						if (ImGui::MenuItem("Plane")) {
-							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
-							App->scene->m_GameObjects.push_back(ret);
-						}
+						PrimitivesMenu();
 						ImGui::EndMenu();
 					}
 					ImGui::EndMenu();
@@ -1676,6 +1603,103 @@ namespace Cronos {
 
 		fps_log[count - 1] = App->GetFramesInLastSecond();
 		ms_log[count - 1] = App->GetLastFrameMS();
+	}
+
+	void PrimitivesMenu() {
+
+		if (ImGui::MenuItem("Empty GameObject"))
+		{
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Cube"))
+		{
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", { 1,1,1 });
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Sphere"))
+		{
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SPHERE, "Sphere");
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Cone")) {
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CONE, "Cone");
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Torus")) {
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TORUS, "Torus");
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Cylinder")) {
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CYLINDER, "Cylinder");
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::MenuItem("Plane")) {
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
+			App->scene->m_GameObjects.push_back(ret);
+		}
+		if (ImGui::BeginMenu("Empty Primitives"))
+		{
+			if (ImGui::MenuItem("Empty Cylinder")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY_CYLINDER, "Empty Cylinder");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Empty Cone")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY_CONE, "Empty Cone");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Semi Sphere")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SEMI_SPHERE, "Semi Sphere");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Complex")) {
+
+			if (ImGui::MenuItem("Tetrahedron")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TETRAHEDRON, "Tetrahedron");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Octahedron")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::OCTAHEDRON, "Octahedron");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("DodeCahedron")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::DODECAHEDRON, "Dodecahedron");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Icosahedron")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::ICOSAHEDRON, "Icosahedron");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Trefoil Knot")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TREFOIL_KNOT, "Trefoil Knot");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Klein Bottle")) {
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::KLEIN_BOTTLE, "Klein Bottle");
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Disk"))
+			{
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Disk", { 1,1,1 });
+				ret->CreateDisk();
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Rock"))
+			{
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Rock", { 1,1,1 });
+				ret->CreateRock();
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			if (ImGui::MenuItem("Sub-Sphere"))
+			{
+				PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Sub-Sphere", { 1,1,1 });
+				ret->CreateSubdividedSphere();
+				App->scene->m_GameObjects.push_back(ret);
+			}
+			ImGui::EndMenu();
+		}
 	}
 
 }
