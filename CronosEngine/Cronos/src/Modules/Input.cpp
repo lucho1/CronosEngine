@@ -131,7 +131,7 @@ namespace Cronos {
 			case SDL_DROPFILE: 
 			{
 				AssetItems* ItemTemp = new AssetItems(e.drop.file,nullptr);
-				if (ItemTemp->GetType() == ItemType::ITEM_FBX) {
+				if (ItemTemp->GetType() == ItemType::ITEM_FBX || ItemTemp->GetType() == ItemType::ITEM_OBJ) {
 					GameObject* goTemp = App->scene->CreateModel(ItemTemp->GetAssetPath().c_str());
 					App->scene->m_GameObjects.push_back(goTemp);
 					//App->EditorGUI->m_CurrentDir->m_Container.push_back(ItemTemp);
