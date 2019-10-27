@@ -29,7 +29,7 @@ namespace Cronos {
 		const inline glm::vec3 GetScale() const { return m_Scale; };
 
 		//AABBs
-		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, minVec); }
+		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, maxVec); }
 		void SetAABB(const AABB& aabbCube) { m_ContainerAABBCube = AABB(aabbCube); }
 
 		const inline AABB GetAABB() const { return m_ContainerAABBCube; }

@@ -94,7 +94,7 @@ namespace Cronos {
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
 		LOG("	Asset Dir: %s \n	Current Dir: %s", AssetDirectories, m_CurrentDir);
-		CurrentGameObject = App->scene->m_GameObjects[0];
+		CurrentGameObject = nullptr;
 
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
@@ -595,7 +595,7 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawHierarchyPanel()
 	{
-		
+
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
 			if (ImGui::BeginMenuBar()) {
@@ -623,12 +623,11 @@ namespace Cronos {
 					ImGui::EndMenu();
 				}
 
-
-
 				ImGui::EndMenuBar();
 			}
 
-			for (auto&go : App->scene->m_GameObjects) {
+			for (auto&go : App->scene->m_GameObjects)
+			{
 				std::string temp = go->GetName();
 				bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
 				if (ImGui::IsItemClicked()) {
@@ -639,9 +638,14 @@ namespace Cronos {
 					ImGui::TreePop();
 				}
 			}
+
+			float Vec2Ytest = ImGui::GetWindowSize().y - ImGui::GetCursorPosY() - 5.0f;
+
+			if (ImGui::IsWindowHovered() && ImGui::GetMousePos().y > Vec2Ytest)
+				if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+					CurrentGameObject = nullptr;
 		}
 		ImGui::End();
-
 	}
 
 	void ImGuiLayer::GUIDrawAssetPanel()

@@ -74,7 +74,7 @@ namespace Cronos {
 	{
 		auto comp = GetComponent<TransformComponent>();
 		if (comp != nullptr)
-			comp->SetAABB(minVec, minVec);
+			comp->SetAABB(minVec, maxVec);
 	}
 
 	Component* GameObject::CreateComponent(ComponentType type) 
