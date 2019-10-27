@@ -32,6 +32,7 @@ We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/proje
   * (Internal) File copy into project when dragging it and dropping it
   * Game Object Hierarchy (with no huge parenting for now)
   * Game Object Selection
+  * Game Object debug draw (wireframe, vertices/polygons normals, positional axis...)
 
 * Started the implementation of node System
 * Many different types of primitives creation (check it out!)
@@ -86,7 +87,7 @@ v0.1
     * Hierarchy (Under Construction)
     * Configuration Panel
 * Filesystem Implemented
-* Game Objects & Hierarchy
+* Game Objects, Hierarchy and Debug Drawing
 * Hardware's Log Window - Extensive System Info Read (on GPU, CPU, Memory and Software, using GPUDetect library to get CPU/GPU information)
 * Performance Window to track useful info (Memory, FPS, ...)
 * Detection of a dedicated NVIDIA or AMD Graphics Card - automatic usage
