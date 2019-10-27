@@ -46,7 +46,7 @@ namespace Cronos {
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN(), "");
 
 
-		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/nanosuit/nanosuit.obj"));
+		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/models/PantherBoss/PAN.obj"));
 
 		m_GameObjects.push_back(vmodelxd);
 		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, { 8, 0, 5 }, "PRGO");
@@ -54,11 +54,6 @@ namespace Cronos {
 		
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
-
-
-		//std::string path = std::string("res/miface/Mi_Face_baseTexBaked.png");
-		Texture* text = App->textureManager->CreateTexture("res/miface/Mi_Face_baseTexBaked.png", TextureType::DIFFUSE);
-		newVecText.push_back(text);
 
 		/*
 		
