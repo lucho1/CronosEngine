@@ -254,9 +254,9 @@ namespace Cronos {
 		GUIDrawWidgetMenu();
 		if (ShowInspectorPanel)			GUIDrawInspectorMenu(CurrentGameObject);
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
-		if (ShowAssetMenu)				GUIDrawAssetPanel();
 		if (ShowNodeEditorPanel)		GUIDrawNodeEditorPanel();
 		if (ShowConsolePanel)			GUIDrawConsolePanel();
+		if (ShowAssetMenu)				GUIDrawAssetPanel();
 		if (ShowDemoWindow)				ImGui::ShowDemoWindow(&ShowDemoWindow);
 		if (ShowConfigurationPanel)		GUIDrawConfigurationPanel();
 		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
@@ -310,7 +310,7 @@ namespace Cronos {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar| ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse;
+		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar | ImGuiWindowFlags_NoMove |ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse;
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
@@ -427,7 +427,11 @@ namespace Cronos {
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("GameObject")) {
-				if (ImGui::MenuItem("Empty Object")) {}
+				if (ImGui::MenuItem("Empty Object")) 
+				{
+					PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
+					App->scene->m_GameObjects.push_back(ret);
+				}
 				if (ImGui::BeginMenu("3D Object"))
 					{
 					PrimitivesMenu();
@@ -540,7 +544,6 @@ namespace Cronos {
 
 			if (CurrentGameObject != nullptr) {
 				ImGui::Checkbox(" ", &CurrentGameObject->SetActive()); ImGui::SameLine();
-
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
 				if (ImGui::InputText("###", buf1, 64)) {
@@ -548,6 +551,11 @@ namespace Cronos {
 				}
 				ImGui::Separator();
 				GUIDrawTransformPMenu(CurrentGameObject);
+
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+					GUIDrawMeshMenu(CurrentGameObject);
+				}
+
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
 					if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
 						GUIDrawMaterialsMenu(CurrentGameObject);
@@ -644,6 +652,22 @@ namespace Cronos {
 		ImGui::EndChild();
 	}
 
+	void ImGuiLayer::GUIDrawMeshMenu(GameObject* CurrentGameObject) 
+	{
+		if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text(CurrentGameObject->GetName().c_str());
+			
+			ImGui::Checkbox("Draw Normals", &CurrentGameObject->GetComponent<MeshComponent>()->setDebugDraw());
+			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<TransformComponent>()->SetDrawAxis() );
+
+			if(CurrentGameObject->GetComponent<TransformComponent>()->DrawAxis)
+				CurrentGameObject->GetComponent<TransformComponent>()->DrawCentralAxis();
+			
+			ImGui::Separator();
+		}
+	}
+
 	void ImGuiLayer::GUIDrawMaterialsMenu(GameObject* CurrentGameObject)
 	{
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
@@ -672,6 +696,25 @@ namespace Cronos {
 
 			if(Diffuse!=nullptr)
 				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+			
+			if (ImGui::BeginDragDropTarget())
+			{
+				//ImGui::GetID("Scene");
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Window"))
+				{
+					int payload_n = *(const int*)payload->Data;
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG ||
+						m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
+						AssetItems* a = (AssetItems*)payload->Data;
+						std::vector<Texture*>tmp_TextureVector;
+						Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
+						tmp_TextureVector.push_back(TempText);
+						CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector,TextureType::DIFFUSE);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+			
 			//else if (Diffuse==nullptr)
 			//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 
@@ -729,7 +772,11 @@ namespace Cronos {
 
 				if (ImGui::BeginMenu("Create")) {
 
-					if (ImGui::MenuItem("Empty Object")) {}
+					if (ImGui::MenuItem("Empty Object")) 
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
+						App->scene->m_GameObjects.push_back(ret);
+					}
 					if (ImGui::BeginMenu("3D Object"))
 					{
 						PrimitivesMenu();
@@ -798,11 +845,13 @@ namespace Cronos {
 			}
 
 			ImGui::PopStyleColor(); //OJU POSIBLE CRASH
-			float Vec2Ytest = ImGui::GetWindowSize().y - ImGui::GetCursorPosY() - 5.0f;
+			float Vec2Ytest = ImGui::GetCursorPosY() + 5.0f;
 
 			if (ImGui::IsWindowHovered() && ImGui::GetMousePos().y > Vec2Ytest)
-				if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+				if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
 					CurrentGameObject = nullptr;
+					nodeHirearchySelected = 0;
+				}
 		}
 		ImGui::End();
 	}
@@ -810,7 +859,7 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawAssetPanel()
 	{
-		ImGui::Begin("Project", &ShowAssetMenu, ImGuiWindowFlags_MenuBar);
+		ImGui::Begin("Project", &ShowAssetMenu, ImGuiWindowFlags_MenuBar );
 		{
 			if (ImGui::BeginMenuBar())
 			{
@@ -1341,6 +1390,9 @@ namespace Cronos {
 		ImGui::Text("Reserved VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(HardwareInfo.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMReserved_MB) + " GB").c_str());
 		ImGui::Text("Used VRAM: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(HardwareInfo.GetGPUHardwareInfo().GetGPUInfo_GPUDet().mPI_GPUDet_VRAMUsage_MB) + " GB").c_str());
 
+		if (ImGui::Button("Recalculate Parametters"))
+			HardwareInfo.RecalculateParameters();
+
 		ImGui::PopStyleVar();
 	};
 
@@ -1614,11 +1666,6 @@ namespace Cronos {
 
 	void PrimitivesMenu() {
 
-		if (ImGui::MenuItem("Empty GameObject"))
-		{
-			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
-			App->scene->m_GameObjects.push_back(ret);
-		}
 		if (ImGui::MenuItem("Cube"))
 		{
 			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", { 1,1,1 });

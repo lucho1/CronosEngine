@@ -70,6 +70,7 @@ namespace Cronos {
 		void GUIDrawInspectorMenu(GameObject* CurrentGameObject);
 		void GUIDrawAssetLabelInspector();
 		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
+		void GUIDrawMeshMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();

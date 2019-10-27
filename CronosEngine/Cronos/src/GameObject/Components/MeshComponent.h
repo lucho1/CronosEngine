@@ -29,7 +29,7 @@ namespace Cronos {
 		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
 		void SetTextures(std::vector<Texture*> newTexture, TextureType textureType);
 		void RecalculateNormals() { m_NormalsCalculated = false; }
-		
+		bool &setDebugDraw() { RecalculateNormals(); return m_DebugDraw; }
 		//Getters
 		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }

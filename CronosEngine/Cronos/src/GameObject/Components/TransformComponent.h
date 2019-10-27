@@ -34,10 +34,13 @@ namespace Cronos {
 
 		const inline AABB GetAABB() const { return m_ContainerAABBCube; }
 		const inline glm::vec3 GetCentralAxis() const { return m_ContainerAABBCube.getCenter(); }
+		bool &SetDrawAxis() { return DrawAxis; }
 		void DrawCentralAxis();
 
 		//Type
 		static ComponentType GetType() { return ComponentType::TRANSFORM; };
+
+		bool DrawAxis = false;
 
 	private:
 

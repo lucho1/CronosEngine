@@ -1284,15 +1284,6 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObject\Components\MeshComponent.h" />
-    <ClInclude Include="src\GameObject\Components\TransformComponent.h">
-      <Filter>src\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
-    <ClInclude Include="src\Providers\AssimpImporter.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="vendor\AABB.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
