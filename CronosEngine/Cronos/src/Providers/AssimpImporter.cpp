@@ -185,38 +185,16 @@ namespace Cronos {
 
 		//Now create a Game Object and a mesh component to load the textures
 		GameObject* GO = new GameObject(as_mesh->mName.C_Str(), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
-
+		
+		//Process Mesh's textures
+		if (as_mesh->mMaterialIndex >= 0)
+			SetTexturesVector(as_mesh, as_scene, GO, tmp_TextureVector);
+		
 		//Set the AABB Cube
 		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
 		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
 		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
 
-		
-
-		//Process Mesh's textures
-		if (as_mesh->mMaterialIndex >= 0)
-		{
-			aiMaterial *material = as_scene->mMaterials[as_mesh->mMaterialIndex];
-
-			std::vector<Texture*> ambientMaps = LoadTextures(material, aiTextureType_AMBIENT, TextureType::AMBIENT, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), ambientMaps.begin(), ambientMaps.end());
-
-			std::vector<Texture*> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), diffuseMaps.begin(), diffuseMaps.end());
-
-			std::vector<Texture*> specularMaps = LoadTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), specularMaps.begin(), specularMaps.end());
-
-			std::vector<Texture*> normalMaps = LoadTextures(material, aiTextureType_NORMALS, TextureType::NORMALMAP, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), normalMaps.begin(), normalMaps.end());	
-
-			std::vector<Texture*> heightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::HEIGHTMAP, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), heightMaps.begin(), heightMaps.end());
-
-			std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::LIGHTMAP, GO);
-			tmp_TextureVector.insert(tmp_TextureVector.end(), lightMaps.begin(), lightMaps.end());
-		}
-		
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);
@@ -224,6 +202,31 @@ namespace Cronos {
 		motherGameObj->m_Childs.push_back(GO);
 
 		LOG("Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
+	}
+
+
+	//Textures Loading
+	void AssimpCronosImporter::SetTexturesVector(aiMesh* as_mesh, const aiScene* as_scene, GameObject* GObj, std::vector<Texture*>& TexVec)
+	{
+		aiMaterial *material = as_scene->mMaterials[as_mesh->mMaterialIndex];
+
+		std::vector<Texture*> ambientMaps = LoadTextures(material, aiTextureType_AMBIENT, TextureType::AMBIENT, GObj);
+		TexVec.insert(TexVec.end(), ambientMaps.begin(), ambientMaps.end());
+
+		std::vector<Texture*> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE, GObj);
+		TexVec.insert(TexVec.end(), diffuseMaps.begin(), diffuseMaps.end());
+
+		std::vector<Texture*> specularMaps = LoadTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR, GObj);
+		TexVec.insert(TexVec.end(), specularMaps.begin(), specularMaps.end());
+
+		std::vector<Texture*> normalMaps = LoadTextures(material, aiTextureType_NORMALS, TextureType::NORMALMAP, GObj);
+		TexVec.insert(TexVec.end(), normalMaps.begin(), normalMaps.end());
+
+		std::vector<Texture*> heightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::HEIGHTMAP, GObj);
+		TexVec.insert(TexVec.end(), heightMaps.begin(), heightMaps.end());
+
+		std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::LIGHTMAP, GObj);
+		TexVec.insert(TexVec.end(), lightMaps.begin(), lightMaps.end());
 	}
 
 	std::vector<Texture*> AssimpCronosImporter::LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType TexType, GameObject* motherGameObj)

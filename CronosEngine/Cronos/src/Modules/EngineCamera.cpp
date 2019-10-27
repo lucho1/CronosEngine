@@ -102,20 +102,17 @@ namespace Cronos {
 				m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
 				OrbitAroundReference(vec3(0, 0, 0));
 			}
+		}
 
-			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		{
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
 			{
-				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
-				{
-					glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
-					LookAt(vec3(posToLook.x, posToLook.y, posToLook.z));
-				}
-				//else
-				//	LookAt(vec3(0.0f, 0.0f, 0.0f));
-					
+				glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+				LookAt(vec3(posToLook.x, posToLook.y, posToLook.z));
 			}
-				//LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
-
+			else
+				LookAt(vec3(0.0f, 0.0f, 0.0f));
 		}
 
 		// Recalculate matrix -------------

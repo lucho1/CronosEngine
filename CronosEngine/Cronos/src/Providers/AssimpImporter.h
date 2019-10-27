@@ -25,6 +25,7 @@ namespace Cronos {
 		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj);
 
 		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType, GameObject* motherGameObj);
+		void SetTexturesVector(aiMesh* as_mesh, const aiScene* as_scene, GameObject* GObj, std::vector<Texture*>& TexVec);
 
 		std::vector<Texture*> m_TexturesLoaded;
 
