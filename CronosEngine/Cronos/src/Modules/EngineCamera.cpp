@@ -96,11 +96,18 @@ namespace Cronos {
 				LookAt(m_Reference);
 			}
 
-			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+			{
 				// Orbiting around center --- CalculateMouseRotation() is the reference postion
 				m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
-				OrbitAroundReference(vec3(0, 0, 0));
+				
+				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
+				{
+					glm::vec3 GO_refPos = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+					OrbitAroundReference(vec3(GO_refPos.x, GO_refPos.y, GO_refPos.z));
+				}
+				else
+					OrbitAroundReference(vec3(0, 0, 0));
 			}
 		}
 
@@ -110,6 +117,7 @@ namespace Cronos {
 			{
 				AABB GO_BB = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetAABB();
 				glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+
 				glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
 				size *= 1.5f;
 
@@ -205,7 +213,7 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void EngineCamera::OrbitAroundReference(const vec3 &Reference)
 	{
-		this->m_Reference = Reference;
+		m_Reference = Reference;
 
 		m_Z = normalize(m_Position - Reference);
 		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
