@@ -2,6 +2,7 @@
 #include "PrimitiveGameObject.h"
 
 #include "Application.h"
+#include "AABB.hpp"
 
 #include "par_shapes/par_shapes.h"
 
@@ -10,7 +11,7 @@ namespace Cronos {
 	static par_shapes_mesh* ParshapeMesh;
 
 	// --------------------------------- PRIMITIVE MODEL ---------------------------------
-	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, const std::string& name, glm::vec3 size, float radius, int figure_slices, int figure_stacks)
+	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, const std::string& name, glm::vec3 size, glm::vec3 position, float radius, int figure_slices, int figure_stacks)
 		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), ""), m_PrimitiveType(primitve_type)
 	{
 		if (primitve_type == PrimitiveType::DISK || primitve_type == PrimitiveType::ROCK || primitve_type == PrimitiveType::SUBDIVIDED_SPHERE)
@@ -54,14 +55,14 @@ namespace Cronos {
 				ParshapeMesh = par_shapes_create_cylinder(figure_slices, figure_stacks);
 				break;
 			case PrimitiveType::CLOSED_CYLINDER:
-				CreateCylinder(size, figure_slices, figure_stacks);
+				CreateCylinder(size, position, figure_slices, figure_stacks);
 				LOG("Created Primitive of Radius %i and Size (%i, %i, %i) with %i Slices and %i Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
 				return;
 			case PrimitiveType::EMPTY_CONE:
 				ParshapeMesh = par_shapes_create_cone(figure_slices, figure_stacks);
 				break;
 			case PrimitiveType::CLOSED_CONE:
-				CreateCone(size, figure_slices, figure_stacks);
+				CreateCone(size, position, figure_slices, figure_stacks);
 				LOG("Created Primitive of Radius %i and Size (%i, %i, %i) with %i Slices and %i Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
 				return;
 			case PrimitiveType::SPHERE:
@@ -93,15 +94,14 @@ namespace Cronos {
 		}
 
 
-		ParShapeToPrimitive(size);
-		LOG("Created Primitive of Radius %i and Size (%i, %i, %i) with %i Slices and %i Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
-		//CalculateModelAxis();
+		ParShapeToPrimitive(size, position);
+		LOG("Created Primitive of Radius %.2f and Size (%.2f, %.2f, %.2f) with %d Slices and %d Stacks", radius, size.x, size.y, size.z, figure_slices, figure_stacks);
 	}
 
 	//Translation from ParShape to Cronos Primitive
-	void PrimitiveGameObject::ParShapeToPrimitive(glm::vec3 size)
+	void PrimitiveGameObject::ParShapeToPrimitive(glm::vec3 size, glm::vec3 position)
 	{
-		par_shapes_translate(ParshapeMesh, 0, 0, 0);
+		par_shapes_translate(ParshapeMesh, position.x, position.y, position.z);
 		par_shapes_scale(ParshapeMesh, size.x, size.y, size.z);
 
 		std::vector<CronosVertex>tmpVertexVector;
@@ -151,12 +151,17 @@ namespace Cronos {
 		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);
 		m_Components.push_back(meshComp);
 
+		//Compute AABB
+		float AABBPoints[6];
+		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
+		SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+
 		LOG("Processed Primitive Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmpVertexVector.size(), tmpIndicesVector.size(), j/3, tmpTextureVector.size());
 	}
 
 
 	//---------------------------------------- Special Primitives Creation ----------------------------------------
-	void PrimitiveGameObject::CreateCylinder(glm::vec3 size, int figure_slices, int figure_stacks)
+	void PrimitiveGameObject::CreateCylinder(glm::vec3 size, glm::vec3 position, int figure_slices, int figure_stacks)
 	{
 		//Check if the size forms a circle (to directly do a rounded cylinder) or not (to do a rounded cylinder and then scale it)
 		if (size.x == size.y &&  size.x == size.z)
@@ -186,16 +191,16 @@ namespace Cronos {
 		}
 		else
 		{
-			CreateCylinder(glm::vec3(1, 1, 1), figure_slices, figure_slices);
+			CreateCylinder(glm::vec3(1, 1, 1), position, figure_slices, figure_slices);
 			//ScaleModel(size);
 			return;
 		}
 
 		//At the end, call the translation function
-		ParShapeToPrimitive(size);
+		ParShapeToPrimitive(size, position);
 	}
 
-	void PrimitiveGameObject::CreateCone(glm::vec3 size, int figure_slices, int figure_stacks)
+	void PrimitiveGameObject::CreateCone(glm::vec3 size, glm::vec3 position, int figure_slices, int figure_stacks)
 	{
 		//Same method for cylinder but with one disk
 		if (size.x == size.y &&  size.x == size.z)
@@ -222,16 +227,16 @@ namespace Cronos {
 		}
 		else
 		{
-			CreateCone(glm::vec3(1, 1, 1), figure_slices, figure_slices);
+			CreateCone(glm::vec3(1, 1, 1), position, figure_slices, figure_slices);
 			//ScaleModel(size);
 			return;
 		}
 
 		//At the end, call the translation function
-		ParShapeToPrimitive(size);
+		ParShapeToPrimitive(size, position);
 	}
 
-	void PrimitiveGameObject::CreateRock(glm::vec3 size, int seed, uint nSubdivisions)
+	void PrimitiveGameObject::CreateRock(glm::vec3 size, glm::vec3 position, int seed, uint nSubdivisions)
 	{
 		if (m_PrimitiveType == PrimitiveType::EMPTY)
 		{
@@ -240,14 +245,14 @@ namespace Cronos {
 
 			ParshapeMesh = par_shapes_create_rock(seed, nSubdivisions);
 			m_PrimitiveType = PrimitiveType::ROCK;
-			ParShapeToPrimitive(size);
+			ParShapeToPrimitive(size, position);
 			LOG("Created Rock with seed %i and %i Subdivisions", seed, nSubdivisions);
 		}
 		else
 			LOG("Couldn't create Rock! It must be created from an Empty primitive type");
 	}
 
-	void PrimitiveGameObject::CreateSubdividedSphere(glm::vec3 size, uint nSubdivisions)
+	void PrimitiveGameObject::CreateSubdividedSphere(glm::vec3 size, glm::vec3 position, uint nSubdivisions)
 	{
 		if (m_PrimitiveType == PrimitiveType::EMPTY)
 		{
@@ -256,7 +261,7 @@ namespace Cronos {
 
 			ParshapeMesh = par_shapes_create_subdivided_sphere(nSubdivisions);
 			m_PrimitiveType = PrimitiveType::SUBDIVIDED_SPHERE;
-			ParShapeToPrimitive(size);
+			ParShapeToPrimitive(size, position);
 			LOG("Created Subdivided Sphere with %i Subdivisions", nSubdivisions);
 		}
 		else
@@ -276,7 +281,7 @@ namespace Cronos {
 			ParshapeMesh = par_shapes_create_disk(radius, figure_slices, center_arr, normal);
 
 			m_PrimitiveType = PrimitiveType::DISK;
-			ParShapeToPrimitive(size);
+			ParShapeToPrimitive(size, center);
 		}
 		else
 			LOG("Couldn't create Disk! It must be created from an Empty primitive type");

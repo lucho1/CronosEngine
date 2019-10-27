@@ -36,9 +36,8 @@ namespace Cronos {
 	private:
 
 		Plane m_FloorPlane;
-		glm::mat4 modelMatDef = glm::mat4(1.0f);
-
 		AssimpCronosImporter m_CNAssimp_Importer;
+		GameObject* m_HouseModel;
 	};
 
 }

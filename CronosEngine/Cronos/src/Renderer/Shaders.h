@@ -6,6 +6,12 @@
 
 namespace Cronos
 {
+	struct ShaderProgram
+	{
+		std::string vertexShader;
+		std::string fragmentShader;
+	};
+
 	class Shader
 	{
 	public:
@@ -24,11 +30,15 @@ namespace Cronos
 	private:
 
 		uint CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+		uint CompileShader(uint type, const std::string& source);
+
+		int GetUniformLocation(const std::string& name);
 
 	private:
 
 		uint m_ID;
 		std::string m_Path;
+		std::unordered_map<std::string, int> m_UniformLocationCache;
 
 	};
 }

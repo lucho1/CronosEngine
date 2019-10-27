@@ -77,7 +77,7 @@ namespace Cronos {
 				int cursor = 0;
 				for (auto& go : App->scene->m_GameObjects) {
 					bool wasActive = go->isActive();
-					if (go->GetGOID() == currentGameObject->GetGOID()) {					
+					if (go->GetGOID() == currentGameObject->GetGOID()) {
 						App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
 						if(!wasActive)
 						 ImGui::PopStyleColor();
@@ -110,7 +110,7 @@ namespace Cronos {
 		//Setting FrameBuffer for gameWindow;
 		m_SceneWindow = new FrameBuffer();
 		m_SceneWindow->Init(1280, 720);
-		
+
 		m_ShadingModesLabel[(int)ShadingMode::Shaded] = "Shaded";
 		m_ShadingModesLabel[(int)ShadingMode::ShadedWireframe] = "Shaded Wireframe";
 		m_ShadingModesLabel[(int)ShadingMode::Wireframe] = "Wireframe";
@@ -120,8 +120,8 @@ namespace Cronos {
 		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
 		//Reading License
 		FILE* fp = fopen("LICENSE", "r");
-		int c; 
-		while ((c = fgetc(fp)) != EOF) { 
+		int c;
+		while ((c = fgetc(fp)) != EOF) {
 			LicenseString += c;
 		}
 		//LicenseString = std::string("sadasf");
@@ -129,11 +129,13 @@ namespace Cronos {
 		//Setting temporary root
 		AssetDirectories = App->filesystem->GetAssetDirectories();
 		m_CurrentDir = AssetDirectories;
-		LOG("	Asset Dir: %s \n	Current Dir: %s", AssetDirectories, m_CurrentDir);
-		CurrentGameObject = App->scene->m_GameObjects[0];
+		const char* LogString1 = AssetDirectories->m_LabelDirectories.c_str();
+		const char* LogString2 = m_CurrentDir->m_LabelDirectories.c_str();
+		LOG("	Asset Dir: %s \n	Current Dir: %s", LogString1, LogString2);
 
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
+		CurrentGameObject = nullptr;
 		return true;
 	}
 
@@ -188,7 +190,7 @@ namespace Cronos {
 				RightOptions(go);
 			}
 			else {
-				
+
 				bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
@@ -213,7 +215,7 @@ namespace Cronos {
 	}
 
 	update_status ImGuiLayer::OnPreUpdate(float dt) {
-		if (ShowDrawGameWindow)		   
+		if (ShowDrawGameWindow)
 			m_SceneWindow->PreUpdate();
 
 		return current_status;
@@ -324,20 +326,20 @@ namespace Cronos {
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 	}
-	
-	void ImGuiLayer::GUIDrawSceneWindow() 
+
+	void ImGuiLayer::GUIDrawSceneWindow()
 	{
 		static ImGuiWindowFlags GameWindow_flags= ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_MenuBar;
-		
+
 		static ImVec2 SizeGame;
 		static ImVec2 LastSize = SizeGame;
 
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Scene",nullptr,GameWindow_flags); 
+		ImGui::Begin("Scene",nullptr,GameWindow_flags);
 		{
 
 			if (ImGui::BeginMenuBar()) {
-		
+
 				if (ImGui::BeginMenu(m_ShadingModesLabel[(int)m_currentShadingMode].c_str())) {
 
 					for (int i = 0; i < (int)ShadingMode::MaxElements; i++) {
@@ -347,8 +349,8 @@ namespace Cronos {
 					}
 					ImGui::EndMenu();
 				}
-			
-				
+
+
 
 				ImGui::EndMenuBar();
 			}
@@ -412,7 +414,8 @@ namespace Cronos {
 					ShowConfigurationPanel = true;
 				}
 
-				ImGui::MenuItem("Exit");
+				if (ImGui::MenuItem("Exit"))
+					App->input->updateQuit(true);
 
 				ImGui::EndMenu();
 			}
@@ -588,7 +591,7 @@ namespace Cronos {
 		ImGui::Separator();
 	}
 
-	void ImGuiLayer::GUIDrawAssetLabelInspector() 
+	void ImGuiLayer::GUIDrawAssetLabelInspector()
 	{
 		ImGui::BeginChild("test");
 		ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
@@ -613,9 +616,9 @@ namespace Cronos {
 		}
 
 		if (open) {
-			
+
 			ImGui::BeginChild("AssetInspectorLabel");
-			
+
 			int AvSizeX = ImGui::GetWindowWidth();
 			int AvSizeY = ImGui::GetWindowHeight();
 			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x) {
@@ -668,10 +671,10 @@ namespace Cronos {
 			}
 
 			if(Diffuse!=nullptr)
-				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); 
+				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 			//else if (Diffuse==nullptr)
 			//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
-			
+
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("\n   Albedo"); ImGui::SameLine();
@@ -679,9 +682,9 @@ namespace Cronos {
 			ImVec2 FramePadding(100.0f, 3.0f);
 			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
 			static int  test = ImGui::GetCursorPosY();
-			
+
 			ImGui::SetCursorPosY(test+15);
-	
+
 			ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags);
 			//ImGui::PopStyleVar();
 
@@ -692,7 +695,7 @@ namespace Cronos {
 			static float SpecIntensity = 1.0f;
 			static int  test2 = ImGui::GetCursorPosY();
 			ImGui::SetCursorPosY(test2 + 13);
-		
+
 			ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
 
 			//if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
@@ -719,7 +722,7 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawHierarchyPanel()
 	{
-		
+
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
 			if (ImGui::BeginMenuBar()) {
@@ -735,8 +738,6 @@ namespace Cronos {
 					ImGui::EndMenu();
 				}
 
-
-
 				ImGui::EndMenuBar();
 			}
 			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 0.70f));
@@ -745,7 +746,7 @@ namespace Cronos {
 				std::string GameObject_Name = go->GetName();
 				std::string ID = std::to_string(go->GetGOID());
 				ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-				
+
 				if (go->isActive() == false) {
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5, 0.5, 0.5, 1.0f));
 				}
@@ -754,9 +755,9 @@ namespace Cronos {
 				{
 					Treenode_flags |= ImGuiTreeNodeFlags_Selected;
 				}
-				
+
 				if (go->GetCountChilds() <= 0) {
-					Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;			
+					Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 					ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, "%s", GameObject_Name.c_str());
 					if (ImGui::IsItemClicked()) {
 						CurrentGameObject = go;
@@ -787,7 +788,7 @@ namespace Cronos {
 					if (open) {
 						HierarchyIterator(*go);
 						ImGui::TreePop();
-					}				
+					}
 				}
 				if (go->isActive() == false) {
 					ImGui::PopStyleColor();
@@ -796,7 +797,12 @@ namespace Cronos {
 
 			}
 
-			ImGui::PopStyleColor();
+			ImGui::PopStyleColor(); //OJU POSIBLE CRASH
+			float Vec2Ytest = ImGui::GetWindowSize().y - ImGui::GetCursorPosY() - 5.0f;
+
+			if (ImGui::IsWindowHovered() && ImGui::GetMousePos().y > Vec2Ytest)
+				if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+					CurrentGameObject = nullptr;
 		}
 		ImGui::End();
 	}
@@ -890,7 +896,7 @@ namespace Cronos {
 			ImGui::Separator();
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			int spaceCounter = 180;
-			for (auto& a : m_CurrentDir->m_Container) {				
+			for (auto& a : m_CurrentDir->m_Container) {
 				a->DrawIcons();
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 					ImGui::SetDragDropPayload("Window",a, sizeof(AssetItems));
@@ -911,7 +917,7 @@ namespace Cronos {
 				//ImGui::Button(a.m_Elements.c_str());
 			}
 
-		
+
 
 			ImGui::PopStyleColor();
 
@@ -920,7 +926,7 @@ namespace Cronos {
 
 		}
 
-	
+
 
 		ImGui::End();
 	}
@@ -1064,7 +1070,7 @@ namespace Cronos {
 				links_.erase(link_id);
 				//}
 			}
-		
+
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -1122,7 +1128,7 @@ namespace Cronos {
 				currentMenu = ConfigMenus::Texture;
 				selected = 8;
 			}
-			
+
 
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
@@ -1168,9 +1174,9 @@ namespace Cronos {
 				if (ImGui::Button("Save Changes"))
 					App->SaveEngineData();
 			ImGui::EndChild();
-			
+
 		ImGui::EndGroup();
-	
+
 		ImGui::EndGroup();
 
 
@@ -1288,7 +1294,7 @@ namespace Cronos {
 		ImGui::Text("");
 		ImGui::Text("Physical Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetPhysMemoryUsedByProcess()) + " MB").c_str()));
 		ImGui::Text("Virtual Memory Used by Process: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetVirtualMemoryUsedByProcess()) + " MB").c_str()));
-		
+
 		ImGui::Text(" MMGR Memory Statistics"); ImGui::SameLine(); ImGui::Separator();
 		ImGui::Text("Total Reported Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalReportedMemory()) + " Bytes").c_str()));
 		ImGui::Text("Total Actual/Real Memory: "); ImGui::SameLine(); ImGui::TextColored(Color, ((std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalActualMemory()) + " Bytes").c_str()));
@@ -1301,7 +1307,7 @@ namespace Cronos {
 		ImGui::Text("Total Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetMemStatsFromMMGR_TotalAllocUnitCount()).c_str()));
 		ImGui::Text("Peak Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetMemStatsFromMMGR_PeakAllocUnitCount()).c_str()));
 		ImGui::Text("Accumulated Allocated Unit Count: "); ImGui::SameLine(); ImGui::TextColored(Color, (std::to_string(HardwareInfo.GetMemoryHardwareInfo().GetMemStatsFromMMGR_AccumulatedAllocUnitCount()).c_str()));
-		
+
 		ImGui::Separator();
 		ImGui::Separator();
 		ImGui::Text("PROCESSOR");
@@ -1345,7 +1351,7 @@ namespace Cronos {
 		ImGui::Text("Software");
 		ImGui::Separator();
 		ImGui::Separator();
-		
+
 		ImGui::Text("Compilation Date: "); ImGui::SameLine(); ImGui::TextColored(Color, SoftwareInfo.GetSoftwareInfo().GetCompilationDate().c_str());
 		ImGui::SameLine(); ImGui::Text("   and Time: "); ImGui::SameLine(); ImGui::TextColored(Color, SoftwareInfo.GetSoftwareInfo().GetCompilationTime().c_str());
 		ImGui::Text(SoftwareInfo.GetSoftwareInfo().MultithreadedSpecified().c_str());
@@ -1359,7 +1365,7 @@ namespace Cronos {
 		ImGui::Text(" C++ Programming Language"); ImGui::SameLine(); ImGui::Separator();
 		ImGui::Text("C++ Version Implemented by Compiler: "); ImGui::SameLine(); ImGui::TextColored(Color, SoftwareInfo.GetSoftwareInfo().GetCppVersionImplementedByCompiler().c_str());
 		ImGui::SameLine(); ImGui::Text(" ("); ImGui::SameLine(); ImGui::TextColored(Color, SoftwareInfo.GetSoftwareInfo().GetCPPNumericalVersion().c_str()); ImGui::SameLine(); ImGui::Text(")");
-		
+
 		ImGui::Text("C++ Used Version: "); ImGui::SameLine(); ImGui::TextColored(Color, (SoftwareInfo.GetSoftwareInfo().GetCppCompilerVersion()).c_str());
 		ImGui::Text("Visual Studio Compiler Version: "); ImGui::SameLine(); ImGui::TextColored(Color, SoftwareInfo.GetSoftwareInfo().GetVSCompilerVersion().c_str());
 
@@ -1402,7 +1408,7 @@ namespace Cronos {
 		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
 			App->engineCamera->SetFOV(CameraFieldOfView);
 		ImGui::NewLine();
-		ImGui::SameLine(15); ImGui::Text("Viewing Frustum: "); 
+		ImGui::SameLine(15); ImGui::Text("Viewing Frustum: ");
 		ImGui::NewLine();
 		ImGui::SameLine(30);
 		ImGui::SetNextItemWidth(100);
@@ -1425,13 +1431,13 @@ namespace Cronos {
 			App->engineCamera->SetFOV(CameraFieldOfView);
 			App->engineCamera->SetNearPlane(CameraNearPlane);
 			App->engineCamera->SetFarPlane(CameraFarPlane);
-		
+
 		}
-			
+
 
 
 		//ImGui::Text("Camera ")
-		
+
 		ImGui::EndChild();
 		ImGui::PopStyleVar();
 	}
@@ -1536,8 +1542,9 @@ namespace Cronos {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Begin("About", &ShowAboutPanel);
 
-			ImGui::Text("Cronos v0.1");
-			ImGui::Text("The next generation 3D Game Engine");
+			if (ImGui::Button("Cronos")) { App->RequestBrowser("https://github.com/lucho1/CronosEngine"); } ImGui::SameLine(); ImGui::Text(" v0.1");
+			ImGui::Text("3D Game Engine based on OpenGL made for the Degree in Videogames Design");
+			ImGui::Text("and Development of Universitat Politecnica de Catalunya for 3rd course Engines subject.");
 			ImGui::Text("By"); ImGui::SameLine(); if (ImGui::Button("Lucho Suaya")) { App->RequestBrowser("https://github.com/lucho1"); }
 			ImGui::SameLine(); ImGui::Text("&"); ImGui::SameLine(); if (ImGui::Button("Roger Leon")) { App->RequestBrowser("https://github.com/rleonborras"); }
 

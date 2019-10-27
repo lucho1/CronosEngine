@@ -24,20 +24,18 @@ namespace Cronos {
 		~MeshComponent();
 
 		virtual void Update(float dt) override;
+		void Draw(Shader* shader, bool bindShader);
 
 		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
-		void SetTextures(std::vector<Texture*>& newTexture, TextureType textureType);
-
+		void SetTextures(std::vector<Texture*> newTexture, TextureType textureType);
+		void RecalculateNormals() { m_NormalsCalculated = false; }
+		
 		//Getters
 		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
 		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
-
 		static ComponentType GetType() { return ComponentType::MESH; };
 
-		void RecalculateNormals() { m_NormalsCalculated = false; }
-
-		void Draw(Shader* shader, bool bindShader);
 
 	private:
 
@@ -45,6 +43,7 @@ namespace Cronos {
 
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
+		void DrawCentralAxis();
 
 	private:
 

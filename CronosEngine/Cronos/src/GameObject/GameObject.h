@@ -39,6 +39,8 @@ namespace Cronos {
 		//}
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
+
+		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
 		
 		Component* CreateComponent(ComponentType type);
 		std::list<GameObject*> m_Childs;
@@ -50,8 +52,9 @@ namespace Cronos {
 			ComponentType type = T::GetType();
 			for (auto& comp : m_Components)
 				if (comp->GetComponentType() == type)
-					return ((T*)(comp));			
+					return ((T*)(comp));
 			
+			LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
 

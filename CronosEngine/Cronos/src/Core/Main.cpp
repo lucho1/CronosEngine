@@ -95,6 +95,7 @@ int main(int argc, char ** argv)
 	}
 
 	delete Cronos::App;
+	Cronos::App = nullptr;
 	LOG("Exiting Engine '%s'...\n");
 	return main_return;
 }

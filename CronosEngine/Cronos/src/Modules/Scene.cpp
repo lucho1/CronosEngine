@@ -5,22 +5,11 @@
 
 //#include "Renderer/Model.h"
 //#include "Renderer/CronosPrimitive.h"
-
 #include <glm/gtx/transform.hpp>
 
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
-
-	//static CronosModel* vmodelxd;
-	static GameObject* vmodelxd;
-	//static CronosModel* NanoSuitModel;
-	static PrimitiveGameObject* vCubePrimitivexd;
-
-	/*
-	AssimpCronosTranslator m_ACT(this);
-		m_ACT.LoadModel(filepath);
-	*/
 
 	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
 	{}
@@ -38,21 +27,8 @@ namespace Cronos {
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
 
-		//vmodelxd = new CronosModel("res/BakerHouse.fbx"); //warrior   BakerHouse
-		//vCubePrimitivexd = new CronosPrimitive(PrimitiveType::CUBE, { 1, 1, 1 });
-	//	NanoSuitModel = new CronosModel("res/nanosuit/nanosuit.obj");
-
-		GameObject* Test = new GameObject("Test", App->m_RandomNumGenerator.GetIntRN(), "");
-		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN(), "");
-
-
-		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
-		m_GameObjects.push_back(vmodelxd);
-		//vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE,"PRGO",{ 1, 1, 1 } );
-		//m_GameObjects.push_back(vCubePrimitivexd);
-		
-		Test->m_Childs.push_back(TestChild);
-		m_GameObjects.push_back(Test);
+		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
+		m_GameObjects.push_back(m_HouseModel);
 
 		std::string vertexShader = R"(
 			#version 330 core
@@ -96,7 +72,7 @@ namespace Cronos {
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-		BasicTestShader->SetUniformMat4f("u_Model", modelMatDef);
+		BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		//BasicTestShader->Unbind();
 
 		return ret;
@@ -129,55 +105,24 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		static float move = 0.0f;
-		static float angle = 0.0f;
-		static float scale = 1.0f;
-		static glm::mat4 translation = glm::mat4(1.0f);
-
-
+		//Changing Textures Test
 		/*if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-			vmodelxd->MoveModel(glm::vec3(1, 0, 1), 0);
+		{
+			auto comp = vmodelxd->GetComponent<MeshComponent>();
+			if (comp != nullptr)
+				comp->SetTextures(newVecText, TextureType::DIFFUSE);
 
-		if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
-		{
-			vmodelxd->ScaleModel(glm::vec3(scale));
-			scale -= 0.1f;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
-		{
-			vmodelxd->RotateModel(angle, glm::vec3(0, 1, 0));
-			angle += 10.0f;
+			for (auto child : vmodelxd->m_Childs)
+			{
+				comp = child->GetComponent<MeshComponent>();
+				if (comp != nullptr)
+					comp->SetTextures(newVecText, TextureType::DIFFUSE);
+			}
 		}*/
+		for (auto element : m_GameObjects)
+			element->Update(dt);
 
-	//	bool wireDrawing = (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe ? true : false);
-	//	if (wireDrawing)
-	//		vmodelxd->Draw(BasicTestShader, false);
-	//	else
-	//		vmodelxd->Draw(BasicTestShader, true);
-		
-
-		//BasicTestShader->Bind();
-		//vmodelxd->Update(dt);
-		for (auto& go: m_GameObjects) {
-			go->Update(dt);
-		}
-		//vCubePrimitivexd->Update(dt);
-		//std::list<GameObject*>::iterator listItem = vmodelxd->m_Childs.begin();
-		//for (; listItem != vmodelxd->m_Childs.end(); listItem++)
-		//{
-		//	(*listItem)->Update();
-		//}
-		
-
-
-	//	//NanoSuitModel->Draw(BasicTestShader, true);
-		//vmodelxd->DrawModelAxis();
-		////vmodelxd->DrawPlanesNormals();
-		//vmodelxd->DrawVerticesNormals();
-
-		glColor3f(White.r, White.g, White.b);
-		//vCubePrimitivexd->Draw(BasicTestShader, false);
-
+		//m_HouseModel->Update(dt);
 		return UPDATE_CONTINUE;
 	}
 

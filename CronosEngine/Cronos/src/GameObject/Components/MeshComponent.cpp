@@ -1,5 +1,6 @@
 #include "Providers/cnpch.h"
 #include "MeshComponent.h"
+#include "TransformComponent.h"
 
 #include "Application.h"
 
@@ -60,18 +61,14 @@ namespace Cronos {
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
 	}
 
-	void MeshComponent::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
+	void MeshComponent::SetTextures(std::vector<Texture*> newTexture, TextureType textureType)
 	{
-		std::vector<Texture*>::iterator item = m_TexturesVector.begin();
-
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+		for (uint i = 0; i < m_TexturesVector.size() && m_TexturesVector[i] != nullptr; i++)
 		{
-		
-			if ((*item)->GetTextureType() == textureType)
+			if (m_TexturesVector[i]->GetTextureType() == textureType)
 			{
-				(*item)->~Texture();
-				delete (*item);
-				m_TexturesVector.erase(item);
+				RELEASE(m_TexturesVector[i]);
+				m_TexturesVector.erase(m_TexturesVector.begin() + i);
 			}
 		}
 
@@ -92,7 +89,6 @@ namespace Cronos {
 		if (GetParent()->m_IsPrimitive == true)
 			bindShader = false;
 
-		m_MeshVAO->Bind();
 		if (bindShader)
 		{
 			shader->Bind();
@@ -101,41 +97,75 @@ namespace Cronos {
 			shader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
-		std::vector< Texture*>::iterator item = m_TexturesVector.begin();
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 		{
-			(*item)->Bind((*item)->GetTextureID());
+			std::vector< Texture*>::iterator item = m_TexturesVector.begin();
+			for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+			{
+				(*item)->Bind((*item)->GetTextureID());
 
-			if ((*item)->GetTextureType() == TextureType::AMBIENT)
-				shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::DIFFUSE)
-				shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::SPECULAR)
-				shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::NORMALMAP)
-				shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
-				shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
-				shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
-			//else
-			//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::AMBIENT)
+					shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::DIFFUSE)
+					shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::SPECULAR)
+					shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::NORMALMAP)
+					shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
+					shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
+					shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
+				//else
+				//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
+			}
+		}
+		else
+		{
+			glColor3f(White.r, White.g, White.b);
+			shader->Unbind();
 		}
 
-
+		m_MeshVAO->Bind();
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		item = m_TexturesVector.begin();
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-			(*item)->Unbind();
+		std::vector< Texture*>::iterator item2 = m_TexturesVector.begin();
+		item2 = m_TexturesVector.begin();
+		for (; item2 != m_TexturesVector.end() && (*item2) != NULL; item2++)
+			(*item2)->Unbind();
 
 		shader->Unbind();
-		
+		m_MeshVAO->UnBind();
+
+	//	DrawCentralAxis();
 		if (m_DebugDraw)
 		{
 			DrawVerticesNormals();
 			DrawPlanesNormals();
-		}		
+		}
+	}
+
+	void MeshComponent::DrawCentralAxis()
+	{
+		auto comp = GetParent()->GetComponent<TransformComponent>();
+		if (comp != nullptr)
+		{
+			float linelength = 1.0f;
+			glm::vec3 axis = comp->GetCentralAxis();
+			glLineWidth(5.0f);
+			glBegin(GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x + linelength, axis.y, axis.z);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x, axis.y + linelength, axis.z);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x, axis.y, axis.z + linelength);
+				glColor4f(White.r, White.g, White.b, White.a);
+			glEnd();
+		}
 	}
 
 	void MeshComponent::DrawVerticesNormals()

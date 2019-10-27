@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "EngineCamera.h"
 
+#include "GameObject/Components/TransformComponent.h"
+
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
@@ -56,8 +58,8 @@ namespace Cronos {
 			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 			{
 				vec3 newPos(0.0f, 0.0f, 0.0f);
-				newPos += m_X * (float)App->input->GetMouseXMotion() * dt * m_CameraMoveSpeed/2.0f;
-				newPos += -m_Y * (float)App->input->GetMouseYMotion() * dt * m_CameraMoveSpeed/2.0f;
+				newPos += -m_X * (float)App->input->GetMouseXMotion() * dt * m_CameraMoveSpeed/2.0f;
+				newPos += m_Y * (float)App->input->GetMouseYMotion() * dt * m_CameraMoveSpeed/2.0f;
 				//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
 				m_Position += newPos;
@@ -94,16 +96,38 @@ namespace Cronos {
 				LookAt(m_Reference);
 			}
 
-			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT) {
-
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+			{
 				// Orbiting around center --- CalculateMouseRotation() is the reference postion
 				m_Position = m_Reference + CalculateMouseRotation(m_Position, m_Reference);
-				OrbitAroundReference(vec3(0, 0, 0));
+				
+				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
+				{
+					glm::vec3 GO_refPos = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+					OrbitAroundReference(vec3(GO_refPos.x, GO_refPos.y, GO_refPos.z));
+				}
+				else
+					OrbitAroundReference(vec3(0, 0, 0));
 			}
+		}
 
-			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-				LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		{
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
+			{
+				AABB GO_BB = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetAABB();
+				glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
 
+				glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
+				size *= 1.5f;
+
+				vec3 pos = vec3(posToLook.x * size.x, posToLook.y + 1.5f, posToLook.z * size.z) + m_Z * 6.0f;
+				vec3 ref = vec3(posToLook.x, posToLook.y + 0.5f, posToLook.z + 0.5f);
+
+				Look(pos, ref, true);
+			}
+			else
+				LookAt(vec3(0.0f, 0.0f, 0.0f));
 		}
 
 		// Recalculate matrix -------------
@@ -135,8 +159,8 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void EngineCamera::Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference)
 	{
-		this->m_Position = Position;
-		this->m_Reference = Reference;
+		m_Position = Position;
+		m_Reference = Reference;
 
 		m_Z = normalize(Position - Reference);
 		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
@@ -144,8 +168,8 @@ namespace Cronos {
 
 		if (!RotateAroundReference)
 		{
-			this->m_Reference = this->m_Position;
-			this->m_Position += m_Z * 0.05f;
+			m_Reference = m_Position;
+			m_Position += m_Z * 0.05f;
 		}
 
 		CalculateViewMatrix();
@@ -189,7 +213,7 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void EngineCamera::OrbitAroundReference(const vec3 &Reference)
 	{
-		this->m_Reference = Reference;
+		m_Reference = Reference;
 
 		m_Z = normalize(m_Position - Reference);
 		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
