@@ -144,11 +144,11 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		static float move = 0.0f;
-		static float angle = 0.0f;
-		static float scale = 1.0f;
-		static glm::mat4 translation = glm::mat4(1.0f);
-
+		//static float move = 0.0f;
+		//static float angle = 0.0f;
+		//static float scale = 1.0f;
+		//static glm::mat4 translation = glm::mat4(1.0f);
+		//
 
 		/*if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
 			vmodelxd->MoveModel(glm::vec3(1, 0, 1), 0);

@@ -95,33 +95,41 @@ namespace Cronos {
 			shader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
-		std::vector< Texture*>::iterator item = m_TexturesVector.begin();
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 		{
-			(*item)->Bind((*item)->GetTextureID());
+			std::vector< Texture*>::iterator item = m_TexturesVector.begin();
+			for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
+			{
+				(*item)->Bind((*item)->GetTextureID());
 
-			if ((*item)->GetTextureType() == TextureType::AMBIENT)
-				shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::DIFFUSE)
-				shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::SPECULAR)
-				shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::NORMALMAP)
-				shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
-				shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
-			if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
-				shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
-			//else
-			//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::AMBIENT)
+					shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::DIFFUSE)
+					shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::SPECULAR)
+					shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::NORMALMAP)
+					shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
+					shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
+				if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
+					shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
+				//else
+				//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
+			}
 		}
-
+		else
+		{
+			glColor3f(White.r, White.g, White.b);
+			shader->Unbind();
+		}
 
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		item = m_TexturesVector.begin();
-		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-			(*item)->Unbind();
+		std::vector< Texture*>::iterator item2 = m_TexturesVector.begin();
+		item2 = m_TexturesVector.begin();
+		for (; item2 != m_TexturesVector.end() && (*item2) != NULL; item2++)
+			(*item2)->Unbind();
 
 		shader->Unbind();
 		
