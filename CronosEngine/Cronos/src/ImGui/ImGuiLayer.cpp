@@ -310,7 +310,8 @@ namespace Cronos {
 					ShowConfigurationPanel = true;
 				}
 
-				ImGui::MenuItem("Exit");
+				if (ImGui::MenuItem("Exit"))
+					App->input->updateQuit(true);
 
 				ImGui::EndMenu();
 			}
@@ -1362,8 +1363,9 @@ namespace Cronos {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 		ImGui::Begin("About", &ShowAboutPanel);
 
-			ImGui::Text("Cronos v0.1");
-			ImGui::Text("The next generation 3D Game Engine");
+			if (ImGui::Button("Cronos")) { App->RequestBrowser("https://github.com/lucho1/CronosEngine"); } ImGui::SameLine(); ImGui::Text(" v0.1");
+			ImGui::Text("3D Game Engine based on OpenGL made for the Degree in Videogames Design");
+			ImGui::Text("and Development of Universitat Politecnica de Catalunya for 3rd course Engines subject.");
 			ImGui::Text("By"); ImGui::SameLine(); if (ImGui::Button("Lucho Suaya")) { App->RequestBrowser("https://github.com/lucho1"); }
 			ImGui::SameLine(); ImGui::Text("&"); ImGui::SameLine(); if (ImGui::Button("Roger Leon")) { App->RequestBrowser("https://github.com/rleonborras"); }
 
