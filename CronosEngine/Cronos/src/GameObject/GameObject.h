@@ -28,6 +28,16 @@ namespace Cronos {
 
 		inline const std::string GetName() const { return m_Name; }
 		inline const std::string GetPath() const { return m_Path; }
+		inline const int GetGOID() const { return m_GameObjectID; }
+		inline const int GetCountChilds() const { return m_Childs.size(); }
+
+		//const bool hasMaterial() {
+		//	for(auto& a : m_Components)
+		//		if (a->GetComponentType == ComponentType::MATERIAL) {
+		//			return true;
+		//		}
+		//}
+		
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
 		
@@ -49,11 +59,13 @@ namespace Cronos {
 	public:
 
 		bool m_IsPrimitive = false;
+		bool tempHasMaterial = false;
 
 	private:
 
 		std::string m_Name;
 		std::string m_Path;
+	
 		bool m_Active;
 		int m_GameObjectID;
 	};

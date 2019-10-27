@@ -48,8 +48,8 @@ namespace Cronos {
 
 		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
 		m_GameObjects.push_back(vmodelxd);
-		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, "PRGO");
-		m_GameObjects.push_back(vCubePrimitivexd);
+		//vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE,"PRGO",{ 1, 1, 1 } );
+		//m_GameObjects.push_back(vCubePrimitivexd);
 		
 		Test->m_Childs.push_back(TestChild);
 		m_GameObjects.push_back(Test);
@@ -157,8 +157,11 @@ namespace Cronos {
 		
 
 		//BasicTestShader->Bind();
-		vmodelxd->Update(dt);
-		vCubePrimitivexd->Update(dt);
+		//vmodelxd->Update(dt);
+		for (auto& go: m_GameObjects) {
+			go->Update(dt);
+		}
+		//vCubePrimitivexd->Update(dt);
 		//std::list<GameObject*>::iterator listItem = vmodelxd->m_Childs.begin();
 		//for (; listItem != vmodelxd->m_Childs.end(); listItem++)
 		//{
@@ -178,6 +181,9 @@ namespace Cronos {
 		return UPDATE_CONTINUE;
 	}
 
+	GameObject* Scene::CreateModel(const char* path) {
+		return m_CNAssimp_Importer.LoadModel(path);
+	}
 	// PreUpdate
 	update_status Scene::OnPreUpdate(float dt)
 	{

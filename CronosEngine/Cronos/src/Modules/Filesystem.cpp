@@ -36,12 +36,21 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_path,ItemType mtype): type(mtype),m_Path(m_path.string()) {
+	AssetItems::AssetItems(std::filesystem::path m_path,ItemType mtype): type(mtype),m_Path(m_path.root_path().string()) {
+		
+		m_path.make_preferred();
+		m_Path = m_path.parent_path().generic_string();
+		std::string temp = m_path.generic_string();
+		temp.erase(0, App->filesystem->GetRootPath().size()+1);
+		m_Path = temp;
+		//temp-=App->filesystem->GetLabelAssetRoot();
 
 		m_AssetFullName = m_path.filename().string();
 		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
 		m_AssetNameNoExtension = m_AssetShortName = m_AssetFullName;
-		
+
+		m_AssetID = App->m_RandomNumGenerator.GetIntRN();
+
 		if (m_AssetFullName.length() > 10) {
 			m_AssetShortName.erase(10);
 			m_AssetShortName += "...";
@@ -103,9 +112,8 @@ namespace Cronos {
 
 		ImGui::BeginGroup();    
 
-		if (ImGui::ImageButton((void*)(m_IconTex-1), ImVec2(50, 50),ImVec2(0,1), ImVec2(1, 0),2)) {
-			bool a = true;
-		} 
+		ImGui::ImageButton((void*)(m_IconTex - 1), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0), 2);
+
 		hovered = ImGui::IsItemHovered(); //ASK MARC WHY IS NOT HOVERING ALL TIME
 		static double refresh_time = 0.0;
 		if (hovered) {
@@ -131,9 +139,9 @@ namespace Cronos {
 			ImGui::OpenPopup(labelID);
 		}
 		if (ImGui::BeginPopup(labelID)) {
+
 			if (ImGui::BeginMenu("Rename File")) {
 
-		
 				static char buf1[64];
 				sprintf_s(buf1, "%s", m_AssetNameNoExtension.c_str());				
 				ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x+25);
@@ -141,11 +149,6 @@ namespace Cronos {
 					App->filesystem->RenameFile(this,buf1);
 				}
 				
-			/*	while (ImGui::MenuItem("Renameit")) {
-					static char buf1[64] = { (char)m_AssetNameNoExtension.c_str() }; ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-					ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank);
-					App->filesystem->RenameFile(this, "Hello");
-				}*/
 				ImGui::EndMenu();
 			}
 			if (ImGui::MenuItem("Delete"))
@@ -153,6 +156,7 @@ namespace Cronos {
 			}
 			ImGui::EndPopup();
 		}
+
 
 		ImGui::Text(m_AssetShortName.c_str());
 		m_ElementSize = ImGui::GetItemRectSize().x;

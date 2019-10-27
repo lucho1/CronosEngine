@@ -11,6 +11,7 @@
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
 #include "Renderer/Buffers.h"
+#include "Renderer/Primitive.h"
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 
@@ -51,6 +52,42 @@ namespace Cronos {
 		}
 	}
 
+	void RightOptions(GameObject* currentGameObject) {
+
+		std::string ID = std::to_string(currentGameObject->GetGOID());
+		static ImVec2 Pos = ImGui::GetCursorPos();
+
+		if (ImGui::BeginPopup(ID.c_str())) {
+
+			if (ImGui::BeginMenu("Rename File")) {
+
+				static char buf1[64];
+				sprintf_s(buf1, "%s", currentGameObject->GetName().c_str());
+
+				//ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x + 25);
+				if (ImGui::InputText("###", buf1, 64)) {
+
+					currentGameObject->SetName(buf1);
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Delete"))
+			{
+				int cursor = 0;
+				for (auto& go : App->scene->m_GameObjects) {
+					bool wasActive = go->isActive();
+					if (go->GetGOID() == currentGameObject->GetGOID()) {					
+						App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
+						if(!wasActive)
+						 ImGui::PopStyleColor();
+					}
+					cursor++;
+				}
+			}
+			ImGui::EndPopup();
+		}
+	}
+
 	bool ImGuiLayer::OnStart()
 	{
 		ImGui::CreateContext();
@@ -68,8 +105,6 @@ namespace Cronos {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableSetMousePos | ImGuiConfigFlags_NavEnableKeyboard;
 
 		setDocking();
-
-		Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
 		//Setting FrameBuffer for gameWindow;
 		m_SceneWindow = new FrameBuffer();
@@ -106,6 +141,8 @@ namespace Cronos {
 		for (auto& c : a.childs) {
 
 			std::string temp = c->m_Directories.filename().string();
+			ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
+
 			bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
 			if (ImGui::IsItemClicked()) {
 				m_CurrentDir = c;
@@ -121,14 +158,55 @@ namespace Cronos {
 	void ImGuiLayer::HierarchyIterator(GameObject GameObjects)
 	{
 		for (auto& go : GameObjects.m_Childs) {
-			std::string temp = go->GetName();
-			bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
-			if (ImGui::IsItemClicked()) {
-				CurrentGameObject = go;
+
+			ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			std::string ID = std::to_string(go->GetGOID());
+
+			if (go->isActive() == false) {
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5, 0.5, 0.5, 1.0f));
 			}
-			if (open) {
-				HierarchyIterator(*go);
-				ImGui::TreePop();
+
+			if (nodeHirearchySelected == go->GetGOID())
+			{
+				Treenode_flags |= ImGuiTreeNodeFlags_Selected;
+			}
+			std::string GameObject_Name = go->GetName();
+
+			if (go->GetCountChilds() <= 0) {
+				Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+				ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
+				if (ImGui::IsItemClicked()) {
+					CurrentGameObject = go;
+					nodeHirearchySelected = go->GetGOID();
+				}
+				if (ImGui::IsItemClicked(1))
+				{
+					ImGui::OpenPopup(ID.c_str());
+				}
+
+				RightOptions(go);
+			}
+			else {
+				
+				bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
+				if (ImGui::IsItemClicked()) {
+					CurrentGameObject = go;
+					nodeHirearchySelected = go->GetGOID();
+
+				}
+				if (ImGui::IsItemClicked(1))
+				{
+					ImGui::OpenPopup(ID.c_str());
+				}
+
+				RightOptions(go);
+				if (open) {
+					HierarchyIterator(*go);
+					ImGui::TreePop();
+				}
+			}
+			if (go->isActive() == false) {
+				ImGui::PopStyleColor();
 			}
 		}
 	}
@@ -168,9 +246,6 @@ namespace Cronos {
 
 		//Only to test
 		static bool show = true;
-		//ImGui::ShowDemoWindow(&show);
-		//ImGui::End();
-
 
 		GUIDrawMainBar();
 		GUIDrawWidgetMenu();
@@ -187,6 +262,17 @@ namespace Cronos {
 
 		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
 		ImGui::End();
+
+		if (CurrentGameObject != nullptr&&App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) {
+			int cursor = 0;
+			for (auto& go : App->scene->m_GameObjects) {
+				if (go->GetGOID() == CurrentGameObject->GetGOID()) {
+					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
+				}
+				cursor++;
+			}
+		}
+
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -240,7 +326,6 @@ namespace Cronos {
 	
 	void ImGuiLayer::GUIDrawSceneWindow() 
 	{
-
 		static ImGuiWindowFlags GameWindow_flags= ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_MenuBar;
 		
 		static ImVec2 SizeGame;
@@ -249,6 +334,7 @@ namespace Cronos {
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("Scene",nullptr,GameWindow_flags); 
 		{
+
 			if (ImGui::BeginMenuBar()) {
 		
 				if (ImGui::BeginMenu(m_ShadingModesLabel[(int)m_currentShadingMode].c_str())) {
@@ -273,6 +359,22 @@ namespace Cronos {
 				LastSize = SizeGame;
 			}
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				//ImGui::GetID("Scene");
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Window"))
+				{
+					int payload_n = *(const int*)payload->Data;
+
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_OBJ) {
+						AssetItems* a = (AssetItems*)payload->Data;
+						GameObject* ret = App->scene->CreateModel(a->GetAssetPath().c_str());
+						App->scene->m_GameObjects.push_back(ret);
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
 		}
 		if (ImGui::IsItemHovered()) {
 			HoverGameWin = true;
@@ -286,7 +388,6 @@ namespace Cronos {
 
 	void ImGuiLayer::GUIDrawMainBar()
 	{
-
 		ImGui::BeginMainMenuBar();
 		{
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
@@ -323,10 +424,33 @@ namespace Cronos {
 				if (ImGui::MenuItem("Empty Object")) {}
 				if (ImGui::BeginMenu("3D Object"))
 					{
-						ImGui::MenuItem("Cube");
-						ImGui::MenuItem("Sphere");
-						ImGui::MenuItem("Cone");
-						ImGui::EndMenu();
+					if (ImGui::MenuItem("Cube")) 
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", {1,1,1});
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					if (ImGui::MenuItem("Sphere"))
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SPHERE, "Sphere");
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					if (ImGui::MenuItem("Cone")) {
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CONE, "Cone");
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					if (ImGui::MenuItem("Torus")) {
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TORUS, "Torus");
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					if (ImGui::MenuItem("Cylinder")) {
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CYLINDER, "Cylinder");
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					if (ImGui::MenuItem("Plane")) {
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
+						App->scene->m_GameObjects.push_back(ret);
+					}
+					ImGui::EndMenu();
 					}
 				ImGui::EndMenu();
 			}
@@ -387,6 +511,7 @@ namespace Cronos {
 		ImGui::EndMainMenuBar();
 
 	}
+
 	void ImGuiLayer::GUIDrawPerformancePanel() {
 
 		ImGui::SetNextWindowSize(ImVec2(250, 400));
@@ -442,7 +567,10 @@ namespace Cronos {
 				}
 				ImGui::Separator();
 				GUIDrawTransformPMenu(CurrentGameObject);
-				GUIDrawMaterialsMenu();
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+					if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+						GUIDrawMaterialsMenu(CurrentGameObject);
+				}
 			}
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
@@ -535,7 +663,7 @@ namespace Cronos {
 		ImGui::EndChild();
 	}
 
-	void ImGuiLayer::GUIDrawMaterialsMenu()
+	void ImGuiLayer::GUIDrawMaterialsMenu(GameObject* CurrentGameObject)
 	{
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -551,8 +679,18 @@ namespace Cronos {
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.392f, 0.369f, 0.376f, 0.10f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));
+			Texture* Diffuse=nullptr;
+			MeshComponent* textureVec = CurrentGameObject->GetComponent<MeshComponent>();
+			if (textureVec != nullptr) {
+				for (auto& tv : textureVec->GetTexturesVector()) {
+					if (tv->GetTextureType() == TextureType::DIFFUSE) {
+						Diffuse = tv;
+					}
+				}
+			}
+			if(Diffuse!=nullptr)
+				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
 
-			ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("\n   Albedo"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
@@ -593,6 +731,10 @@ namespace Cronos {
 		}
 	}
 
+
+
+
+
 	void ImGuiLayer::GUIDrawHierarchyPanel()
 	{
 		
@@ -605,18 +747,31 @@ namespace Cronos {
 					if (ImGui::MenuItem("Empty Object")) {}
 					if (ImGui::BeginMenu("3D Object"))
 					{
-						ImGui::MenuItem("Cube");
-						ImGui::MenuItem("Sphere");
-						ImGui::MenuItem("Cone");
-						if (ImGui::BeginMenu("More.."))
+						if (ImGui::MenuItem("Cube"))
 						{
-							ImGui::MenuItem("Hello");
-							ImGui::MenuItem("Sailor");
-							if (ImGui::BeginMenu("Recurse.."))
-							{
-								ImGui::EndMenu();
-							}
-							ImGui::EndMenu();
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", { 1,1,1 });
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Sphere"))
+						{
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::SPHERE, "Sphere");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Cone")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CONE, "Cone");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Torus")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TORUS, "Torus");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Cylinder")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CLOSED_CYLINDER, "Cylinder");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Plane")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
+							App->scene->m_GameObjects.push_back(ret);
 						}
 						ImGui::EndMenu();
 					}
@@ -627,22 +782,68 @@ namespace Cronos {
 
 				ImGui::EndMenuBar();
 			}
+			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 0.70f));
 
 			for (auto&go : App->scene->m_GameObjects) {
-				std::string temp = go->GetName();
-				bool open = ImGui::TreeNodeEx(temp.c_str(),Treenode_flags);
-				if (ImGui::IsItemClicked()) {
-					CurrentGameObject = go;
+				std::string GameObject_Name = go->GetName();
+				std::string ID = std::to_string(go->GetGOID());
+				ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+				
+				if (go->isActive() == false) {
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5, 0.5, 0.5, 1.0f));
 				}
-				if (open) {
-					HierarchyIterator(*go);
-					ImGui::TreePop();
+
+				if (nodeHirearchySelected == go->GetGOID())
+				{
+					Treenode_flags |= ImGuiTreeNodeFlags_Selected;
 				}
+				
+				if (go->GetCountChilds() <= 0) {
+					Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;			
+					ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, "%s", GameObject_Name.c_str());
+					if (ImGui::IsItemClicked()) {
+						CurrentGameObject = go;
+						nodeHirearchySelected = go->GetGOID();
+					}
+					if (ImGui::IsItemClicked(1))
+					{
+						ImGui::OpenPopup(ID.c_str());
+					}
+
+					RightOptions(go);
+
+				}
+				else {
+
+					bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, "%s", GameObject_Name.c_str());
+					if (ImGui::IsItemClicked()) {
+						CurrentGameObject = go;
+						nodeHirearchySelected = go->GetGOID();
+					}
+					if (ImGui::IsItemClicked(1))
+					{
+						ImGui::OpenPopup(ID.c_str());
+					}
+
+					RightOptions(go);
+
+					if (open) {
+						HierarchyIterator(*go);
+						ImGui::TreePop();
+					}				
+				}
+				if (go->isActive() == false) {
+					ImGui::PopStyleColor();
+				}
+
+
 			}
+
+			ImGui::PopStyleColor();
 		}
 		ImGui::End();
-
 	}
+
 
 	void ImGuiLayer::GUIDrawAssetPanel()
 	{
@@ -663,6 +864,7 @@ namespace Cronos {
 
 			ImGui::BeginChild("left panel", ImVec2(150, 0),true,window_flags);
 
+			ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 			bool open = ImGui::TreeNodeEx(App->filesystem->GetLabelAssetRoot().c_str(),Treenode_flags);
 			if (ImGui::IsItemClicked())
 				m_CurrentDir = AssetDirectories;
@@ -731,10 +933,14 @@ namespace Cronos {
 			ImGui::Separator();
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 			int spaceCounter = 180;
-			for (auto& a : m_CurrentDir->m_Container) {
-				
+			for (auto& a : m_CurrentDir->m_Container) {				
 				a->DrawIcons();
-				
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+					ImGui::SetDragDropPayload("Window",a, sizeof(AssetItems));
+					ImGui::Image((void*)(a->GetIconTexture() - 1), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::EndDragDropSource();
+				}
+
 				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
 					m_CurrentDir = a->folderDirectory;
 
@@ -747,12 +953,18 @@ namespace Cronos {
 					spaceCounter = 180;
 				//ImGui::Button(a.m_Elements.c_str());
 			}
+
+		
+
 			ImGui::PopStyleColor();
 
 			ImGui::EndChild();
 			ImGui::EndGroup();
 
 		}
+
+	
+
 		ImGui::End();
 	}
 

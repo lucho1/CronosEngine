@@ -111,10 +111,10 @@
     <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Module.h" />
     <ClInclude Include="src\GameObject\Components\Component.h" />
-    <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
-    <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\Components\MeshComponent.h" />
+    <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
+    <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
@@ -132,13 +132,13 @@
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
     <ClInclude Include="src\Modules\TextureManager.h" />
+    <ClInclude Include="src\Providers\AssimpImporter.h" />
     <ClInclude Include="src\Providers\Errors.h" />
     <ClInclude Include="src\Providers\Globals.h" />
     <ClInclude Include="src\Providers\SystemInfo.h" />
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
-    <ClInclude Include="src\Providers\AssimpImporter.h" />
     <ClInclude Include="src\Renderer\Primitive.h" />
     <ClInclude Include="src\Renderer\Shaders.h" />
     <ClInclude Include="src\Renderer\Textures.h" />
@@ -519,10 +519,10 @@
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
-    <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
-    <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\MeshComponent.cpp" />
+    <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
+    <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
@@ -540,6 +540,7 @@
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
     <ClCompile Include="src\Modules\TextureManager.cpp" />
+    <ClCompile Include="src\Providers\AssimpImporter.cpp" />
     <ClCompile Include="src\Providers\Log.cpp" />
     <ClCompile Include="src\Providers\SystemInfo.cpp" />
     <ClCompile Include="src\Providers\cnpch.cpp">
@@ -547,7 +548,6 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
-    <ClCompile Include="src\Providers\AssimpImporter.cpp" />
     <ClCompile Include="src\Renderer\Primitive.cpp" />
     <ClCompile Include="src\Renderer\Shaders.cpp" />
     <ClCompile Include="src\Renderer\Textures.cpp" />

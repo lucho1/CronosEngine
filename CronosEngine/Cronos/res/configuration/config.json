@@ -23,9 +23,9 @@
             0.0
         ],
         "InitialPosition": [
-            12.486549377441406,
-            34.41038131713867,
-            31.718883514404297
+            15.927526473999023,
+            16.808761596679688,
+            7.261531829833984
         ],
         "NearPlane": 0.125
     },
@@ -52,8 +52,8 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 720,
+        "ScreenHeight": 1010,
         "ScreenSize": 1,
-        "ScreenWidth": 1024
+        "ScreenWidth": 1456
     }
 }

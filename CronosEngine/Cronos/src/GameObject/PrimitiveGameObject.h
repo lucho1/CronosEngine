@@ -23,7 +23,7 @@ namespace Cronos {
 	{
 	public:
 
-		PrimitiveGameObject(PrimitiveType primitve_type, glm::vec3 size = { 2, 2, 2 }, const std::string& name = "Primitive Game Object", float radius = DEFAULT_RADIUS,
+		PrimitiveGameObject(PrimitiveType primitve_type, const std::string& name = "Primitive Game Object" , glm::vec3 size = { 2, 2, 2 }, float radius = DEFAULT_RADIUS,
 			int figure_slices = DEFAULT_SLICE_AND_STACK, int figure_stacks = DEFAULT_SLICE_AND_STACK);
 
 		~PrimitiveGameObject() {}

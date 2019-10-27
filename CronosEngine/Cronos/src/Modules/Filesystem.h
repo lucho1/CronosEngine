@@ -49,6 +49,7 @@ namespace Cronos {
 		std::string GetAssetPath() const { return m_Path; }
 		std::string GetExtension() const { return m_Extension; }
 		std::string GetDetails() const { return m_Details; }
+		inline int GetAssetID() const { return m_AssetID; }
 
 		Directories* folderDirectory = nullptr;
 
@@ -60,6 +61,7 @@ namespace Cronos {
 		std::string m_Path;
 		std::string m_Details;
 		//For Images
+		int m_AssetID;
 		GLuint m_IconTex;
 		ImVec2 m_Resolution;
 	};
@@ -111,6 +113,7 @@ namespace Cronos {
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
+		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 
 	private:

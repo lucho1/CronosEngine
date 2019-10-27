@@ -61,8 +61,10 @@ namespace Cronos {
 	void MeshComponent::SetTextures(std::vector<Texture*>& newTexture, TextureType textureType)
 	{
 		std::vector<Texture*>::iterator item = m_TexturesVector.begin();
+
 		for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
 		{
+		
 			if ((*item)->GetTextureType() == textureType)
 			{
 				(*item)->~Texture();

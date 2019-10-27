@@ -69,7 +69,7 @@ namespace Cronos {
 		void GUIDrawInspectorMenu(GameObject* CurrentGameObject);
 		void GUIDrawAssetLabelInspector();
 		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
-		void GUIDrawMaterialsMenu();
+		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
@@ -114,6 +114,7 @@ namespace Cronos {
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
 		bool AssetLabelInspector = false;
+		int nodeHirearchySelected = -1;
 
 		bool HoverGameWin = false;
 
@@ -137,7 +138,9 @@ namespace Cronos {
 		std::vector <Directories*> DirectoriesArray;
 
 		void HierarchyIterator(GameObject GameObjects);
-		ImGuiTreeNodeFlags Treenode_flags;
+
+		ImGuiID SceneWindowID;
+
 
 		ShadingMode m_currentShadingMode;
 		GameObject* CurrentGameObject = nullptr;
@@ -154,6 +157,7 @@ namespace Cronos {
 		};
 
 		int current_id_;
+		
 		std::unordered_map<int, float> float_nodes_;
 		std::unordered_map<int, Color3> color_nodes_;
 		std::unordered_map<int, Link> links_;

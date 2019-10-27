@@ -19,7 +19,7 @@ namespace Cronos {
 		friend class GameObject;
 	private:
 
-		GameObject* m_Parent = nullptr;
+
 		ComponentType m_Type;
 		bool m_Active;
 
@@ -35,6 +35,9 @@ namespace Cronos {
 		virtual void Disable() { m_Active = false; }
 
 		void SetParent(GameObject* parent) { m_Parent = parent; }
+
+		//TODO CHANGE TO PRIVATE WHEN MATERIAL COMPONENT ADDED
+		GameObject* m_Parent = nullptr;
 
 		//Getters
 		inline GameObject* GetParent() const { return m_Parent; }
