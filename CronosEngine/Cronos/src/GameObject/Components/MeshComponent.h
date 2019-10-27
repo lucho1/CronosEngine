@@ -30,7 +30,6 @@ namespace Cronos {
 		void SetTextures(std::vector<Texture*> newTexture, TextureType textureType);
 		void RecalculateNormals() { m_NormalsCalculated = false; }
 		
-
 		//Getters
 		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
@@ -44,6 +43,7 @@ namespace Cronos {
 
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
+		void DrawCentralAxis();
 
 	private:
 

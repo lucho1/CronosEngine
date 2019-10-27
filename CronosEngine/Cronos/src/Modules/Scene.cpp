@@ -5,13 +5,12 @@
 
 //#include "Renderer/Model.h"
 //#include "Renderer/CronosPrimitive.h"
-
 #include <glm/gtx/transform.hpp>
 
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
-
+	
 	//static CronosModel* vmodelxd;
 	static GameObject* vmodelxd;
 	//static CronosModel* NanoSuitModel;
@@ -47,10 +46,10 @@ namespace Cronos {
 		GameObject* TestChild = new GameObject("TestChild", App->m_RandomNumGenerator.GetIntRN(), "");
 
 
-		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/BakerHouse.fbx"));
+		vmodelxd = m_CNAssimp_Importer.LoadModel(std::string("res/nanosuit/nanosuit.obj"));
 
 		m_GameObjects.push_back(vmodelxd);
-		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, "PRGO");
+		vCubePrimitivexd = new PrimitiveGameObject(PrimitiveType::CUBE, { 1, 1, 1 }, { 8, 0, 5 }, "PRGO");
 		m_GameObjects.push_back(vCubePrimitivexd);
 		
 		Test->m_Childs.push_back(TestChild);

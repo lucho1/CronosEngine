@@ -4,6 +4,8 @@
 #include "glm/glm.hpp"
 #include "Component.h"
 
+#include <AABB.hpp>
+
 namespace Cronos {
 
 	class GameObject;
@@ -22,10 +24,19 @@ namespace Cronos {
 		void SetRotation(glm::vec3 rot) { m_Rotation = rot; }
 		void SetScale(glm::vec3 scale) { m_Scale = scale; }
 
-		inline glm::vec3 GetPosition() const { return m_Position; };
-		inline glm::vec3 GetRotation() const { return m_Rotation; };
-		inline glm::vec3 GetScale() const { return m_Scale; };
+		const inline glm::vec3 GetPosition() const { return m_Position; };
+		const inline glm::vec3 GetRotation() const { return m_Rotation; };
+		const inline glm::vec3 GetScale() const { return m_Scale; };
 
+		//AABBs
+		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, minVec); }
+		void SetAABB(const AABB& aabbCube) { m_ContainerAABBCube = AABB(aabbCube); }
+
+		const inline AABB GetAABB() const { return m_ContainerAABBCube; }
+		const inline glm::vec3 GetCentralAxis() const { return m_ContainerAABBCube.getCenter(); }
+		void DrawCentralAxis();
+
+		//Type
 		static ComponentType GetType() { return ComponentType::TRANSFORM; };
 
 	private:
@@ -33,7 +44,8 @@ namespace Cronos {
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
-		
+
+		AABB m_ContainerAABBCube;
 	};
 
 }

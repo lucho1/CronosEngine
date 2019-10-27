@@ -3,6 +3,7 @@
 #include "AssimpImporter.h"
 #include "Application.h"
 
+#include "GameObject/Components/TransformComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -109,6 +110,10 @@ namespace Cronos {
 		//If all is correct, we process all the nodes passing the first one (root)
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
 
+		//For the parent AABB, I'll just get the first child's AABB
+		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
+		mother_GO->SetAABB(comp->GetAABB().getMin(), comp->GetAABB().getMax());
+
 		// detach log stream
 		aiDetachAllLogStreams();
 
@@ -123,7 +128,6 @@ namespace Cronos {
 		{
 			//Get the mesh from the meshes list of the node in scene's meshes list
 			aiMesh* as_mesh = as_scene->mMeshes[as_node->mMeshes[i]];
-			//m_CronosModel->m_ModelMeshesVector.push_back(ProcessCronosMesh(as_mesh, as_scene));
 			ProcessCronosMesh(as_mesh, as_scene, motherGameObj);
 		}
 		
@@ -140,11 +144,8 @@ namespace Cronos {
 		std::vector<Texture*>tmp_TextureVector;
 		uint facesNumber = 0;
 
-		//static float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].x;
-		//static float maxX = minX, maxY = minY, maxZ = minZ;
-
-		//static glm::vec3 minPos = glm::vec3(as_mesh->mVertices[0].x, as_mesh->mVertices[0].y, as_mesh->mVertices[0].z);
-		//static glm::vec3 maxPos = minPos;
+		float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].z;
+		float maxX = minX, maxY = minY, maxZ = minZ;
 
 		//Process mesh vertices
 		for (uint i = 0; i < as_mesh->mNumVertices; i++)
@@ -154,11 +155,8 @@ namespace Cronos {
 			tmpVertex.Position = glm::vec3(as_mesh->mVertices[i].x, as_mesh->mVertices[i].y, as_mesh->mVertices[i].z);
 			tmpVertex.Normal = glm::vec3(as_mesh->mNormals[i].x, as_mesh->mNormals[i].y, as_mesh->mNormals[i].z);
 
-			//minPos = glm::vec3(MIN(minPos.x, tmpVertex.Position.x), MIN(minPos.y, tmpVertex.Position.y), MIN(minPos.z, tmpVertex.Position.z));
-			//maxPos = glm::vec3(MAX(maxPos.x, tmpVertex.Position.x), MAX(maxPos.y, tmpVertex.Position.y), MAX(maxPos.z, tmpVertex.Position.z));
-
-			//minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
-			//maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
+			minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
+			maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
 
 			//Then we see if there are text. coords in the first set [0] (OGL has until 8)
 			if (as_mesh->mTextureCoords[0])
@@ -188,6 +186,13 @@ namespace Cronos {
 		//Now create a Game Object and a mesh component to load the textures
 		GameObject* GO = new GameObject(as_mesh->mName.C_Str(), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
 
+		//Set the AABB Cube
+		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
+		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
+		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
+
+		
+
 		//Process Mesh's textures
 		if (as_mesh->mMaterialIndex >= 0)
 		{
@@ -211,10 +216,6 @@ namespace Cronos {
 			std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::LIGHTMAP, GO);
 			tmp_TextureVector.insert(tmp_TextureVector.end(), lightMaps.begin(), lightMaps.end());
 		}
-
-		//m_CronosModel->m_ModelMaxVertexPos = maxPos;
-		//m_CronosModel->m_ModelMinVertexPos = minPos;
-		//m_CronosModel->m_ModelAxis = glm::vec3((minX + maxX)/2, (minY+maxY)/2, (minZ+maxZ)/2);
 		
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));

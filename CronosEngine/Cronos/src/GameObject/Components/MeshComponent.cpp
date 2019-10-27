@@ -1,5 +1,6 @@
 #include "Providers/cnpch.h"
 #include "MeshComponent.h"
+#include "TransformComponent.h"
 
 #include "Application.h"
 
@@ -85,8 +86,7 @@ namespace Cronos {
 
 		if (GetParent()->m_IsPrimitive == true)
 			bindShader = false;
-
-		m_MeshVAO->Bind();
+		
 		if (bindShader)
 		{
 			shader->Bind();
@@ -124,6 +124,7 @@ namespace Cronos {
 			shader->Unbind();
 		}
 
+		m_MeshVAO->Bind();
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
 		std::vector< Texture*>::iterator item2 = m_TexturesVector.begin();
@@ -132,12 +133,37 @@ namespace Cronos {
 			(*item2)->Unbind();
 
 		shader->Unbind();
+		m_MeshVAO->UnBind();
 		
+	//	DrawCentralAxis();
 		if (m_DebugDraw)
 		{
 			DrawVerticesNormals();
 			DrawPlanesNormals();
 		}		
+	}
+
+	void MeshComponent::DrawCentralAxis()
+	{
+		auto comp = GetParent()->GetComponent<TransformComponent>();
+		if (comp != nullptr)
+		{
+			float linelength = 1.0f;
+			glm::vec3 axis = comp->GetCentralAxis();
+			glLineWidth(5.0f);
+			glBegin(GL_LINES);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x + linelength, axis.y, axis.z);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x, axis.y + linelength, axis.z);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glVertex3f(axis.x, axis.y, axis.z);
+				glVertex3f(axis.x, axis.y, axis.z + linelength);
+				glColor4f(White.r, White.g, White.b, White.a);
+			glEnd();
+		}
 	}
 
 	void MeshComponent::DrawVerticesNormals()

@@ -70,6 +70,13 @@ namespace Cronos {
 		}
 	}
 
+	void GameObject::SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec)
+	{
+		auto comp = GetComponent<TransformComponent>();
+		if (comp != nullptr)
+			comp->SetAABB(minVec, minVec);
+	}
+
 	Component* GameObject::CreateComponent(ComponentType type) 
 	{
 		Component* ret = nullptr;
@@ -92,5 +99,4 @@ namespace Cronos {
 		}
 		return ret;
 	}
-	
 }

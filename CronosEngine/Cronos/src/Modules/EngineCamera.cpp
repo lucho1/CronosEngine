@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "EngineCamera.h"
 
+#include "GameObject/Components/TransformComponent.h"
+
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
@@ -102,7 +104,17 @@ namespace Cronos {
 			}
 
 			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-				LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
+			{
+				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
+				{
+					glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+					LookAt(vec3(posToLook.x, posToLook.y, posToLook.z));
+				}
+				//else
+				//	LookAt(vec3(0.0f, 0.0f, 0.0f));
+					
+			}
+				//LookAt(vec3(0.0f, 0.0f, 0.0f)); //TODO: Make this with objects, not with center!!
 
 		}
 

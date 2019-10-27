@@ -27,6 +27,10 @@ namespace Cronos {
 		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType, GameObject* motherGameObj);
 
 		std::vector<Texture*> m_TexturesLoaded;
+
+		glm::vec3 m_AABB_MinVec;
+		glm::vec3 m_AABB_MaxVec;
+		
 	};
 
 }

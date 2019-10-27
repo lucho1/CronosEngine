@@ -55,6 +55,7 @@ namespace Cronos {
 
 		void GetInput(uint key, uint state, bool mouse=false);
 		ShadingMode GetCurrentShading() const { return m_currentShadingMode; }
+		GameObject* GetCurrentGameObject() { return CurrentGameObject; }
 
 		void AddLog(std::string log);
 

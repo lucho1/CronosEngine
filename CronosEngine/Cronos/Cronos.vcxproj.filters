@@ -1280,6 +1280,7 @@
     <ClInclude Include="src\Providers\AssimpImporter.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\AABB.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
