@@ -167,7 +167,7 @@ namespace Cronos {
 
 	void Application::SaveEngineData() const
 	{
-		m_MustSave = false;
+		m_MustSave = true;
 	}
 
 

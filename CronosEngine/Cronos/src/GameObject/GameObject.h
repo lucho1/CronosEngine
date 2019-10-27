@@ -37,7 +37,6 @@ namespace Cronos {
 		//			return true;
 		//		}
 		//}
-		
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
 		

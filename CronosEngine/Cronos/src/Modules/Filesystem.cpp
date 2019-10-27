@@ -36,10 +36,11 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_path,ItemType mtype): type(mtype),m_Path(m_path.root_path().string()) {
+	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		
 		m_path.make_preferred();
 		m_Path = m_path.parent_path().generic_string();
+		m_AbsolutePath = m_path.generic_string();
 		std::string temp = m_path.generic_string();
 		temp.erase(0, App->filesystem->GetRootPath().size()+1);
 		m_Path = temp;
@@ -83,6 +84,18 @@ namespace Cronos {
 			m_Details += m_AssetFullName;
 			delete temp;
 		}
+		else if (m_Extension == ".dds") {
+			type = ItemType::ITEM_TEXTURE_DDS;
+			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
+			m_IconTex = temp->GetTextureID();
+			m_Details += std::to_string((int)temp->GetWidth());
+			m_Details += "x";
+			m_Details += std::to_string((int)temp->GetHeight());
+			m_Details += " ";
+			m_Details += m_AssetFullName;
+			delete temp;
+		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
 			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
@@ -104,7 +117,7 @@ namespace Cronos {
 	
 	};
 	void AssetItems::Clear() {
-		delete folderDirectory;
+		//delete folderDirectory;
 	}
 
 	void AssetItems::DrawIcons()
@@ -153,6 +166,17 @@ namespace Cronos {
 			}
 			if (ImGui::MenuItem("Delete"))
 			{
+			/*	folderDirectory->m_Container.;
+				folderDirectory->m_Container.pop_back();
+				std::list<AssetItems*>::iterator it;
+				for (it = folderDirectory->m_Container.begin(); it != folderDirectory->m_Container.end(); ++it) {
+					if (*(it) == this) {
+					
+						break;
+					}
+				}
+				std::wstring TempstringToDelete = std::wstring(m_AbsolutePath.begin(), m_AbsolutePath.begin());*/
+				//DeleteFile(TempstringToDelete.c_str());
 			}
 			ImGui::EndPopup();
 		}
@@ -224,10 +248,8 @@ namespace Cronos {
 	}
 
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {
-		
-
+	
 		std::string tempDirName = currentDir->m_LabelDirectories +"/"+ newName;
-
 		std::filesystem::create_directory(tempDirName);
 		Directories* TempDir = new Directories(tempDirName);
 		for (auto& a : DirectoriesArray) {
@@ -253,7 +275,7 @@ namespace Cronos {
 		static int LastDepth = 0;
 		static int ID = 0;
 		static int currentDepth = 0;
-
+		filepath.make_preferred();
 		Directories* SolutionDirTemp = new Directories(filepath);
 		SolutionDirTemp->m_ID = ID;
 		DirectoriesArray.push_back(SolutionDirTemp);
@@ -286,8 +308,7 @@ namespace Cronos {
 						}
 						currentDir->childs.push_back(newPath);
 						
-						AssetItems* t = new AssetItems(path.path().string().c_str(),ItemType::ITEM_FOLDER);
-						t->folderDirectory = newPath;
+						AssetItems* t = new AssetItems(path.path().string().c_str(),newPath,ItemType::ITEM_FOLDER);
 						currentDir->m_Container.push_front(t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
@@ -295,9 +316,8 @@ namespace Cronos {
 					else if (p.depth() > LastDepth) {
 						currentDir->childs.push_back(newPath);
 
-						AssetItems* t = new AssetItems(path.path().string().c_str(),ItemType::ITEM_FOLDER);
+						AssetItems* t = new AssetItems(path.path().string().c_str(),newPath,ItemType::ITEM_FOLDER);
 						
-						t->folderDirectory = newPath;
 						currentDir->m_Container.push_front(t);
 						newPath->SetParentDirectory(currentDir);
 						currentDir = newPath;
@@ -309,7 +329,7 @@ namespace Cronos {
 					
 				}
 				else {
-					AssetItems* t = new AssetItems(path.path().string().c_str());
+					AssetItems* t = new AssetItems(path.path().string().c_str(),currentDir);
 					currentDir->m_Container.push_back(t);
 					AssetArray.push_back(t);
 				}

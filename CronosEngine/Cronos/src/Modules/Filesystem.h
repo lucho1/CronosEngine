@@ -23,12 +23,13 @@ namespace Cronos {
 		ITEM_TEXTURE_PNG,
 		ITEM_TEXTURE_TGA,
 		ITEM_TEXTURE_JPEG,
+		ITEM_TEXTURE_DDS,
 		MAX_ITEMS
 	};
 
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_path,ItemType mtype=ItemType::ITEM_NONE);
+		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE);
 
 		ItemType type = ItemType::ITEM_NONE;
 
@@ -47,9 +48,12 @@ namespace Cronos {
 
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		std::string GetAssetPath() const { return m_Path; }
+		std::string GetAbsolutePath() const { return m_AbsolutePath; }
+
 		std::string GetExtension() const { return m_Extension; }
 		std::string GetDetails() const { return m_Details; }
 		inline int GetAssetID() const { return m_AssetID; }
+
 
 		Directories* folderDirectory = nullptr;
 
@@ -60,6 +64,7 @@ namespace Cronos {
 		bool hovered;
 		std::string m_Path;
 		std::string m_Details;
+		std::string m_AbsolutePath;
 		//For Images
 		int m_AssetID;
 		GLuint m_IconTex;

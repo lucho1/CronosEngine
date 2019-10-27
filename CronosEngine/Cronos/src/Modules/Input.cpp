@@ -5,7 +5,8 @@
 #include "ImGui/ImGuiLayer.h"
 #include "ImGui/OpenGL/imgui_impl_sdl.h"
 #include "Input.h"
-
+#include <iostream>
+#include <Windows.h>
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
@@ -127,7 +128,26 @@ namespace Cronos {
 			case SDL_QUIT:
 				quit = true;
 				break;
+			case SDL_DROPFILE: 
+			{
+				AssetItems* ItemTemp = new AssetItems(e.drop.file,nullptr);
+				if (ItemTemp->GetType() == ItemType::ITEM_FBX) {
+					GameObject* goTemp = App->scene->CreateModel(ItemTemp->GetAssetPath().c_str());
+					App->scene->m_GameObjects.push_back(goTemp);
+					//App->EditorGUI->m_CurrentDir->m_Container.push_back(ItemTemp);
 
+					std::string SrcPath = ItemTemp->GetAbsolutePath().c_str();
+					std::string DestPath = App->EditorGUI->m_CurrentDir->m_LabelDirectories + "\\" + ItemTemp->m_AssetFullName;				
+					std::wstring WSrcPath = std::wstring(SrcPath.begin(), SrcPath.end());
+					std::wstring WDestPath = std::wstring(DestPath.begin(), DestPath.end());
+
+					CopyFile(WSrcPath.c_str(), WDestPath.c_str(),0);
+					AssetItems* ItemRet = new AssetItems(DestPath.c_str(), App->EditorGUI->m_CurrentDir);
+					App->EditorGUI->m_CurrentDir->m_Container.push_back(ItemTemp);
+					delete ItemTemp;
+				}
+				break;
+			}
 			case SDL_WINDOWEVENT:
 			{
 				if (e.window.event == SDL_WINDOWEVENT_RESIZED)

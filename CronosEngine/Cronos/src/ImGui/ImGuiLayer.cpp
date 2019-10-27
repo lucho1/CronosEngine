@@ -450,6 +450,32 @@ namespace Cronos {
 						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::PLANE, "Plane");
 						App->scene->m_GameObjects.push_back(ret);
 					}
+					if (ImGui::BeginMenu("Complex")) {
+						ImGui::EndMenu();
+
+						if (ImGui::MenuItem("Tetrahedron")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::TETRAHEDRON, "Tetrahedron");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Octahedron")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::OCTAHEDRON, "Octahedron");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("DodeCahedron")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::DODECAHEDRON, "Dodecahedron");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Icosahedron")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::ICOSAHEDRON, "Icosahedron");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+						if (ImGui::MenuItem("Empty Cylinder")) {
+							PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY_CYLINDER, "Emp");
+							App->scene->m_GameObjects.push_back(ret);
+						}
+
+
+					}
 					ImGui::EndMenu();
 					}
 				ImGui::EndMenu();
@@ -688,9 +714,13 @@ namespace Cronos {
 					}
 				}
 			}
-			if(Diffuse!=nullptr)
-				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
 
+			if(Diffuse!=nullptr)
+				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); 
+			//else if (Diffuse==nullptr)
+			//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+			
+			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("\n   Albedo"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
@@ -1208,9 +1238,12 @@ namespace Cronos {
 				default:
 					break;
 				}
+				if (ImGui::Button("Save Changes"))
+					App->SaveEngineData();
 			ImGui::EndChild();
+			
 		ImGui::EndGroup();
-
+	
 		ImGui::EndGroup();
 
 
@@ -1241,10 +1274,18 @@ namespace Cronos {
 
 		ImGui::TextColored(Color, (App->GetAppTitle() + " " + App->GetAppVersion()).c_str());
 		ImGui::Text("Organization: "); ImGui::SameLine();
-		static char buf2[64];
-		ImGui::TextColored(Color, App->GetAppOrganization().c_str());
+		static char buf2[90];
+		strcpy(buf2, App->GetAppOrganization().c_str());
+		if (ImGui::InputText("###Organization", buf2, 90, ImGuiInputTextFlags_CharsNoBlank)) {
+			App->SetAppOrganization(buf2);
+		}
 		ImGui::Text("Authors: "); ImGui::SameLine();
-		ImGui::TextColored(Color, (App->GetAppAuthors()).c_str());
+
+		static char buf4[90];
+		strcpy(buf4, App->GetAppAuthors().c_str());
+		if (ImGui::InputText("###Authors", buf4, 90, ImGuiInputTextFlags_CharsNoBlank)) {
+			App->SetAppAuthors(buf4);
+		}
 		ImGui::Separator();
 		ImGui::Text("");
 		ImGui::Text("Performance here"); ImGui::SameLine();
