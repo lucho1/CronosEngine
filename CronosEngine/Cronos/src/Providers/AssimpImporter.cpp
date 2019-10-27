@@ -232,12 +232,13 @@ namespace Cronos {
 		{
 			aiString str;
 			material->GetTexture(Texturetype, i, &str);
-			/*bool skip = false;
-			for (unsigned int j = 0; j < textures_loaded.size(); j++)
+
+			bool skip = false;
+			for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
 			{
-				if (std::strcmp(textures_loaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
+				if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
 				{
-					textures_loaded.push_back(textures_loaded[j]);
+					ret.push_back(m_TexturesLoaded[j]);
 					skip = true;
 					break;
 				}
@@ -245,16 +246,11 @@ namespace Cronos {
 
 			if (!skip)
 			{
-				std::string path = m_CronosModel->m_ModelDirectoryPath + '/' + str.C_Str();
-
+				std::string path = motherGameObj->GetPath() + '/' + str.C_Str();
 				Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
 				ret.push_back(tex);
-				textures_loaded.push_back(tex);
-			}*/
-
-			std::string path = motherGameObj->GetPath() + '/' + str.C_Str();
-			Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
-			ret.push_back(tex);
+				m_TexturesLoaded.push_back(tex);
+			}
 		}
 
 		return ret;

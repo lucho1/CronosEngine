@@ -15,17 +15,18 @@ namespace Cronos {
 
 	class AssimpCronosImporter
 	{
-	public:
+		friend class Scene;
+	private:
 
 		AssimpCronosImporter();
 		GameObject* LoadModel(const std::string& filepath);
-
-	private:
 
 		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj);
 		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj);
 
 		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType, GameObject* motherGameObj);
+
+		std::vector<Texture*> m_TexturesLoaded;
 	};
 
 }
