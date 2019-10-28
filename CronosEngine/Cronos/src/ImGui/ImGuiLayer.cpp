@@ -694,9 +694,12 @@ namespace Cronos {
 				}
 			}
 
-			if(Diffuse!=nullptr)
+			if(Diffuse != nullptr)
 				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
-			
+			else
+				ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				//ImGui::GetID("Scene");
