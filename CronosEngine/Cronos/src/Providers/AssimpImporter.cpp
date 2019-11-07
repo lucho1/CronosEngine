@@ -103,10 +103,9 @@ namespace Cronos {
 		//the substr() gets, in this case, all the characters until the last '/' char.
 		//So, if filepath is "AA/BB/model.fbx", this will be "AA/BB"
 		//m_CronosModel->m_ModelDirectoryPath = filepath.substr(0, filepath.find_last_of('/'));
-		std::string GOName = filepath.substr(filepath.find_last_of('/') + 1, filepath.find_last_of('.') - 4);
+		std::string GOName = filepath.substr(filepath.find_last_of('/') + 1, filepath.find_last_of('.') - filepath.find_last_of('/') - 1);
 		GameObject* mother_GO = new GameObject(GOName, App->m_RandomNumGenerator.GetIntRN(), filepath.substr(0, filepath.find_last_of('/')));
-
-
+		
 		//If all is correct, we process all the nodes passing the first one (root)
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
 
@@ -188,8 +187,15 @@ namespace Cronos {
 			PolyNum++;			
 		}
 
+		//onst char* GOName = nullptr;
+		std::string GOName;
+		if (as_mesh->mName.length > 0)
+			GOName = as_mesh->mName.C_Str();
+		else
+			GOName = "Game Object";
+
 		//Now create a Game Object and a mesh component to load the textures
-		GameObject* GO = new GameObject(as_mesh->mName.C_Str(), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
+		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
 		
 		//Process Mesh's textures
 		if (as_mesh->mMaterialIndex >= 0)
