@@ -13,19 +13,19 @@
         "SFXVolume": 100
     },
     "EngineCamera": {
-        "CameraMoveSpeed": 15.0,
+        "CameraMoveSpeed": 60.0,
         "CameraScrollSpeed": 76.0,
         "FOV": 60.0,
         "FarPlane": 512.0,
         "InitialLookAt": [
-            0.0,
-            0.0,
-            0.0
+            35.96017074584961,
+            45.08489990234375,
+            150.1053009033203
         ],
         "InitialPosition": [
-            15.927526473999023,
-            16.808761596679688,
-            7.261531829833984
+            57.601932525634766,
+            51.625518798828125,
+            178.77227783203125
         ],
         "NearPlane": 0.125
     },
@@ -52,7 +52,7 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 1078,
+        "ScreenHeight": 1031,
         "ScreenSize": 1,
         "ScreenWidth": 1456
     }

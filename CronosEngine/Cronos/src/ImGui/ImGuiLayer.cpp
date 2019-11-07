@@ -373,7 +373,8 @@ namespace Cronos {
 					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_OBJ) {
 						AssetItems* a = (AssetItems*)payload->Data;
 						GameObject* ret = App->scene->CreateModel(a->GetAssetPath().c_str());
-						App->scene->m_GameObjects.push_back(ret);
+						if(ret != nullptr)
+							App->scene->m_GameObjects.push_back(ret);
 					}
 				}
 				ImGui::EndDragDropTarget();

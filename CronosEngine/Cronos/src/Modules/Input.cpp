@@ -142,8 +142,9 @@ namespace Cronos {
 					std::wstring WDestPath = std::wstring(DestPath.begin(), DestPath.end());
 
 					CopyFile(WSrcPath.c_str(), WDestPath.c_str(),0);
-					AssetItems* ItemRet = new AssetItems(DestPath.c_str(), App->EditorGUI->m_CurrentDir);
-					App->EditorGUI->m_CurrentDir->m_Container.push_back(ItemTemp);
+					std::string TempDestinationPath = DestPath.c_str();
+					AssetItems* ItemRet = new AssetItems(TempDestinationPath.c_str(), App->EditorGUI->m_CurrentDir);
+					App->EditorGUI->m_CurrentDir->m_Container.push_back(ItemRet);
 					delete ItemTemp;
 				}
 				break;

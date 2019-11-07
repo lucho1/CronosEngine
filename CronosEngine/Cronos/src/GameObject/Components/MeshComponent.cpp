@@ -43,8 +43,15 @@ namespace Cronos {
 
 		m_VertexVector = vertices;
 		m_IndicesVector = indices;
-		if (textures.at(0) != nullptr)
+
+		if (textures.size() > 0)
 			m_TexturesVector = textures;
+
+		/*if(*(textures.begin()) != nullptr)
+			m_TexturesVector = textures;
+
+		if (textures.at(0) != nullptr)
+			m_TexturesVector = textures;*/
 
 
 		m_MeshVAO = new VertexArray();
@@ -191,7 +198,7 @@ namespace Cronos {
 		glLineWidth(2.0f);
 		float linelength = 0.5f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
-		for (uint i = 0; i < m_IndicesVector.size(); i += 3)
+		for (uint i = 0; i < m_IndicesVector.size() - 2; i += 3)
 		{
 			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
 			glm::vec3 p2 = m_VertexVector[m_IndicesVector[i + 1]].Position;
@@ -218,13 +225,6 @@ namespace Cronos {
 		//Clear Vectors passed
 		if (normals.size() > 0 || positions.size() > 0)
 		{
-			//std::vector<glm::vec3>::iterator item = normals.begin();
-			//for (; item != normals.end(); item++)
-			//	normals.erase(item);
-			//item = positions.begin();
-			//for (; item != positions.end(); item++)
-			//	positions.erase(item);
-
 			positions.clear();
 			normals.clear();
 		}
