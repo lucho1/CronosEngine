@@ -27,8 +27,7 @@ namespace Cronos {
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
 
-		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		m_GameObjects.push_back(m_HouseModel);
+		
 
 		std::string vertexShader = R"(
 			#version 330 core
@@ -73,7 +72,10 @@ namespace Cronos {
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		//BasicTestShader->Unbind();
+		BasicTestShader->Unbind();
+
+		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
+		m_GameObjects.push_back(m_HouseModel);
 
 		return ret;
 	}
@@ -86,6 +88,7 @@ namespace Cronos {
 			element->CleanUp();
 
 		m_GameObjects.clear();
+		RELEASE(BasicTestShader);
 		return true;
 	}
 

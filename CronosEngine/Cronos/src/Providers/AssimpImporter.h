@@ -2,7 +2,6 @@
 #define _ASSIMPIMPORTER_H_
 
 #include "GameObject/GameObject.h"
-#include "GameObject/Components/MeshComponent.h"
 #include "Renderer/Textures.h"
 
 #include <Assimp/include/cimport.h>

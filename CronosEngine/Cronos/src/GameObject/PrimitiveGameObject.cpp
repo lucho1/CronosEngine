@@ -151,6 +151,12 @@ namespace Cronos {
 		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);
 		m_Components.push_back(meshComp);
 
+
+		MaterialComponent* matComp = (MaterialComponent*)(CreateComponent(ComponentType::MATERIAL));
+		matComp->SetShader(App->scene->BasicTestShader);
+		m_Components.push_back(matComp);
+
+
 		//Compute AABB
 		float AABBPoints[6];
 		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);

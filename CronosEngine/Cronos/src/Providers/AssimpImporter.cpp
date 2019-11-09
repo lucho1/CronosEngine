@@ -4,6 +4,8 @@
 #include "Application.h"
 
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/MeshComponent.h"
+#include "GameObject/Components/MaterialComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -187,7 +189,6 @@ namespace Cronos {
 			PolyNum++;			
 		}
 
-		//onst char* GOName = nullptr;
 		std::string GOName;
 		if (as_mesh->mName.length > 0)
 			GOName = as_mesh->mName.C_Str();
@@ -200,6 +201,21 @@ namespace Cronos {
 		//Process Mesh's textures
 		if (as_mesh->mMaterialIndex >= 0)
 			SetTexturesVector(as_mesh, as_scene, GO, tmp_TextureVector);
+
+		if (as_mesh->mMaterialIndex >= 0)
+		{
+			std::vector<Texture*> vect = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO);
+
+			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
+			if (vect.size() > 0)
+			{
+				Texture* ambText = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO)[0];
+				matComp->SetTexture(ambText);
+			}
+			
+			matComp->SetShader(App->scene->BasicTestShader);
+			GO->m_Components.push_back(matComp);
+		}
 		
 		//Set the AABB Cube
 		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
@@ -210,8 +226,8 @@ namespace Cronos {
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);
 		GO->m_Components.push_back(meshComp);
-		motherGameObj->m_Childs.push_back(GO);
 
+		motherGameObj->m_Childs.push_back(GO);
 		LOG("	Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
 	}
 

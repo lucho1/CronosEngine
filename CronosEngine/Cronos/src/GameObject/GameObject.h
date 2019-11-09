@@ -2,6 +2,7 @@
 #define _GAMEOBJECT_H_
 
 #include "Components/Component.h"
+#include "Components/MeshComponent.h"
 #include "glm/glm.hpp"
 
 namespace Cronos {
@@ -54,7 +55,7 @@ namespace Cronos {
 				if (comp->GetComponentType() == type)
 					return ((T*)(comp));
 			
-			LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
+			//LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
 
