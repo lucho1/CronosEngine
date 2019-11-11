@@ -205,7 +205,6 @@ namespace Cronos {
 		if (as_mesh->mMaterialIndex >= 0)
 		{
 			std::vector<Texture*> vect = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO);
-
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
 			if (vect.size() > 0)
 			{

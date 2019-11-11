@@ -558,7 +558,7 @@ namespace Cronos {
 				}
 
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
-					if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
 						GUIDrawMaterialsMenu(CurrentGameObject);
 				}
 			}
@@ -713,7 +713,9 @@ namespace Cronos {
 						std::vector<Texture*>tmp_TextureVector;
 						Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
 						tmp_TextureVector.push_back(TempText);
-						CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector,TextureType::DIFFUSE);
+						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(tmp_TextureVector[0]);
+
+						//CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector,TextureType::DIFFUSE);
 					}
 				}
 				ImGui::EndDragDropTarget();

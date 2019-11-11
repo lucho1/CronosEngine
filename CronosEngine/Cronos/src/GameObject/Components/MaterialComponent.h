@@ -19,7 +19,7 @@ namespace Cronos
 
 
 		void SetShader(Shader* shader) { m_ShaderAttached = shader; }
-		void SetTexture(Texture* texture) { m_AmbientTexture = texture; }
+		void SetTexture(Texture* texture) { RELEASE(m_AmbientTexture); m_AmbientTexture = texture; }
 		static ComponentType GetType() { return ComponentType::MATERIAL; };
 
 	private:
