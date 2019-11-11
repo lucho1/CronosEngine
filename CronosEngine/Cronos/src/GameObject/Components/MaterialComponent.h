@@ -20,14 +20,12 @@ namespace Cronos
 		void SetTexture(Texture* texture, TextureType type);
 		void SetShader(Shader* shader) { m_ShaderAttached = shader; }
 
+		inline const std::unordered_map<TextureType, Texture*>GetTextures() const { return m_TexturesContainer; }
 		static ComponentType GetType() { return ComponentType::MATERIAL; };
 
 	private:
 
-		//	enum class TextureType { NONE = -1, ICON, AMBIENT, DIFFUSE, SPECULAR, NORMALMAP, HEIGHTMAP, LIGHTMAP, MAX_TEXTURES};
 		Shader* m_ShaderAttached = nullptr;
-		Texture* m_AmbientTexture = nullptr;
-
 		std::unordered_map<TextureType, Texture*>m_TexturesContainer;
 	};
 }

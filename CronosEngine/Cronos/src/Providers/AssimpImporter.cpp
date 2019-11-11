@@ -208,12 +208,8 @@ namespace Cronos {
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
 
 
-
-
-
 			if (vect.size() > 0)
 			{
-				//Texture* ambText = vect[0];
 				matComp->SetTexture(vect[0], TextureType::DIFFUSE);
 			}
 			
@@ -228,7 +224,7 @@ namespace Cronos {
 
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
-		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);
+		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector);
 		GO->m_Components.push_back(meshComp);
 
 		motherGameObj->m_Childs.push_back(GO);
@@ -256,7 +252,7 @@ namespace Cronos {
 		std::vector<Texture*> heightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::HEIGHTMAP, GObj);
 		TexVec.insert(TexVec.end(), heightMaps.begin(), heightMaps.end());
 
-		std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::LIGHTMAP, GObj);
+		std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_LIGHTMAP, TextureType::LIGHTMAP, GObj);
 		TexVec.insert(TexVec.end(), lightMaps.begin(), lightMaps.end());
 	}
 

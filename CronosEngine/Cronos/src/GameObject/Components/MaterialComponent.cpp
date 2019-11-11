@@ -13,10 +13,15 @@ namespace Cronos
 
 	MaterialComponent::~MaterialComponent()
 	{
-		RELEASE(m_AmbientTexture);
-		//RELEASE(m_ShaderAttached);
-		m_ShaderAttached = nullptr;
-		//m_AmbientTexture = nullptr;
+		std::unordered_map<TextureType, Texture*>::iterator TextureItem = m_TexturesContainer.begin();
+		for (; TextureItem != m_TexturesContainer.end(); TextureItem++)
+		{
+			RELEASE(TextureItem->second);
+			m_TexturesContainer.erase(TextureItem);
+		}
+		m_TexturesContainer.clear();
+
+		RELEASE(m_ShaderAttached);
 	}
 
 	void MaterialComponent::Bind(bool bindShader)
@@ -37,9 +42,7 @@ namespace Cronos
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded && m_TexturesContainer[TextureType::DIFFUSE] != nullptr)
 		{
-			//m_AmbientTexture->Bind(m_AmbientTexture->GetTextureID());
 			m_TexturesContainer[TextureType::DIFFUSE]->Bind(m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
-
 			m_ShaderAttached->SetUniform1i("u_DiffuseTexture", m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
 		}
 		else
@@ -52,7 +55,6 @@ namespace Cronos
 	void MaterialComponent::Unbind()
 	{
 		m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
-		//m_AmbientTexture->Unbind();
 		m_ShaderAttached->Unbind();
 	}
 
@@ -72,22 +74,4 @@ namespace Cronos
 		else
 			m_TexturesContainer[type] = texture;
 	}
-
-	/*
-
-	void MeshComponent::SetTextures(std::vector<Texture*> newTexture, TextureType textureType)
-	{
-		for (uint i = 0; i < m_TexturesVector.size() && m_TexturesVector[i] != nullptr; i++)
-		{
-			if (m_TexturesVector[i]->GetTextureType() == textureType)
-			{
-				RELEASE(m_TexturesVector[i]);
-				m_TexturesVector.erase(m_TexturesVector.begin() + i);
-			}
-		}
-
-		m_TexturesVector.insert(m_TexturesVector.end(), newTexture.begin(), newTexture.end());
-	}
-	
-	*/
 }

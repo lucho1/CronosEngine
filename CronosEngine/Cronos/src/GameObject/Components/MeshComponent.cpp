@@ -13,17 +13,11 @@ namespace Cronos {
 
 	MeshComponent::~MeshComponent()
 	{
-		for (uint i = 0; i < m_TexturesVector.size(); i++)
-		{
-			RELEASE(m_TexturesVector[i]);
-			m_TexturesVector.erase(m_TexturesVector.begin() + i);
-		}
 		for (uint i = 0; i < m_VertexVector.size(); i++)
 			m_VertexVector.erase(m_VertexVector.begin() + i);
 		for (uint i = 0; i < m_IndicesVector.size(); i++)
 			m_IndicesVector.erase(m_IndicesVector.begin() + i);
 
-		m_TexturesVector.clear();
 		m_IndicesVector.clear();
 		m_VertexVector.clear();
 
@@ -32,7 +26,7 @@ namespace Cronos {
 		RELEASE(m_MeshVBO);
 	}
 
-	void MeshComponent::SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures)
+	void MeshComponent::SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices)
 	{
 		CRONOS_ASSERT(vertices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE VERTEX VECTOR! \n Try Calling function()");
 		CRONOS_ASSERT(indices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE INDICES VECTOR! \n Try Calling function()");
@@ -42,10 +36,6 @@ namespace Cronos {
 
 		m_VertexVector = vertices;
 		m_IndicesVector = indices;
-
-		if (textures.size() > 0)
-			m_TexturesVector = textures;
-
 
 		m_MeshVAO = new VertexArray();
 		m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
@@ -60,21 +50,6 @@ namespace Cronos {
 		m_MeshIBO = new IndexBuffer(&m_IndicesVector[0], m_IndicesVector.size());
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
 	}
-
-	void MeshComponent::SetTextures(std::vector<Texture*> newTexture, TextureType textureType)
-	{
-		for (uint i = 0; i < m_TexturesVector.size() && m_TexturesVector[i] != nullptr; i++)
-		{
-			if (m_TexturesVector[i]->GetTextureType() == textureType)
-			{
-				RELEASE(m_TexturesVector[i]);
-				m_TexturesVector.erase(m_TexturesVector.begin() + i);
-			}
-		}
-
-		m_TexturesVector.insert(m_TexturesVector.end(), newTexture.begin(), newTexture.end());
-	}
-
 
 	void MeshComponent::Update(float dt)
 	{

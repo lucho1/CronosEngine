@@ -148,7 +148,7 @@ namespace Cronos {
 		tmpTextureVector.push_back(defT);
 
 		MeshComponent* meshComp = ((MeshComponent*)(CreateComponent(ComponentType::MESH)));
-		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector, tmpTextureVector);
+		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector);
 		m_Components.push_back(meshComp);
 
 
