@@ -104,6 +104,7 @@ namespace Cronos {
 		par_shapes_translate(ParshapeMesh, position.x, position.y, position.z);
 		par_shapes_scale(ParshapeMesh, size.x, size.y, size.z);
 
+		//Set up the physical mesh
 		std::vector<CronosVertex>tmpVertexVector;
 
 		uint j = 0;
@@ -143,26 +144,24 @@ namespace Cronos {
 		for (uint i = 0; i < (ParshapeMesh->ntriangles * 3); i++)
 			tmpIndicesVector.push_back(ParshapeMesh->triangles[i]);
 
-		std::vector<Texture*>tmpTextureVector;
-		Texture* defT = nullptr;
-		tmpTextureVector.push_back(defT);
 
+		//Now set up the mesh component for the game object
 		MeshComponent* meshComp = ((MeshComponent*)(CreateComponent(ComponentType::MESH)));
 		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector);
 		m_Components.push_back(meshComp);
 
-
+		//Also, set the material component
 		MaterialComponent* matComp = (MaterialComponent*)(CreateComponent(ComponentType::MATERIAL));
 		matComp->SetShader(App->scene->BasicTestShader);
 		m_Components.push_back(matComp);
 
 
-		//Compute AABB
+		//Finally compute AABB
 		float AABBPoints[6];
 		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
 		SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
 
-		LOG("Processed Primitive Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmpVertexVector.size(), tmpIndicesVector.size(), j/3, tmpTextureVector.size());
+		LOG("Processed Primitive Mesh with %i Vertices %i Indices and %i Polygons (Triangles)", tmpVertexVector.size(), tmpIndicesVector.size(), j/3);
 	}
 
 

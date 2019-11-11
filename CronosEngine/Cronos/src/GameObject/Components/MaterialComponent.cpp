@@ -19,8 +19,8 @@ namespace Cronos
 			RELEASE(TextureItem->second);
 			m_TexturesContainer.erase(TextureItem);
 		}
-		m_TexturesContainer.clear();
 
+		m_TexturesContainer.clear();
 		RELEASE(m_ShaderAttached);
 	}
 

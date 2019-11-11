@@ -72,7 +72,22 @@ namespace Cronos {
 	//	glm::decompose(m_Transformation, m_Scale, m_Rotation, m_Translation, skew, perspective);
 	//	m_Rotation = glm::conjugate(m_Rotation);
 	//}
+	
+	const aiTextureType ConvertToAssimpTextureType(TextureType CN_textureType)
+	{
+		switch (CN_textureType)
+		{
+			case TextureType::AMBIENT:		return aiTextureType_AMBIENT;
+			case TextureType::DIFFUSE:		return aiTextureType_DIFFUSE;
+			case TextureType::SPECULAR:		return aiTextureType_SPECULAR;
+			case TextureType::NORMALMAP:	return aiTextureType_NORMALS;
+			case TextureType::HEIGHTMAP:	return aiTextureType_HEIGHT;
+			case TextureType::LIGHTMAP:		return aiTextureType_LIGHTMAP;
+		}
 
+		CRONOS_ASSERT(0, "COULDN'T CONVERT TO ASSIMP TEXTURE TYPE!");
+		return aiTextureType_NONE;
+	}
 
 	// ---------------------------------- ASSIMP-CRONOS MODEL TRANSLATOR ----------------------------------
 	AssimpCronosImporter::AssimpCronosImporter()
@@ -89,7 +104,7 @@ namespace Cronos {
 		//aiProcess_Triangulate makes all the model's primitive shapes to be triangles if they aren't
 		//aiProcess_FlipUVs flips the texture UV's Y axis (necessary)
 		//Other useful option: _GenNormals (generates normals for vertices if they don't have),
-		//_OptimizeMeshes (joins several meshes into 1 to reduce drawcalls)
+		//_OptimizeMeshes (joins several meshes into 1 to reduce draw calls)
 		LOG("LOADING MODEL");
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcessPreset_TargetRealtime_MaxQuality);
@@ -134,7 +149,7 @@ namespace Cronos {
 			ProcessCronosMesh(as_mesh, as_scene, motherGameObj);
 		}
 		
-		//Process all node's childrens
+		//Process all node's children
 		for (uint i = 0; i < as_node->mNumChildren; i++)
 			ProcessAssimpNode(as_node->mChildren[i], as_scene, motherGameObj);
 	}
@@ -145,7 +160,6 @@ namespace Cronos {
 		MeshNum++;
 		std::vector<CronosVertex>tmp_VertexVector;
 		std::vector<uint>tmp_IndicesVector;
-		std::vector<Texture*>tmp_TextureVector;
 		uint facesNumber = 0;
 
 		float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].z;
@@ -161,17 +175,21 @@ namespace Cronos {
 			if(as_mesh->HasNormals())
 				tmpVertex.Normal = glm::vec3(as_mesh->mNormals[i].x, as_mesh->mNormals[i].y, as_mesh->mNormals[i].z);
 
-			minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
-			maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
-
-			//Then we see if there are text. coords in the first set [0] (OGL has until 8)
+			//Then we see if there are text. coordinates in the first set [0] (OGL has until 8)
 			if (as_mesh->mTextureCoords[0])
 				tmpVertex.TexCoords = glm::vec2(as_mesh->mTextureCoords[0][i].x, as_mesh->mTextureCoords[0][i].y);
 			else
 				tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
+
+			minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
+			maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
 			tmp_VertexVector.push_back(tmpVertex);
 		}
+
+		//Set the AABB Cube
+		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
+		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
 
 		//Process mesh's indices
 		for (uint i = 0; i < as_mesh->mNumFaces; i++)
@@ -189,105 +207,65 @@ namespace Cronos {
 			PolyNum++;			
 		}
 
+
+		//Now set up the new Game Object
 		std::string GOName;
 		if (as_mesh->mName.length > 0)
 			GOName = as_mesh->mName.C_Str();
 		else
 			GOName = "Game Object";
 
-		//Now create a Game Object and a mesh component to load the textures
+		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
-		
-		//Process Mesh's textures
-		if (as_mesh->mMaterialIndex >= 0)
-			SetTexturesVector(as_mesh, as_scene, GO, tmp_TextureVector);
-
-		if (as_mesh->mMaterialIndex >= 0)
-		{
-			std::vector<Texture*> vect = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO);
-			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
-
-
-			if (vect.size() > 0)
-			{
-				matComp->SetTexture(vect[0], TextureType::DIFFUSE);
-			}
-			
-			matComp->SetShader(App->scene->BasicTestShader);
-			GO->m_Components.push_back(matComp);
-		}
-		
-		//Set the AABB Cube
-		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
-		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
-		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
 
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector);
 		GO->m_Components.push_back(meshComp);
-
-		motherGameObj->m_Childs.push_back(GO);
-		LOG("	Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles) and %i Textures", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber, tmp_TextureVector.size());
-	}
-
-
-	//Textures Loading
-	void AssimpCronosImporter::SetTexturesVector(aiMesh* as_mesh, const aiScene* as_scene, GameObject* GObj, std::vector<Texture*>& TexVec)
-	{
-		aiMaterial *material = as_scene->mMaterials[as_mesh->mMaterialIndex];
-
-		std::vector<Texture*> ambientMaps = LoadTextures(material, aiTextureType_AMBIENT, TextureType::AMBIENT, GObj);
-		TexVec.insert(TexVec.end(), ambientMaps.begin(), ambientMaps.end());
-
-		std::vector<Texture*> diffuseMaps = LoadTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE, GObj);
-		TexVec.insert(TexVec.end(), diffuseMaps.begin(), diffuseMaps.end());
-
-		std::vector<Texture*> specularMaps = LoadTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR, GObj);
-		TexVec.insert(TexVec.end(), specularMaps.begin(), specularMaps.end());
-
-		std::vector<Texture*> normalMaps = LoadTextures(material, aiTextureType_NORMALS, TextureType::NORMALMAP, GObj);
-		TexVec.insert(TexVec.end(), normalMaps.begin(), normalMaps.end());
-
-		std::vector<Texture*> heightMaps = LoadTextures(material, aiTextureType_HEIGHT, TextureType::HEIGHTMAP, GObj);
-		TexVec.insert(TexVec.end(), heightMaps.begin(), heightMaps.end());
-
-		std::vector<Texture*> lightMaps = LoadTextures(material, aiTextureType_LIGHTMAP, TextureType::LIGHTMAP, GObj);
-		TexVec.insert(TexVec.end(), lightMaps.begin(), lightMaps.end());
-	}
-
-	std::vector<Texture*> AssimpCronosImporter::LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType TexType, GameObject* motherGameObj)
-	{
-		aiColor3D color = aiColor3D(0, 0, 0);
-		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
-
-		std::vector<Texture*> ret;
-		for (unsigned int i = 0; i < material->GetTextureCount(Texturetype); i++)
+		
+		//Process Mesh's textures/material
+		if (as_mesh->mMaterialIndex >= 0)
 		{
-			aiString str;
-			material->GetTexture(Texturetype, i, &str);
+			aiMaterial* AssimpMaterial = as_scene->mMaterials[as_mesh->mMaterialIndex];
+			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
 
-			bool skip = false;
-			for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
-			{
-				if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
-				{
-					ret.push_back(m_TexturesLoaded[j]);
-					skip = true;
-					break;
-				}
-			}
+			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
+				matComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
 
-			if (!skip)
-			{
-				std::string path = motherGameObj->GetPath() + '/' + str.C_Str();
-				Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
-				ret.push_back(tex);
-				m_TexturesLoaded.push_back(tex);
-			}
+			matComp->SetShader(App->scene->BasicTestShader);
+			GO->m_Components.push_back(matComp);
 		}
+		
+		//Set the GO AABB and finally push it to the mother's child list
+		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
+		motherGameObj->m_Childs.push_back(GO);
 
-		return ret;
+		LOG("	Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles)", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber);
+	}
+
+
+	Texture* AssimpCronosImporter::LoadTextures(aiMaterial *material, TextureType TexType, const std::string& GOPath)
+	{
+		/*aiColor3D color = aiColor3D(0, 0, 0);
+		material->Get(AI_MATKEY_COLOR_AMBIENT, color);*/ //Maybe also shininess?
+		//AMBIENT (color?), DIFFUSE, SPECULAR, NORMALMAP, HEIGHTMAP, LIGHTMAP
+
+		//Get the texture wanted from Assimp
+		aiTextureType Ass_TextureType = ConvertToAssimpTextureType(TexType);
+		aiString str;
+		material->GetTexture(Ass_TextureType, 0, &str);
+
+		//If it has been already loaded, then return it without creating a new one
+		for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
+			if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
+				return m_TexturesLoaded[j];
+		
+		//Else, create it and put it in the loaded textures vector
+		std::string path = GOPath + '/' + str.C_Str();
+		Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
+
+		m_TexturesLoaded.push_back(tex);
+		return tex;
 	}
 
 }
