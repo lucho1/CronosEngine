@@ -713,7 +713,7 @@ namespace Cronos {
 						std::vector<Texture*>tmp_TextureVector;
 						Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
 						tmp_TextureVector.push_back(TempText);
-						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(tmp_TextureVector[0]);
+						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(tmp_TextureVector[0], TextureType::DIFFUSE);
 
 						//CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector,TextureType::DIFFUSE);
 					}

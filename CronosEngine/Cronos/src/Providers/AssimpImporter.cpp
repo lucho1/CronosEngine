@@ -206,10 +206,15 @@ namespace Cronos {
 		{
 			std::vector<Texture*> vect = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO);
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
+
+
+
+
+
 			if (vect.size() > 0)
 			{
-				Texture* ambText = LoadTextures(as_scene->mMaterials[as_mesh->mMaterialIndex], aiTextureType_DIFFUSE, TextureType::DIFFUSE, GO)[0];
-				matComp->SetTexture(ambText);
+				//Texture* ambText = vect[0];
+				matComp->SetTexture(vect[0], TextureType::DIFFUSE);
 			}
 			
 			matComp->SetShader(App->scene->BasicTestShader);
@@ -257,6 +262,9 @@ namespace Cronos {
 
 	std::vector<Texture*> AssimpCronosImporter::LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType TexType, GameObject* motherGameObj)
 	{
+		aiColor3D color = aiColor3D(0, 0, 0);
+		material->Get(AI_MATKEY_COLOR_AMBIENT, color);
+
 		std::vector<Texture*> ret;
 		for (unsigned int i = 0; i < material->GetTextureCount(Texturetype); i++)
 		{

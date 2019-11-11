@@ -35,10 +35,12 @@ namespace Cronos
 			m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded && m_AmbientTexture != nullptr)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded && m_TexturesContainer[TextureType::DIFFUSE] != nullptr)
 		{
-			m_AmbientTexture->Bind(m_AmbientTexture->GetTextureID());
-			m_ShaderAttached->SetUniform1i("u_DiffuseTexture", m_AmbientTexture->GetTextureID());
+			//m_AmbientTexture->Bind(m_AmbientTexture->GetTextureID());
+			m_TexturesContainer[TextureType::DIFFUSE]->Bind(m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
+
+			m_ShaderAttached->SetUniform1i("u_DiffuseTexture", m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
 		}
 		else
 		{
@@ -49,15 +51,26 @@ namespace Cronos
 
 	void MaterialComponent::Unbind()
 	{
-		m_AmbientTexture->Unbind();
+		m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
+		//m_AmbientTexture->Unbind();
 		m_ShaderAttached->Unbind();
+	}
 
-		/*std::vector< Texture*>::iterator item2 = m_TexturesVector.begin();
-		item2 = m_TexturesVector.begin();
-		for (; item2 != m_TexturesVector.end() && (*item2) != NULL; item2++)
-			(*item2)->Unbind();
+	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
+	{
+		CRONOS_ASSERT((type != TextureType::MAX_TEXTURES || type != TextureType::NONE), "Invalid Texture Type passed!");
+		std::unordered_map<TextureType, Texture*>::iterator itemFound = m_TexturesContainer.find(type);
 
-		shader->Unbind();*/
+		if (itemFound != m_TexturesContainer.end())
+		{
+			if (itemFound->second != texture)
+			{
+				RELEASE(m_TexturesContainer[type]);
+				m_TexturesContainer[type] = texture;
+			}
+		}
+		else
+			m_TexturesContainer[type] = texture;
 	}
 
 	/*
