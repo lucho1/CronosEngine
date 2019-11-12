@@ -209,6 +209,7 @@ namespace Cronos {
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector, tmp_TextureVector);
+		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
 		motherGameObj->m_Childs.push_back(GO);
 

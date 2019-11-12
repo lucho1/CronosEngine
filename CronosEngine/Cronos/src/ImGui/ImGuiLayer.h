@@ -93,12 +93,16 @@ namespace Cronos {
 		void GUIDrawConfigAudioMenu();
 		void GUIDrawConfigTexturesMenu();
 
+		void GetGameObject(GameObject* go);
+		void setParentGameObject(GameObject* ToParentGo);
 
 		void AcumulateLogDT();
 
 		//void ImGuiTransformMenu(GameObject currentObject) {};
 
 	private:
+
+		GameObject* Draging;
 
 		FrameBuffer* m_SceneWindow = nullptr;
 

@@ -69,7 +69,9 @@ namespace Cronos {
 				child->Update(dt);
 		}
 	}
-
+	void GameObject::SetParent(GameObject* Go) {
+		Parent = Go;
+	}
 	void GameObject::SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec)
 	{
 		auto comp = GetComponent<TransformComponent>();

@@ -39,8 +39,9 @@ namespace Cronos {
 		//}
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
-
+		void SetParent(GameObject* Go);
 		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
+		GameObject* GetParentGameObject() { return Parent; }
 		
 		Component* CreateComponent(ComponentType type);
 		std::list<GameObject*> m_Childs;
@@ -58,13 +59,14 @@ namespace Cronos {
 			return nullptr;
 		}
 
+
 	public:
 
 		bool m_IsPrimitive = false;
 		bool tempHasMaterial = false;
 
 	private:
-
+		GameObject* Parent=nullptr;
 		std::string m_Name;
 		std::string m_Path;
 	

@@ -178,6 +178,9 @@ namespace Cronos {
 			if (go->GetCountChilds() <= 0) {
 				Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 				ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+					GetGameObject(go);
+				}
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
@@ -192,11 +195,12 @@ namespace Cronos {
 			else {
 
 				bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
+
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
-
 				}
+				
 				if (ImGui::IsItemClicked(1))
 				{
 					ImGui::OpenPopup(ID.c_str());
@@ -211,7 +215,72 @@ namespace Cronos {
 			if (go->isActive() == false) {
 				ImGui::PopStyleColor();
 			}
+			if (ImGui::BeginDragDropTarget())
+			{
+				setParentGameObject(go);
+			}
 		}
+	}
+
+	void ImGuiLayer::setParentGameObject(GameObject* ToParentGo) {
+		//if (ImGui::BeginDragDropTarget())
+		//{
+			//ImGui::GetID("Scene");
+
+		
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject")) {
+			GameObject* Temp = Draging;
+			GameObject* LastParent = Temp->GetParentGameObject();
+			//Temp.parent
+			std::list<GameObject*>::iterator it1;
+			for (it1 = LastParent->m_Childs.begin(); it1 != LastParent->m_Childs.end(); ++it1) {
+				if ((*it1)->GetGOID() == Temp->GetGOID()) {
+					LastParent->m_Childs.erase(it1);
+					Temp->SetParent(ToParentGo);
+					break;
+				}
+			}
+			ToParentGo->m_Childs.push_back(Temp);
+		}
+		ImGui::EndDragDropTarget();
+
+
+			//if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
+			//{
+			//	int payload_n = *(const int*)payload->Data;
+			//	GameObject* Temp = (GameObject*)payload->Data;
+			//	GameObject* LastParent = Temp->GetParentGameObject();
+			//	//Temp.parent
+			//	std::list<GameObject*>::iterator it1;
+			//	for (it1 = LastParent->m_Childs.begin(); it1 != LastParent->m_Childs.end();++it1) {
+			//		if ((*it1)->GetGOID() == Temp->GetGOID()) {
+			//			LastParent->m_Childs.erase(it1);
+			//			Temp->SetParent(ToParentGo);
+			//			break;
+			//		}
+			//	}
+			//	ToParentGo->m_Childs.push_back(Temp);
+			//	
+
+			///*	if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG ||
+			//		m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
+			//		AssetItems* a = (AssetItems*)payload->Data;
+			//		std::vector<Texture*>tmp_TextureVector;
+			//		Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
+			//		tmp_TextureVector.push_back(TempText);
+			//		CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector, TextureType::DIFFUSE);
+			//	}*/
+			//}
+			//ImGui::EndDragDropTarget();
+		//}
+	}
+
+	void ImGuiLayer::GetGameObject(GameObject* Go) {
+
+		ImGui::SetDragDropPayload("GameObject", Go, sizeof(Go->GetGOID()));
+		Draging = Go;
+		ImGui::Text(Go->GetName().c_str());
+		ImGui::EndDragDropSource();
 	}
 
 	update_status ImGuiLayer::OnPreUpdate(float dt) {
@@ -762,9 +831,6 @@ namespace Cronos {
 			ImGui::Separator();
 		}
 	}
-
-
-
 
 
 	void ImGuiLayer::GUIDrawHierarchyPanel()
