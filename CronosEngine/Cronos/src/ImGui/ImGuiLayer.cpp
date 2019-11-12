@@ -182,6 +182,10 @@ namespace Cronos {
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 					GetGameObject(go);
 				}
+				if (ImGui::BeginDragDropTarget())
+				{
+					setParentGameObject(go);
+				}
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
@@ -196,9 +200,15 @@ namespace Cronos {
 			else {
 
 				bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
+
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
 					GetGameObject(go);
 				}
+				if (ImGui::BeginDragDropTarget())
+				{
+					setParentGameObject(go);
+				}
+
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
@@ -215,10 +225,7 @@ namespace Cronos {
 					ImGui::TreePop();
 				}
 			}
-			if (ImGui::BeginDragDropTarget())
-			{
-				setParentGameObject(go);
-			}
+			
 			if (go->isActive() == false) {
 				ImGui::PopStyleColor();
 			}
