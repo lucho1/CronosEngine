@@ -90,14 +90,15 @@ namespace Cronos {
 		m_GameObjects.clear();
 		RELEASE(BasicTestShader);
 
-		//Unloading Assimp Importer loaded textures' vector
-		for (uint i = 0; i < m_CNAssimp_Importer.m_TexturesLoaded.size(); i++)
+		
+		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
+		while (it != m_TexturesLoaded.end())
 		{
-			RELEASE(*(m_CNAssimp_Importer.m_TexturesLoaded.begin() + i));
-			m_CNAssimp_Importer.m_TexturesLoaded.erase(m_CNAssimp_Importer.m_TexturesLoaded.begin() + i);
+			RELEASE(*it);
+			it = m_TexturesLoaded.erase(it);
 		}
+		m_TexturesLoaded.clear();
 
-		m_CNAssimp_Importer.m_TexturesLoaded.clear();
 		return true;
 	}
 
@@ -117,37 +118,24 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		//Changing Textures Test
-		/*if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-		{
-			auto comp = vmodelxd->GetComponent<MeshComponent>();
-			if (comp != nullptr)
-				comp->SetTextures(newVecText, TextureType::DIFFUSE);
-
-			for (auto child : vmodelxd->m_Childs)
-			{
-				comp = child->GetComponent<MeshComponent>();
-				if (comp != nullptr)
-					comp->SetTextures(newVecText, TextureType::DIFFUSE);
-			}
-		}*/
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-		//m_HouseModel->Update(dt);
 		return UPDATE_CONTINUE;
 	}
 
-	GameObject* Scene::CreateModel(const char* path) {
+	GameObject* Scene::CreateModel(const char* path)
+	{
 		return m_CNAssimp_Importer.LoadModel(path);
 	}
+
 	// PreUpdate
 	update_status Scene::OnPreUpdate(float dt)
 	{
 		return UPDATE_CONTINUE;
 	}
 
-	// UPostUpdate
+	// PostUpdate
 	update_status Scene::OnPostUpdate(float dt)
 	{
 		return UPDATE_CONTINUE;

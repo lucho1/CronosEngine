@@ -31,7 +31,7 @@ namespace Cronos {
 		glm::vec3 m_AABB_MinVec;
 		glm::vec3 m_AABB_MaxVec;
 		
-		std::vector<Texture*> m_TexturesLoaded;
+		//std::vector<Texture*> m_TexturesLoaded;
 	};
 
 }

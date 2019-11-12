@@ -6,8 +6,10 @@
 
 namespace Cronos {
 
-	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled) {
-		
+	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled)
+	{
+		for (uint i = 0; i < (uint)ItemType::MAX_ITEMS; i++)
+			ArrayIconTextures[i] = nullptr;
 	}
 
 	bool Filesystem::OnStart() {
@@ -31,9 +33,9 @@ namespace Cronos {
 	bool Filesystem::OnCleanUp()
 	{
 		for (uint i = 0; i < (uint)ItemType::MAX_ITEMS; i++)
-			if(ArrayIconTextures[i] != nullptr)
-				ArrayIconTextures[i] = nullptr;
-		
+			if (ArrayIconTextures[i] != nullptr)
+				RELEASE(ArrayIconTextures[i]);
+
 		return true;
 	}
 
@@ -74,40 +76,44 @@ namespace Cronos {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".png" ) {
+
 			type = ItemType::ITEM_TEXTURE_PNG;
-			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
-			m_IconTex = temp->GetTextureID();
-			m_Details += std::to_string((int)temp->GetWidth());
+			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			
+
+			m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			m_IconTex = m_AssetTexture->GetTextureID();
+			m_Details += std::to_string((int)m_AssetTexture->GetWidth());
 			m_Details += "x";
-			m_Details += std::to_string((int)temp->GetHeight());
+			m_Details += std::to_string((int)m_AssetTexture->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
-			delete temp;
+
 		}
 		else if (m_Extension == ".dds") {
 			type = ItemType::ITEM_TEXTURE_DDS;
-			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
-			m_IconTex = temp->GetTextureID();
-			m_Details += std::to_string((int)temp->GetWidth());
+			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+
+
+			m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			m_IconTex = m_AssetTexture->GetTextureID();
+			m_Details += std::to_string((int)m_AssetTexture->GetWidth());
 			m_Details += "x";
-			m_Details += std::to_string((int)temp->GetHeight());
+			m_Details += std::to_string((int)m_AssetTexture->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
-			delete temp;
 		}
 		else if (m_Extension == ".jpeg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
-			Texture* temp = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			m_Resolution = ImVec2(temp->GetWidth(), temp->GetHeight());
-			m_IconTex = temp->GetTextureID();
-			m_Details += std::to_string((int)temp->GetWidth());
+			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+
+			m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			m_IconTex = m_AssetTexture->GetTextureID();
+			m_Details += std::to_string((int)m_AssetTexture->GetWidth());
 			m_Details += "x";
-			m_Details += std::to_string((int)temp->GetHeight());
+			m_Details += std::to_string((int)m_AssetTexture->GetHeight());
 			m_Details += " ";
 			m_Details += m_AssetFullName;
-			delete temp;
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;

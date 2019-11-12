@@ -78,9 +78,13 @@ namespace Cronos
 
 	void MaterialComponent::Unbind()
 	{
+		std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+		for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
+			(*it->second).Unbind();
+
 		//m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
-		for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
-			m_TexturesContainer[TextureType(i)]->Unbind();
+		/*for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
+			m_TexturesContainer[TextureType(i)]->Unbind();*/
 		
 		m_ShaderAttached->Unbind();
 	}
@@ -88,17 +92,31 @@ namespace Cronos
 	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
 	{
 		CRONOS_ASSERT((type != TextureType::MAX_TEXTURES || type != TextureType::NONE), "Invalid Texture Type passed!");
+		if (texture == nullptr || type == TextureType::ICON)
+		{
+			LOG("Texture was nullptr or Icon type!");
+			return;
+		}
+
+
+		std::list<Texture*>::iterator itemFound_inTexturesList = std::find(App->scene->m_TexturesLoaded.begin(), App->scene->m_TexturesLoaded.end(), texture);
 		std::unordered_map<TextureType, Texture*>::iterator itemFound = m_TexturesContainer.find(type);
 
-		if (itemFound != m_TexturesContainer.end())
+		if (itemFound != m_TexturesContainer.end() && itemFound->second != texture)
 		{
-			if (itemFound->second != texture && texture != nullptr)
-			{
-				RELEASE(m_TexturesContainer[type]);
-				m_TexturesContainer[type] = texture;
-			}
-		}
-		else if(texture != nullptr)
+			if (itemFound_inTexturesList == App->scene->m_TexturesLoaded.end())
+				App->scene->m_TexturesLoaded.push_back(texture);
+
 			m_TexturesContainer[type] = texture;
+		}
+		else if(itemFound == m_TexturesContainer.end())
+		{
+			if (itemFound_inTexturesList == App->scene->m_TexturesLoaded.end())
+				App->scene->m_TexturesLoaded.push_back(texture);
+
+			m_TexturesContainer.insert(std::pair(type, texture));
+
+			//m_TexturesContainer[type] = texture;
+		}
 	}
 }

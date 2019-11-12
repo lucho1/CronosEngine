@@ -13,7 +13,7 @@ namespace Cronos {
 
 	enum class ItemType
 	{
-		ITEM_NONE = 0,
+		ITEM_NONE = -1,
 		ITEM_FBX,
 		ITEM_OBJ,
 		ITEM_MATERIAL,
@@ -44,6 +44,7 @@ namespace Cronos {
 		ItemType GetType() const { return type; }
 		uint GetIconTexture() const { return m_IconTex; }
 		ImVec2 GetResolution() const { return m_Resolution; }
+		Texture* GetTexture() const { return m_AssetTexture; }
 
 
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
@@ -65,10 +66,13 @@ namespace Cronos {
 		std::string m_Path;
 		std::string m_Details;
 		std::string m_AbsolutePath;
+
 		//For Images
 		int m_AssetID;
 		GLuint m_IconTex;
 		ImVec2 m_Resolution;
+
+		Texture* m_AssetTexture = nullptr;
 	};
 
 	class Directories {

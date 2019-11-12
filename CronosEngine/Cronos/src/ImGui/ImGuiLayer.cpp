@@ -713,10 +713,7 @@ namespace Cronos {
 						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
 					{
 						AssetItems* AssetData = (AssetItems*)payload->Data;
-
-						Texture* TempText = App->textureManager->CreateTexture(AssetData->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
-						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(TempText, TextureType::DIFFUSE);
-						TempText = nullptr;
+						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(AssetData->GetTexture(), TextureType::DIFFUSE);
 					}
 				}
 

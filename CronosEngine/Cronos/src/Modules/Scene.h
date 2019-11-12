@@ -29,9 +29,14 @@ namespace Cronos {
 		virtual update_status OnPostUpdate(float dt) override;
 
 		GameObject* CreateModel(const char* path);
+
+	public:
+
 		std::vector<GameObject*>m_GameObjects;
 
 		Shader* BasicTestShader = nullptr; //To test
+
+		std::list<Texture*> m_TexturesLoaded;
 
 	private:
 
