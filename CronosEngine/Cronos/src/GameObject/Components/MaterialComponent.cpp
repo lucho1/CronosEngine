@@ -6,6 +6,25 @@
 
 namespace Cronos
 {
+	std::string UniformNameFromTextureType(TextureType textureType)
+	{
+		std::string ret = "";
+
+		switch (textureType)
+		{
+			case TextureType::AMBIENT:		ret = "u_AmbientTexture"; break;
+			case TextureType::DIFFUSE:		ret = "u_DiffuseTexture"; break;
+			case TextureType::SPECULAR:		ret = "u_SpecularTexture"; break;
+			case TextureType::NORMALMAP:	ret = "u_NormalMap"; break;
+			case TextureType::HEIGHTMAP:	ret = "u_HeightMap"; break;
+			case TextureType::LIGHTMAP:		ret = "u_LightMap"; break;
+		}
+
+		CRONOS_ASSERT(ret != "", "COULDN'T CONVERT TO ASSIMP TEXTURE TYPE!");
+		return ret;
+	}
+
+
 	MaterialComponent::MaterialComponent(GameObject* attachedGO)
 		: Component(ComponentType::MATERIAL, attachedGO)
 	{
@@ -40,10 +59,15 @@ namespace Cronos
 			m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded && m_TexturesContainer[TextureType::DIFFUSE] != nullptr)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded /*&& m_TexturesContainer[TextureType::DIFFUSE] != nullptr*/)
 		{
-			m_TexturesContainer[TextureType::DIFFUSE]->Bind(m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
-			m_ShaderAttached->SetUniform1i("u_DiffuseTexture", m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
+			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
+			{
+				uint TextureID = (*it->second).GetTextureID();
+				(*it->second).Bind(TextureID);
+				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
+			}
 		}
 		else
 		{
@@ -54,7 +78,10 @@ namespace Cronos
 
 	void MaterialComponent::Unbind()
 	{
-		m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
+		//m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
+		for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
+			m_TexturesContainer[TextureType(i)]->Unbind();
+		
 		m_ShaderAttached->Unbind();
 	}
 
@@ -65,13 +92,13 @@ namespace Cronos
 
 		if (itemFound != m_TexturesContainer.end())
 		{
-			if (itemFound->second != texture)
+			if (itemFound->second != texture && texture != nullptr)
 			{
 				RELEASE(m_TexturesContainer[type]);
 				m_TexturesContainer[type] = texture;
 			}
 		}
-		else
+		else if(texture != nullptr)
 			m_TexturesContainer[type] = texture;
 	}
 }

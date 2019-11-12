@@ -252,20 +252,26 @@ namespace Cronos {
 
 		//Get the texture wanted from Assimp
 		aiTextureType Ass_TextureType = ConvertToAssimpTextureType(TexType);
-		aiString str;
-		material->GetTexture(Ass_TextureType, 0, &str);
-
-		//If it has been already loaded, then return it without creating a new one
-		for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
-			if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
-				return m_TexturesLoaded[j];
 		
-		//Else, create it and put it in the loaded textures vector
-		std::string path = GOPath + '/' + str.C_Str();
-		Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
+		if(material->GetTextureCount(Ass_TextureType) > 0)
+		{
+			aiString str;
+			material->GetTexture(Ass_TextureType, 0, &str);
 
-		m_TexturesLoaded.push_back(tex);
-		return tex;
+			//If it has been already loaded, then return it without creating a new one
+			for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
+				if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), str.C_Str()) == 0)
+					return m_TexturesLoaded[j];
+
+			//Else, create it and put it in the loaded textures vector
+			std::string path = GOPath + '/' + str.C_Str();
+			Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
+
+			m_TexturesLoaded.push_back(tex);
+			return tex;
+		}
+
+		return nullptr;
 	}
 
 }
