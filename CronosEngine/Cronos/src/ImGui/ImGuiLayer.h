@@ -95,7 +95,8 @@ namespace Cronos {
 
 		void GetGameObject(GameObject* go);
 		void setParentGameObject(GameObject* ToParentGo);
-
+		void BreakParentGameObject(GameObject* go);
+		void DeleteGameObject(GameObject*go);
 		void AcumulateLogDT();
 
 		//void ImGuiTransformMenu(GameObject currentObject) {};

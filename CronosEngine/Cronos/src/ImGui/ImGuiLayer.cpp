@@ -136,6 +136,7 @@ namespace Cronos {
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
 		CurrentGameObject = nullptr;
+		Draging = nullptr;
 		return true;
 	}
 
@@ -195,7 +196,9 @@ namespace Cronos {
 			else {
 
 				bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, GameObject_Name.c_str());
-
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+					GetGameObject(go);
+				}
 				if (ImGui::IsItemClicked()) {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
@@ -212,67 +215,83 @@ namespace Cronos {
 					ImGui::TreePop();
 				}
 			}
-			if (go->isActive() == false) {
-				ImGui::PopStyleColor();
-			}
 			if (ImGui::BeginDragDropTarget())
 			{
 				setParentGameObject(go);
 			}
+			if (go->isActive() == false) {
+				ImGui::PopStyleColor();
+			}
+			
 		}
 	}
 
 	void ImGuiLayer::setParentGameObject(GameObject* ToParentGo) {
-		//if (ImGui::BeginDragDropTarget())
-		//{
-			//ImGui::GetID("Scene");
 
+		if (Draging != nullptr) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject")) {
+				GameObject* Temp = Draging;
+				GameObject* LastParent = Temp->GetParentGameObject();
+				//To know if ToParentGo is a child so it will cancel, a parent cannot be a child from his own child.
+				for (auto& a : Temp->m_Childs) { 
+					if (a->GetGOID() == ToParentGo->GetGOID()) {
+						ImGui::EndDragDropTarget();
+						Draging = nullptr;
+						return;
+					}
+				}
+				//To know if we are moving childs
+				std::list<GameObject*>::iterator it1;
+				if (LastParent != nullptr) {
+					for (it1 = LastParent->m_Childs.begin(); it1 != LastParent->m_Childs.end(); ++it1) {
+						if ((*it1)->GetGOID() == Temp->GetGOID()) {
+							LastParent->m_Childs.erase(it1);
+							Temp->SetParent(ToParentGo);
+							break;
+						}
+					}
+				}
+				//To know if we are moving Fathers;
+				else {
+					for (unsigned int i = 0; i<App->scene->m_GameObjects.size(); ++i) {
+						if (App->scene->m_GameObjects[i]->GetGOID() == Temp->GetGOID()) {
+							App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + i);
+							Temp->SetParent(ToParentGo);
+							break;
+						}
+					}
+				}
+				ToParentGo->m_Childs.push_back(Temp);
+				Draging = nullptr;
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	void ImGuiLayer::BreakParentGameObject(GameObject* go) {
+
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
+		{
 		
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject")) {
 			GameObject* Temp = Draging;
 			GameObject* LastParent = Temp->GetParentGameObject();
-			//Temp.parent
+			if (LastParent == nullptr) {
+				Draging = nullptr;
+				ImGui::EndDragDropTarget();
+				return;
+			}
 			std::list<GameObject*>::iterator it1;
 			for (it1 = LastParent->m_Childs.begin(); it1 != LastParent->m_Childs.end(); ++it1) {
 				if ((*it1)->GetGOID() == Temp->GetGOID()) {
 					LastParent->m_Childs.erase(it1);
-					Temp->SetParent(ToParentGo);
 					break;
 				}
 			}
-			ToParentGo->m_Childs.push_back(Temp);
+			go->BreakParent();
+			App->scene->m_GameObjects.push_back(go);
+			Draging = nullptr;
 		}
 		ImGui::EndDragDropTarget();
-
-
-			//if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
-			//{
-			//	int payload_n = *(const int*)payload->Data;
-			//	GameObject* Temp = (GameObject*)payload->Data;
-			//	GameObject* LastParent = Temp->GetParentGameObject();
-			//	//Temp.parent
-			//	std::list<GameObject*>::iterator it1;
-			//	for (it1 = LastParent->m_Childs.begin(); it1 != LastParent->m_Childs.end();++it1) {
-			//		if ((*it1)->GetGOID() == Temp->GetGOID()) {
-			//			LastParent->m_Childs.erase(it1);
-			//			Temp->SetParent(ToParentGo);
-			//			break;
-			//		}
-			//	}
-			//	ToParentGo->m_Childs.push_back(Temp);
-			//	
-
-			///*	if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG ||
-			//		m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
-			//		AssetItems* a = (AssetItems*)payload->Data;
-			//		std::vector<Texture*>tmp_TextureVector;
-			//		Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
-			//		tmp_TextureVector.push_back(TempText);
-			//		CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector, TextureType::DIFFUSE);
-			//	}*/
-			//}
-			//ImGui::EndDragDropTarget();
-		//}
 	}
 
 	void ImGuiLayer::GetGameObject(GameObject* Go) {
@@ -340,6 +359,10 @@ namespace Cronos {
 			for (auto& go : App->scene->m_GameObjects) {
 				if (go->GetGOID() == CurrentGameObject->GetGOID()) {
 					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
+					break;
+				}
+				else {
+					DeleteGameObject(go);
 				}
 				cursor++;
 			}
@@ -352,6 +375,21 @@ namespace Cronos {
 		return current_status;
 	}
 
+	void ImGuiLayer::DeleteGameObject(GameObject* go) {
+
+		std::list<GameObject*>::iterator it1;
+		for (it1 = go->m_Childs.begin(); it1 != go->m_Childs.end();++it1) {
+			
+			if ((*it1)->GetGOID() == CurrentGameObject->GetGOID())
+			{
+				go->m_Childs.erase(it1);
+				return;
+			}
+			else
+				DeleteGameObject((*it1));
+		}
+	}
+	
 	void ImGuiLayer::setDocking() {
 
 		static bool opt_fullscreen_persistant = true;
@@ -602,8 +640,6 @@ namespace Cronos {
 
 		ImGui::PopStyleVar();
 
-
-
 		ImGui::End();
 	}
 
@@ -838,6 +874,7 @@ namespace Cronos {
 
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
+			
 			if (ImGui::BeginMenuBar()) {
 
 				if (ImGui::BeginMenu("Create")) {
@@ -876,6 +913,13 @@ namespace Cronos {
 				if (go->GetCountChilds() <= 0) {
 					Treenode_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 					ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, "%s", GameObject_Name.c_str());
+					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+						GetGameObject(go);
+					}
+					if (ImGui::BeginDragDropTarget())
+					{
+						setParentGameObject(go);
+					}
 					if (ImGui::IsItemClicked()) {
 						CurrentGameObject = go;
 						nodeHirearchySelected = go->GetGOID();
@@ -891,6 +935,9 @@ namespace Cronos {
 				else {
 
 					bool open = ImGui::TreeNodeEx((void*)(intptr_t)go->GetGOID(), Treenode_flags, "%s", GameObject_Name.c_str());
+					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+						GetGameObject(go);
+					}
 					if (ImGui::IsItemClicked()) {
 						CurrentGameObject = go;
 						nodeHirearchySelected = go->GetGOID();
@@ -901,7 +948,10 @@ namespace Cronos {
 					}
 
 					RightOptions(go);
-
+					if (ImGui::BeginDragDropTarget())
+					{
+						setParentGameObject(go);
+					}
 					if (open) {
 						HierarchyIterator(*go);
 						ImGui::TreePop();
@@ -911,12 +961,16 @@ namespace Cronos {
 					ImGui::PopStyleColor();
 				}
 
-
 			}
-
+			
 			ImGui::PopStyleColor(); //OJU POSIBLE CRASH
 			float Vec2Ytest = ImGui::GetCursorPosY() + 5.0f;
-
+			ImGui::InvisibleButton("##invisibleButton", ImVec2(ImGui::GetWindowWidth()-30, ImGui::GetWindowHeight() - Vec2Ytest));
+			if (ImGui::BeginDragDropTarget()) {
+				if(Draging!=nullptr)
+					if(Draging->GetParentGameObject()!=nullptr)
+						BreakParentGameObject(Draging);
+			}
 			if (ImGui::IsWindowHovered() && ImGui::GetMousePos().y > Vec2Ytest)
 				if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
 					CurrentGameObject = nullptr;

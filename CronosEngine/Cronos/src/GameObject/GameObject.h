@@ -41,8 +41,9 @@ namespace Cronos {
 		void SetPath(const std::string path) { m_Path = path; }
 		void SetParent(GameObject* Go);
 		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
+
 		GameObject* GetParentGameObject() { return Parent; }
-		
+		void BreakParent() { Parent = nullptr; }
 		Component* CreateComponent(ComponentType type);
 		std::list<GameObject*> m_Childs;
 		std::vector<Component*> m_Components;
