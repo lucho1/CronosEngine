@@ -59,30 +59,15 @@ namespace Cronos
 			m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
 
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded /*&& m_TexturesContainer[TextureType::DIFFUSE] != nullptr*/)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 		{
-			/*std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
 			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
 			{
-				uint TextureID = (*it->second).GetTextureID();
-				(*it->second).Bind(TextureID);
+				uint TextureID = (uint)(it->first);
 				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
-			}*/
-			m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::DIFFUSE), m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
-			m_TexturesContainer[TextureType::DIFFUSE]->Bind(m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
-
-			if (m_TexturesContainer[TextureType::SPECULAR] != nullptr)
-			{
-				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::SPECULAR), m_TexturesContainer[TextureType::SPECULAR]->GetTextureID());
-				m_TexturesContainer[TextureType::SPECULAR]->Bind(m_TexturesContainer[TextureType::SPECULAR]->GetTextureID());
+				(*it->second).Bind(TextureID);
 			}
-
-			if (m_TexturesContainer[TextureType::NORMALMAP] != nullptr)
-			{
-				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::NORMALMAP), m_TexturesContainer[TextureType::NORMALMAP]->GetTextureID());
-				m_TexturesContainer[TextureType::NORMALMAP]->Bind(/*m_TexturesContainer[TextureType::NORMALMAP]->GetTextureID()*/);
-			}
-
 		}
 		else
 		{
@@ -97,10 +82,6 @@ namespace Cronos
 		for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
 			(*it->second).Unbind();
 
-		//m_TexturesContainer[TextureType::DIFFUSE]->Unbind();
-		/*for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
-			m_TexturesContainer[TextureType(i)]->Unbind();*/
-		
 		m_ShaderAttached->Unbind();
 	}
 

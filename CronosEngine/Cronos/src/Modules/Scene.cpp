@@ -65,8 +65,13 @@ namespace Cronos {
 				//vec4 t1 = texture2D(u_DiffuseTexture, v_TexCoords);
 				//vec4 t2 = texture2D(u_SpecularTexture, v_TexCoords);
 				//vec4 texColor = t1*t2;
-				vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
+				vec4 texColor = (texture(u_DiffuseTexture, v_TexCoords)) * vec4(1.0,1.0,1.0,1.0);
+				
+				//texColor = mix(texColor, texture(u_NormalMap, v_TexCoords), 0.0);
+				//texColor = mix(texColor, texture(u_HeightMap, v_TexCoords), 0.0);
+				
 				color = texColor;
+				//color = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
 			}
 		)";
 
@@ -134,8 +139,9 @@ namespace Cronos {
 	update_status Scene::OnUpdate(float dt)
 	{
 		// "Floor" Plane
-		m_FloorPlane.Render();
 		glColor3f(White.r, White.g, White.b);
+		glBindTextures(0, 31, 0);
+		m_FloorPlane.Render();
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
