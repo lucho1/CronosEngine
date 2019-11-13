@@ -37,7 +37,16 @@ namespace Cronos {
 
 	Texture* TextureManager::CreateTexture(const char* path, TextureType textype)
 	{
+		CRONOS_ASSERT((textype != TextureType::NONE || textype != TextureType::MAX_TEXTURES), "Invalid Texture type creation!");
+
 		Texture* ret = new Texture(path, textype);
+		if (ret != nullptr && textype != TextureType::ICON)
+		{
+			std::list<Texture*>::iterator itemFound_inTexturesList = std::find(App->scene->m_TexturesLoaded.begin(), App->scene->m_TexturesLoaded.end(), ret);
+			if (itemFound_inTexturesList == App->scene->m_TexturesLoaded.end())
+				App->scene->m_TexturesLoaded.push_back(ret);
+		}
+
 		return ret;
 	}
 }

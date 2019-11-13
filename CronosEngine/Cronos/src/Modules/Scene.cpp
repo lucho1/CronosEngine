@@ -27,9 +27,7 @@ namespace Cronos {
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
 		m_FloorPlane.axis = true; //Enable axis render
 
-		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		m_GameObjects.push_back(m_HouseModel);
-
+		//Shaders
 		std::string vertexShader = R"(
 			#version 330 core
 			layout(location = 0) in vec3 a_Position;
@@ -48,7 +46,40 @@ namespace Cronos {
 				v_TexCoords = a_TexCoords;
 			}
 		)";
+
 		std::string fragmentShader = R"(
+			#version 330 core
+
+			out vec4 color;
+			in vec2 v_TexCoords;
+
+			uniform sampler2D u_AmbientTexture;
+			uniform sampler2D u_DiffuseTexture;
+			uniform sampler2D u_SpecularTexture;
+			uniform sampler2D u_NormalMap;
+			uniform sampler2D u_HeightMap;
+			uniform sampler2D u_LightMap;
+
+			void main()
+			{
+				//vec4 t1 = texture2D(u_DiffuseTexture, v_TexCoords);
+				//vec4 t2 = texture2D(u_SpecularTexture, v_TexCoords);
+				//vec4 texColor = t1*t2;
+				vec4 texColor = (texture(u_DiffuseTexture, v_TexCoords)) * vec4(1.0,1.0,1.0,1.0);
+				
+				//texColor = mix(texColor, texture(u_NormalMap, v_TexCoords), 0.0);
+				//texColor = mix(texColor, texture(u_HeightMap, v_TexCoords), 0.0);
+				
+				color = texColor;
+				//color = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
+			}
+		)";
+
+		//vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
+		//vec3 diffuse = vec3(texture(u_DiffuseTexture, v_TexCoords));
+		//vec4 texColor = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
+
+		/*std::string fragmentShader = R"(
 			#version 330 core
 
 			out vec4 color;
@@ -66,14 +97,18 @@ namespace Cronos {
 				vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
 				color = texColor;
 			}
-		)";
+		)";*/
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		//BasicTestShader->Unbind();
+		BasicTestShader->Unbind();
+
+		//House Model Load
+		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
+		m_GameObjects.push_back(m_HouseModel);
 
 		return ret;
 	}
@@ -86,6 +121,17 @@ namespace Cronos {
 			element->CleanUp();
 
 		m_GameObjects.clear();
+		RELEASE(BasicTestShader);
+
+		
+		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
+		while (it != m_TexturesLoaded.end())
+		{
+			RELEASE(*it);
+			it = m_TexturesLoaded.erase(it);
+		}
+		m_TexturesLoaded.clear();
+
 		return true;
 	}
 
@@ -93,8 +139,9 @@ namespace Cronos {
 	update_status Scene::OnUpdate(float dt)
 	{
 		// "Floor" Plane
-		m_FloorPlane.Render();
 		glColor3f(White.r, White.g, White.b);
+		glBindTextures(0, 31, 0);
+		m_FloorPlane.Render();
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -105,37 +152,24 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		//Changing Textures Test
-		/*if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
-		{
-			auto comp = vmodelxd->GetComponent<MeshComponent>();
-			if (comp != nullptr)
-				comp->SetTextures(newVecText, TextureType::DIFFUSE);
-
-			for (auto child : vmodelxd->m_Childs)
-			{
-				comp = child->GetComponent<MeshComponent>();
-				if (comp != nullptr)
-					comp->SetTextures(newVecText, TextureType::DIFFUSE);
-			}
-		}*/
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-		//m_HouseModel->Update(dt);
 		return UPDATE_CONTINUE;
 	}
 
-	GameObject* Scene::CreateModel(const char* path) {
+	GameObject* Scene::CreateModel(const char* path)
+	{
 		return m_CNAssimp_Importer.LoadModel(path);
 	}
+
 	// PreUpdate
 	update_status Scene::OnPreUpdate(float dt)
 	{
 		return UPDATE_CONTINUE;
 	}
 
-	// UPostUpdate
+	// PostUpdate
 	update_status Scene::OnPostUpdate(float dt)
 	{
 		return UPDATE_CONTINUE;

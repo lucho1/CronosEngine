@@ -670,7 +670,7 @@ namespace Cronos {
 				}
 
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
-					if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
 						GUIDrawMaterialsMenu(CurrentGameObject);
 				}
 			}
@@ -742,12 +742,12 @@ namespace Cronos {
 
 			int AvSizeX = ImGui::GetWindowWidth();
 			int AvSizeY = ImGui::GetWindowHeight();
-			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x) {
+
+			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x) 
 				AvSizeX = m_CurrentAssetSelected->GetResolution().x;
-			}
-			else if (AvSizeX > AvSizeY) {
+			else if (AvSizeX > AvSizeY)
 				AvSizeX = AvSizeY;
-			}
+			
 
 			static float aspectRatio = m_CurrentAssetSelected->GetResolution().x / m_CurrentAssetSelected->GetResolution().y;
 			ImGui::SameLine(ImGui::GetWindowWidth() / 2 - AvSizeX / 2);
@@ -797,17 +797,18 @@ namespace Cronos {
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.392f, 0.369f, 0.376f, 0.10f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));
-			Texture* Diffuse=nullptr;
-			MeshComponent* textureVec = CurrentGameObject->GetComponent<MeshComponent>();
-			if (textureVec != nullptr) {
-				for (auto& tv : textureVec->GetTexturesVector()) {
-					if (tv->GetTextureType() == TextureType::DIFFUSE) {
-						Diffuse = tv;
-					}
-				}
+
+			Texture* Diffuse = nullptr;
+			MaterialComponent* Cn_Material = CurrentGameObject->GetComponent<MaterialComponent>();
+
+			if (Cn_Material != nullptr)
+			{
+				for (auto& tv : Cn_Material->GetTextures())
+					if (tv.first == TextureType::DIFFUSE)
+						Diffuse = (tv.second);
 			}
 
-			if(Diffuse != nullptr)
+			if (Diffuse != nullptr)
 				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 			else
 				ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
@@ -819,24 +820,22 @@ namespace Cronos {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Window"))
 				{
 					int payload_n = *(const int*)payload->Data;
-					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG ||
-						m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
-						AssetItems* a = (AssetItems*)payload->Data;
-						std::vector<Texture*>tmp_TextureVector;
-						Texture* TempText = App->textureManager->CreateTexture(a->GetAbsolutePath().c_str(), TextureType::DIFFUSE);
-						tmp_TextureVector.push_back(TempText);
-						CurrentGameObject->GetComponent<MeshComponent>()->SetTextures(tmp_TextureVector,TextureType::DIFFUSE);
+
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS
+						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
+					{
+						AssetItems* AssetData = (AssetItems*)payload->Data;
+						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(AssetData->GetTexture(), TextureType::DIFFUSE);
 					}
 				}
+
 				ImGui::EndDragDropTarget();
 			}
 			
-			//else if (Diffuse==nullptr)
-			//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text("\n   Albedo"); ImGui::SameLine();
+			ImGui::Text("\n   Ambient"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 			ImVec2 FramePadding(100.0f, 3.0f);
 			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));

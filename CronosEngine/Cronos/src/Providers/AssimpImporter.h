@@ -2,7 +2,6 @@
 #define _ASSIMPIMPORTER_H_
 
 #include "GameObject/GameObject.h"
-#include "GameObject/Components/MeshComponent.h"
 #include "Renderer/Textures.h"
 
 #include <Assimp/include/cimport.h>
@@ -19,20 +18,20 @@ namespace Cronos {
 	private:
 
 		AssimpCronosImporter();
-		GameObject* LoadModel(const std::string& filepath);
 
+		GameObject* LoadModel(const std::string& filepath);
 		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj);
 		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj);
 
-		std::vector<Texture*> LoadTextures(aiMaterial *material, aiTextureType Texturetype, TextureType texType, GameObject* motherGameObj);
-		void SetTexturesVector(aiMesh* as_mesh, const aiScene* as_scene, GameObject* GObj, std::vector<Texture*>& TexVec);
+		Texture * LoadTextures(aiMaterial* material, TextureType TexType, const std::string& GOPath);
 
-		std::vector<Texture*> m_TexturesLoaded;
+	private:
 
+		uint MeshNum = 0;
 		glm::vec3 m_AABB_MinVec;
 		glm::vec3 m_AABB_MaxVec;
-		uint MeshNum = 0;
 		
+		//std::vector<Texture*> m_TexturesLoaded;
 	};
 
 }

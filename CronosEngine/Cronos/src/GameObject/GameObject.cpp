@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 #include "Components/TransformComponent.h"
-#include "Components/MeshComponent.h"
+#include "Components/MaterialComponent.h"
 
 namespace Cronos {
 
@@ -95,6 +95,7 @@ namespace Cronos {
 			case Cronos::ComponentType::MESH_RENDERER:
 				break;
 			case Cronos::ComponentType::MATERIAL:
+				ret = new MaterialComponent(this);
 				break;
 			default:
 				break;

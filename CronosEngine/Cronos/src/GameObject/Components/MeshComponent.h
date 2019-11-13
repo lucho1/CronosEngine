@@ -2,10 +2,10 @@
 #define _MESHCOMPONENT_H_
 
 #include "glm/glm.hpp"
+
 #include "Component.h"
 #include "Renderer/VertexArray.h"
-#include "Renderer/Textures.h"
-#include "Renderer/Shaders.h"
+#include "MaterialComponent.h"
 
 namespace Cronos {
 
@@ -20,22 +20,20 @@ namespace Cronos {
 	{
 	public:
 
-		MeshComponent(GameObject* GObjAttached);
+		MeshComponent(GameObject* attachedGO);
 		~MeshComponent();
 
 		virtual void Update(float dt) override;
-		void Draw(Shader* shader, bool bindShader);
+		void Draw(MaterialComponent* material, bool bindShader);
 
-		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures);
-		void SetTextures(std::vector<Texture*> newTexture, TextureType textureType);
+		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices);
 		void RecalculateNormals() { m_NormalsCalculated = false; }
 		bool &setDebugDraw() { RecalculateNormals(); return m_DebugDraw; }
+
 		//Getters
-		const std::vector<Texture*>& GetTexturesVector() const { return m_TexturesVector; }
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
 		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
-		static ComponentType GetType() { return ComponentType::MESH; };
-
+		static ComponentType GetType() { return ComponentType::MESH; }
 
 	private:
 
@@ -47,7 +45,6 @@ namespace Cronos {
 
 	private:
 
-		std::vector<Texture*> m_TexturesVector;
 		std::vector<CronosVertex> m_VertexVector;
 		std::vector<uint> m_IndicesVector;
 

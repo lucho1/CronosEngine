@@ -3,8 +3,8 @@
 
 namespace Cronos {
 
-	TransformComponent::TransformComponent(GameObject* parentGo, bool active)
-		: Component(ComponentType::TRANSFORM, parentGo, active)
+	TransformComponent::TransformComponent(GameObject* attachedGO, bool active)
+		: Component(ComponentType::TRANSFORM, attachedGO, active)
 	{
 
 	}

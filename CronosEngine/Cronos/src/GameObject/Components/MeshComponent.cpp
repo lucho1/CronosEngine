@@ -6,24 +6,18 @@
 
 namespace Cronos {
 
-	MeshComponent::MeshComponent(GameObject* GObjAttached) :
-		Component(ComponentType::MESH , GObjAttached)
+	MeshComponent::MeshComponent(GameObject* attachedGO) :
+		Component(ComponentType::MESH , attachedGO)
 	{
 	}
 
 	MeshComponent::~MeshComponent()
 	{
-		for (uint i = 0; i < m_TexturesVector.size(); i++)
-		{
-			RELEASE(m_TexturesVector[i]);
-			m_TexturesVector.erase(m_TexturesVector.begin() + i);
-		}
 		for (uint i = 0; i < m_VertexVector.size(); i++)
 			m_VertexVector.erase(m_VertexVector.begin() + i);
 		for (uint i = 0; i < m_IndicesVector.size(); i++)
 			m_IndicesVector.erase(m_IndicesVector.begin() + i);
 
-		m_TexturesVector.clear();
 		m_IndicesVector.clear();
 		m_VertexVector.clear();
 
@@ -32,7 +26,7 @@ namespace Cronos {
 		RELEASE(m_MeshVBO);
 	}
 
-	void MeshComponent::SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices, std::vector<Texture*> textures)
+	void MeshComponent::SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices)
 	{
 		CRONOS_ASSERT(vertices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE VERTEX VECTOR! \n Try Calling function()");
 		CRONOS_ASSERT(indices.size() != 0, "THE MESH IS NOT WELL CREATED! YOU NEED TO PROPERLY SETUP THE INDICES VECTOR! \n Try Calling function()");
@@ -40,20 +34,9 @@ namespace Cronos {
 		CRONOS_WARN(m_MeshVBO == nullptr, "Warning! Mesh VBO being created is not nullptr!");
 		CRONOS_WARN(m_MeshIBO == nullptr, "Warning! Mesh IBO being created is not nullptr!");
 
-
 		m_VertexVector = vertices;
 		m_IndicesVector = indices;
 
-		if (textures.size() > 0)
-			m_TexturesVector = textures;
-
-		/*if(*(textures.begin()) != nullptr)
-			m_TexturesVector = textures;
-
-		if (textures.at(0) != nullptr)
-			m_TexturesVector = textures;*/
-
-		
 		m_MeshVAO = new VertexArray();
 		m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
 
@@ -68,80 +51,25 @@ namespace Cronos {
 		m_MeshVAO->AddIndexBuffer(*m_MeshIBO);
 	}
 
-	void MeshComponent::SetTextures(std::vector<Texture*> newTexture, TextureType textureType)
-	{
-		for (uint i = 0; i < m_TexturesVector.size() && m_TexturesVector[i] != nullptr; i++)
-		{
-			if (m_TexturesVector[i]->GetTextureType() == textureType)
-			{
-				RELEASE(m_TexturesVector[i]);
-				m_TexturesVector.erase(m_TexturesVector.begin() + i);
-			}
-		}
-
-		m_TexturesVector.insert(m_TexturesVector.end(), newTexture.begin(), newTexture.end());
-	}
-
-
 	void MeshComponent::Update(float dt)
 	{
-		Draw(App->scene->BasicTestShader, true);
+		Draw(GetParent()->GetComponent<MaterialComponent>(), true);
 	}
 
-	void MeshComponent::Draw(Shader* shader, bool bindShader)
+	void MeshComponent::Draw(MaterialComponent* material, bool bindShader)
 	{
 		if (!isEnabled())
 			return;
 
-		if (GetParent()->m_IsPrimitive == true)
-			bindShader = false;
-
-		if (bindShader)
-		{
-			shader->Bind();
-			shader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-			shader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-			shader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		}
-
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-		{
-			std::vector< Texture*>::iterator item = m_TexturesVector.begin();
-			for (; item != m_TexturesVector.end() && (*item) != NULL; item++)
-			{
-				(*item)->Bind((*item)->GetTextureID());
-
-				if ((*item)->GetTextureType() == TextureType::AMBIENT)
-					shader->SetUniform1i("u_AmbientTexture", (*item)->GetTextureID());
-				if ((*item)->GetTextureType() == TextureType::DIFFUSE)
-					shader->SetUniform1i("u_DiffuseTexture", (*item)->GetTextureID());
-				if ((*item)->GetTextureType() == TextureType::SPECULAR)
-					shader->SetUniform1i("u_SpecularTexture", (*item)->GetTextureID());
-				if ((*item)->GetTextureType() == TextureType::NORMALMAP)
-					shader->SetUniform1i("u_NormalMap", (*item)->GetTextureID());
-				if ((*item)->GetTextureType() == TextureType::HEIGHTMAP)
-					shader->SetUniform1i("u_HeightMap", (*item)->GetTextureID());
-				if ((*item)->GetTextureType() == TextureType::LIGHTMAP)
-					shader->SetUniform1i("u_LightMap", (*item)->GetTextureID());
-				//else
-				//	App->scene->BasicTestShader->SetUniform1i("u_Texture", (*item)->GetTextureID());
-			}
-		}
-		else
-		{
-			glColor3f(White.r, White.g, White.b);
-			shader->Unbind();
-		}
+		if (material != nullptr)
+			material->Bind(bindShader);
 
 		m_MeshVAO->Bind();
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		std::vector< Texture*>::iterator item2 = m_TexturesVector.begin();
-		item2 = m_TexturesVector.begin();
-		for (; item2 != m_TexturesVector.end() && (*item2) != NULL; item2++)
-			(*item2)->Unbind();
+		if (material != nullptr)
+			material->Unbind();
 
-		shader->Unbind();
 		m_MeshVAO->UnBind();
 
 	//	DrawCentralAxis();

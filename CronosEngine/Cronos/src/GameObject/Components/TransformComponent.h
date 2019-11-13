@@ -14,7 +14,7 @@ namespace Cronos {
 	{
 	public:
 
-		TransformComponent(GameObject* parentGo, bool active = true);
+		TransformComponent(GameObject* attachedGO, bool active = true);
 		~TransformComponent();
 
 		virtual void OnStart() override;
