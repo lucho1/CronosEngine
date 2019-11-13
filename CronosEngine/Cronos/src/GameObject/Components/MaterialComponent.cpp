@@ -61,13 +61,28 @@ namespace Cronos
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded /*&& m_TexturesContainer[TextureType::DIFFUSE] != nullptr*/)
 		{
-			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+			/*std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
 			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
 			{
 				uint TextureID = (*it->second).GetTextureID();
 				(*it->second).Bind(TextureID);
 				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
+			}*/
+			m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::DIFFUSE), m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
+			m_TexturesContainer[TextureType::DIFFUSE]->Bind(m_TexturesContainer[TextureType::DIFFUSE]->GetTextureID());
+
+			if (m_TexturesContainer[TextureType::SPECULAR] != nullptr)
+			{
+				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::SPECULAR), m_TexturesContainer[TextureType::SPECULAR]->GetTextureID());
+				m_TexturesContainer[TextureType::SPECULAR]->Bind(m_TexturesContainer[TextureType::SPECULAR]->GetTextureID());
 			}
+
+			if (m_TexturesContainer[TextureType::NORMALMAP] != nullptr)
+			{
+				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(TextureType::NORMALMAP), m_TexturesContainer[TextureType::NORMALMAP]->GetTextureID());
+				m_TexturesContainer[TextureType::NORMALMAP]->Bind(/*m_TexturesContainer[TextureType::NORMALMAP]->GetTextureID()*/);
+			}
+
 		}
 		else
 		{
@@ -98,7 +113,6 @@ namespace Cronos
 			return;
 		}
 
-
 		std::list<Texture*>::iterator itemFound_inTexturesList = std::find(App->scene->m_TexturesLoaded.begin(), App->scene->m_TexturesLoaded.end(), texture);
 		std::unordered_map<TextureType, Texture*>::iterator itemFound = m_TexturesContainer.find(type);
 
@@ -115,8 +129,6 @@ namespace Cronos
 				App->scene->m_TexturesLoaded.push_back(texture);
 
 			m_TexturesContainer.insert(std::pair(type, texture));
-
-			//m_TexturesContainer[type] = texture;
 		}
 	}
 }

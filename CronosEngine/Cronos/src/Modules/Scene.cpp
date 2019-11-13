@@ -46,7 +46,35 @@ namespace Cronos {
 				v_TexCoords = a_TexCoords;
 			}
 		)";
+
 		std::string fragmentShader = R"(
+			#version 330 core
+
+			out vec4 color;
+			in vec2 v_TexCoords;
+
+			uniform sampler2D u_AmbientTexture;
+			uniform sampler2D u_DiffuseTexture;
+			uniform sampler2D u_SpecularTexture;
+			uniform sampler2D u_NormalMap;
+			uniform sampler2D u_HeightMap;
+			uniform sampler2D u_LightMap;
+
+			void main()
+			{
+				//vec4 t1 = texture2D(u_DiffuseTexture, v_TexCoords);
+				//vec4 t2 = texture2D(u_SpecularTexture, v_TexCoords);
+				//vec4 texColor = t1*t2;
+				vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
+				color = texColor;
+			}
+		)";
+
+		//vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
+		//vec3 diffuse = vec3(texture(u_DiffuseTexture, v_TexCoords));
+		//vec4 texColor = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
+
+		/*std::string fragmentShader = R"(
 			#version 330 core
 
 			out vec4 color;
@@ -64,7 +92,7 @@ namespace Cronos {
 				vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
 				color = texColor;
 			}
-		)";
+		)";*/
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
