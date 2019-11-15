@@ -21,22 +21,31 @@ namespace Cronos {
 
 	public:
 
-		inline const float* GetViewMatrix()				const { return &m_ViewMatrix;		}
-		inline const float* GetProjectionMatrix()		const { return &m_ProjectionMatrix;	}
-														
-		inline const vec3 GetX()						const { return m_X;					}
-		inline const vec3 GetY()						const { return m_Y;					}
-		inline const vec3 GetZ()						const { return m_Z;					}
-		inline const vec3 GetPosition()					const { return m_Position;			}
-		inline const vec3 GetReference()				const { return m_Reference;			}
-		inline const mat4x4 GetProjectionMatrixMAT4()	const { return m_ProjectionMatrix;	}
-		inline const mat4x4 GetViewMatrixMAT4()			const { return m_ViewMatrix; }
+		//inline const float* GetViewMatrix()				const { return &m_ViewMatrix;		}
+		//inline const float* GetProjectionMatrix()		const { return &m_ProjectionMatrix;	}
+		//												
+		//inline const vec3 GetX()						const { return m_X;					}
+		//inline const vec3 GetY()						const { return m_Y;					}
+		//inline const vec3 GetZ()						const { return m_Z;					}
+		//inline const vec3 GetPosition()					const { return m_Position;			}
+		//inline const vec3 GetReference()				const { return m_Reference;			}
+		//inline const mat4x4 GetProjectionMatrixMAT4()	const { return m_ProjectionMatrix;	}
+		//inline const mat4x4 GetViewMatrixMAT4()		const { return m_ViewMatrix; }
 
-		inline const float GetCameraMoveSpeed()			const { return m_CameraMoveSpeed;	}
-		inline const float GetCameraScrollSpeed()		const { return m_CameraScrollSpeed; }
-		inline const float GetFOV()						const { return m_FOV; }
-		inline const float GetNearPlane()				const { return m_NearPlane; }
-		inline const float GetFarPlane()				const { return m_FarPlane; }
+		inline const glm::vec3 GetPosition()				const { return m_Pos; }
+
+		inline const float* GetViewMatrix()					const { return glm::value_ptr(m_viewMat); }
+		inline const float* GetProjectionMatrix()			const { return glm::value_ptr(m_ProjMat);	}
+
+
+		inline const glm::mat4 GetProjectionMatrixMAT4()	const { return m_ProjMat; }
+		inline const glm::mat4 GetViewMatrixMAT4()			const { return m_viewMat; }
+
+		inline const float GetCameraMoveSpeed()				const { return m_CameraMoveSpeed; }
+		inline const float GetCameraScrollSpeed()			const { return m_CameraScrollSpeed; }
+		inline const float GetFOV()							const { return m_FOV; }
+		inline const float GetNearPlane()					const { return m_NearPlane; }
+		inline const float GetFarPlane()					const { return m_FarPlane; }
 
 
 	public:
@@ -48,10 +57,10 @@ namespace Cronos {
 		void SetNearPlane(float nPlane);
 		void SetFarPlane(float fPlane);
 
-		void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
-		void LookAt(const vec3 &Spot);
-		void Move(const vec3 &Movement);
-		void OrbitAroundReference(const vec3& Reference);
+		void Look(const glm::vec3 &Position, const glm::vec3 &Reference, bool RotateAroundReference = false);
+		void LookAt(const glm::vec3 &Spot);
+		void Move(const glm::vec3 &Movement);
+		void OrbitAroundReference(const glm::vec3& Reference);
 
 		void CalculateProjection();
 
@@ -62,15 +71,20 @@ namespace Cronos {
 	private:
 
 		void CalculateViewMatrix();
-		const vec3 CalculateMouseRotation(const vec3& pos, const vec3& ref);
+		//const glm::vec3 CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref);
 		void Zoom(float dt);	
 
 	private:
 
-		vec3 m_X, m_Y, m_Z;
-		vec3 m_Position, m_Reference;
-		mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
-		mat4x4 m_ProjectionMatrix;
+		glm::vec3 m_Front, m_Up, m_Right, m_Direction;
+		glm::vec3 m_Target, m_Pos;
+
+		glm::mat4 m_viewMat, m_ProjMat;
+
+		//vec3 m_X, m_Y, m_Z;
+		//vec3 m_Position, m_Reference;
+		//mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
+		//mat4x4 m_ProjectionMatrix;
 
 		float m_CameraMoveSpeed;
 		float m_CameraScrollSpeed;
