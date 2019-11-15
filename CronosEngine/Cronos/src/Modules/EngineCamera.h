@@ -71,13 +71,16 @@ namespace Cronos {
 	private:
 
 		void CalculateViewMatrix();
-		//const glm::vec3 CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref);
+		void CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref);
 		void Zoom(float dt);	
 
 	private:
 
-		glm::vec3 m_Front, m_Up, m_Right, m_Direction;
-		glm::vec3 m_Target, m_Pos;
+		void UpdateVectors();
+
+		glm::vec3 m_Front, m_Up, m_Right/*, m_Direction*/;
+		glm::vec3 /*m_Target,*/ m_Pos, m_WorldUp;
+		float m_YawAngle, m_PitchAngle;
 
 		glm::mat4 m_viewMat, m_ProjMat;
 
@@ -89,9 +92,9 @@ namespace Cronos {
 		float m_CameraMoveSpeed;
 		float m_CameraScrollSpeed;
 
-		float m_NearPlane;
-		float m_FarPlane;
-		float m_FOV;
+		float m_NearPlane = 0.125f;;
+		float m_FarPlane = 512.0f;
+		float m_FOV = 60.0f;
 	};
 }
 

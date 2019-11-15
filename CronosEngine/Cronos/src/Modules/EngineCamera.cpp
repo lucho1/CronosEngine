@@ -13,8 +13,15 @@ namespace Cronos {
 	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
 	{
 		m_Pos = glm::vec3(0.0f, 3.0f, 5.0f);
-		m_Target = glm::vec3(0.0f, 0.0f, 0.0f);
-		m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
+		//m_Target = glm::vec3(0.0f, 0.0f, 0.0f);
+		m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+		m_YawAngle = -90.0f;
+		m_PitchAngle = 0.0f;
+
+		UpdateVectors();
+
+		/*m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
 		
 		m_Direction = glm::normalize(m_Pos - m_Target);
 		
@@ -22,7 +29,7 @@ namespace Cronos {
 		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
 		m_Up = glm::cross(m_Direction, m_Right);
 
-		m_viewMat = glm::lookAt(m_Pos, m_Pos + m_Front, m_Up);
+		m_viewMat = glm::lookAt(m_Pos, m_Pos + m_Front, m_Up);*/
 		//m_viewMat = glm::lookAt(m_Pos, m_Direction, m_Up);
 
 
@@ -33,7 +40,7 @@ namespace Cronos {
 		m_Position = vec3(0.0f, 3.0f, 5.0f);
 		m_Reference = vec3(0.0f, 0.0f, 0.0f);*/
 
-		CalculateViewMatrix();
+		//CalculateViewMatrix();
 	}
 
 	EngineCamera::~EngineCamera()
@@ -43,11 +50,11 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
-		SetFOV(m_FOV);
-		SetNearPlane(m_NearPlane);
-		SetFarPlane(m_FarPlane);
+		//SetFOV(m_FOV);
+		//SetNearPlane(m_NearPlane);
+		//SetFarPlane(m_FarPlane);
 
-		Look(m_Pos, m_Target, true);
+		//Look(m_Pos, m_Target, true);
 		return true;
 	}
 
@@ -76,7 +83,7 @@ namespace Cronos {
 				//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
 
 				m_Pos += newPos;
-				m_Target += newPos;
+				//m_Target += newPos;
 			}
 
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
@@ -90,10 +97,20 @@ namespace Cronos {
 					m_CameraMoveSpeed /= 2.0f;
 
 				// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
-				if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) m_Pos += m_CameraMoveSpeed * m_Front * dt;
-				if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) m_Pos -= m_CameraMoveSpeed * m_Front * dt;
-				if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) m_Pos -= glm::normalize(glm::cross(m_Front, m_Up)*m_CameraMoveSpeed) * dt;
-				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) m_Pos += glm::normalize(glm::cross(m_Front, m_Up)*m_CameraMoveSpeed) * dt;
+				if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+					m_Pos += m_Front * m_CameraMoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+					m_Pos -= m_Front * m_CameraMoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+					m_Pos -=  m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
+				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+					m_Pos += /*glm::normalize(glm::cross(m_Front, m_Up)*/m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
+
+				if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
+					m_Pos.y += glm::normalize(m_Up * m_CameraMoveSpeed).y * dt;
+				if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
+					m_Pos.y -= glm::normalize(m_Up * m_CameraMoveSpeed).y * dt;
+				
 				//glm::vec3 newPos(0.0f, 0.0f, 0.0f);
 				//if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
 				//if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
@@ -109,7 +126,7 @@ namespace Cronos {
 				//m_Target += newPos;
 
 				//// Moving camera position orbiting
-				////m_Pos = m_Target + CalculateMouseRotation(m_Pos, m_Target);
+				/*m_Pos =*/ /*m_Target +*/ CalculateMouseRotation(m_Pos, m_Pos);
 
 				//// Finally, we look to the reference
 				//LookAt(m_Target);
@@ -140,7 +157,7 @@ namespace Cronos {
 				glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
 				size *= 1.5f;
 
-				glm::vec3 pos = glm::vec3(posToLook.x * size.x, posToLook.y + 1.5f, posToLook.z * size.z) + m_Direction * 6.0f;
+				glm::vec3 pos = glm::vec3(posToLook.x * size.x, posToLook.y + 1.5f, posToLook.z * size.z) + m_Front * 6.0f;
 				glm::vec3 ref = glm::vec3(posToLook.x, posToLook.y + 0.5f, posToLook.z + 0.5f);
 
 				Look(pos, ref, true);
@@ -155,88 +172,139 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
-	//const glm::vec3 EngineCamera::CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref)
-	//{
-	//	// Mouse motion ----------------
-	//	// There is another way to do it in Physics handout 1
-	//	// Applying horizontal orbit
-	//	glm::vec3 ref_pos = m_Pos - ref;
-	//	ref_pos = rotate(ref_pos, -App->input->GetMouseXMotion() * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+	void EngineCamera::CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref)
+	{
+		// Mouse motion ----------------
 
-	//	// Applying vertical orbit
-	//	glm::vec3 ref_pos_dy = glm::rotate(ref_pos, -App->input->GetMouseYMotion() * 0.5f, m_Right);
+		/*glm::vec3 dir;
 
-	//	// We check the vertical orbit to not do a complete orbit
-	//	float dotProd = dot(normalize(ref_pos_dy), glm::vec3(0.0f, 1.0f, 0.0f));
-	//	if (dotProd > -0.95f && dotProd < 0.95f)
-	//		ref_pos = ref_pos_dy;
+		glm::vec3 movement = pos - ref;*/
 
-	//	return ref_pos;
-	//}
+		//m_viewMat = glm::rotate(m_viewMat, (float)App->input->GetMouseXMotion(), glm::vec3(1.0f));
+
+		float pitch = (float)App->input->GetMouseXMotion(), yaw = (float)App->input->GetMouseYMotion();
+
+		m_PitchAngle += pitch;
+		m_YawAngle += yaw;
+
+		UpdateVectors();
+		//CalculateViewMatrix();
+
+		//glm::vec3 a = m_viewMat[3];
+		//return glm::vec3(0.0f);
+
+		/*dir.x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
+		dir.z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
+		dir.y = glm::sin(glm::radians(pitch));
+
+		glm::rotate(m_viewMat, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::rotate(m_viewMat, yaw, glm::vec3(0.0f, 0.0f, 1.0f));
+		m_Pos = m_viewMat[3];
+		CalculateViewMatrix();*/
+
+		//return dir;
+
+		// There is another way to do it in Physics handout 1
+		// Applying horizontal orbit
+		//glm::vec3 ref_pos = m_Pos - ref;
+		//ref_pos = rotate(m_viewMat, (float)-App->input->GetMouseXMotion() * 0.5f, vec3(0.0f, 1.0f, 0.0f));
+		//
+		//glm::rotate(m_viewMat, (float)-App->input->GetMouseXMotion(), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		//// Applying vertical orbit
+		//glm::vec3 ref_pos_dy = glm::rotate(ref_pos, -App->input->GetMouseYMotion() * 0.5f, m_Right);
+
+		//// We check the vertical orbit to not do a complete orbit
+		//float dotProd = dot(normalize(ref_pos_dy), glm::vec3(0.0f, 1.0f, 0.0f));
+		//if (dotProd > -0.95f && dotProd < 0.95f)
+		//	ref_pos = ref_pos_dy;
+
+		//return ref_pos;
+	}
+
+
+	// -----------------------------------------------------------------
+	void EngineCamera::OrbitAroundReference(const glm::vec3 &Reference)
+	{
+		//m_Target = Reference;
+
+		//m_Direction = glm::normalize(m_Pos - m_Target);
+		////m_Front = glm::normalize(m_Pos - m_Target);
+		//m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
+		//m_Up = glm::cross(m_Direction, m_Right);
+
+		///*m_Reference = Reference;
+
+		//m_Z = normalize(m_Position - Reference);
+		//m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
+		//m_Y = cross(m_Z, m_X);*/
+
+		//CalculateViewMatrix();
+	}
 
 
 	// -----------------------------------------------------------------
 	void EngineCamera::Look(const glm::vec3 &Position, const glm::vec3 &Reference, bool RotateAroundReference)
 	{
-		m_Pos = Position;
-		m_Target = Reference;
+		//m_Pos = Position;
+		//m_Target = Reference;
 
-		m_Direction = glm::normalize(m_Pos - m_Target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
-		m_Up = glm::cross(m_Direction, m_Right);
+		//m_Direction = glm::normalize(m_Pos - m_Target);
+		//m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
+		//m_Up = glm::cross(m_Direction, m_Right);
 
-		if (!RotateAroundReference)
-		{
-			m_Target = m_Pos;
-			m_Pos += m_Direction * 0.05f;
-		}
+		//if (!RotateAroundReference)
+		//{
+		//	m_Target = m_Pos;
+		//	m_Pos += m_Direction * 0.05f;
+		//}
 
-		/*m_Position = Position;
-		m_Reference = Reference;
+		///*m_Position = Position;
+		//m_Reference = Reference;
 
-		m_Z = normalize(Position - Reference);
-		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
-		m_Y = cross(m_Z, m_X);
+		//m_Z = normalize(Position - Reference);
+		//m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
+		//m_Y = cross(m_Z, m_X);
 
-		if (!RotateAroundReference)
-		{
-			m_Reference = m_Position;
-			m_Position += m_Z * 0.05f;
-		}*/
+		//if (!RotateAroundReference)
+		//{
+		//	m_Reference = m_Position;
+		//	m_Position += m_Z * 0.05f;
+		//}*/
 
-		CalculateViewMatrix();
+		//CalculateViewMatrix();
 	}
 
 	// -----------------------------------------------------------------
 	void EngineCamera::LookAt(const glm::vec3 &Spot)
 	{
-		m_Target = Spot;
+		//m_Target = Spot;
 
-		m_Direction = glm::normalize(m_Pos - m_Target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
-		m_Up = glm::cross(m_Direction, m_Right);
+		//m_Direction = glm::normalize(m_Pos - m_Target);
+		//m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
+		//m_Up = glm::cross(m_Direction, m_Right);
 
 
-		/*m_Reference = Spot;
+		///*m_Reference = Spot;
 
-		m_Z = normalize(m_Position - m_Reference);
-		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
-		m_Y = cross(m_Z, m_X);*/
+		//m_Z = normalize(m_Position - m_Reference);
+		//m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
+		//m_Y = cross(m_Z, m_X);*/
 
-		CalculateViewMatrix();
+		//CalculateViewMatrix();
 	}
 
 
 	// -----------------------------------------------------------------
 	void EngineCamera::Move(const glm::vec3 &Movement)
 	{
-		m_Pos += Movement;
-		m_Target += Movement;
+		//m_Pos += Movement;
+		//m_Target += Movement;
 
-		//m_Position += Movement;
-		//m_Reference += Movement;
+		////m_Position += Movement;
+		////m_Reference += Movement;
 
-		CalculateViewMatrix();
+		//CalculateViewMatrix();
 	}
 
 	// -----------------------------------------------------------------
@@ -245,32 +313,27 @@ namespace Cronos {
 		glm::vec3 newPos(0.0f, 0.0f, 0.0f);
 
 		if (App->input->GetMouseZ() > 0)
-			newPos -= m_CameraScrollSpeed * m_Direction * dt;
+			newPos -= m_CameraScrollSpeed * m_Front * dt;
 		else
-			newPos += m_CameraScrollSpeed * m_Direction * dt;
+			newPos += m_CameraScrollSpeed * m_Front * dt;
 
 		m_Pos += newPos;
 		//m_Position += newPos;
 	}
 
-	// -----------------------------------------------------------------
-	void EngineCamera::OrbitAroundReference(const glm::vec3 &Reference)
+	void EngineCamera::UpdateVectors()
 	{
-		m_Target = Reference;
+		glm::vec3 front;
+		front.x = cos(glm::radians(m_YawAngle)) * cos(glm::radians(m_PitchAngle));
+		front.y = sin(glm::radians(m_PitchAngle));
+		front.z = sin(glm::radians(m_YawAngle)) * cos(glm::radians(m_PitchAngle));
 
-		m_Direction = glm::normalize(m_Pos - m_Target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
-		m_Up = glm::cross(m_Direction, m_Right);
+		m_Front = glm::normalize(front);
 
-		/*m_Reference = Reference;
-
-		m_Z = normalize(m_Position - Reference);
-		m_X = normalize(cross(vec3(0.0f, 1.0f, 0.0f), m_Z));
-		m_Y = cross(m_Z, m_X);*/
-
+		m_Right = glm::normalize(glm::cross(m_Front, m_WorldUp));
+		m_Up = glm::normalize(glm::cross(m_Right, m_Front));
 		CalculateViewMatrix();
 	}
-
 
 	// -----------------------------------------------------------------
 	void EngineCamera::CalculateViewMatrix()
@@ -281,9 +344,15 @@ namespace Cronos {
 								-dot(m_X, m_Position), -dot(m_Y, m_Position), -dot(m_Z, m_Position), 1.0f);
 
 		m_ViewMatrixInverse = inverse(m_ViewMatrix);*/
-
+		
 
 		m_viewMat = glm::lookAt(m_Pos, m_Pos + m_Front, m_Up);
+
+		/*if (App->scene->BasicTestShader == nullptr)
+			return;*/
+
+		if (App != nullptr && App->scene->BasicTestShader != nullptr)
+			App->scene->BasicTestShader->SetUniformMat4f("u_View", m_viewMat);
 
 		//m_viewMat = glm::lookAt(m_Pos, m_Direction, m_Up);
 	}
@@ -338,9 +407,9 @@ namespace Cronos {
 		JSONFile["EngineCamera"]["InitialPosition"][1] = m_Pos.y;
 		JSONFile["EngineCamera"]["InitialPosition"][2] = m_Pos.z;
 
-		JSONFile["EngineCamera"]["InitialLookAt"][0] = m_Target.x;
-		JSONFile["EngineCamera"]["InitialLookAt"][1] = m_Target.y;
-		JSONFile["EngineCamera"]["InitialLookAt"][2] = m_Target.z;
+		//JSONFile["EngineCamera"]["InitialLookAt"][0] = m_Target.x;
+		//JSONFile["EngineCamera"]["InitialLookAt"][1] = m_Target.y;
+		//JSONFile["EngineCamera"]["InitialLookAt"][2] = m_Target.z;
 	}
 
 	void EngineCamera::LoadModuleData(json& JSONFile)
