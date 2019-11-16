@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;Vendor\PhysFS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -71,8 +71,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;physfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;vendor\PhysFS\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -85,7 +85,7 @@
       <PrecompiledHeaderFile>Providers/cnpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>CN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor;vendor\SDL_mixer\libx86;dll_files;src\Core;src\Helpers;vendor\imgui;vendor\Glad\include;vendor\glm;vendor\DevIL;vendor\Assimp;Vendor\PhysFS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -99,8 +99,8 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;opengl32.lib;SDL2_mixer.lib;SDL2.lib;SDL2main.lib;DevIL.lib;ILU.lib;ILUT.lib;Assimp.lib;physfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\SDL_mixer\libx86;vendor\SDL\libx86;vendor\glut;vendor\DevIL\lib86;vendor\Assimp\libx86;vendor\PhysFS\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>

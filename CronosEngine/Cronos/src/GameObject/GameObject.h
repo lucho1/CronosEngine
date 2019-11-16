@@ -29,6 +29,8 @@ namespace Cronos {
 
 		inline const std::string GetName() const { return m_Name; }
 		inline const std::string GetPath() const { return m_Path; }
+		inline const std::string GetMetaPath() const { return m_MetaPath; }
+
 		inline const int GetGOID() const { return m_GameObjectID; }
 		inline const int GetCountChilds() const { return m_Childs.size(); }
 
@@ -40,6 +42,7 @@ namespace Cronos {
 		//}
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
+		void SetMeta(const std::string meta) { m_MetaPath = m_Path+meta; }
 		void SetParent(GameObject* Go);
 		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
 
@@ -66,11 +69,14 @@ namespace Cronos {
 
 		bool m_IsPrimitive = false;
 		bool tempHasMaterial = false;
+		bool HasMetaa = false;
+		bool HasVertices = false;
 
 	private:
 		GameObject* Parent=nullptr;
 		std::string m_Name;
 		std::string m_Path;
+		std::string m_MetaPath;
 	
 		bool m_Active;
 		int m_GameObjectID;

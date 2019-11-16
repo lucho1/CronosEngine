@@ -2,6 +2,7 @@
 
 #include "AssimpImporter.h"
 #include "Application.h"
+#include "Modules/Filesystem.h"
 
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/MeshComponent.h"
@@ -125,6 +126,7 @@ namespace Cronos {
 
 		//If all is correct, we process all the nodes passing the first one (root)
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
+		App->filesystem->SaveOwnFormat(mother_GO);
 
 		//For the parent AABB, I'll just get the first child's AABB
 		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
@@ -142,13 +144,14 @@ namespace Cronos {
 	{
 		LOG("	Processing Assimp Node");
 		//Process node's meshes if there are
+
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
 			//Get the mesh from the meshes list of the node in scene's meshes list
 			aiMesh* as_mesh = as_scene->mMeshes[as_node->mMeshes[i]];
 			ProcessCronosMesh(as_mesh, as_scene, motherGameObj);
 		}
-
+		
 		//Process all node's children
 		for (uint i = 0; i < as_node->mNumChildren; i++)
 			ProcessAssimpNode(as_node->mChildren[i], as_scene, motherGameObj);
@@ -206,8 +209,6 @@ namespace Cronos {
 			}
 			PolyNum++;
 		}
-
-
 		//Now set up the new Game Object
 		std::string GOName;
 		if (as_mesh->mName.length > 0)
@@ -217,7 +218,7 @@ namespace Cronos {
 
 		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
-
+		GO->HasVertices = true;
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		

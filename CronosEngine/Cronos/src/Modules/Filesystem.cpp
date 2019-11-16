@@ -3,6 +3,7 @@
 #include "Filesystem.h"
 #include "Application.h"
 #include "TextureManager.h"
+#include "PhysFS/include/physfs.h"
 
 namespace Cronos {
 
@@ -38,6 +39,49 @@ namespace Cronos {
 
 		return true;
 	}
+
+	char* convertToData(GameObject* ToConvert)
+	{
+		std::string Data;
+		//RootInfo
+		Data += "Name:"+ToConvert->GetName();
+		Data += "Path:"+ToConvert->GetPath();
+		if (ToConvert->GetParentGameObject() != nullptr) {
+			Data +="ParentName:" + ToConvert->GetParentGameObject()->GetName();
+		}
+		if (ToConvert->HasVertices) {
+			std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
+			for (auto&a : vertexArray) {
+				Data += a.Normal.x + "a";
+			}
+		}
+		for()
+	}
+
+	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject) 
+	{
+		if (RootGameObject->GetMetaPath().c_str()==nullptr) {
+			RootGameObject->SetMeta(".model");
+		}
+		const char * file = RootGameObject->GetMetaPath().c_str();
+		
+
+
+ 		bool overwrite = PHYSFS_exists(file) != 0;
+	
+		if(RootGameObject->HasVertices)
+			std::vector<CronosVertex>vertexArray = RootGameObject->GetComponent<MeshComponent>()->GetVertexVector();
+
+		PHYSFS_file* fs_file = (true) ? PHYSFS_openAppend(file) : PHYSFS_openWrite(file);
+		
+		if (fs_file != nullptr) {
+			//uint write = (uint)PHYSFS_write(fs_file, (const void*)vertexArray.at[0], 1, 30);
+
+		}
+
+		return true;
+	}
+
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		

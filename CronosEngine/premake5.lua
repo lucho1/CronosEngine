@@ -27,6 +27,7 @@ IncludeDir["glm"] = "Cronos/vendor/glm"
 IncludeDir["Assimp"]="Cronos/vendor/Assimp"
 IncludeDir["DevIL"]="Cronos/vendor/DevIL"
 IncludeDir["gpuDetect"]="Cronos/vendor/gpudetect"
+IncludeDir["PhysFS"]="Cronos/Vendor/PhysFS"
 
 include "Cronos/vendor/Glad"
 include "Cronos/vendor/imgui"
@@ -76,7 +77,9 @@ project "Cronos"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.DevIL}",
-		"%{IncludeDir.Assimp}"
+		"%{IncludeDir.Assimp}",
+		"%{IncludeDir.PhysFS}"
+
 	}
 	libdirs
 	{
@@ -84,7 +87,8 @@ project "Cronos"
 		"%{prj.name}/vendor/SDL/libx86",
 		"%{prj.name}/vendor/glut",
 		"%{prj.name}/vendor/DevIL/lib86",
-		"%{prj.name}/vendor/Assimp/libx86"
+		"%{prj.name}/vendor/Assimp/libx86",
+		"%{prj.name}/vendor/PhysFS/libx86"
 	}
 	links
 	{
@@ -98,7 +102,8 @@ project "Cronos"
 		"DevIL.lib",
 		"ILU.lib",
 		"ILUT.lib",
-		"Assimp.lib"
+		"Assimp.lib",
+		"physfs.lib"
 	}
 
 	filter "system:windows"

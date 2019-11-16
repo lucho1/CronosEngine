@@ -10,6 +10,7 @@
 namespace Cronos {
 
 	class Directories;
+	class GameObject;
 
 	enum class ItemType
 	{
@@ -119,7 +120,7 @@ namespace Cronos {
 		void DeleteDirectory(const char* path);
 		void RenameFile(AssetItems* Asset, const char* newName);
 		void SearchFile(Directories* tempDir,const char* name);
-
+		bool SaveOwnFormat(GameObject* RootGameObject);
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }
