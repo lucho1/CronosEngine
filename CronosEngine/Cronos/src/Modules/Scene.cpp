@@ -101,9 +101,9 @@ namespace Cronos {
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
-		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-		BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
+		//BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
+		//BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
+		//BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		BasicTestShader->Unbind();
 
 		//House Model Load

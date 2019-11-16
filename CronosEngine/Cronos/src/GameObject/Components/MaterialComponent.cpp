@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Modules/EngineCamera.h"
 #include "MaterialComponent.h"
+#include "TransformComponent.h"
 
 namespace Cronos
 {
@@ -54,10 +55,14 @@ namespace Cronos
 		if (bindShader)
 		{
 			m_ShaderAttached->Bind();
-			m_ShaderAttached->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-			m_ShaderAttached->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-			m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
+			//m_ShaderAttached->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
+			//m_ShaderAttached->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
+			//m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
 		}
+
+			//GetParent()->GetComponent<MaterialComponent>()->m_ShaderAttached->SetUniformMat4f("u_Model", m_TransformationMatrix);
+
+		m_ShaderAttached->SetUniformMat4f("u_Model", GetParent()->GetComponent<TransformComponent>()->m_TransformationMatrix);
 
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 		{

@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 #include "Component.h"
+#include "MaterialComponent.h"
 
 #include <AABB.hpp>
 
@@ -42,7 +43,14 @@ namespace Cronos {
 
 		bool DrawAxis = false;
 
+		glm::mat4 m_TransformationMatrix;
+
 	private:
+
+		glm::vec4 m_TransformationVector;
+		
+
+
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Rotation;

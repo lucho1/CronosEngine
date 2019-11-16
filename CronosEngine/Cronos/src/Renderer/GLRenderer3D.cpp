@@ -14,7 +14,8 @@ namespace Cronos {
 
 	// Destructor
 	GLRenderer3D::~GLRenderer3D()
-	{}
+	{
+	}
 
 	// Called before render is available
 	bool GLRenderer3D::OnInit()
@@ -44,59 +45,59 @@ namespace Cronos {
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 			}
 			//Initialize Projection Matrix
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
+			//glMatrixMode(GL_PROJECTION);
+			//glLoadIdentity();
 
 			//Check for error
-			GLenum error = glGetError();
-			if (error != GL_NO_ERROR)
-			{
-				LOG("Error initializing OpenGL! %s\n", error);
-				ret = false;
-			}
+		//	GLenum error = glGetError();
+		//	if (error != GL_NO_ERROR)
+		//	{
+		//		LOG("Error initializing OpenGL! %s\n", error);
+		//		ret = false;
+		//	}
 
-			//Initialize Modelview Matrix
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
+		//	//Initialize Modelview Matrix
+		//	//glMatrixMode(GL_MODELVIEW);
+		//	//glLoadIdentity();
 
-			//Check for error
-			error = glGetError();
-			if (error != GL_NO_ERROR)
-			{
-				LOG("Error initializing OpenGL! %s\n", error);
-				ret = false;
-			}
+		//	//Check for error
+		//	error = glGetError();
+		//	if (error != GL_NO_ERROR)
+		//	{
+		//		LOG("Error initializing OpenGL! %s\n", error);
+		//		ret = false;
+		//	}
 
-			glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-			glClearDepth(1.0f);
+		//	/*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		//	glClearDepth(1.0f);*/
 
-			//Initialize clear color
-			//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		//	//Initialize clear color
+		//	//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
-			//Check for error
-			error = glGetError();
-			if (error != GL_NO_ERROR)
-			{
-				LOG("Error initializing OpenGL! %s\n", error);
-				ret = false;
-			}
+		//	//Check for error
+		//	error = glGetError();
+		//	if (error != GL_NO_ERROR)
+		//	{
+		//		LOG("Error initializing OpenGL! %s\n", error);
+		//		ret = false;
+		//	}
 
-			GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
+		//	GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		//	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
-			lights[0].ref = GL_LIGHT0;
-			lights[0].ambient.Set(0.75f, 0.75f, 0.75f, 1.0f); //0.25f, 0.25f, 0.25f, 1.0f
-			lights[0].diffuse.Set(0.0f, 0.0f, 0.0f, 0.0f); //0.75f, 0.75f, 0.75f, 1.0f
-			lights[0].SetPos(0.0f, 0.0f, 2.5f);
-			lights[0].Init();
+		//	lights[0].ref = GL_LIGHT0;
+		//	lights[0].ambient.Set(0.75f, 0.75f, 0.75f, 1.0f); //0.25f, 0.25f, 0.25f, 1.0f
+		//	lights[0].diffuse.Set(0.0f, 0.0f, 0.0f, 0.0f); //0.75f, 0.75f, 0.75f, 1.0f
+		//	lights[0].SetPos(0.0f, 0.0f, 2.5f);
+		//	lights[0].Init();
 
-			GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
+		//	GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
 
-			GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
+		//	GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		//	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
 
-			lights[0].Active(true);
+		//	lights[0].Active(true);
 		}
 
 		// Projection matrix for
@@ -109,13 +110,13 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPreUpdate(float dt)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
+		//glLoadIdentity();
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(App->engineCamera->GetViewMatrix());
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadMatrixf(App->engineCamera->GetViewMatrix());
 
 		// light 0 on cam pos
-		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
+//		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
 
 		for (uint i = 0; i < MAX_LIGHTS; ++i)
 			lights[i].Render();
@@ -251,7 +252,7 @@ namespace Cronos {
 
 		glViewport(0, 0, width, height);
 		App->window->SetAspectRatio((float)width / (float)height);
-		App->engineCamera->CalculateProjection();
+		//App->engineCamera->CalculateProjection();
 	}
 
 	//void GLRenderer3D::SetClipDistance(bool setStatus)

@@ -1,12 +1,19 @@
 #include"Providers/cnpch.h"
 #include "TransformComponent.h"
+#include "GameObject/GameObject.h"
+
+#include "Application.h"
+//#include "MaterialComponent.h"
 
 namespace Cronos {
 
 	TransformComponent::TransformComponent(GameObject* attachedGO, bool active)
 		: Component(ComponentType::TRANSFORM, attachedGO, active)
 	{
+		m_TransformationVector = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		m_TransformationMatrix = glm::mat4(1.0f);
 
+		
 	}
 
 	TransformComponent::~TransformComponent()
@@ -21,7 +28,19 @@ namespace Cronos {
 
 	void TransformComponent::Update(float dt)
 	{
+		m_TransformationVector = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		m_TransformationMatrix = glm::mat4(1.0f);
+
+		m_TransformationVector = m_TransformationMatrix * m_TransformationVector;
+		//App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_TransformationMatrix);
+
+		/*if (GetParent()->GetComponent<MaterialComponent>() != nullptr)
+			GetParent()->GetComponent<MaterialComponent>()->m_ShaderAttached->SetUniformMat4f("u_Model", m_TransformationMatrix);*/
+
+		
+
 		//DrawCentralAxis();
+		
 	}
 
 	void TransformComponent::DrawCentralAxis()

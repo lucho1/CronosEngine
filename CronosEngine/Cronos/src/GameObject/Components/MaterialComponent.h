@@ -23,9 +23,11 @@ namespace Cronos
 		inline const std::unordered_map<TextureType, Texture*>GetTextures() const { return m_TexturesContainer; }
 		static ComponentType GetType() { return ComponentType::MATERIAL; };
 
+		Shader* m_ShaderAttached = nullptr;
+
 	private:
 
-		Shader* m_ShaderAttached = nullptr;
+		
 		std::unordered_map<TextureType, Texture*>m_TexturesContainer;
 	};
 }

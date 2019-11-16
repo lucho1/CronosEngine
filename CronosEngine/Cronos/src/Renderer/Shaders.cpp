@@ -51,7 +51,7 @@ namespace Cronos {
 
 	void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& mat)
 	{
-		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]);
+		glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]); //glm::value_ptr(trans)
 	}
 
 	void Shader::SetUniform1i(const std::string& name, int value)
