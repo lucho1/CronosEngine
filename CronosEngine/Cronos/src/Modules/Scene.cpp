@@ -24,9 +24,6 @@ namespace Cronos {
 		bool ret = true;
 		App->renderer3D->SetOpenGLSettings();
 
-		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f); //Express the normal (0 centered)
-		m_FloorPlane.axis = true; //Enable axis render
-
 		//Shaders
 		std::string vertexShader = R"(
 			#version 330 core
@@ -99,16 +96,11 @@ namespace Cronos {
 		)";*/
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
-		//BasicTestShader->Bind();
-		//BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-		//BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-		//BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		//BasicTestShader->Unbind();
 
-		//House Model Load
+		//House Model Load & Floor Plane primitive
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		m_GameObjects.push_back(m_HouseModel);
-
+		m_SceneFloorPlane = new PrimitiveGameObject(PrimitiveType::PLANE, "FloorPrimitive", { 20.0f, 20.0f, 1.0f }, glm::vec3(0.0f), 0.6, 5, 5);
 		return ret;
 	}
 
@@ -116,12 +108,17 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
+
+		m_SceneFloorPlane->CleanUp();
+		RELEASE(m_SceneFloorPlane);
 		for (auto element : m_GameObjects)
+		{
 			element->CleanUp();
+			RELEASE(element);
+		}
 
 		m_GameObjects.clear();
 		RELEASE(BasicTestShader);
-
 		
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
 		while (it != m_TexturesLoaded.end())
@@ -137,11 +134,6 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-		// "Floor" Plane
-		glColor3f(White.r, White.g, White.b);
-		glBindTextures(0, 31, 0);
-		m_FloorPlane.Render();
-
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
@@ -155,6 +147,14 @@ namespace Cronos {
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
 		BasicTestShader->Unbind();
+
+		// "Floor" Plane
+		//TODO: This might conflict if Cull face isn't active
+		glDisable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		m_SceneFloorPlane->Update(dt);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
 
 		for (auto element : m_GameObjects)
 			element->Update(dt);

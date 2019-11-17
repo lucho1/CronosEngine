@@ -26,21 +26,17 @@ namespace Cronos {
 
 	void TransformComponent::Update(float dt)
 	{
-		m_TransformationVector = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		m_TransformationMatrix = glm::mat4(1.0f);
-
-		m_TransformationVector = m_TransformationMatrix * m_TransformationVector;
+		//m_TransformationVector = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		//m_TransformationMatrix = glm::mat4(1.0f);
+		//
+		//m_TransformationVector = m_TransformationMatrix * m_TransformationVector;
 
 		App->scene->BasicTestShader->Bind();
 		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_TransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
-		/*if (GetParent()->GetComponent<MaterialComponent>() != nullptr)
-			GetParent()->GetComponent<MaterialComponent>()->m_ShaderAttached->SetUniformMat4f("u_Model", m_TransformationMatrix);*/
 
-		
 
-		//DrawCentralAxis();
-		
+		//DrawCentralAxis();		
 	}
 
 	void TransformComponent::DrawCentralAxis()
