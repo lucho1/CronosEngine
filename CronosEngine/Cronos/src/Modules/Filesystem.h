@@ -131,7 +131,7 @@ namespace Cronos {
 		std::vector <Directories*> DirectoriesArray;
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
-
+	
 		Directories* m_AssetRoot = nullptr;
 		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
 

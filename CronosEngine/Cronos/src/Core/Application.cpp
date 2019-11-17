@@ -31,8 +31,8 @@ namespace Cronos {
 		AddModule(textureManager);
 
 		// Scenes
-		AddModule(scene);
 		AddModule(filesystem);
+		AddModule(scene);
 		AddModule(EditorGUI);
 	}
 

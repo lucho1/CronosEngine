@@ -5,12 +5,20 @@
 #include "TextureManager.h"
 #include "PhysFS/include/physfs.h"
 
+#include <fstream>
+
 namespace Cronos {
 
 	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled)
 	{
 		for (uint i = 0; i < (uint)ItemType::MAX_ITEMS; i++)
 			ArrayIconTextures[i] = nullptr;
+
+		//char* base_path = SDL_GetBasePath();
+
+
+
+		
 	}
 
 	bool Filesystem::OnStart() {
@@ -27,7 +35,12 @@ namespace Cronos {
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory);
-		
+
+		char* base_path = new char[GetRootPath().length() + 1];
+		strcpy(base_path, GetRootPath().c_str());
+		PHYSFS_init(base_path);
+		SDL_free(base_path);
+
 		return true;
 	}
 
@@ -44,40 +57,54 @@ namespace Cronos {
 	{
 		std::string Data;
 		//RootInfo
-		Data += "Name:"+ToConvert->GetName();
-		Data += "Path:"+ToConvert->GetPath();
-		if (ToConvert->GetParentGameObject() != nullptr) {
-			Data +="ParentName:" + ToConvert->GetParentGameObject()->GetName();
+		
+		Data += "Name:"+ToConvert->GetName()+" ";
+		Data += "Path:"+ToConvert->GetPath()+ " ";
+		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + " ";
+		if (ToConvert->m_Childs.size() > 0) {
+			Data += "Childs: " + ToConvert->m_Childs.size();
 		}
+		if (ToConvert->GetParentGameObject() != nullptr) {
+			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + "\n";
+		}
+		else
+			Data += "\n";
+
 		if (ToConvert->HasVertices) {
 			std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
+			Data += "Size: " + std::to_string(vertexArray.size()) + "\nVertices:\n";
 			for (auto&a : vertexArray) {
-				Data += a.Normal.x + "a";
+				Data += std::to_string(a.Position.x) + "," + std::to_string(a.Position.y) + "," + std::to_string(a.Position.z) + "," +
+					std::to_string(a.Normal.x) + "," + std::to_string(a.Normal.y) + "," + std::to_string(a.Normal.z) + "," +
+					std::to_string(a.TexCoords.x) + "," + std::to_string(a.TexCoords.y) + ",\n";
 			}
 		}
-		for()
+	
+		for (auto&child : ToConvert->m_Childs) {
+
+			Data += convertToData(child);
+		}
+		char* Test = new char[Data.length() + 1];
+		strcpy(Test, Data.c_str());
+		return Test;
 	}
 
 	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject) 
 	{
-		if (RootGameObject->GetMetaPath().c_str()==nullptr) {
-			RootGameObject->SetMeta(".model");
+		if (RootGameObject->GetMetaPath().size()<=0) {
+			RootGameObject->SetMeta("/"+RootGameObject->GetName()+".model");
 		}
-		const char * file = RootGameObject->GetMetaPath().c_str();
-		
+		char* Data = convertToData(RootGameObject);
+		std::string test = GetRootPath() +"/" + RootGameObject->GetPath()+".txt";
 
+		//PHYSFS_file* fs_file =  PHYSFS_openWrite(file);
 
- 		bool overwrite = PHYSFS_exists(file) != 0;
-	
-		if(RootGameObject->HasVertices)
-			std::vector<CronosVertex>vertexArray = RootGameObject->GetComponent<MeshComponent>()->GetVertexVector();
+		std::ofstream ToSave{RootGameObject->GetMetaPath().c_str() };
 
-		PHYSFS_file* fs_file = (true) ? PHYSFS_openAppend(file) : PHYSFS_openWrite(file);
-		
-		if (fs_file != nullptr) {
-			//uint write = (uint)PHYSFS_write(fs_file, (const void*)vertexArray.at[0], 1, 30);
+		if(std::filesystem::exists(std::filesystem::path(RootGameObject->GetMetaPath().c_str())))
+			ToSave << Data << std::endl;
 
-		}
+		SDL_free(Data);
 
 		return true;
 	}
