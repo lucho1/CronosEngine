@@ -12,23 +12,6 @@
         "MusicVolume": 100,
         "SFXVolume": 100
     },
-    "EngineCamera": {
-        "CameraMoveSpeed": 60.0,
-        "CameraScrollSpeed": 76.0,
-        "FOV": 60.0,
-        "FarPlane": 512.0,
-        "InitialLookAt": [
-            0.0,
-            0.0,
-            0.0
-        ],
-        "InitialPosition": [
-            -4.365901470184326,
-            9.530479431152344,
-            14.970544815063477
-        ],
-        "NearPlane": 0.125
-    },
     "Renderer": {
         "AntialiasedLPSmooth": false,
         "Blend": true,

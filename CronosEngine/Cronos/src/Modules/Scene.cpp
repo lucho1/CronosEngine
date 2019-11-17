@@ -59,19 +59,18 @@ namespace Cronos {
 			uniform sampler2D u_NormalMap;
 			uniform sampler2D u_HeightMap;
 			uniform sampler2D u_LightMap;
+	
+			uniform int u_TextureEmpty = 1;
 
 			void main()
 			{
-				//vec4 t1 = texture2D(u_DiffuseTexture, v_TexCoords);
-				//vec4 t2 = texture2D(u_SpecularTexture, v_TexCoords);
-				//vec4 texColor = t1*t2;
-				vec4 texColor = (texture(u_DiffuseTexture, v_TexCoords)) * vec4(1.0,1.0,1.0,1.0);
-				
-				//texColor = mix(texColor, texture(u_NormalMap, v_TexCoords), 0.0);
-				//texColor = mix(texColor, texture(u_HeightMap, v_TexCoords), 0.0);
+				vec4 texColor = vec4(0.8, 0.8, 0.8, 1.0);
+				if(u_TextureEmpty == 0)
+				{
+					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * vec4(1.0,1.0,1.0,1.0);
+				}
 				
 				color = texColor;
-				//color = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
 			}
 		)";
 
@@ -100,11 +99,11 @@ namespace Cronos {
 		)";*/
 
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
-		BasicTestShader->Bind();
+		//BasicTestShader->Bind();
 		//BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
 		//BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
 		//BasicTestShader->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		BasicTestShader->Unbind();
+		//BasicTestShader->Unbind();
 
 		//House Model Load
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
@@ -151,6 +150,11 @@ namespace Cronos {
 			glColor3f(White.r, White.g, White.b);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
+
+		BasicTestShader->Bind();
+		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
+		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
+		BasicTestShader->Unbind();
 
 		for (auto element : m_GameObjects)
 			element->Update(dt);

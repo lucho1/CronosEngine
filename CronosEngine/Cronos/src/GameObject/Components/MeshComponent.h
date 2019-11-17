@@ -24,7 +24,7 @@ namespace Cronos {
 		~MeshComponent();
 
 		virtual void Update(float dt) override;
-		void Draw(MaterialComponent* material, bool bindShader);
+		void Draw(MaterialComponent* material, bool bindMaterial);
 
 		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices);
 		void RecalculateNormals() { m_NormalsCalculated = false; }

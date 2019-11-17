@@ -14,7 +14,7 @@ namespace Cronos
 		MaterialComponent(GameObject* attachedGO);
 		~MaterialComponent();
 
-		void Bind(bool bindShader);
+		void Bind(bool bindMaterial);
 		void Unbind();
 
 		void SetTexture(Texture* texture, TextureType type);

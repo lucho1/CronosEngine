@@ -15,21 +15,9 @@ namespace Cronos {
 		glm::mat4 camTransform = glm::translate(glm::mat4(1.0f), m_Position) *
 			glm::mat4_cast(m_Rotation);
 
-
-		
-
 		m_ViewMatrix = glm::inverse(camTransform);
-
 		m_ProjectionMatrix = glm::perspective(glm::radians(60.0f),
 			(float)App->window->GetWidth() / (float)App->window->GetHeight(), 0.125f, 512.0f);
-
-		if (App->scene->BasicTestShader != nullptr)
-		{
-			App->scene->BasicTestShader->Bind();
-			App->scene->BasicTestShader->SetUniformMat4f("u_View", glm::mat4(1.0f));
-			App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_ProjectionMatrix * m_ViewMatrix);
-			App->scene->BasicTestShader->Unbind();
-		}
 	}
 
 	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
@@ -103,7 +91,6 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status EngineCamera::OnUpdate(float dt)
 	{
-
 		if (m_Position == m_Target)
 			m_Target += m_Direction;
 		else
@@ -112,20 +99,23 @@ namespace Cronos {
 		m_Right = glm::normalize(glm::cross(m_Up, m_Direction));
 		m_Up = glm::cross(m_Direction, m_Right);
 
+		//Movement --------------------------------------------
+		float vel = 10.0f * dt;
+
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			m_Position -= m_Direction;
+			m_Position -= m_Direction * vel;
 		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			m_Position += m_Direction;
+			m_Position += m_Direction * vel;
 
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			m_Position -= m_Right;
+			m_Position -= m_Right * vel;
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			m_Position += m_Right;
+			m_Position += m_Right * vel;
 
 		if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
-			m_Position -= m_Up;
+			m_Position += m_Up * vel;
 		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
-			m_Position += m_Up;
+			m_Position -= m_Up * vel;
 
 		/*if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
 			m_Rotation += 10.0f;
@@ -137,12 +127,13 @@ namespace Cronos {
 			float pitch = (float)App->input->GetMouseYMotion();
 			float yaw = (float)App->input->GetMouseXMotion();
 
-			PAng += glm::sin(glm::radians(pitch)) * glm::cos(glm::radians(yaw)) * 5.0f;
-			YAng += glm::sin(glm::radians(yaw)) * 5.0f;
+			PAng += glm::sin(glm::radians(pitch)) * glm::cos(glm::radians(yaw)) * 3.0f;
+			YAng += glm::sin(glm::radians(yaw)) * 3.0f;
 			
 			m_Rotation = glm::quat(glm::vec3(-glm::radians(PAng), -glm::radians(YAng), 0.0f));
 		}
 
+		RecalculateViewMatrix();
 		//m_Rotation = PAng * YAng;
 
 		//	/*dir.x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
@@ -182,7 +173,7 @@ namespace Cronos {
 //		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 //			m_Pos += /*glm::normalize(glm::cross(m_Front, m_Up)*/m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
 
-		RecalculateViewMatrix();
+		
 
 		//if (App->EditorGUI->isHoveringWinGame()) {
 

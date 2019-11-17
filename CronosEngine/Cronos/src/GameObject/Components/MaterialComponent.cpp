@@ -44,41 +44,32 @@ namespace Cronos
 		RELEASE(m_ShaderAttached);
 	}
 
-	void MaterialComponent::Bind(bool bindShader)
+	void MaterialComponent::Bind(bool bindMaterial)
 	{
 		if (!isEnabled() || m_ShaderAttached == nullptr)
 			return;
 
 		if (GetParent()->m_IsPrimitive == true)
-			bindShader = false;
+			bindMaterial = false;
 
-		if (bindShader)
+		if (bindMaterial)
 		{
-			m_ShaderAttached->Bind();
-			//m_ShaderAttached->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
-			//m_ShaderAttached->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrixMAT4());
-			//m_ShaderAttached->SetUniformMat4f("u_Model", glm::mat4(1.0f));
-		}
-
-			//GetParent()->GetComponent<MaterialComponent>()->m_ShaderAttached->SetUniformMat4f("u_Model", m_TransformationMatrix);
-
-		m_ShaderAttached->SetUniformMat4f("u_Model", GetParent()->GetComponent<TransformComponent>()->m_TransformationMatrix);
-
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-		{
-			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
-			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
+			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 0);
+			if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			{
-				uint TextureID = (uint)(it->first);
-				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
-				(*it->second).Bind(TextureID);
+				std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+				for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
+				{
+					uint TextureID = (uint)(it->first);
+					m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
+					(*it->second).Bind(TextureID);
+				}
 			}
+			else
+				glColor3f(White.r, White.g, White.b);
 		}
 		else
-		{
-			glColor3f(White.r, White.g, White.b);
-			m_ShaderAttached->Unbind();
-		}
+			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
 	}
 
 	void MaterialComponent::Unbind()

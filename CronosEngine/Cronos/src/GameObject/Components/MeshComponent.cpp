@@ -56,13 +56,15 @@ namespace Cronos {
 		Draw(GetParent()->GetComponent<MaterialComponent>(), true);
 	}
 
-	void MeshComponent::Draw(MaterialComponent* material, bool bindShader)
+	void MeshComponent::Draw(MaterialComponent* material, bool bindMaterial)
 	{
 		if (!isEnabled())
 			return;
 
+		App->scene->BasicTestShader->Bind();
+
 		if (material != nullptr)
-			material->Bind(bindShader);
+			material->Bind(bindMaterial);
 
 		m_MeshVAO->Bind();
 		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
@@ -70,6 +72,7 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Unbind();
 
+		App->scene->BasicTestShader->Unbind();
 		m_MeshVAO->UnBind();
 
 	//	DrawCentralAxis();
