@@ -58,21 +58,21 @@ namespace Cronos {
 		std::string Data;
 		//RootInfo
 		
-		Data += "Name:"+ToConvert->GetName()+" ";
-		Data += "Path:"+ToConvert->GetPath()+ " ";
-		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + " ";
+		Data += "Name:"+ToConvert->GetName()+"; ";
+		Data += "Path:"+ToConvert->GetPath()+ "; ";
+		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + "; ";
 		if (ToConvert->m_Childs.size() > 0) {
-			Data += "Childs: " + ToConvert->m_Childs.size();
+			Data += "Childs: " + std::to_string(ToConvert->m_Childs.size()) +"; ";
 		}
 		if (ToConvert->GetParentGameObject() != nullptr) {
-			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + "\n";
+			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + ";\n";
 		}
 		else
 			Data += "\n";
 
 		if (ToConvert->HasVertices) {
 			std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
-			Data += "Size: " + std::to_string(vertexArray.size()) + "\nVertices:\n";
+			Data += "Size: " + std::to_string(vertexArray.size()) + "; " + "\nVertices:\n";
 			for (auto&a : vertexArray) {
 				Data += std::to_string(a.Position.x) + "," + std::to_string(a.Position.y) + "," + std::to_string(a.Position.z) + "," +
 					std::to_string(a.Normal.x) + "," + std::to_string(a.Normal.y) + "," + std::to_string(a.Normal.z) + "," +
@@ -91,13 +91,12 @@ namespace Cronos {
 
 	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject) 
 	{
+
 		if (RootGameObject->GetMetaPath().size()<=0) {
 			RootGameObject->SetMeta("/"+RootGameObject->GetName()+".model");
 		}
 		char* Data = convertToData(RootGameObject);
 		std::string test = GetRootPath() +"/" + RootGameObject->GetPath()+".txt";
-
-		//PHYSFS_file* fs_file =  PHYSFS_openWrite(file);
 
 		std::ofstream ToSave{RootGameObject->GetMetaPath().c_str() };
 
@@ -109,6 +108,42 @@ namespace Cronos {
 		return true;
 	}
 
+	bool Filesystem::Load(std::string MetaPath, std::vector<CronosVertex>&vertices)
+	{
+
+		std::ifstream a;
+		a.open(MetaPath);
+		
+		int offset;
+		int size;
+		std::ofstream test;
+		std::string atest,line;
+		//while (std::getline(a, line)) {
+		//	atest += line;
+		//}
+		if (a.is_open()) {
+			while (!a.eof())
+			{
+				getline(a, atest);
+				if ((offset = atest.find("Size: ", 0)) != std::string::npos) {
+					int offset1 = atest.find_first_of(":") + 2;
+					int offset2 = atest.find(";")-offset1;
+
+					std::string testing = atest.substr(offset1, offset2);
+					size = (int)testing.c_str();
+				}
+			}
+		}
+
+		//a.
+		//std::string test2 = atest.substr(atest.find("Size: "),atest.);
+		//
+		//int size = (int)atest.at(atest.find("Size: "));
+		
+
+
+		return true;
+	}
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		

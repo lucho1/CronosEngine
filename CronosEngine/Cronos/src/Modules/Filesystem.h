@@ -11,6 +11,7 @@ namespace Cronos {
 
 	class Directories;
 	class GameObject;
+	struct CronosVertex;
 
 	enum class ItemType
 	{
@@ -120,7 +121,10 @@ namespace Cronos {
 		void DeleteDirectory(const char* path);
 		void RenameFile(AssetItems* Asset, const char* newName);
 		void SearchFile(Directories* tempDir,const char* name);
+
 		bool SaveOwnFormat(GameObject* RootGameObject);
+		bool Load(std::string MetaPath,std::vector<CronosVertex>&vertices);
+
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }

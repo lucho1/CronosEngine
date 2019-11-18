@@ -34,6 +34,7 @@ namespace Cronos {
 		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
 		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
 		static ComponentType GetType() { return ComponentType::MESH; }
+		std::vector<CronosVertex> m_VertexVector;
 
 	private:
 
@@ -45,7 +46,7 @@ namespace Cronos {
 
 	private:
 
-		std::vector<CronosVertex> m_VertexVector;
+		
 		std::vector<uint> m_IndicesVector;
 
 		VertexArray* m_MeshVAO = nullptr;
