@@ -10,6 +10,9 @@ namespace Cronos {
 	TransformComponent::TransformComponent(GameObject* attachedGO, bool active)
 		: Component(ComponentType::TRANSFORM, attachedGO, active)
 	{
+		m_Orientation = glm::quat(1.0f, glm::vec3(0.0f));
+		m_Position = m_Orientation_eulerAngles = glm::vec3(0.0f);
+		m_Scale = glm::vec3(1.0f);
 		m_TransformationMatrix = glm::mat4(1.0f);
 		DecomposeTransformation();
 	}
@@ -95,7 +98,7 @@ namespace Cronos {
 
 	void TransformComponent::SetOrientation(glm::vec3 eulerAxAngles)
 	{
-		glm::quat rot = glm::quat(eulerAxAngles);
+		glm::quat rot = glm::quat(glm::radians(eulerAxAngles));
 		glm::quat resRot = rot * m_Orientation;
 		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(resRot);
 		m_TransformationMatrix = transform;
@@ -119,7 +122,7 @@ namespace Cronos {
 
 	void TransformComponent::Rotate(glm::vec3 eulerAxAngles)
 	{
-		glm::quat rot = glm::quat(eulerAxAngles);
+		glm::quat rot = glm::quat(glm::radians(eulerAxAngles));
 		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(rot);
 		m_TransformationMatrix = transform;
 		DecomposeTransformation();
@@ -134,9 +137,12 @@ namespace Cronos {
 		m_Orientation = glm::conjugate(m_Orientation);
 
 		glm::quat q = m_Orientation;
-		float pitch = glm::atan(2*(q.w * q.x + q.y * q.z), 1-2*(glm::sqrt(q.x) + glm::sqrt(q.y)));
+
+		float pitch = glm::atan(2*(q.w * q.x + q.y * q.z), 1-2*(q.x*q.x + q.y*q.y));
 		float yaw = glm::asin(2*(q.w * q.y - q.z * q.x));
-		float roll = glm::atan(2*(q.w * q.z + q.x * q.y), 1-2*(glm::sqrt(q.y) + glm::sqrt(q.z)));
+		float roll = glm::atan(2*(q.w * q.z + q.x * q.y), 1-2*(q.y*q.y + q.z*q.z));
+
+
 		m_Orientation_eulerAngles = glm::vec3(pitch, yaw, roll);
 
 	}

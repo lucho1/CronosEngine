@@ -49,7 +49,7 @@ namespace Cronos {
 		//Getters
 		const inline glm::vec3 GetPosition() const { return m_Position; };
 		const inline glm::vec3 GetScale() const { return m_Scale; };
-		const inline glm::vec3 GetOrientation() const { return m_Orientation_eulerAngles; };
+		const inline glm::vec3 GetOrientation() const { return glm::degrees(m_Orientation_eulerAngles); };
 		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
 
 	private:

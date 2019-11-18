@@ -690,18 +690,25 @@ namespace Cronos {
 			glm::vec3 TempRot = CurrentGameObject->GetComponent<TransformComponent>()->GetOrientation();
 			glm::vec3 TempScale = CurrentGameObject->GetComponent<TransformComponent>()->GetScale();
 
+			static bool toChange;
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &TempPos.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &TempPos.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetPosition(TempPos);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &TempPos.x, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueY", &TempPos.y, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f))toChange=true;
+			if (toChange) {
+				CurrentGameObject->GetComponent<TransformComponent>()->SetPosition(TempPos);
+				toChange = false;
+			}
 			ImGui::Text("Rotation");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetOrientation(TempRot);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##value1", &TempRot.x, 1.0f))toChange= true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &TempRot.y, 1.0f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##value3", &TempRot.z, 1.0f))toChange=true;
+			if (toChange) {
+				CurrentGameObject->GetComponent<TransformComponent>()->SetOrientation(TempRot);
+				toChange = false;
+			}
 			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();
