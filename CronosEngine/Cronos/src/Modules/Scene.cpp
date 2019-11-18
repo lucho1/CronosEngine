@@ -5,7 +5,7 @@
 
 //#include "Renderer/Model.h"
 //#include "Renderer/CronosPrimitive.h"
-#include <glm/gtx/transform.hpp>
+#include "GameObject/Components/TransformComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -101,6 +101,8 @@ namespace Cronos {
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		m_GameObjects.push_back(m_HouseModel);
 		m_SceneFloorPlane = new PrimitiveGameObject(PrimitiveType::PLANE, "FloorPrimitive", { 20.0f, 20.0f, 1.0f }, glm::vec3(0.0f), 0.6, 5, 5);
+		m_SceneFloorPlane->GetComponent<TransformComponent>()->SetOrientation(glm::vec3(-90, 0, 0));
+		
 		return ret;
 	}
 

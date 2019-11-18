@@ -33,15 +33,25 @@ namespace Cronos {
 		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_TransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
 
-		if (App->input->GetKey(SDL_SCANCODE_J) == KEY_REPEAT)
-			Move(glm::vec3(1, 1, 0));
-		if (App->input->GetKey(SDL_SCANCODE_K) == KEY_REPEAT)
-			Scale(glm::vec3(2, 2, 2));
+		if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+			Move(glm::vec3(0.3, 0, 0));
+		if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
+			Scale(glm::vec3(1.2, 1.2, 1.2));
 
-		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
 			SetPosition(glm::vec3(0, 0, 0));
-		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
+		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN)
 			SetScale(glm::vec3(1, 1, 1));
+
+		//if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
+		//	SetOrientation(glm::vec3(20, 20, 20));
+		//if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+		//	Rotate(glm::vec3(20, 20, 20));
+		//if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
+		//	Rotate(glm::vec3(1, 1, 1));
+
+		//if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
+		//	SetOrientation(glm::vec3(-90, 0, 0));
 
 		//DrawCentralAxis();
 	}
@@ -68,29 +78,28 @@ namespace Cronos {
 
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-		m_TransformationMatrix = glm::translate(glm::mat4(1.0f), position);
+		glm::vec3 resPos = position - m_Position;
+		m_TransformationMatrix = glm::translate(m_TransformationMatrix, resPos);
 		DecomposeTransformation();
 	}
 
 	void TransformComponent::SetScale(glm::vec3 scale)
 	{
-		m_TransformationMatrix = glm::scale(glm::mat4(1.0f), scale);
+		glm::vec3 resScale = scale - m_Scale;
+		if (glm::any(glm::lessThanEqual(glm::abs(resScale), glm::vec3(glm::epsilon<float>()))))
+			return;
+		
+		m_TransformationMatrix = glm::scale(m_TransformationMatrix, resScale);
 		DecomposeTransformation();
 	}
 
 	void TransformComponent::SetOrientation(glm::vec3 eulerAxAngles)
 	{
-		//glm::quat rot = glm::quat(eulerAxAngles);
-		//glm::mat4 rotMat = glm::mat4(rot);
 		glm::quat rot = glm::quat(eulerAxAngles);
-
-
-		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(rot);
+		glm::quat resRot = rot * m_Orientation;
+		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(resRot);
 		m_TransformationMatrix = transform;
-		//m_TransformationMatrix *= rot;
 		DecomposeTransformation();
-
-		//transform = glm::translate(position) * glm::mat4_cast(rotation) * glm::scale(scale);
 	}
 
 	void TransformComponent::Move(glm::vec3 translation)
@@ -101,21 +110,19 @@ namespace Cronos {
 
 	void TransformComponent::Scale(glm::vec3 scale)
 	{
+		if (glm::any(glm::lessThanEqual(glm::abs(scale), glm::vec3(glm::epsilon<float>()))))
+			return;
+
 		m_TransformationMatrix = glm::scale(m_TransformationMatrix, scale);
 		DecomposeTransformation();
 	}
 
 	void TransformComponent::Rotate(glm::vec3 eulerAxAngles)
 	{
-		//glm::quat myquaternion = glm::quat(glm::vec3(angle.x, angle.y, angle.z));
 		glm::quat rot = glm::quat(eulerAxAngles);
-
 		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(rot);
 		m_TransformationMatrix = transform;
-
-		//m_TransformationMatrix *= rot;
 		DecomposeTransformation();
-
 	}
 
 	void TransformComponent::DecomposeTransformation()
