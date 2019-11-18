@@ -133,6 +133,11 @@ namespace Cronos {
 		glm::decompose(m_TransformationMatrix, m_Scale, m_Orientation, m_Position, skew, perspective);
 		m_Orientation = glm::conjugate(m_Orientation);
 
-		m_Orientation_eulerAngles = glm::vec3(glm::asin(m_Orientation.x / 2), glm::asin(m_Orientation.y / 2), glm::asin(m_Orientation.z / 2));
+		glm::quat q = m_Orientation;
+		float pitch = glm::atan(2*(q.w * q.x + q.y * q.z), 1-2*(glm::sqrt(q.x) + glm::sqrt(q.y)));
+		float yaw = glm::asin(2*(q.w * q.y - q.z * q.x));
+		float roll = glm::atan(2*(q.w * q.z + q.x * q.y), 1-2*(glm::sqrt(q.y) + glm::sqrt(q.z)));
+		m_Orientation_eulerAngles = glm::vec3(pitch, yaw, roll);
+
 	}
 }
