@@ -144,7 +144,6 @@ namespace Cronos {
 	{
 		LOG("	Processing Assimp Node");
 		//Process node's meshes if there are
-
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
 			//Get the mesh from the meshes list of the node in scene's meshes list
@@ -215,7 +214,7 @@ namespace Cronos {
 			GOName = as_mesh->mName.C_Str();
 		else
 			GOName = "Game Object";
-
+		
 		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
 		GO->HasVertices = true;

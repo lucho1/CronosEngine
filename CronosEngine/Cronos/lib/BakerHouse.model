@@ -1,6 +1,20 @@
-Name:BakerHouse; Path:res/models/bakerhouse; ID:1372538529; Childs: 2; 
-Name:Untitled; Path:res/models/bakerhouse; ID:553234704; ParentName:BakerHouse;
-Size: 160; 
+Name:BakerHouse;
+Path:res/models/bakerhouse;
+ID:1434894904;
+Childs:2;
+Components:
+TransformComponent;
+
+EndNode;
+Name:Untitled;
+Path:res/models/bakerhouse;
+ID:145186643;
+ParentName:BakerHouse;
+Components:
+TransformComponent;
+MaterialComponent;
+MeshComponent
+Size:160; 
 Vertices:
 1.907932,1.419628,0.739776,0.000000,1.000000,0.000000,0.054991,0.673564,
 1.907932,1.419628,0.189361,0.000000,1.000000,0.000000,0.161299,0.673564,
@@ -162,8 +176,17 @@ Vertices:
 1.733091,2.394076,0.669737,1.000000,0.000000,0.000000,0.656308,0.645946,
 1.733091,2.314075,0.669737,1.000000,0.000000,0.000000,0.685766,0.645946,
 1.733091,2.314075,0.534575,1.000000,0.000000,0.000000,0.685766,0.704316,
-Name:Untitled; Path:res/models/bakerhouse; ID:1970474312; ParentName:BakerHouse;
-Size: 1641; 
+
+EndNode;
+Name:Untitled;
+Path:res/models/bakerhouse;
+ID:954874023;
+ParentName:BakerHouse;
+Components:
+TransformComponent;
+MaterialComponent;
+MeshComponent
+Size:1641; 
 Vertices:
 0.184737,2.329081,-1.849184,0.778742,0.627302,0.007292,0.546383,0.148067,
 -0.340929,3.131866,-1.849284,0.836300,0.547615,0.026825,0.546383,0.006671,

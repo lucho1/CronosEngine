@@ -1,6 +1,6 @@
 #include "Providers/cnpch.h"
 #include "GameObject.h"
-
+#include "Application.h"
 #include "Components/TransformComponent.h"
 #include "Components/MaterialComponent.h"
 
@@ -14,6 +14,7 @@ namespace Cronos {
 		((TransformComponent*)(Comp))->SetRotation(rotation);
 		((TransformComponent*)(Comp))->SetScale(scale);
 		m_Components.push_back(Comp);
+		m_MetaPath = App->filesystem->GetMetaPath() + "/" + name + ".model";
 	}
 
 	GameObject::~GameObject()

@@ -36,7 +36,7 @@ namespace Cronos {
 
 		m_VertexVector = vertices;
 		m_IndicesVector = indices;
-
+		
 		m_MeshVAO = new VertexArray();
 		m_MeshVBO = new VertexBuffer(&m_VertexVector[0], m_VertexVector.size() * sizeof(CronosVertex));
 

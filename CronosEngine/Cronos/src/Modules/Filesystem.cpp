@@ -34,7 +34,8 @@ namespace Cronos {
 
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
-		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory);
+		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory); 
+		m_LibraryPath = "lib";
 
 		char* base_path = new char[GetRootPath().length() + 1];
 		strcpy(base_path, GetRootPath().c_str());
@@ -58,21 +59,23 @@ namespace Cronos {
 		std::string Data;
 		//RootInfo
 		
-		Data += "Name:"+ToConvert->GetName()+"; ";
-		Data += "Path:"+ToConvert->GetPath()+ "; ";
-		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + "; ";
+		Data += "Name:"+ToConvert->GetName()+";\n";
+		Data += "Path:"+ToConvert->GetPath()+ ";\n";
+		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + ";\n";
 		if (ToConvert->m_Childs.size() > 0) {
-			Data += "Childs: " + std::to_string(ToConvert->m_Childs.size()) +"; ";
+			Data += "Childs:" + std::to_string(ToConvert->m_Childs.size()) +";\n";
 		}
 		if (ToConvert->GetParentGameObject() != nullptr) {
 			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + ";\n";
 		}
-		else
-			Data += "\n";
-
-		if (ToConvert->HasVertices) {
+		Data += "Components:\n";
+		Data += "TransformComponent;\n";
+		if (ToConvert->GetComponent<MaterialComponent>())
+			Data += "MaterialComponent;\n";
+		if (ToConvert->HasVertices) {	
+			Data += "MeshComponent\n";
 			std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
-			Data += "Size: " + std::to_string(vertexArray.size()) + "; " + "\nVertices:\n";
+			Data += "Size:" + std::to_string(vertexArray.size()) + "; " + "\nVertices:\n";
 			for (auto&a : vertexArray) {
 				Data += std::to_string(a.Position.x) + "," + std::to_string(a.Position.y) + "," + std::to_string(a.Position.z) + "," +
 					std::to_string(a.Normal.x) + "," + std::to_string(a.Normal.y) + "," + std::to_string(a.Normal.z) + "," +
@@ -81,7 +84,7 @@ namespace Cronos {
 		}
 	
 		for (auto&child : ToConvert->m_Childs) {
-
+			Data+="\nEndNode;\n";
 			Data += convertToData(child);
 		}
 		char* Test = new char[Data.length() + 1];
@@ -93,57 +96,244 @@ namespace Cronos {
 	{
 
 		if (RootGameObject->GetMetaPath().size()<=0) {
-			RootGameObject->SetMeta("/"+RootGameObject->GetName()+".model");
+			RootGameObject->SetMeta("/" +RootGameObject->GetName()+".model");
 		}
 		char* Data = convertToData(RootGameObject);
-		std::string test = GetRootPath() +"/" + RootGameObject->GetPath()+".txt";
+		//std::filesystem::path meta = RootGameObject->GetMetaPath().c_str();
 
 		std::ofstream ToSave{RootGameObject->GetMetaPath().c_str() };
-
-		if(std::filesystem::exists(std::filesystem::path(RootGameObject->GetMetaPath().c_str())))
-			ToSave << Data << std::endl;
+		ToSave << Data << std::endl;
 
 		SDL_free(Data);
 
 		return true;
 	}
 
-	bool Filesystem::Load(std::string MetaPath, std::vector<CronosVertex>&vertices)
+	const std::vector<CronosVertex>&verticestest(std::ifstream& a)
 	{
+		std::vector<CronosVertex> testing;
+		CronosVertex toPush;
+		std::string Vertex;
+		int offset;
+		int cursor=0;
+		while (!a.eof()) {	
+				if(cursor==0)
+					getline(a, Vertex);
+				
+				if (!(offset=Vertex.find("EndNode;",0)!=std::string::npos)) {
+					
+					if ((offset = Vertex.find(",", 0)) != std::string::npos) {
+						int offset1 = (Vertex.find(",") +1)*cursor;
+						int offset2 = 8;
+						std::string pop;
+						switch (cursor)
+						{
+						case 0:
+							pop = Vertex.substr(offset1, offset2);
+							toPush.Position.x = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 1:
+							toPush.Position.y = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 2:
+							toPush.Position.z = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 3:
+							pop = Vertex.substr(offset1, offset2);
+							toPush.Normal.x = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 4:
+							toPush.Normal.y = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 5:
+							toPush.Normal.z = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 6:
+							toPush.TexCoords.x = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						case 7:
+							toPush.TexCoords.y = std::stof(Vertex.substr(offset1, offset2).c_str());
+							cursor++;
+							break;
+						}
+						if (cursor >= 8) {
+							testing.push_back(toPush);
+							cursor = 0;
+						}
+					}
+				}
+				else
+					break;
+		}
+		return testing;
+	}
+
+	void LoadGameObjects(GameObject* Parent,std::ifstream& a ) {
+		
+		GameObject* Child;
+		int offset;
+		int size;
+		int childs;
+		bool SetupMesh = false;
+		std::string atest;
+		//while (std::getline(a, line)) {
+		//	atest += line;
+		//}
+		if (a.is_open()) {
+			std::string name;
+			std::string path;
+			int id;
+			while (!a.eof())
+			{
+				getline(a, atest);
+				if (!(offset = atest.find("EndNode;", 0) != std::string::npos)) {
+
+					if ((offset = atest.find("Childs:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						childs = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
+
+					if ((offset = atest.find("Size:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+
+						std::string testing = atest.substr(offset1, offset2);
+						size = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
+					if ((offset = atest.find("Name:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						name = atest.substr(offset1, offset2).c_str();
+					}
+					if ((offset = atest.find("Path:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						path = atest.substr(offset1, offset2).c_str();
+					}
+					if ((offset = atest.find("ID:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						id = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
+					if ((offset = atest.find("MeshComponent", 0)) != std::string::npos) {
+						SetupMesh = true;
+					}
+				}
+				else {
+					Child = new GameObject(name, id, path);
+					if (SetupMesh) {
+						Child->CreateComponent(ComponentType::MESH_RENDERER);
+						std::vector<uint> per;
+						Child->GetComponent<MeshComponent>()->SetupMesh(verticestest(a), per);
+					}
+					break;
+				}
+			}
+			if (childs > 0)
+			{
+				LoadGameObjects(Child, a);
+			}
+		}
+		Parent->m_Childs.push_back(Child);
+	}
+
+	GameObject* Filesystem::Load(std::string MetaPath)
+	{
+		//std::vector<CronosVertex>&vertices
+		GameObject* Root;
 
 		std::ifstream a;
 		a.open(MetaPath);
 		
 		int offset;
 		int size;
+		int childs;
+		bool SetupMesh=false;
 		std::ofstream test;
 		std::string atest,line;
 		//while (std::getline(a, line)) {
 		//	atest += line;
 		//}
 		if (a.is_open()) {
+			std::string name;
+			std::string path;
+			int id;
 			while (!a.eof())
-			{
+			{			
 				getline(a, atest);
-				if ((offset = atest.find("Size: ", 0)) != std::string::npos) {
-					int offset1 = atest.find_first_of(":") + 2;
-					int offset2 = atest.find(";")-offset1;
+				if (!(offset = atest.find("EndNode;", 0) != std::string::npos)) {
+			
+					if ((offset = atest.find("Childs:", 0)) != std::string::npos) {
+						
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						childs = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
 
-					std::string testing = atest.substr(offset1, offset2);
-					size = (int)testing.c_str();
+					if ((offset = atest.find("Size:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+
+						std::string testing = atest.substr(offset1, offset2);
+						size = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
+					if ((offset = atest.find("Name:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						name = atest.substr(offset1, offset2).c_str() ;
+					}
+					if ((offset = atest.find("Path:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						path = atest.substr(offset1, offset2).c_str();
+					}
+					if ((offset = atest.find("ID:", 0)) != std::string::npos) {
+
+						int offset1 = atest.find_first_of(":") + 1;
+						int offset2 = atest.find(";") - offset1;
+						id = std::stoi(atest.substr(offset1, offset2).c_str());
+					}
+					if ((offset = atest.find("MeshComponent", 0)) != std::string::npos) {
+						SetupMesh = true;
+					}
+				}
+				else {
+					Root = new GameObject(name, id, path);
+					if (SetupMesh) {
+						Root->CreateComponent(ComponentType::MESH_RENDERER);
+						std::vector<uint> per;
+						Root->GetComponent<MeshComponent>()->SetupMesh(verticestest(a), per);
+					}
+					break;
 				}
 			}
+			if (childs > 0) 
+			{
+				for(int i = 0; i<=childs;++childs)
+					LoadGameObjects(Root,a);
+			}
 		}
-
-		//a.
-		//std::string test2 = atest.substr(atest.find("Size: "),atest.);
-		//
-		//int size = (int)atest.at(atest.find("Size: "));
-		
-
-
-		return true;
+		return Root;
 	}
+
+
+
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		

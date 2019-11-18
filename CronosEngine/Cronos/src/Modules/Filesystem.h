@@ -123,11 +123,13 @@ namespace Cronos {
 		void SearchFile(Directories* tempDir,const char* name);
 
 		bool SaveOwnFormat(GameObject* RootGameObject);
-		bool Load(std::string MetaPath,std::vector<CronosVertex>&vertices);
+		GameObject* Load(std::string MetaPath);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }
+		inline std::string GetMetaPath() const { return m_LibraryPath.c_str(); }
+
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 
 	private:
@@ -135,6 +137,7 @@ namespace Cronos {
 		std::vector <Directories*> DirectoriesArray;
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
+		std::string m_LibraryPath;
 	
 		Directories* m_AssetRoot = nullptr;
 		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];

@@ -108,7 +108,7 @@ namespace Cronos {
 
 		//House Model Load
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		App->filesystem->Load(m_HouseModel->GetMetaPath(),m_HouseModel->GetComponent<MeshComponent>()->m_VertexVector);
+		App->filesystem->Load(m_HouseModel->GetMetaPath());
 		m_GameObjects.push_back(m_HouseModel);
 
 		return ret;
