@@ -3,6 +3,8 @@
 #include "GameObject/GameObject.h"
 
 #include "Application.h"
+
+#include <glm/gtx//euler_angles.hpp>
 //#include "MaterialComponent.h"
 
 namespace Cronos {
@@ -46,10 +48,11 @@ namespace Cronos {
 		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN)
 			SetScale(glm::vec3(1, 1, 1));
 
-		//if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
-		//	SetOrientation(glm::vec3(20, 20, 20));
-		//if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-		//	Rotate(glm::vec3(20, 20, 20));
+		if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
+			SetOrientation(glm::vec3(20.00, 20.00, 20.00));
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+			Rotate(glm::vec3(20.00, 20.00, 20.00));
+
 		//if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
 		//	Rotate(glm::vec3(1, 1, 1));
 
@@ -96,9 +99,19 @@ namespace Cronos {
 		DecomposeTransformation();
 	}
 
+	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 eulerAxAngles)
 	{
-		glm::quat rot = glm::quat(glm::radians(eulerAxAngles));
+		glm::float1 a = 1.2345678;
+		glm::precision(0);
+		a += 2.345;
+
+		std::cout << a;
+
+		glm::vec3 euler_inRadians = glm::radians(eulerAxAngles);
+		glm::mat4 mat = glm::eulerAngleXYZ(euler_inRadians.x, euler_inRadians.y, euler_inRadians.z);
+		glm::quat rot = glm::quat(mat);
+
 		glm::quat resRot = rot * m_Orientation;
 		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(resRot);
 		m_TransformationMatrix = transform;
@@ -142,6 +155,7 @@ namespace Cronos {
 		float yaw = glm::asin(2*(q.w * q.y - q.z * q.x));
 		float roll = glm::atan(2*(q.w * q.z + q.x * q.y), 1-2*(q.y*q.y + q.z*q.z));
 
+		glm::vec3 Test = glm::eulerAngles(q);
 
 		m_Orientation_eulerAngles = glm::vec3(pitch, yaw, roll);
 

@@ -59,6 +59,17 @@ namespace Cronos {
 	
 			uniform int u_TextureEmpty = 1;
 
+			float nearP = 1.0;
+			float farP = 512.0;
+			uniform int u_drawZBuffer = 0;
+			
+			float LinearizeZ(float depth)
+			{
+				float z = depth*2.0 - 1.0;
+				float ret = (2.0*nearP*farP)/(farP + nearP - z*(farP - nearP));
+				return ret;
+			}
+
 			void main()
 			{
 				vec4 texColor = vec4(0.8, 0.8, 0.8, 1.0);
@@ -68,6 +79,11 @@ namespace Cronos {
 				}
 				
 				color = texColor;
+				if(u_drawZBuffer == 1)
+				{
+					float depth = (LinearizeZ(gl_FragCoord.z)/farP);
+					color = vec4(vec3(depth), 1.0);
+				}
 			}
 		)";
 
@@ -145,9 +161,13 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
+		//glEnable(GL_DEPTH_TEST);
+		//glDepthFunc(GL_ALWAYS);
+
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
+		BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
 		BasicTestShader->Unbind();
 
 		//"Floor" Plane

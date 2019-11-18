@@ -15,8 +15,8 @@
     "Renderer": {
         "AntialiasedLPSmooth": false,
         "Blend": true,
-        "ClipDistance": false,
-        "ColorDither": false,
+        "ClipDistance": true,
+        "ColorDither": true,
         "DepthTest": true,
         "FaceCulling": true,
         "GL_ColorMaterial": true,
@@ -25,9 +25,9 @@
         "OpenGL_MajorV": 4,
         "OpenGL_MinorV": 3,
         "ScissorTest": false,
-        "StencilTest": false,
+        "StencilTest": true,
         "VSYNC": false,
-        "WireframeDraw": true
+        "WireframeDraw": false
     },
     "Window": {
         "Borderless": false,

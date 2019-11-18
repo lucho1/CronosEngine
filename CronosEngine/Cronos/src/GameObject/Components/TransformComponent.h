@@ -54,14 +54,16 @@ namespace Cronos {
 
 	private:
 
+		//Decompose the matrix in the position, scale vectors and orientation quaternion
 		void DecomposeTransformation();
 
 	public:
 
 		bool DrawAxis = false;
-		glm::mat4 m_TransformationMatrix;
 
 	private:
+
+		glm::mat4 m_TransformationMatrix;
 
 		glm::vec3 m_Position;
 		glm::vec3 m_Scale;

@@ -172,6 +172,11 @@ namespace Cronos {
 		//System Info
 		SystemInfo HardwareInfo;
 		SystemInfo SoftwareInfo;
+
+		//For transformations
+		glm::vec3 ObjectPos;
+		glm::vec3 ObjectRot;
+		glm::vec3 ObjectScale;
 	};
 
 

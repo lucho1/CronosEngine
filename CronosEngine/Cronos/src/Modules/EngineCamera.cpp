@@ -17,7 +17,7 @@ namespace Cronos {
 
 		m_ViewMatrix = glm::inverse(camTransform);
 		m_ProjectionMatrix = glm::perspective(glm::radians(60.0f),
-			(float)App->window->GetWidth() / (float)App->window->GetHeight(), 0.125f, 512.0f);
+			(float)App->window->GetWidth() / (float)App->window->GetHeight(), 1.0f, 512.0f);
 	}
 
 	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
@@ -65,7 +65,7 @@ namespace Cronos {
 
 		m_ProjectionMatrix = glm::perspective(glm::radians(60.0f),
 			(float)App->window->GetWidth() / (float)App->window->GetHeight(), 0.125f, 512.0f);
-
+		
 		m_ViewMatrix = glm::mat4(1.0f);
 
 		m_Direction = glm::normalize(m_Position - m_Target);
