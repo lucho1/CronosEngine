@@ -148,7 +148,7 @@ namespace Cronos {
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
 		BasicTestShader->Unbind();
 
-		// "Floor" Plane
+		//"Floor" Plane
 		//TODO: This might conflict if Cull face isn't active
 		glDisable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

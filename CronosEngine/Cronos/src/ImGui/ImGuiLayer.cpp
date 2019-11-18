@@ -687,7 +687,7 @@ namespace Cronos {
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			glm::vec3 TempPos = CurrentGameObject->GetComponent<TransformComponent>()->GetPosition();
-			glm::vec3 TempRot = CurrentGameObject->GetComponent<TransformComponent>()->GetRotation();
+			glm::vec3 TempRot = CurrentGameObject->GetComponent<TransformComponent>()->GetOrientation();
 			glm::vec3 TempScale = CurrentGameObject->GetComponent<TransformComponent>()->GetScale();
 
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
@@ -701,7 +701,7 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetRotation(TempRot);
+			CurrentGameObject->GetComponent<TransformComponent>()->SetOrientation(TempRot);
 			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();

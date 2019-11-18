@@ -21,40 +21,52 @@ namespace Cronos {
 		virtual void OnStart() override;
 		virtual void Update(float dt) override;
 
-		void SetPosition(glm::vec3 pos) { m_Position = pos; }
-		void SetRotation(glm::vec3 rot) { m_Rotation = rot; }
-		void SetScale(glm::vec3 scale) { m_Scale = scale; }
-
-		const inline glm::vec3 GetPosition() const { return m_Position; };
-		const inline glm::vec3 GetRotation() const { return m_Rotation; };
-		const inline glm::vec3 GetScale() const { return m_Scale; };
-
-		//AABBs
-		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, maxVec); }
-		void SetAABB(const AABB& aabbCube) { m_ContainerAABBCube = AABB(aabbCube); }
-
-		const inline AABB GetAABB() const { return m_ContainerAABBCube; }
-		const inline glm::vec3 GetCentralAxis() const { return m_ContainerAABBCube.getCenter(); }
-		bool &SetDrawAxis() { return DrawAxis; }
-		void DrawCentralAxis();
-
 		//Type
 		static ComponentType GetType() { return ComponentType::TRANSFORM; };
 
-		bool DrawAxis = false;
+		//AABBs & Axis
+		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, maxVec); }
+		void SetAABB(const AABB& aabbCube) { m_ContainerAABBCube = AABB(aabbCube); }
+		
+		bool &SetDrawAxis() { return DrawAxis; }
+		void DrawCentralAxis();
 
+		const inline AABB GetAABB() const { return m_ContainerAABBCube; }
+		const inline glm::vec3 GetCentralAxis() const { return m_ContainerAABBCube.getCenter(); }
+
+	public:
+
+		//This is to SET the game object to a desired transformation
+		void SetPosition(glm::vec3 pos);
+		void SetScale(glm::vec3 scale);
+		void SetOrientation(glm::vec3 eulerAxAngles);
+		
+		//This is to ADD the game object a transformation
+		void Move(glm::vec3 translation);
+		void Scale(glm::vec3 scale);
+		void Rotate(glm::vec3 eulerAxAngles);
+
+		//Getters
+		const inline glm::vec3 GetPosition() const { return m_Position; };
+		const inline glm::vec3 GetScale() const { return m_Scale; };
+		const inline glm::vec3 GetOrientation() const { return m_Orientation_eulerAngles; };
+		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
+
+	private:
+
+		void DecomposeTransformation();
+
+	public:
+
+		bool DrawAxis = false;
 		glm::mat4 m_TransformationMatrix;
 
 	private:
 
-		glm::vec4 m_TransformationVector;
-		
-
-
-
 		glm::vec3 m_Position;
-		glm::vec3 m_Rotation;
 		glm::vec3 m_Scale;
+		glm::quat m_Orientation;
+		glm::vec3 m_Orientation_eulerAngles;
 
 		AABB m_ContainerAABBCube;
 	};

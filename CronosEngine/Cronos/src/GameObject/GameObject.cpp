@@ -11,7 +11,7 @@ namespace Cronos {
 	{
 		Component* Comp = CreateComponent(ComponentType::TRANSFORM);
 		((TransformComponent*)(Comp))->SetPosition(position);
-		((TransformComponent*)(Comp))->SetRotation(rotation);
+		((TransformComponent*)(Comp))->SetOrientation(rotation);
 		((TransformComponent*)(Comp))->SetScale(scale);
 		m_Components.push_back(Comp);
 	}
