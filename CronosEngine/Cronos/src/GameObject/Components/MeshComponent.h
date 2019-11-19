@@ -14,6 +14,8 @@ namespace Cronos {
 		glm::vec3 Position;
 		glm::vec3 Normal;
 		glm::vec2 TexCoords;
+		CronosVertex(){};
+		CronosVertex(std::vector<float>a) { Position.x = a[0], Position.y = a[1], Position.z = a[2], Normal.x = a[3], Normal.y = a[4], Normal.z = a[5], TexCoords.x = a[6], TexCoords.y = a[7]; }
 	};
 
 	class MeshComponent : public Component

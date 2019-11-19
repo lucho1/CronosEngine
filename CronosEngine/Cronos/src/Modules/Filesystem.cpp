@@ -65,28 +65,35 @@ namespace Cronos {
 		if (ToConvert->m_Childs.size() > 0) {
 			Data += "Childs:" + std::to_string(ToConvert->m_Childs.size()) +";\n";
 		}
+		Data += "Components:\n";
+		Data += "TransformComponent;\n";
+
+		if (ToConvert->GetComponent<MaterialComponent>())
+			Data += "MaterialComponent;\n";
 		if (ToConvert->GetParentGameObject() != nullptr) {
 			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + ";\n";
 		}
-		Data += "Components:\n";
-		Data += "TransformComponent;\n";
-		if (ToConvert->GetComponent<MaterialComponent>())
-			Data += "MaterialComponent;\n";
+
 		if (ToConvert->HasVertices) {	
 			Data += "MeshComponent\n";
 			std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
 			Data += "Size:" + std::to_string(vertexArray.size()) + "; " + "\nVertices:\n";
 			for (auto&a : vertexArray) {
-				Data += std::to_string(a.Position.x) + "," + std::to_string(a.Position.y) + "," + std::to_string(a.Position.z) + "," +
-					std::to_string(a.Normal.x) + "," + std::to_string(a.Normal.y) + "," + std::to_string(a.Normal.z) + "," +
-					std::to_string(a.TexCoords.x) + "," + std::to_string(a.TexCoords.y) + ",\n";
+				Data += std::to_string(a.Position.x) + " " + std::to_string(a.Position.y) + " " + std::to_string(a.Position.z) + " " +
+					std::to_string(a.Normal.x) + " " + std::to_string(a.Normal.y) + " " + std::to_string(a.Normal.z) + " " +
+					std::to_string(a.TexCoords.x) + " " + std::to_string(a.TexCoords.y)+"\n";
 			}
 		}
-	
-		for (auto&child : ToConvert->m_Childs) {
-			Data+="\nEndNode;\n";
-			Data += convertToData(child);
+
+		if (ToConvert->GetParentGameObject() == nullptr) {
+			Data += "EndNode;\n";
 		}
+
+		for (auto&child : ToConvert->m_Childs) {
+			Data += convertToData(child);
+			Data += "EndNode;\n";
+		}
+
 		char* Test = new char[Data.length() + 1];
 		strcpy(Test, Data.c_str());
 		return Test;
@@ -109,14 +116,52 @@ namespace Cronos {
 		return true;
 	}
 
+
 	const std::vector<CronosVertex>&verticestest(std::ifstream& a)
 	{
 		std::vector<CronosVertex> testing;
-		CronosVertex toPush;
+
 		std::string Vertex;
+		std::vector<float>test;
+		std::stringstream iss;
+		int i=0;
 		int offset;
 		int cursor=0;
-		while (!a.eof()) {	
+		bool start = false;
+		while (!a.eof()) {
+			getline(a, Vertex);
+			if (!(offset = Vertex.find("EndNode;", 0) != std::string::npos)) {
+				if ((offset = Vertex.find("Size:", 0) != std::string::npos)) {
+					int offset1 = Vertex.find_first_of(":") + 1;
+					int offset2 = Vertex.find(";") - offset1;
+					testing.resize(std::stoi(Vertex.substr(offset1, offset2).c_str()));
+				}
+				if ((offset = Vertex.find("Vertices:", 0) != std::string::npos)) {
+					start = true;
+				}
+				if (start) {
+					float value;
+					std::stringstream ss(Vertex);
+					while (ss >> value) {
+						test.push_back(value);
+					}
+					if (Vertex != "Vertices:") {
+						CronosVertex temp(test);
+						if (i == 1640) {
+							bool terer = false;
+						}
+						testing[i] = temp;
+						++i;
+					}
+					test.clear();
+
+				}
+			}
+			else
+				return testing;
+		}
+
+		/*while (!a.eof()) {	
 				if(cursor==0)
 					getline(a, Vertex);
 				
@@ -171,7 +216,7 @@ namespace Cronos {
 				}
 				else
 					break;
-		}
+		}*/
 		return testing;
 	}
 
