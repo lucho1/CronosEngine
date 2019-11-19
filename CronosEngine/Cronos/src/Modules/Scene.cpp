@@ -169,7 +169,7 @@ namespace Cronos {
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
-		BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
+		BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
 		BasicTestShader->Unbind();
 
 		//"Floor" Plane

@@ -12,41 +12,11 @@ namespace Cronos {
 
 	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
 	{
-		
-
-		//m_Pos = glm::vec3(0.0f, 3.0f, 5.0f);
-		////m_Target = glm::vec3(0.0f, 0.0f, 0.0f);
-		//m_WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-		//m_YawAngle = -90.0f;
-		//m_PitchAngle = 0.0f;
-
-		//UpdateVectors();
-
-		/*m_Front = glm::vec3(0.0f, 0.0f, -1.0f);
-		
-		m_Direction = glm::normalize(m_Pos - m_Target);
-		
-
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Direction));
-		m_Up = glm::cross(m_Direction, m_Right);
-
-		m_viewMat = glm::lookAt(m_Pos, m_Pos + m_Front, m_Up);*/
-		//m_viewMat = glm::lookAt(m_Pos, m_Direction, m_Up);
-
-
-		/*m_X = vec3(1.0f, 0.0f, 0.0f);
-		m_Y = vec3(0.0f, 1.0f, 0.0f);
-		m_Z = vec3(0.0f, 0.0f, 1.0f);
-
-		m_Position = vec3(0.0f, 3.0f, 5.0f);
-		m_Reference = vec3(0.0f, 0.0f, 0.0f);*/
-
-		//CalculateViewMatrix();
 	}
 
 	EngineCamera::~EngineCamera()
-	{}
+	{
+	}
 
 	void EngineCamera::RecalculateViewMatrix()
 	{
@@ -97,31 +67,29 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	update_status EngineCamera::OnUpdate(float dt)
 	{
-		/*if (m_Position == m_Target)
-			m_Target += m_Direction;
-		else*/
 		m_Direction = glm::normalize(m_Target - m_Position);
-		
 		m_Right = glm::normalize(glm::cross(m_Up, m_Direction));
 		m_Up = glm::cross(m_Direction, m_Right);
 
 		//Movement --------------------------------------------
 		float vel = 10.0f * dt;
 
+		glm::vec3 movement = glm::vec3(0.0f);
+
 		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			m_Position += m_Direction * vel;
+			movement += m_Direction * vel;
 		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			m_Position -= m_Direction * vel;
+			movement -= m_Direction * vel;
 
 		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			m_Position += m_Right * vel;
+			movement += m_Right * vel;
 		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			m_Position -= m_Right * vel;
+			movement -= m_Right * vel;
 
 		if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
-			m_Position += m_Up * vel;
+			movement += m_Up * vel;
 		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
-			m_Position -= m_Up * vel;
+			movement -= m_Up * vel;
 
 		/*if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
 			m_Rotation += 10.0f;
@@ -139,153 +107,26 @@ namespace Cronos {
 			m_Rotation = glm::quat(glm::vec3(-glm::radians(PAng), -glm::radians(YAng), 0.0f));
 		}
 
+		// Recalculate matrix -------------
+		m_Position += movement;
+		m_Target += movement;
 		RecalculateViewMatrix();
-		//m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, m_Up);
+		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, m_Up);
 		
 		
 		
-		//m_Rotation = PAng * YAng;
-
-		//	/*dir.x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
-//	dir.z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
-//	dir.y = glm::sin(glm::radians(pitch));
-
-//	glm::rotate(m_viewMat, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
-//	glm::rotate(m_viewMat, yaw, glm::vec3(0.0f, 0.0f, 1.0f));
-
-
-//	m_PitchAngle += pitch;
-//	m_YawAngle += yaw;
-
-//	UpdateVectors();
-//	//CalculateViewMatrix();
-
-//	//glm::vec3 a = m_viewMat[3];
-//	//return glm::vec3(0.0f);
-
-//	/*dir.x = glm::cos(glm::radians(pitch)) * glm::cos(glm::radians(yaw));
-//	dir.z = glm::cos(glm::radians(pitch)) * glm::sin(glm::radians(yaw));
-//	dir.y = glm::sin(glm::radians(pitch));
-
-//	glm::rotate(m_viewMat, pitch, glm::vec3(1.0f, 0.0f, 0.0f));
-//	glm::rotate(m_viewMat, yaw, glm::vec3(0.0f, 0.0f, 1.0f));
-//	m_Pos = m_viewMat[3];
-//	CalculateViewMatrix();*/
-
 		
-
-		//		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-//			m_Pos += m_Front * m_CameraMoveSpeed * dt;
-//		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-//			m_Pos -= m_Front * m_CameraMoveSpeed * dt;
-//		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-//			m_Pos -=  m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
-//		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-//			m_Pos += /*glm::normalize(glm::cross(m_Front, m_Up)*/m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
-
 		
-
-		//if (App->EditorGUI->isHoveringWinGame()) {
-
-
-		//	if (App->input->isMouseScrolling())
-		//		Zoom(dt);
-
-		//	if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
-		//	{
-		//		glm::vec3 newPos(0.0f, 0.0f, 0.0f);
-		//		newPos += -m_Right * (float)App->input->GetMouseXMotion() * dt * m_CameraMoveSpeed/2.0f;
-		//		newPos += m_Up * (float)App->input->GetMouseYMotion() * dt * m_CameraMoveSpeed/2.0f;
-		//		//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
-
-		//		m_Pos += newPos;
-		//		//m_Target += newPos;
-		//	}
-
-		//	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) {
-
-		//		//m_CameraMoveSpeed *= dt;
-
-		//		//Aplying extra impulse if LShift is pressed
-		//		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
-		//			m_CameraMoveSpeed *= 2.0f;
-		//		else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
-		//			m_CameraMoveSpeed /= 2.0f;
-
-		//		// Camera Movement On Keys WASD + Right Mouse Button ------------------------------
-		//		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-		//			m_Pos += m_Front * m_CameraMoveSpeed * dt;
-		//		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-		//			m_Pos -= m_Front * m_CameraMoveSpeed * dt;
-		//		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		//			m_Pos -=  m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
-		//		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		//			m_Pos += /*glm::normalize(glm::cross(m_Front, m_Up)*/m_Right * m_CameraMoveSpeed * dt/* * 5.5f*/;
-
-		//		if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
-		//			m_Pos.y += glm::normalize(m_Up * m_CameraMoveSpeed).y * dt;
-		//		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
-		//			m_Pos.y -= glm::normalize(m_Up * m_CameraMoveSpeed).y * dt;
-		//		
-		//		//glm::vec3 newPos(0.0f, 0.0f, 0.0f);
-		//		//if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT) newPos.y += m_CameraMoveSpeed * dt;
-		//		//if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT) newPos.y -= m_CameraMoveSpeed * dt;
-
-		//		//// Note that the vectors m_X/m_Y/m_Z contain the current axis of the camera
-		//		//if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= m_Direction * m_CameraMoveSpeed * dt;
-		//		//if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += m_Direction * m_CameraMoveSpeed * dt;
-
-		//		//if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= m_Right * m_CameraMoveSpeed * dt;
-		//		//if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += m_Right * m_CameraMoveSpeed * dt;
-
-		//		//m_Pos += newPos;
-		//		//m_Target += newPos;
-
-		//		//// Moving camera position orbiting
-		//		/*m_Pos =*/ /*m_Target +*/ CalculateMouseRotation(m_Pos, m_Pos);
-
-		//		//// Finally, we look to the reference
-		//		//LookAt(m_Target);
-		//	}
-
-		//	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
-		//	{
-		//		// Orbiting around center --- CalculateMouseRotation() is the reference postion
-		//		//m_Pos = m_Target + CalculateMouseRotation(m_Pos, m_Target);
-		//		
-		//		if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
-		//		{
-		//			glm::vec3 GO_refPos = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
-		//			OrbitAroundReference(GO_refPos);
-		//		}
-		//		else
-		//			OrbitAroundReference(glm::vec3(0.0f));
-		//	}
-		//}
-
-		//if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-		//{
-		//	if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
-		//	{
-		//		AABB GO_BB = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetAABB();
-		//		glm::vec3 posToLook = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
-
-		//		glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
-		//		size *= 1.5f;
-
-		//		glm::vec3 pos = glm::vec3(posToLook.x * size.x, posToLook.y + 1.5f, posToLook.z * size.z) + m_Front * 6.0f;
-		//		glm::vec3 ref = glm::vec3(posToLook.x, posToLook.y + 0.5f, posToLook.z + 0.5f);
-
-		//		Look(pos, ref, true);
-		//	}
-		//	else
-		//		LookAt(glm::vec3(0.0f));
-		//}
-
-		//// Recalculate matrix -------------
-		//CalculateViewMatrix();
 		return UPDATE_CONTINUE;
 	}
+
+
+
+
+
+
+
+
 
 	// -----------------------------------------------------------------
 	//void EngineCamera::CalculateMouseRotation(const glm::vec3& pos, const glm::vec3& ref)

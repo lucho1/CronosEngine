@@ -26,15 +26,15 @@ namespace Cronos {
 
 		void RecalculateViewMatrix();
 
-		glm::vec3 m_Position = glm::vec3(0.0f, 3.0f, 5.0f);
 		glm::vec3 m_Target = glm::vec3(0.0f);
+		glm::vec3 m_Position = glm::vec3(0.0f, 3.0f, 5.0f);
 		glm::vec3 m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
+
 		glm::vec3 m_Direction;
 		glm::vec3 m_Right;
 
 		//float m_Rotation = 0.0f;
 		float PAng = 0.0f, YAng = 0.0f;
-
 		glm::quat m_Rotation = glm::quat();
 
 	//public:
