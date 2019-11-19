@@ -41,7 +41,6 @@ namespace Cronos {
 	private:
 
 		Plane m_FloorPlane;
-		PrimitiveGameObject* m_SceneFloorPlane;
 		AssimpCronosImporter m_CNAssimp_Importer;
 		GameObject* m_HouseModel;
 	};

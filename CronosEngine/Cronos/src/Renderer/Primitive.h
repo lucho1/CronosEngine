@@ -9,7 +9,6 @@ namespace Cronos {
 	enum PrimitiveTypes
 	{
 		Null,
-		Primitive_Line,
 		Primitive_Plane
 	};
 
@@ -34,18 +33,6 @@ namespace Cronos {
 
 	protected:
 		PrimitiveTypes type;
-	};
-
-	// ============================================
-	class Line : public Primitive
-	{
-	public:
-		Line();
-		Line(float x, float y, float z);
-		void InnerRender() const;
-	public:
-		vec3 origin;
-		vec3 destination;
 	};
 
 	// ============================================

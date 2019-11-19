@@ -113,10 +113,10 @@ namespace Cronos {
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
 
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
@@ -144,10 +144,10 @@ namespace Cronos {
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
 		
 		//glMatrixMode(GL_PROJECTION);
 			//glLoadIdentity();

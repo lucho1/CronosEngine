@@ -123,8 +123,8 @@ namespace Cronos {
 	{
  		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
-		//App->engineCamera->CalculateProjection();
-		m_Data.Width = width; 
+		App->engineCamera->ChangeProjection();
+		m_Data.Width = width;
 		m_Data.Height = height;
 		//SetWindowFullscreen(false);
 		//SetWindowDesktopFullscreen(false);

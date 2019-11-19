@@ -42,7 +42,7 @@ namespace Cronos {
 
 		//Setters
 		void SetTitle(const char* title);
-		void SetAspectRatio(float AR) { m_Data.AspectRatio = AR;}
+		//void SetAspectRatio(float AR) { m_Data.AspectRatio = AR;}
 		//void SetWindowFullscreen(bool setStatus);
 		//void SetWindowResizable(bool setStatus);
 		//void SetWindowBorderless(bool setStatus);

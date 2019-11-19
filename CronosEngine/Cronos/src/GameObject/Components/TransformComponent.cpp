@@ -38,7 +38,7 @@ namespace Cronos {
 		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_TransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
 
-		if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+		/*if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
 			Move(glm::vec3(0.3, 0, 0));
 		if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN)
 			Scale(glm::vec3(1.2, 1.2, 1.2));
@@ -51,7 +51,7 @@ namespace Cronos {
 		if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN)
 			SetOrientation(glm::vec3(20.00, 20.00, 20.00));
 		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
-			Rotate(glm::vec3(20.00, 20.00, 20.00));
+			Rotate(glm::vec3(20.00, 20.00, 20.00));*/
 
 		//if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
 		//	Rotate(glm::vec3(1, 1, 1));
@@ -68,10 +68,10 @@ namespace Cronos {
 		glm::vec3 axis = GetCentralAxis();
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
 
 		glLineWidth(5.0f);
 		glBegin(GL_LINES);

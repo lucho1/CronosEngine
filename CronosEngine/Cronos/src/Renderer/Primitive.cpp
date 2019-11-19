@@ -29,6 +29,12 @@ namespace Cronos {
 		glPushMatrix();
 		glMultMatrixf(transform.M);
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
 		if (axis == true)
 		{
 			// Draw Axis Grid
@@ -72,6 +78,11 @@ namespace Cronos {
 
 		InnerRender();
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 		glPopMatrix();
 	}
 
@@ -107,31 +118,6 @@ namespace Cronos {
 		transform.scale(x, y, z);
 	}
 
-	// LINE ==================================================
-	Line::Line() : Primitive(), origin(0, 0, 0), destination(1, 1, 1)
-	{
-		type = PrimitiveTypes::Primitive_Line;
-	}
-
-	Line::Line(float x, float y, float z) : Primitive(), origin(0, 0, 0), destination(x, y, z)
-	{
-		type = PrimitiveTypes::Primitive_Line;
-	}
-
-	void Line::InnerRender() const
-	{
-		glLineWidth(2.0f);
-
-		glBegin(GL_LINES);
-
-		glVertex3f(origin.x, origin.y, origin.z);
-		glVertex3f(destination.x, destination.y, destination.z);
-
-		glEnd();
-
-		glLineWidth(1.0f);
-	}
-
 	// PLANE ==================================================
 	Plane::Plane() : Primitive(), normal(0, 1, 0), constant(1)
 	{
@@ -146,10 +132,10 @@ namespace Cronos {
 	void Plane::InnerRender() const
 	{
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
 
 		glLineWidth(1.0f);
 

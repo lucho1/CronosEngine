@@ -248,11 +248,11 @@ namespace Cronos {
 			glDisable(GL_BLEND);
 	}
 
-	void GLRenderer3D::OnResize(uint width, uint height) {
-
+	void GLRenderer3D::OnResize(uint width, uint height)
+	{
 		glViewport(0, 0, width, height);
-		App->window->SetAspectRatio((float)width / (float)height);
-		//App->engineCamera->CalculateProjection();
+		App->window->ReCalculateAspectRatio(width, height);
+		App->engineCamera->ChangeProjection();
 	}
 
 	//void GLRenderer3D::SetClipDistance(bool setStatus)

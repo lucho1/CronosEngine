@@ -469,12 +469,16 @@ namespace Cronos {
 				ImGui::EndMenuBar();
 			}
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
-			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
+			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y)
+			{
+				//TODO: When doing this resize it actually does a window resize, and shouldn't be like that
+				//but resizing through renderer doesn't works
 				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
-				App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
-				//App->window->OnResize(SizeGame.x, SizeGame.y);
+				//App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
+				App->window->OnResize(SizeGame.x, SizeGame.y);
 				LastSize = SizeGame;
 			}
+
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 
 			if (ImGui::BeginDragDropTarget())
@@ -1575,60 +1579,68 @@ namespace Cronos {
 	};
 	void ImGuiLayer::GUIDrawConfigViewPortMenu() {
 
-		//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
-		//static float CameraMoveSpeed= App->engineCamera->GetCameraMoveSpeed();
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+
+		//static float CameraMoveSpeed = App->engineCamera->GetCameraMoveSpeed();
 		//static float CameraScrollSpeed = App->engineCamera->GetCameraScrollSpeed();
-		//static float CameraFieldOfView = App->engineCamera->GetFOV();
-		//static float CameraNearPlane = App->engineCamera->GetNearPlane();
-		//static float CameraFarPlane = App->engineCamera->GetFarPlane();
-		//ImGui::Text("Viewport");
-		//ImGui::Separator();
-		//ImGui::Text("Viewport Camera Options");
-		//ImGui::BeginChild("Camera Options");
+		static float CameraFieldOfView = App->engineCamera->GetFOV();
+		static float CameraNearPlane = App->engineCamera->GetNearPlane();
+		static float CameraFarPlane = App->engineCamera->GetFarPlane();
+
+		ImGui::Text("Viewport");
+		ImGui::Separator();
+		ImGui::Text("Viewport Camera Options");
+		ImGui::BeginChild("Camera Options");
+
+		//Setters -----------------------------------------------------------------------------------------
 		//ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
 		//if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 		//	App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+
 		//ImGui::NewLine();
 		//ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
 		//if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 		//	App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
-		//ImGui::NewLine();
-		//ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
-		//if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
-		//	App->engineCamera->SetFOV(CameraFieldOfView);
-		//ImGui::NewLine();
-		//ImGui::SameLine(15); ImGui::Text("Viewing Frustum: ");
-		//ImGui::NewLine();
-		//ImGui::SameLine(30);
-		//ImGui::SetNextItemWidth(100);
-		//if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
-		//	App->engineCamera->SetNearPlane(CameraNearPlane);
-		//sameLine;
-		//ImGui::SetNextItemWidth(100);
+		
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
+		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+			App->engineCamera->SetFOV(CameraFieldOfView);
 
-		//if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
-		//	App->engineCamera->SetFarPlane(CameraFarPlane);
-		//
-		//if (ImGui::Button("Default")) {
-		//	CameraMoveSpeed = 5.0;
-		//	CameraScrollSpeed = 20.0;
-		//	CameraFieldOfView = 60;
-		//	CameraNearPlane = 0.125;
-		//	CameraFarPlane = 512.0;
-		//	App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
-		//	App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
-		//	App->engineCamera->SetFOV(CameraFieldOfView);
-		//	App->engineCamera->SetNearPlane(CameraNearPlane);
-		//	App->engineCamera->SetFarPlane(CameraFarPlane);
-		//
-		//}
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Viewing Frustum: ");
 
+		ImGui::NewLine();
+		ImGui::SameLine(30);
+		ImGui::SetNextItemWidth(100);
 
+		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
+			App->engineCamera->SetNearPlane(CameraNearPlane);
 
-		//ImGui::Text("Camera ")
+		sameLine;
+		ImGui::SetNextItemWidth(100);
 
-		//ImGui::EndChild();
-		//ImGui::PopStyleVar();
+		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
+			App->engineCamera->SetFarPlane(CameraFarPlane);
+
+		//Set to default values ------------------------------------------------------------------------------
+		if (ImGui::Button("Default"))
+		{
+			//CameraMoveSpeed = 5.0;
+			//CameraScrollSpeed = 20.0;
+			CameraFieldOfView = 60;
+			CameraNearPlane = 1.0;
+			CameraFarPlane = 100.0;
+			//App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+			//App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+			App->engineCamera->SetFOV(CameraFieldOfView);
+			App->engineCamera->SetNearPlane(CameraNearPlane);
+			App->engineCamera->SetFarPlane(CameraFarPlane);
+
+		}
+
+		ImGui::EndChild();
+		ImGui::PopStyleVar();
 	}
 
 	void ImGuiLayer::GUIDrawConfigInputMenu() {

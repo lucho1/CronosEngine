@@ -59,14 +59,13 @@ namespace Cronos {
 	
 			uniform int u_TextureEmpty = 1;
 
-			float nearP = 1.0;
-			float farP = 10.0;
+			uniform vec2 u_CamPlanes; //x for near plane, y for far plane
 			uniform int u_drawZBuffer = 0;
 			
 			float LinearizeZ(float depth)
 			{
 				float z = depth*2.0 - 1.0;
-				float ret = (2.0*nearP*farP)/(farP + nearP - z*(farP - nearP));
+				float ret = (2.0*u_CamPlanes.x*u_CamPlanes.y)/(u_CamPlanes.y + u_CamPlanes.x - z*(u_CamPlanes.y - u_CamPlanes.x));
 				return ret;
 			}
 
@@ -81,7 +80,7 @@ namespace Cronos {
 				color = texColor;
 				if(u_drawZBuffer == 1)
 				{
-					float depth = (LinearizeZ(gl_FragCoord.z)/farP);
+					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
 					color = vec4(vec3(depth), 1.0);
 				}
 			}
@@ -116,8 +115,6 @@ namespace Cronos {
 		//House Model Load & Floor Plane primitive
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		m_GameObjects.push_back(m_HouseModel);
-		m_SceneFloorPlane = new PrimitiveGameObject(PrimitiveType::PLANE, "FloorPrimitive", { 20.0f, 20.0f, 1.0f }, glm::vec3(0.0f), 0.6, 5, 5);
-		m_SceneFloorPlane->GetComponent<TransformComponent>()->SetOrientation(glm::vec3(-90, 0, 0));
 		
 		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f);
 		m_FloorPlane.axis = true;
@@ -128,9 +125,6 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		LOG("Unloading Intro scene");
-
-		m_SceneFloorPlane->CleanUp();
-		RELEASE(m_SceneFloorPlane);
 		for (auto element : m_GameObjects)
 		{
 			element->CleanUp();
@@ -154,6 +148,10 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
+		//"Floor" Plane
+		glColor3f(White.r, White.g, White.b);
+		m_FloorPlane.Render();
+
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
@@ -167,20 +165,11 @@ namespace Cronos {
 		//glDepthFunc(GL_ALWAYS);
 
 		BasicTestShader->Bind();
-		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
-		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
+		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
 		BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+		BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 		BasicTestShader->Unbind();
-
-		//"Floor" Plane
-		//TODO: This might conflict if Cull face isn't active
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		m_SceneFloorPlane->Update(dt);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_CULL_FACE);
-
-		m_FloorPlane.Render();
 
 		for (auto element : m_GameObjects)
 			element->Update(dt);
