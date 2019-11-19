@@ -5,13 +5,14 @@
 #include "Providers/Globals.h"
 #include "imgui.h"
 #include "Renderer/Textures.h"
-
+#include "Providers/AssimpImporter.h"
 
 namespace Cronos {
 
 	class Directories;
 	class GameObject;
 	struct CronosVertex;
+
 
 	enum class ItemType
 	{
@@ -56,11 +57,12 @@ namespace Cronos {
 		std::string GetExtension() const { return m_Extension; }
 		std::string GetDetails() const { return m_Details; }
 		inline int GetAssetID() const { return m_AssetID; }
-
+		inline bool HasMeta() const;
 
 		Directories* folderDirectory = nullptr;
 
 	private:
+		
 		std::string m_Extension;
 		int m_ElementSize;
 		char labelID[150];
@@ -105,6 +107,7 @@ namespace Cronos {
 
 	class Filesystem : public Module
 	{
+		friend AssetItems;
 	public:
 
 		Filesystem(Application* app, bool start_enabled = true) ;
@@ -131,16 +134,19 @@ namespace Cronos {
 		inline std::string GetMetaPath() const { return m_LibraryPath.c_str(); }
 
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
-
+		
 	private:
+
 		std::vector <AssetItems*> AssetArray;
 		std::vector <Directories*> DirectoriesArray;
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
 		std::string m_LibraryPath;
-	
+		//AssimpCronosImporter m_CNAssimp_Importer;
 		Directories* m_AssetRoot = nullptr;
 		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
+
+		AssimpCronosImporter m_CNAssimp_Importer;
 
 	};
 

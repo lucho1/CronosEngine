@@ -15,6 +15,8 @@ namespace Cronos {
 	class AssimpCronosImporter
 	{
 		friend class Scene;
+		friend class Filesystem;
+		friend class AssetItems;
 	private:
 
 		AssimpCronosImporter();

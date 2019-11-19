@@ -107,10 +107,12 @@ namespace Cronos {
 		BasicTestShader->Unbind();
 
 		//House Model Load
+		//if(!m_HouseModel->HasMeta())
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		App->filesystem->Load(m_HouseModel->GetMetaPath());
-		m_GameObjects.push_back(m_HouseModel);
+		GameObject* testing = App->filesystem->Load(m_HouseModel->GetMetaPath());
 
+		////App->filesystem->Load(m_HouseModel->GetMetaPath());
+		m_GameObjects.push_back(testing);
 		return ret;
 	}
 

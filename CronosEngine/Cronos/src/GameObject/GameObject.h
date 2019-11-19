@@ -63,7 +63,11 @@ namespace Cronos {
 			//LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
-
+		bool HasMeta() {
+			if (std::filesystem::exists(m_MetaPath))
+				return true;
+			return false;
+		}
 
 	public:
 
