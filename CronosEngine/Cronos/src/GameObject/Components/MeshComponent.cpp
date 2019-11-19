@@ -111,6 +111,13 @@ namespace Cronos {
 		glLineWidth(2.0f);
 		float linelength = 0.2f;
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
 		{
@@ -122,6 +129,12 @@ namespace Cronos {
 			glVertex3f(norm.x, norm.y, norm.z);
 			glEnd();
 		}
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 
 	void MeshComponent::DrawPlanesNormals()
@@ -129,6 +142,18 @@ namespace Cronos {
 		glLineWidth(2.0f);
 		float linelength = 0.5f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+		
+		//glMatrixMode(GL_PROJECTION);
+			//glLoadIdentity();
+
+		//glLoadMatrixf();
+
 		for (uint i = 0; i < m_IndicesVector.size() - 2; i += 3)
 		{
 			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
@@ -149,6 +174,12 @@ namespace Cronos {
 			glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
 			glEnd();
 		}
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 
 	void MeshComponent::CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions)

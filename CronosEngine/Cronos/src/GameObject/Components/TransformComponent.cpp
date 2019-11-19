@@ -67,6 +67,12 @@ namespace Cronos {
 		float linelength = 1.0f;
 		glm::vec3 axis = GetCentralAxis();
 
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+
 		glLineWidth(5.0f);
 		glBegin(GL_LINES);
 		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
@@ -80,6 +86,13 @@ namespace Cronos {
 		glVertex3f(axis.x, axis.y, axis.z + linelength);
 		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		glEnd();
+		glLineWidth(2.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 
 	void TransformComponent::SetPosition(glm::vec3 position)

@@ -60,7 +60,7 @@ namespace Cronos {
 			uniform int u_TextureEmpty = 1;
 
 			float nearP = 1.0;
-			float farP = 512.0;
+			float farP = 10.0;
 			uniform int u_drawZBuffer = 0;
 			
 			float LinearizeZ(float depth)
@@ -167,7 +167,7 @@ namespace Cronos {
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->m_ViewMatrix);
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->m_ProjectionMatrix);
-		BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+		BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
 		BasicTestShader->Unbind();
 
 		//"Floor" Plane
