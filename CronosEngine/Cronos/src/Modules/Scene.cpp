@@ -119,6 +119,8 @@ namespace Cronos {
 		m_SceneFloorPlane = new PrimitiveGameObject(PrimitiveType::PLANE, "FloorPrimitive", { 20.0f, 20.0f, 1.0f }, glm::vec3(0.0f), 0.6, 5, 5);
 		m_SceneFloorPlane->GetComponent<TransformComponent>()->SetOrientation(glm::vec3(-90, 0, 0));
 		
+		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f);
+		m_FloorPlane.axis = true;
 		return ret;
 	}
 
@@ -177,6 +179,8 @@ namespace Cronos {
 		m_SceneFloorPlane->Update(dt);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
+
+		m_FloorPlane.Render();
 
 		for (auto element : m_GameObjects)
 			element->Update(dt);

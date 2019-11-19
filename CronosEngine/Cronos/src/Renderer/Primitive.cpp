@@ -3,6 +3,9 @@
 #include "Providers/Globals.h"
 #include "Primitive.h"
 
+#include "Application.h"
+#include "Modules/EngineCamera.h"
+
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "glut/glut.h"
@@ -142,6 +145,12 @@ namespace Cronos {
 
 	void Plane::InnerRender() const
 	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ProjectionMatrix));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->m_ViewMatrix));
+
 		glLineWidth(1.0f);
 
 		glBegin(GL_LINES);
@@ -155,8 +164,14 @@ namespace Cronos {
 			glVertex3f(-d, 0.0f, i);
 			glVertex3f(d, 0.0f, i);
 		}
-
+		glLineWidth(2.0f);
 		glEnd();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 
 }
