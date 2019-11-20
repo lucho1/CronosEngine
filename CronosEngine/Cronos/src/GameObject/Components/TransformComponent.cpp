@@ -115,7 +115,7 @@ namespace Cronos {
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 eulerAxAngles)
 	{		
-		glm::vec3 resEuler = eulerAxAngles - m_Orientation_eulerAnglesDEG;
+		/*glm::vec3 resEuler = eulerAxAngles - m_Orientation_eulerAnglesDEG;
 		glm::bvec3 vec = glm::lessThanEqual(glm::abs(resEuler), glm::vec3(glm::epsilon<float>()));
 
 		if (glm::all(vec) || eulerAxAngles == m_Orientation_eulerAnglesDEG)
@@ -140,20 +140,43 @@ namespace Cronos {
 
 
 		if (euler_inRadians == m_Orientation_eulerAnglesRAD)
-			return;
+			return;*/
 
 		
-		glm::mat4 mat = glm::eulerAngleXYZ(euler_inRadians.x, euler_inRadians.y, euler_inRadians.z);
+		/*glm::mat4 mat = glm::eulerAngleXYZ(euler_inRadians.x, euler_inRadians.y, euler_inRadians.z);
 
 		glm::quat rot = glm::rotate(m_Orientation, euler_inRadians.x, glm::vec3(1.0f, 0.0f, 0.0f));
 		rot = glm::rotate(rot, euler_inRadians.y, glm::vec3(0.0f, 1.0f, 0.0f));
-		rot = glm::rotate(rot, euler_inRadians.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		rot = glm::rotate(rot, euler_inRadians.z, glm::vec3(0.0f, 0.0f, 1.0f));*/
 
 
 
 		//glm::quat resRot = rot * m_Orientation;
+		glm::vec3 increase = glm::radians(eulerAxAngles - m_Orientation_eulerAnglesDEG);
 
-		glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(rot);
+
+		glm::quat q1 = glm::quat(increase.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::quat q2 = glm::quat(increase.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::quat q3 = glm::quat(increase.z, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::quat rot = q1*q2*q3;
+
+		/*
+		Quaternion QuatAroundX = Quaternion( Vector3(1.0,0.0,0.0), EulerAngle.x );
+Quaternion QuatAroundY = Quaternion( Vector3(0.0,1.0,0.0), EulerAngle.y );
+Quaternion QuatAroundZ = Quaternion( Vector3(0.0,0.0,1.0), EulerAngle.z );
+Quaternion finalOrientation = QuatAroundX * QuatAroundY * QuatAroundZ;
+		*/
+
+		glm::quat res = rot * m_Orientation;
+
+		glm::mat4 mat = glm::mat4(1.0f) * glm::mat4_cast(rot);
+
+		glm::mat4 transform = m_TransformationMatrix * mat;
+		//glm::vec3 euler_inRadians = glm::radians(eulerAxAngles);
+		//
+		//glm::mat4 mat = glm::eulerAngleXYZ(euler_inRadians.x, euler_inRadians.y, euler_inRadians.z);
+		//glm::mat4 transform = m_TransformationMatrix * mat;
+		//glm::mat4 transform = m_TransformationMatrix * glm::mat4_cast(rot);
 		m_TransformationMatrix = transform;
 		DecomposeTransformation();
 	}
