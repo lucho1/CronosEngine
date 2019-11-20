@@ -17,7 +17,7 @@ namespace Cronos {
 		m_Translation = glm::vec3(0.0f);
 		m_Scale = glm::vec3(1.0f);
 
-		m_TransformationMatrix = glm::mat4(1.0f);
+		m_LocalTransformationMatrix = glm::mat4(1.0f);
 		UpdateTransform();
 	}
 
@@ -32,41 +32,8 @@ namespace Cronos {
 	void TransformComponent::Update(float dt)
 	{
 		App->scene->BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_TransformationMatrix);
+		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
-	}
-
-	void TransformComponent::DrawCentralAxis()
-	{
-		float linelength = 1.0f;
-		glm::vec3 axis = GetCentralAxis();
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-
-		glLineWidth(5.0f);
-		glBegin(GL_LINES);
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x + linelength, axis.y, axis.z);
-		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x, axis.y + linelength, axis.z);
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x, axis.y, axis.z + linelength);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glEnd();
-		glLineWidth(2.0f);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 	}
 
 	void TransformComponent::SetPosition(glm::vec3 position)
@@ -132,8 +99,22 @@ namespace Cronos {
 		//m_TransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
 		//	glm::scale(glm::mat4(1.0f), m_Scale) * glm::mat4_cast(m_Orientation);
 
-		m_TransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
+		
+
+		m_LocalTransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
 			glm::scale(glm::mat4(1.0f), m_Scale) * rotMat;
+
+
+		//GameObject* GOAttached = GetParent();
+		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
+		if (GOAttached_Parent != nullptr)
+			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;			
+		else
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
+
+		for (auto child : GetParent()->m_Childs)
+			child->GetComponent<TransformComponent>()->UpdateTransform();
+
 		//Set euler angles
 		glm::quat q = m_Orientation;
 		float pitch = -glm::atan(2 * (q.w * q.x + q.y * q.z), 1 - 2 * (q.x*q.x + q.y*q.y));
@@ -144,5 +125,40 @@ namespace Cronos {
 
 		//m_Rotation_InEulerAngles = glm::vec3(pitch, yaw, roll);
 		//m_Rotation_InEulerAngles = eu;
+	}
+
+
+	//Central Axis
+	void TransformComponent::DrawCentralAxis()
+	{
+		float linelength = 1.0f;
+		glm::vec3 axis = GetCentralAxis();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glLineWidth(5.0f);
+		glBegin(GL_LINES);
+		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+		glVertex3f(axis.x, axis.y, axis.z);
+		glVertex3f(axis.x + linelength, axis.y, axis.z);
+		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+		glVertex3f(axis.x, axis.y, axis.z);
+		glVertex3f(axis.x, axis.y + linelength, axis.z);
+		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+		glVertex3f(axis.x, axis.y, axis.z);
+		glVertex3f(axis.x, axis.y, axis.z + linelength);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glEnd();
+		glLineWidth(2.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 	}
 }

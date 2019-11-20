@@ -52,6 +52,11 @@ namespace Cronos {
 		const inline glm::vec3 GetOrientation() const { return m_Rotation_InEulerAngles; };
 		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
 
+		const inline glm::mat4 GetLocalTranformationMatrix() const { return m_LocalTransformationMatrix; }
+		const inline glm::mat4 GetGlobalTranformationMatrix() const { return m_GlobalTransformationMatrix; }
+
+		
+
 	private:
 
 		//Decompose the matrix in the position, scale vectors and orientation quaternion
@@ -63,7 +68,8 @@ namespace Cronos {
 
 	private:
 
-		glm::mat4 m_TransformationMatrix;
+		glm::mat4 m_LocalTransformationMatrix;
+		glm::mat4 m_GlobalTransformationMatrix = glm::mat4(1.0f);
 
 		glm::vec3 m_Translation;
 		glm::vec3 m_Scale;
