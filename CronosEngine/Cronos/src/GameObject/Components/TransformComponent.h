@@ -49,7 +49,7 @@ namespace Cronos {
 		//Getters
 		const inline glm::vec3 GetPosition() const { return m_Position; };
 		const inline glm::vec3 GetScale() const { return m_Scale; };
-		const inline glm::vec3 GetOrientation() const { return glm::degrees(m_Orientation_eulerAngles); };
+		const inline glm::vec3 GetOrientation() const { return m_Orientation_eulerAnglesDEG; };
 		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
 
 	private:
@@ -68,7 +68,8 @@ namespace Cronos {
 		glm::vec3 m_Position;
 		glm::vec3 m_Scale;
 		glm::quat m_Orientation;
-		glm::vec3 m_Orientation_eulerAngles;
+		glm::vec3 m_Orientation_eulerAnglesRAD;
+		glm::vec3 m_Orientation_eulerAnglesDEG;
 
 		AABB m_ContainerAABBCube;
 	};

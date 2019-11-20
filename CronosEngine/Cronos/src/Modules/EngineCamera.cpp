@@ -106,7 +106,6 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	glm::vec3 EngineCamera::Rotate(const glm::vec3& pos, const glm::vec3& ref)
 	{
-
 		float dx = (float)App->input->GetMouseXMotion() * 0.01f;
 		float dy = (float)-App->input->GetMouseYMotion() * 0.01f;
 
