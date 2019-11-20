@@ -47,15 +47,15 @@ namespace Cronos {
 		void Rotate(glm::vec3 eulerAxAngles);
 
 		//Getters
-		const inline glm::vec3 GetPosition() const { return m_Position; };
+		const inline glm::vec3 GetTranslation() const { return m_Translation; };
 		const inline glm::vec3 GetScale() const { return m_Scale; };
-		const inline glm::vec3 GetOrientation() const { return m_Orientation_eulerAnglesDEG; };
+		const inline glm::vec3 GetOrientation() const { return m_Rotation_InEulerAngles; };
 		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
 
 	private:
 
 		//Decompose the matrix in the position, scale vectors and orientation quaternion
-		void DecomposeTransformation();
+		void UpdateTransform();
 
 	public:
 
@@ -65,11 +65,16 @@ namespace Cronos {
 
 		glm::mat4 m_TransformationMatrix;
 
-		glm::vec3 m_Position;
+		glm::vec3 m_Translation;
 		glm::vec3 m_Scale;
 		glm::quat m_Orientation;
-		glm::vec3 m_Orientation_eulerAnglesRAD;
-		glm::vec3 m_Orientation_eulerAnglesDEG;
+
+
+		glm::vec3 m_Rotation_InEulerAngles;
+
+
+		//glm::vec3 m_Orientation_eulerAnglesRAD;
+		//glm::vec3 m_Orientation_eulerAnglesDEG;
 
 		AABB m_ContainerAABBCube;
 	};
