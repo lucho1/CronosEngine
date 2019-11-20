@@ -126,7 +126,9 @@ namespace Cronos {
 		void SearchFile(Directories* tempDir,const char* name);
 
 		bool SaveOwnFormat(GameObject* RootGameObject);
-		GameObject* Load(std::string MetaPath);
+		//GameObject* Load(std::string MetaPath);
+		GameObject* Filesystem::Load(int GOID);
+		bool LoadMesh(const char* filepath, std::vector<CronosVertex>&Vertices, std::vector<uint>&Indices);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }

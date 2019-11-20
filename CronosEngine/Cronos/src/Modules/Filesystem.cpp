@@ -134,6 +134,7 @@ namespace Cronos {
 		aux_JSONFile["Name"] = ToConvert->GetName().c_str();
 		aux_JSONFile["Path"] = ToConvert->GetPath().c_str();
 		aux_JSONFile["ID"] = ToConvert->GetGOID();
+		aux_JSONFile["Active"] = ToConvert->isActive();
 			
 		TransformComponent* Transform = ToConvert->GetComponent<TransformComponent>();
 		aux_JSONFile["Components"]["ComponentTransform"]["Position"][0] = Transform->GetPosition().x;
@@ -163,7 +164,7 @@ namespace Cronos {
 
 		}
 		if (ToConvert->GetParentGameObject() != nullptr) {
-			aux_JSONFile["ParentID"] = ToConvert->GetGOID();
+			aux_JSONFile["ParentID"] = ToConvert->GetParentGameObject()->GetGOID();
 		}
 
 		std::ofstream OutputFile_Stream{ filePath,std::ofstream::out };
@@ -226,6 +227,96 @@ namespace Cronos {
 				return testing;
 		}
 		return testing;
+	}
+
+	bool Filesystem::LoadMesh(const char* filepath,std::vector<CronosVertex>&Vertices, std::vector<uint>&Indices) {
+		
+		bool ret = false;
+
+		char*data=nullptr;
+		std::ifstream file { filepath,std::ios::binary};
+		
+
+		if (file.is_open()) {
+	
+			file.seekg(0, file.end);
+			uint size = file.tellg();
+			//Cursor to beggining;
+			file.seekg(0);
+
+			if (size > 0) {
+				data = new char[size];
+				file.read(data, size);
+			}
+			char* cursor = (char*)data;
+			
+			uint ranges[2];
+			uint bytes = sizeof(ranges);
+			memcpy(ranges, cursor, bytes);
+			std::vector<CronosVertex>Vertextemp(ranges[0]);
+			std::vector<uint>Indextemp(ranges[1]);
+
+			cursor += bytes;
+			bytes = sizeof(CronosVertex)*ranges[0];
+			memcpy(&Vertextemp, cursor, bytes);
+
+			cursor += bytes;
+			bytes = sizeof(uint)*ranges[1];
+			memcpy(&Indextemp, cursor, bytes);
+			Vertices = Vertextemp;
+			Indices = Indextemp;
+		}
+		else
+			LOG("FileSystem error loading file %s");
+		
+		return ret;
+	}
+
+	GameObject* Filesystem::Load(int GOID) {
+
+		std::string filename = m_LibraryPath + std::to_string(GOID) + ".model";
+		bool exists = std::filesystem::exists(filename);
+		
+		
+		
+		if (exists) {
+			std::ifstream file{ filename.c_str() };
+			if (file.is_open()) {
+				json configFile = json::parse(file);
+				int id = GOID;
+				std::string name = configFile["Name"].get<std::string>();
+				std::string Path = configFile["Path"].get<std::string>();
+				int ParentID = configFile["ParentID"].get<int>();
+				bool Active = configFile["Active"].get<bool>();
+				glm::vec3 position = glm::vec3(configFile["Components"]["ComponentTransform"]["Position"][0],
+											   configFile["Components"]["ComponentTransform"]["Position"][1],
+											   configFile["Components"]["ComponentTransform"]["Position"][2]);
+				glm::vec3 Rotation = glm::vec3(configFile["Components"]["ComponentTransform"]["Rotation"][0],
+											   configFile["Components"]["ComponentTransform"]["Rotation"][1],
+											   configFile["Components"]["ComponentTransform"]["Rotation"][2]);
+				glm::vec3 Scale = glm::vec3(configFile["Components"]["ComponentTransform"]["Scale"][0],
+										    configFile["Components"]["ComponentTransform"]["Scale"][1],
+										    configFile["Components"]["ComponentTransform"]["Scale"][2]);
+
+				GameObject* Ret = new GameObject(name, id, Path, Active, position, Rotation, Scale);
+				if (configFile["Components"]["ComponentMesh"]) 
+				{
+
+				}
+					
+					//m_JSONConfigFile["Application"]["FPS Cap"].get<int>();
+
+
+			}
+			else {
+				CRONOS_WARN(file.is_open(), "Unable to Open file to load!");
+				file.close();
+				return;
+			}
+		}
+		else {
+			CRONOS_WARN(!exists, ("Filepath %s doesn`t exist", filename.c_str()));
+		}
 	}
 
 	std::vector<uint>GetIndexVector(std::ifstream&a, int size) {
@@ -352,7 +443,7 @@ namespace Cronos {
 		Parent->m_Childs.push_back(Child);
 	}
 
-	GameObject* Filesystem::Load(std::string MetaPath)
+	GameObject* Load(std::string MetaPath)
 	{
 		//std::vector<CronosVertex>&vertices
 		GameObject* Root;
