@@ -72,6 +72,8 @@ namespace Cronos {
 
 		glm::vec3 m_Rotation_InEulerAngles;
 
+		glm::mat4 rotMat = glm::mat4(1.0f);
+
 
 		//glm::vec3 m_Orientation_eulerAnglesRAD;
 		//glm::vec3 m_Orientation_eulerAnglesDEG;

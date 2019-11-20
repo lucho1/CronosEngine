@@ -71,36 +71,44 @@ namespace Cronos {
 
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-			m_Translation = position;
-			UpdateTransform();
-		
+		m_Translation = position;
+		UpdateTransform();
 	}
 
 	void TransformComponent::SetScale(glm::vec3 scale)
 	{
-			m_Scale = scale;
-			UpdateTransform();
-		
+		m_Scale = scale;
+		UpdateTransform();
 	}
 
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 eulerAxAngles)
 	{
-		glm::vec3 increase = glm::radians(eulerAxAngles);
+		//eulerAxAngles = glm::radians(eulerAxAngles);
+		glm::mat4 rotM = glm::yawPitchRoll(eulerAxAngles.y, eulerAxAngles.x, eulerAxAngles.z);
 
+		rotMat = rotMat * rotM;
+		UpdateTransform();
+		//m_Rotation_InEulerAngles = glm::eulerAngles(glm::quat_cast(rotMat));
+		//m_Rotation_InEulerAngles = glm::extractEulerAngleXYZ(rotMat);
+
+
+
+		/*glm::vec3 euler_inRadians = glm::radians(eulerAxAngles);
 		glm::quat newRot;
-		double cy = cos(increase.y * 0.5);
-		double sy = sin(increase.y * 0.5);
-		double cp = cos(increase.x * 0.5);
-		double sp = sin(increase.x * 0.5);
-		double cr = cos(increase.z * 0.5);
-		double sr = sin(increase.z * 0.5);
+		double cy = cos(euler_inRadians.y * 0.5);
+		double sy = sin(euler_inRadians.y * 0.5);
+		double cp = cos(euler_inRadians.x * 0.5);
+		double sp = sin(euler_inRadians.x * 0.5);
+		double cr = cos(euler_inRadians.z * 0.5);
+		double sr = sin(euler_inRadians.z * 0.5);
 		newRot.w = cy * cp * cr + sy * sp * sr;
 		newRot.x = cy * cp * sr - sy * sp * cr;
 		newRot.y = sy * cp * sr + cy * sp * cr;
 		newRot.z = sy * cp * cr - cy * sp * sr;
 
 		m_Orientation = newRot * m_Orientation;
+		UpdateTransform();*/
 	}
 
 	void TransformComponent::Rotate(glm::vec3 eulerAxAngles)
@@ -121,17 +129,20 @@ namespace Cronos {
 
 	void TransformComponent::UpdateTransform()
 	{
+		//m_TransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
+		//	glm::scale(glm::mat4(1.0f), m_Scale) * glm::mat4_cast(m_Orientation);
+
 		m_TransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
-			glm::scale(glm::mat4(1.0f), m_Scale) * glm::mat4_cast(m_Orientation);
-
-
-		//glm::mat4 camTransform = glm::translate(glm::mat4(1.0f), m_Position) *
-		//	glm::mat4_cast(m_Rotation);
+			glm::scale(glm::mat4(1.0f), m_Scale) * rotMat;
+		//Set euler angles
 		glm::quat q = m_Orientation;
 		float pitch = -glm::atan(2 * (q.w * q.x + q.y * q.z), 1 - 2 * (q.x*q.x + q.y*q.y));
 		float yaw = -glm::asin(2 * (q.w * q.y - q.z * q.x));
 		float roll = -glm::atan(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y*q.y + q.z*q.z));
 
-		m_Rotation_InEulerAngles = glm::vec3(pitch, yaw, roll);
+		glm::vec3 eu = glm::eulerAngles(q);
+
+		//m_Rotation_InEulerAngles = glm::vec3(pitch, yaw, roll);
+		//m_Rotation_InEulerAngles = eu;
 	}
 }

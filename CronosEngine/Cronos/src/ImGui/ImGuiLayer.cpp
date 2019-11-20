@@ -707,9 +707,9 @@ namespace Cronos {
 				toChange = false;
 			}
 			ImGui::Text("Rotation");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, .1f))toChange = true; ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, .1f))toChange = true; ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, .1f))toChange = true;
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, 0.1f))toChange = true;
 			if (toChange) {
 				test->SetOrientation(ObjectRot);
 				toChange = false;
