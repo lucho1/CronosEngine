@@ -36,6 +36,22 @@ namespace Cronos {
 		ArrayIconTextures[(int)ItemType::ITEM_SHADER] = App->textureManager->CreateTexture("res/Icons/Shader_Icon.png", TextureType::ICON);
 		
 		m_LibraryPath = "lib/";
+		m_HiddenMeshLibPath = m_LibraryPath + "Meshes/";
+		m_HiddenMaterialLibPath = m_LibraryPath + "Materials/";
+
+		std::wstring Temp_lib = std::wstring(m_LibraryPath.begin(),m_LibraryPath.end());
+
+		SetFileAttributes(Temp_lib.c_str(),FILE_ATTRIBUTE_HIDDEN);
+
+		if (!std::filesystem::exists(m_LibraryPath))
+			std::filesystem::create_directory(m_LibraryPath);
+
+		if (!std::filesystem::exists(m_HiddenMeshLibPath))
+			std::filesystem::create_directory(m_HiddenMeshLibPath);
+
+		if (!std::filesystem::exists(m_HiddenMaterialLibPath))
+			std::filesystem::create_directory(m_HiddenMaterialLibPath);
+
 		m_RootDirectory = std::filesystem::current_path();
 		m_LabelRootDirectory = m_RootDirectory.filename().string();
 		m_AssetRoot = LoadCurrentDirectories(m_RootDirectory); 
@@ -58,20 +74,62 @@ namespace Cronos {
 		return true;
 	}
 
-	char* convertToData(GameObject* ToConvert)
-	{
-		std::string Data;
-		const char* filePath = ToConvert->GetMetaPath().c_str();
+	bool saveData(MeshComponent* mesh,const char* filePath) {
+
 		if (filePath == nullptr) {
 			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
-			return;
+			return false;
 		}
 
-		std::ofstream OutputFile_Stream{filePath};
-		OutputFile_Stream.open(filePath);
+		std::vector<CronosVertex>Vertex = mesh->GetVertexVector();
+		std::vector<uint>Index = mesh->GetIndexVector();
+
+		uint totalSize=0;
+		uint bytes = 0;
+	
+		uint range[2] = { Vertex.size(),Index.size() };
+		
+		totalSize = sizeof(range) + sizeof(CronosVertex)*Vertex.size() + sizeof(uint)*Index.size();
+
+		char*Data = new char[totalSize];
+		char*cursor = Data;
+
+		//Store Total of Vertices and Indexs
+		bytes = sizeof(range);
+		memcpy(cursor, range, bytes);
+
+		//Store Vector of struct with Vertices/Normals/TextCords
+		cursor += bytes;
+		bytes = sizeof(CronosVertex)*Vertex.size();
+		memcpy(cursor, &Vertex, bytes);
+
+		//Store Vector of Indexes
+		cursor += bytes;
+		bytes = sizeof(uint)*Index.size();
+		memcpy(cursor, &Index, bytes);
+
+		
+		std::ofstream MeshData{ filePath,std::ofstream::out };
+		MeshData << std::setw(2) <<cursor;
+		MeshData.close();
+
+		SDL_free(Data);
+		SDL_free(cursor);
+	}
+
+	bool Save(GameObject* ToConvert)
+	{
+		std::string Data= ToConvert->GetMetaPath();
+		const char* filePath = Data.c_str();
+		if (filePath == nullptr) {
+			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
+			return false;
+		}
+
 		//RootInfo
 		//std::ofstream ToSave{ RootGameObject->GetMetaPath().c_str() };
 		//ToSave << Data << std::endl;
+
 		json aux_JSONFile;
 		aux_JSONFile["Name"] = ToConvert->GetName().c_str();
 		aux_JSONFile["Path"] = ToConvert->GetPath().c_str();
@@ -91,85 +149,39 @@ namespace Cronos {
 		if (ToConvert->GetComponent<MaterialComponent>()) {
 			std::unordered_map<TextureType, Texture*>m_TexturesContainer= ToConvert->GetComponent<MaterialComponent>()->GetTextures();
 			aux_JSONFile["Components"]["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
-			aux_JSONFile["Components"]["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();
+			if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
+				aux_JSONFile["Components"]["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();		
 		}
 		if (ToConvert->GetComponent<MeshComponent>()) {
-			std::unordered_map<TextureType, Texture*>m_TexturesContainer = ToConvert->GetComponent<MaterialComponent>()->GetTextures();
-			aux_JSONFile["Components"]["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
-			aux_JSONFile["Components"]["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();
-		}
+			MeshComponent* mesh = ToConvert->GetComponent<MeshComponent>();
+			aux_JSONFile["Components"]["ComponentMesh"]["VertexSize"] = mesh->GetVertexVector().size();
+			aux_JSONFile["Components"]["ComponentMesh"]["IndexSize"] = mesh->GetIndexVector().size();
+			std::string Mesh_Path = App->filesystem->GetMeshLib();
+			Mesh_Path += std::to_string(ToConvert->GetGOID())+".mesh";
+			aux_JSONFile["Components"]["ComponentMesh"]["MeshPath"] = Mesh_Path.c_str();
+			saveData(mesh,Mesh_Path.c_str());
 
-		Data += "Name:"+ToConvert->GetName()+";\n";
-		Data += "Path:"+ToConvert->GetPath()+ ";\n";
-		Data += "ID:" + std::to_string(ToConvert->GetGOID()) + ";\n";
-		if (ToConvert->m_Childs.size() > 0) {
-			Data += "Childs:" + std::to_string(ToConvert->m_Childs.size()) +";\n";
 		}
-		Data += "Components:\n";
-		Data += "TransformComponent;\n";
-		
-		if (ToConvert->GetComponent<MaterialComponent>())
-			Data += "MaterialComponent;\n";
 		if (ToConvert->GetParentGameObject() != nullptr) {
-			Data += "ParentName:" + ToConvert->GetParentGameObject()->GetName() + ";\n";		
-		}
-		//if (ToConvert->HasVertices) {	
-		//	Data += "MeshComponent\n";
-		//	std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
-		//	std::vector<uint>indexArray = ToConvert->GetComponent<MeshComponent>()->GetIndexVector();
-		//	Data += "VertexSize:" + std::to_string(vertexArray.size()) + ";\n";
-		//	Data += "IndexSize:" + std::to_string(indexArray.size()) + ";\n";
-		//	Data += "Vertices:\n";
-		//	for (auto&a : vertexArray) {
-		//		Data += std::to_string(a.Position.x) + " " + std::to_string(a.Position.y) + " " + std::to_string(a.Position.z) + " " +
-		//			std::to_string(a.Normal.x) + " " + std::to_string(a.Normal.y) + " " + std::to_string(a.Normal.z) + " " +
-		//			std::to_string(a.TexCoords.x) + " " + std::to_string(a.TexCoords.y)+"\n";
-		//	}
-		//	Data += "EndVertex;\nIndexes:\n";
-		//	for(auto&b : indexArray) {
-		//		Data += std::to_string(b) + " ";
-		//	}
-		//	Data += "EndNode;\n";
-		//}
-
-		if (ToConvert->GetParentGameObject() == nullptr) {
-			Data += "EndNode;\n";
+			aux_JSONFile["ParentID"] = ToConvert->GetGOID();
 		}
 
-		for (auto&child : ToConvert->m_Childs) {
-			Data += convertToData(child);
-			Data += "EndNode;\n";
-		}
+		std::ofstream OutputFile_Stream{ filePath,std::ofstream::out };
 
-		char* Test = new char[Data.length() + 1];
-		std::vector<CronosVertex>vertexArray = ToConvert->GetComponent<MeshComponent>()->GetVertexVector();
+		OutputFile_Stream << std::setw(2) << aux_JSONFile;
 
-		Saveto(Test,PathMesh);
-		memcpy(Test,&vertexArray,vertexArray.size()*sizeof(CronosVertex));
+		OutputFile_Stream.close();
 
-
-
-		strcpy(Test, Data.c_str());
-		return Test;
+		return true;
 	}
 
 	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject) 
 	{
 
-		if (RootGameObject->GetMetaPath().size()<=0) {
-			RootGameObject->SetMeta(RootGameObject->GetName()+".model");
-		}
+		Save(RootGameObject);
 
-		char* Data = convertToData(RootGameObject);
-		//std::filesystem::path meta = RootGameObject->GetMetaPath().c_str();
-
-		std::ofstream ToSave{RootGameObject->GetMetaPath().c_str() };
-		ToSave << Data << std::endl;
-
-		SDL_free(Data);
-
-		for (auto& test : RootGameObject->m_Childs) {
-			SaveOwnFormat(test);
+		for (auto& childs : RootGameObject->m_Childs) {
+			SaveOwnFormat(childs);
 		}
 		return true;
 	}
@@ -431,12 +443,12 @@ namespace Cronos {
 		return Root;
 	}
 
-	bool AssetItems:: HasMeta() const {
-		std::string test = App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model";
-		if (std::filesystem::exists(std::filesystem::path(App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model")))
-			return true;
-		return false;
-	}
+	//bool AssetItems:: HasMeta() const {
+	//	std::string test = App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model";
+	//	if (std::filesystem::exists(std::filesystem::path(App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model")))
+	//		return true;
+	//	return false;
+	//}
 
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {

@@ -131,7 +131,9 @@ namespace Cronos {
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }
-		inline std::string GetMetaPath() const { return m_LibraryPath.c_str(); }
+		inline const char* GetMetaPath() const { return m_LibraryPath.c_str(); }
+		inline const char* GetMeshLib() const { return m_HiddenMeshLibPath.c_str(); }
+		inline const char* GetMatLib() const { return m_HiddenMaterialLibPath.c_str(); }
 
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 		
@@ -142,6 +144,8 @@ namespace Cronos {
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
 		std::string m_LibraryPath;
+		std::string m_HiddenMeshLibPath;
+		std::string m_HiddenMaterialLibPath;
 		//AssimpCronosImporter m_CNAssimp_Importer;
 		Directories* m_AssetRoot = nullptr;
 		Texture* ArrayIconTextures[(int)ItemType::MAX_ITEMS];
