@@ -56,8 +56,9 @@ namespace Cronos {
 	public:
 
 		//Camera Methods
-		void Look(const vec3 &pos, const vec3 &target, bool RotateAroundReference = false);
-		void LookAt(const vec3 &spot);
+		void Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference = false);
+		void LookAt(const glm::vec3& spot);
+		void Orbit(const glm::vec3& ref);
 
 	private:
 
@@ -69,7 +70,8 @@ namespace Cronos {
 		void CameraPanning(float dt);
 		void Focus();
 
-		glm::vec3 Rotate(const glm::vec3& pos, const glm::vec3& ref);
+		glm::vec3 MouseRotation(const glm::vec3& pos, const glm::vec3& ref);
+		//glm::vec3 Rotate(const glm::vec3& pos, const glm::vec3& ref);
 
 	private:
 
@@ -84,7 +86,7 @@ namespace Cronos {
 		glm::vec3 m_Right;
 		glm::vec3 m_Up;
 
-		glm::quat m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+		glm::quat m_Orientation;
 
 	private:
 

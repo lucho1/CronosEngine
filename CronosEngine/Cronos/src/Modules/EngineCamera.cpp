@@ -24,13 +24,20 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
+		m_Orientation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+		m_ViewMatrix = m_ProjectionMatrix = glm::mat4(1.0f);
+		Recalculate();
 
 		m_Target = glm::vec3(0.0f);
 		m_Position = glm::vec3(0.0f, 3.0f, 5.0f);
 		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-		m_ViewMatrix = glm::mat4(1.0f);
-		Recalculate();
+
+		m_Right = glm::vec3(1.0f, 0.0f, 0.0f);
+		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
+		m_Front = glm::vec3(0.0f, 0.0f, 1.0f);
+		Look(m_Position, m_Target, true);
+
 		return true;
 	}
 
@@ -54,7 +61,22 @@ namespace Cronos {
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 			{
 				Move(dt);
-				/*m_Position =*/ /*m_Target =*/ Rotate(m_Position, m_Target);
+				//m_Position = m_Target + Rotate(m_Position, m_Target);
+
+				LookAt(m_Target);
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
+			{
+				//Rotate(m_Position, m_Target);
+
+				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
+				{
+					glm::vec3 GO_refPos = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>()->GetCentralAxis();
+					Orbit(GO_refPos);
+				}
+				else
+					Orbit(glm::vec3(0.0f));
 			}
 		}
 
@@ -82,7 +104,7 @@ namespace Cronos {
 
 		// Recalculate -------------
 		Recalculate();
-		m_ViewMatrix = glm::lookAt(m_Position, m_Position+m_Front, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::mat4_cast(m_Rotation);
+		//m_ViewMatrix = glm::lookAt(m_Position, m_Position+m_Front, glm::vec3(0.0f, 1.0f, 0.0f)) * glm::mat4_cast(m_Orientation);
 
 		return UPDATE_CONTINUE;
 	}
@@ -99,90 +121,30 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
-	glm::vec3 EngineCamera::Rotate(const glm::vec3& pos, const glm::vec3& ref)
-	{
-		float dx = (float)App->input->GetMouseXMotion() * 0.01f;
-		float dy = (float)-App->input->GetMouseYMotion() * 0.01f;
+	//glm::vec3 EngineCamera::Rotate(const glm::vec3& pos, const glm::vec3& ref)
+	//{
+	//	float dx = (float)App->input->GetMouseXMotion() * 0.01f;
+	//	float dy = (float)-App->input->GetMouseYMotion() * 0.01f;
 
-		//dx = glm::radians(dx);
+	//	//dx = glm::radians(dx);
 
-		m_Rotation = glm::rotate(m_Rotation, dx, glm::vec3(0.0f, 1.0f, 0.0f));
+	//	m_Orientation = glm::rotate(m_Orientation, dx, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm::vec3 axis = m_Target - m_Position;
-		axis.y = 0;
-		m_Rotation = glm::rotate(m_Rotation, dy, glm::normalize(axis));
+	//	glm::vec3 axis = m_Target - m_Position;
+	//	axis.y = 0;
+	//	m_Orientation = glm::rotate(m_Orientation, dy, glm::normalize(axis));
 
-		m_Rotation = glm::normalize(m_Rotation);
+	//	m_Orientation = glm::normalize(m_Orientation);
 
-		//glm::mat4 eulerangles = glm::eulerAngleXY(dy, dx);
-		//
-		//glm::quat q1 = glm::quat(eulerangles);
-		//m_Rotation = q1 * m_Rotation;
 
-		//glm::quat Vrot = glm::rotate(m_Rotation, dy, glm::vec3(1.0f, 0.0f, 0.0f));
-		//glm::quat Hrot = glm::rotate(m_Rotation, dx, glm::vec3(0.0f, 1.0f, 0.0f));
+	//	//m_Front = glm::normalize(pos - target);
+	//	//m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
+	//	//m_Up = glm::cross(m_Front, m_Right);
 
-		
 
-		//m_Rotation = glm::normalize(Vrot) * glm::normalize(Hrot);
 
-		//m_Rotation = glm::normalize(Vrot * glm::conjugate(Hrot));
-
-		//m_Rotation = glm::rotate(m_Rotation, dy, glm::vec3(1.0f, 0.0f, 0.0f));
-		//m_Rotation = glm::rotate(m_Rotation, dx, glm::vec3(0.0f, 1.0f, 0.0f));
-
-		//m_Rotation = Vrot * m_Rotation;
-		//m_Rotation = Hrot * m_Rotation;
-
-		//m_Rotation = glm::rotate(m_Rotation, dx, m_Up);
-		//m_Rotation = glm::rotate(m_Rotation, dy, m_Right);
-
-		//glm::quat rot = glm::rotate(glm::quat(m_Rotation), dy, glm::vec3(1.0f, 0.0f, 0.0f));
-
-		//m_Rotation = rot * m_Rotation;
-
-		//m_Rotation = rot * m_Rotation;
-
-		//float radHalfAngle = ... / 2.0; //See below
-		//float sinVal = Math.Sin(radHalfAngle);
-		//float cosVal = Math.Cos(radHalfAngle);
-		//float xVal = 1.0f * sinVal;
-		//float yVal = 0.0f * sinVal;  //Here for completeness.
-		//float zVal = 0.0f * sinVal;  //Here for completeness.
-		//Quaternion rot = new Quaternion(xVal, yVal, zVal, cosVal);
-
-		return glm::vec3(0.0f);
-		//PAng += App->input->GetMouseYMotion();// * 0.25f;
-		//YAng += App->input->GetMouseXMotion();// * 0.25f;
-
-		//if (PAng > 89.0f)
-		//	PAng = 89.0f;
-		//if (PAng < -89.0f)
-		//	PAng = -89.0f;
-		//if (YAng > 89.0f)
-		//	YAng = 89.0f;
-		//if (YAng < -89.0f)
-		//	YAng = -89.0f;
-
-		//glm::vec3 rot;
-		//rot.x = glm::cos(glm::radians(YAng)) * glm::cos(glm::radians(PAng));
-		//rot.y = glm::sin(glm::radians(PAng));
-		//rot.z = glm::sin(glm::radians(YAng)) * glm::cos(glm::radians(PAng));
-		//m_Front = glm::normalize(rot);
-
-		//return rot;
-		//glm::vec3 desiredRotation = glm::rotate(pos - ref, -App->input->GetMouseXMotion()*0.003f, glm::vec3(0.0f, 1.0f, 0.0f));
-		////desiredRotation.y = 0.0f;
-
-		//glm::vec3 yRotation = glm::rotate(glm::vec3(desiredRotation), App->input->GetMouseYMotion()*0.04f, m_Right);
-
-		////desiredRotation = yRotation;
-		//float completeOrbitCheck = glm::dot(glm::normalize(glm::vec3(yRotation)), glm::vec3(0.0f, 1.0f, 0.0f));
-		//if (completeOrbitCheck > -0.95f && completeOrbitCheck < 0.95f)
-		//	desiredRotation = yRotation;
-
-		//return desiredRotation;
-	}
+	//	return glm::vec3(0.0f);
+	//}
 	
 	void EngineCamera::Move(float dt)
 	{
@@ -270,15 +232,48 @@ namespace Cronos {
 			m_Target = glm::vec3(0.0f);
 	}
 
+	glm::vec3 EngineCamera::MouseRotation(const glm::vec3 & pos, const glm::vec3 & ref)
+	{
+		return glm::vec3();
+	}
+
+	void EngineCamera::Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference)
+	{
+		m_Position = pos;
+		m_Target = target;
+
+		m_Front = glm::normalize(pos - target);
+		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
+		m_Up = glm::cross(m_Front, m_Right);
+	}
+
+	void EngineCamera::LookAt(const glm::vec3& spot)
+	{
+		m_Target = spot;
+
+		m_Front = glm::normalize(m_Position - m_Target);
+		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
+		m_Up = glm::cross(m_Front, m_Right);
+
+		Recalculate();
+	}
+
+	void EngineCamera::Orbit(const glm::vec3& ref)
+	{
+		m_Target = ref;
+
+		m_Front = glm::normalize(m_Position - m_Target);
+		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
+		m_Up = glm::cross(m_Front, m_Right);
+
+		Recalculate();
+	}
+
 	// -----------------------------------------------------------------
 	void EngineCamera::Recalculate()
 	{
-		m_Front = glm::normalize(m_Target - m_Position);
-		m_Right = glm::normalize(glm::cross(m_Up, m_Front));
-		m_Up = glm::cross(m_Front, m_Right);
-
 		glm::mat4 camTransform = glm::translate(glm::mat4(1.0f), m_Position) *
-			glm::mat4_cast(m_Rotation);
+			glm::mat4_cast(m_Orientation);
 
 		m_ViewMatrix = glm::inverse(camTransform);
 
