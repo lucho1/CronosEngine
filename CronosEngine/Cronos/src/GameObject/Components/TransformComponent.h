@@ -18,7 +18,6 @@ namespace Cronos {
 		TransformComponent(GameObject* attachedGO, bool active = true);
 		~TransformComponent();
 
-		virtual void OnStart() override;
 		virtual void Update(float dt) override;
 
 		//Type
@@ -39,18 +38,17 @@ namespace Cronos {
 		//This is to SET the game object to a desired transformation
 		void SetPosition(glm::vec3 pos);
 		void SetScale(glm::vec3 scale);
-		void SetOrientation(glm::vec3 eulerAxAngles);
+		void SetOrientation(glm::vec3 euler_angles);
 		
 		//This is to ADD the game object a transformation
 		void Move(glm::vec3 translation);
 		void Scale(glm::vec3 scale);
-		void Rotate(glm::vec3 eulerAxAngles);
+		void Rotate(glm::vec3 euler_angles);
 
 		//Getters
 		const inline glm::vec3 GetTranslation() const { return m_Translation; };
 		const inline glm::vec3 GetScale() const { return m_Scale; };
-		const inline glm::vec3 GetOrientation() const { return m_Rotation_InEulerAngles; };
-		//const inline glm::vec3 GetRotationVector() const { return glm::quat::value_type(m_Rotation); }
+		const inline glm::vec3 GetOrientation() const { return glm::degrees(m_EulerAngles); };
 
 		const inline glm::mat4 GetLocalTranformationMatrix() const { return m_LocalTransformationMatrix; }
 		const inline glm::mat4 GetGlobalTranformationMatrix() const { return m_GlobalTransformationMatrix; }
@@ -67,20 +65,15 @@ namespace Cronos {
 	private:
 
 		glm::mat4 m_LocalTransformationMatrix;
-		glm::mat4 m_GlobalTransformationMatrix = glm::mat4(1.0f);
+		glm::mat4 m_GlobalTransformationMatrix;
 
 		glm::vec3 m_Translation;
 		glm::vec3 m_Scale;
+
 		glm::quat m_Orientation;
+		glm::vec3 m_EulerAngles;
 
-		glm::vec3 m_Rotation_InEulerAngles;
-
-		glm::mat4 rotMat = glm::mat4(1.0f);
-
-
-		//glm::vec3 m_Orientation_eulerAnglesRAD;
-		//glm::vec3 m_Orientation_eulerAnglesDEG;
-
+		//AABB Cube
 		AABB m_ContainerAABBCube;
 	};
 
