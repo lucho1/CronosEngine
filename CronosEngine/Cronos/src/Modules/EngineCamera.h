@@ -38,6 +38,9 @@ namespace Cronos {
 		inline const float GetFarPlane() const { return m_FarPlane; }
 		inline const float GetFOV() const { return m_FOV; }
 
+		inline const float GetCameraMoveSpeed()			const { return m_MoveSpeed; }
+		inline const float GetCameraScrollSpeed()		const { return m_ScrollSpeed; }
+
 	public:
 
 		//Setters
@@ -45,18 +48,27 @@ namespace Cronos {
 		void SetNearPlane(float nPlane);
 		void SetFarPlane(float fPlane);
 
+		void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
+		void SetScrollSpeed(float speed) { m_ScrollSpeed = speed; }
+
 		void ChangeProjection() { m_ChangeProj = true; }
+
+	public:
+
+		//Camera Methods
+		void Look(const vec3 &pos, const vec3 &target, bool RotateAroundReference = false);
+		void LookAt(const vec3 &spot);
 
 	private:
 
 		//Camera Methods
-		void RecalculateMatrices();
-		void RecalculateVectors();
+		void Recalculate();
 
 		void Move(float dt);
 		void Zoom(float dt);
 		void CameraPanning(float dt);
 		void Focus();
+
 		glm::vec3 Rotate(const glm::vec3& pos, const glm::vec3& ref);
 
 	private:
@@ -72,10 +84,7 @@ namespace Cronos {
 		glm::vec3 m_Right;
 		glm::vec3 m_Up;
 
-		//float m_Rotation = 0.0f;
-		float PAng = 0.0f, YAng = 0.0f;
 		glm::quat m_Rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-		//float m_Rotation = 0.0f;
 
 	private:
 
