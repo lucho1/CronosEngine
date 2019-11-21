@@ -58,8 +58,7 @@ namespace Cronos {
 		//Camera Methods
 		void Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference = false);
 		void LookAt(const glm::vec3& spot);
-		void Orbit(const glm::vec3& ref);
-
+		
 	private:
 
 		//Camera Methods
@@ -87,6 +86,8 @@ namespace Cronos {
 		glm::vec3 m_Up;
 
 		glm::quat m_Orientation;
+
+		bool changeTarget = true;
 
 	private:
 
