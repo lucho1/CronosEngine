@@ -121,7 +121,6 @@
     <ClInclude Include="src\Helpers\RNGen.h" />
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
     <ClInclude Include="src\Helpers\Timers\Timer.h" />
-    <ClInclude Include="src\Helpers\glmath.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
@@ -140,7 +139,6 @@
     <ClInclude Include="src\Providers\cnpch.h" />
     <ClInclude Include="src\Renderer\Buffers.h" />
     <ClInclude Include="src\Renderer\GLRenderer3D.h" />
-    <ClInclude Include="src\Renderer\Primitive.h" />
     <ClInclude Include="src\Renderer\Shaders.h" />
     <ClInclude Include="src\Renderer\Textures.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
@@ -530,7 +528,6 @@
     <ClCompile Include="src\Helpers\RNGen.cpp" />
     <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />
     <ClCompile Include="src\Helpers\Timers\Timer.cpp" />
-    <ClCompile Include="src\Helpers\glmath.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
@@ -550,7 +547,6 @@
     </ClCompile>
     <ClCompile Include="src\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp" />
-    <ClCompile Include="src\Renderer\Primitive.cpp" />
     <ClCompile Include="src\Renderer\Shaders.cpp" />
     <ClCompile Include="src\Renderer\Textures.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />

@@ -99,9 +99,6 @@
     <ClInclude Include="src\Helpers\Timers\Timer.h">
       <Filter>src\Helpers\Timers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Helpers\glmath.h">
-      <Filter>src\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\ImGui\ImGuiLayer.h">
       <Filter>src\ImGui</Filter>
     </ClInclude>
@@ -154,9 +151,6 @@
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
-      <Filter>src\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer\Primitive.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Shaders.h">
@@ -1320,9 +1314,6 @@
     <ClCompile Include="src\Helpers\Timers\Timer.cpp">
       <Filter>src\Helpers\Timers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Helpers\glmath.cpp">
-      <Filter>src\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp">
       <Filter>src\ImGui</Filter>
     </ClCompile>
@@ -1372,9 +1363,6 @@
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
-      <Filter>src\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer\Primitive.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Renderer\Shaders.cpp">

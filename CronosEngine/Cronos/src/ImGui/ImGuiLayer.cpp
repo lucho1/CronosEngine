@@ -11,7 +11,6 @@
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
 #include "Renderer/Buffers.h"
-#include "Renderer/Primitive.h"
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 
@@ -1582,8 +1581,8 @@ namespace Cronos {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
 
-		//static float CameraMoveSpeed = App->engineCamera->GetCameraMoveSpeed();
-		//static float CameraScrollSpeed = App->engineCamera->GetCameraScrollSpeed();
+		static float CameraMoveSpeed = App->engineCamera->GetCameraMoveSpeed();
+		static float CameraScrollSpeed = App->engineCamera->GetCameraScrollSpeed();
 		static float CameraFieldOfView = App->engineCamera->GetFOV();
 		static float CameraNearPlane = App->engineCamera->GetNearPlane();
 		static float CameraFarPlane = App->engineCamera->GetFarPlane();
@@ -1594,14 +1593,14 @@ namespace Cronos {
 		ImGui::BeginChild("Camera Options");
 
 		//Setters -----------------------------------------------------------------------------------------
-		//ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
-		//if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
-		//	App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+		ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
+		if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
 
-		//ImGui::NewLine();
-		//ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
-		//if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
-		//	App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+		ImGui::NewLine();
+		ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
+		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
 		
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;

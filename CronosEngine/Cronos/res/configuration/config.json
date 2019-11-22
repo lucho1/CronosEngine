@@ -12,6 +12,23 @@
         "MusicVolume": 100,
         "SFXVolume": 100
     },
+    "EngineCamera": {
+        "CameraMoveSpeed": 10.0,
+        "CameraScrollSpeed": 3.5,
+        "FOV": 60.0,
+        "FarPlane": 100.0,
+        "InitialLookAt": [
+            -1.666666865348816,
+            6.822786808013916,
+            8.151328086853027
+        ],
+        "InitialPosition": [
+            -1.666666865348816,
+            9.822784423828125,
+            13.151328086853027
+        ],
+        "NearPlane": 1.0
+    },
     "Renderer": {
         "AntialiasedLPSmooth": false,
         "Blend": true,
@@ -35,8 +52,8 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 622,
+        "ScreenHeight": 494,
         "ScreenSize": 1,
-        "ScreenWidth": 699
+        "ScreenWidth": 594
     }
 }

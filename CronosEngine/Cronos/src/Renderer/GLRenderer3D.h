@@ -3,12 +3,11 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "glmath.h"
 #include "Light.h"
 
 namespace Cronos {
 
-#define MAX_LIGHTS 8
+//#define MAX_LIGHTS 8
 
 	struct OpenGLSettings
 	{
@@ -41,6 +40,7 @@ namespace Cronos {
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
 		void OnResize(uint width, uint height);
+
 		//Save/Load
 		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
@@ -69,20 +69,26 @@ namespace Cronos {
 		void SetGLLighting(bool setStatus);
 		void SetGLColorMaterial(bool setStatus);
 
+		//Debug stuff
+		void DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos);
+		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
+
 	public:
 
-		Light lights[MAX_LIGHTS];
+		//Light lights[MAX_LIGHTS];
+		Light centerLight;
 		SDL_GLContext context;
 		//mat3x3 NormalMatrix;
 		//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 
 	private:
 
+		glm::mat4 fPlane = glm::mat4(1.0f);
+
 		bool m_VSyncActive;
 		int m_OGL_Mv = 4, m_OGL_mv = 3; //Open GL Major and Minor version
 
 		OpenGLSettings m_CurrentSettings;
-
 	};
 
 }

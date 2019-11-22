@@ -3,7 +3,6 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "Renderer/Primitive.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/PrimitiveGameObject.h"
 #include "Renderer/Shaders.h"
@@ -33,16 +32,18 @@ namespace Cronos {
 	public:
 
 		std::vector<GameObject*>m_GameObjects;
-
 		Shader* BasicTestShader = nullptr; //To test
-
 		std::list<Texture*> m_TexturesLoaded;
 
 	private:
 
-		Plane m_FloorPlane;
 		AssimpCronosImporter m_CNAssimp_Importer;
 		GameObject* m_HouseModel;
+
+
+		bool drawZBuffer = true;
+		bool changeZBufferDrawing = true;
+		
 	};
 
 }

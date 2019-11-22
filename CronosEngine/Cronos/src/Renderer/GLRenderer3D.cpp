@@ -82,14 +82,15 @@ namespace Cronos {
 		//		ret = false;
 		//	}
 
-		//	GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		//	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
+			GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
-		//	lights[0].ref = GL_LIGHT0;
-		//	lights[0].ambient.Set(0.75f, 0.75f, 0.75f, 1.0f); //0.25f, 0.25f, 0.25f, 1.0f
-		//	lights[0].diffuse.Set(0.0f, 0.0f, 0.0f, 0.0f); //0.75f, 0.75f, 0.75f, 1.0f
-		//	lights[0].SetPos(0.0f, 0.0f, 2.5f);
-		//	lights[0].Init();
+			centerLight.ref = GL_LIGHT0;
+			centerLight.ambient.Set(0.75f, 0.75f, 0.75f, 1.0f); //0.25f, 0.25f, 0.25f, 1.0f
+			centerLight.diffuse.Set(0.0f, 0.0f, 0.0f, 0.0f); //0.75f, 0.75f, 0.75f, 1.0f
+			centerLight.SetPos(0.0f, 0.0f, 2.5f);
+			centerLight.Init();
+			centerLight.Active(true);
 
 		//	GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		//	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -118,8 +119,12 @@ namespace Cronos {
 		// light 0 on cam pos
 //		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
 
-		for (uint i = 0; i < MAX_LIGHTS; ++i)
-			lights[i].Render();
+		glm::vec3 p = App->engineCamera->GetPosition();
+		centerLight.SetPos(p.x, p.y, p.z);
+		centerLight.Render();
+
+		//for (uint i = 0; i < MAX_LIGHTS; ++i)
+		//	lights[i].Render();
 
 		return UPDATE_CONTINUE;
 	}
@@ -140,6 +145,85 @@ namespace Cronos {
 		return true;
 	}
 
+	void GLRenderer3D::DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos)
+	{
+		glm::vec3 posOpp_Down = glm::vec3(pos.x + oppositePos.x, pos.y, pos.z);
+		glm::vec3 posOpp_Top = glm::vec3(pos.x, pos.y + oppositePos.y, oppositePos.z);
+
+		glBegin(GL_QUADS);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glVertex3f(posOpp_Down.x, posOpp_Down.y, posOpp_Down.z);
+			glVertex3f(oppositePos.x, oppositePos.y, oppositePos.z);
+			glVertex3f(posOpp_Top.x, posOpp_Top.y, posOpp_Top.z);
+		glEnd();
+	}
+
+	void GLRenderer3D::DrawFloorPlane(bool drawAxis, float size)
+	{
+		//Set polygon draw mode and appropiated matrices for OGL
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(fPlane));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		float colorIntensity = 0.65f;
+
+		//Axis draw
+		if (drawAxis)
+		{
+			glLineWidth(2.0f);
+			glBegin(GL_LINES);
+
+			glColor4f(colorIntensity, 0.0f, 0.0f, 1.0f);
+			glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
+			glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
+			glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
+
+			glColor4f(0.0f, colorIntensity, 0.0f, 1.0f);
+			glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+			glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+			glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
+			glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
+
+			glColor4f(0.0f, 0.0f, colorIntensity, 1.0f);
+			glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
+			glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
+			glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
+			glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
+
+			glEnd();
+		}
+
+		//Plane draw
+		glLineWidth(1.0f);
+		glColor3f(colorIntensity, colorIntensity, colorIntensity);
+		glBegin(GL_LINES);
+
+		float d = size;
+		for (float i = -d; i <= d; i += 1.0f)
+		{
+			glVertex3f(i, 0.0f, -d);
+			glVertex3f(i, 0.0f, d);
+			glVertex3f(-d, 0.0f, i);
+			glVertex3f(d, 0.0f, i);
+		}
+		glLineWidth(2.0f);
+		glEnd();
+
+		//Set again Identity for OGL Matrices & Polygon draw to fill again
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+
+	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::SaveModuleData(json& JSONFile) const
 	{
 		JSONFile["Renderer"]["VSYNC"] = m_VSyncActive;
@@ -189,6 +273,8 @@ namespace Cronos {
 		SetOpenGLVersion(m_OGL_Mv, m_OGL_mv);
 	}
 
+
+	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::SetVsync(bool setStatus)
 	{
 		m_VSyncActive = setStatus;

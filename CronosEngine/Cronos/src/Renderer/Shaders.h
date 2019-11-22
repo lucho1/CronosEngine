@@ -2,7 +2,6 @@
 #define _SHADERS_H_
 
 #include <glm/glm.hpp>
-#include <glmath.h>
 
 namespace Cronos
 {
@@ -24,7 +23,6 @@ namespace Cronos
 
 		void SetUniformVec3f(const std::string& name, glm::vec3& vector3f);
 		void SetUniformVec2f(const std::string& name, glm::vec2& vector2f);
-		void SetUniformMat4f(const std::string &name, const mat4x4 &mat);
 		void SetUniformMat4f(const std::string &name, const glm::mat4& mat);
 		void SetUniform1i(const std::string& name, int value);
 

@@ -115,9 +115,6 @@ namespace Cronos {
 		//House Model Load & Floor Plane primitive
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		m_GameObjects.push_back(m_HouseModel);
-		
-		m_FloorPlane = Plane(0.0f, 1.0f, 0.0f, 0.0f);
-		m_FloorPlane.axis = true;
 		return ret;
 	}
 
@@ -149,9 +146,9 @@ namespace Cronos {
 	update_status Scene::OnUpdate(float dt)
 	{
 		//"Floor" Plane
-		glColor3f(White.r, White.g, White.b);
-		m_FloorPlane.Render();
+		App->renderer3D->DrawFloorPlane(true);
 
+		//Wireframe Mode (or not)
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
@@ -161,16 +158,28 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		//glEnable(GL_DEPTH_TEST);
-		//glDepthFunc(GL_ALWAYS);
-
+		//Shader bind & uniforms send
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
-		BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
-		BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+
+		if (changeZBufferDrawing)
+		{
+			changeZBufferDrawing = false;
+			drawZBuffer = !drawZBuffer;
+
+			if (drawZBuffer)
+				BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
+			else
+				BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+
+		}
+		if (drawZBuffer)
+			BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+
 		BasicTestShader->Unbind();
 
+		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
