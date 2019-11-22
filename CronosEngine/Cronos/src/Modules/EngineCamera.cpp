@@ -37,7 +37,7 @@ namespace Cronos {
 		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_Front = glm::vec3(0.0f, 0.0f, 1.0f);
 
-		Look(m_Position, m_Target, true);
+		Look(m_Position, m_Target, false);
 		return true;
 	}
 
@@ -65,14 +65,8 @@ namespace Cronos {
 				LookAt(m_Target);
 			}
 
-			static glm::vec3 prevTarget = m_Target;
-			if (changeTarget)
-				prevTarget = m_Target;
-
 			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 			{
-				changeTarget = false;
-
 				//Rotate(m_Position, m_Target);
 				m_Position = m_Target + MouseRotation(m_Position, m_Target);
 
@@ -85,14 +79,10 @@ namespace Cronos {
 				else
 					LookAt(glm::vec3(0.0f));
 			}
-			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_UP)
-			{
-				m_Target = prevTarget;
-				changeTarget = true;
-			}
-			
-		}
 
+			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_UP)
+				Look(m_Position, m_Target, false);
+		}
 		
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 			Focus();
@@ -112,8 +102,6 @@ namespace Cronos {
 
 			m_Rotation = glm::quat(glm::vec3(-glm::radians(PAng), -glm::radians(YAng), 0.0f));
 		}*/
-
-		
 
 		// Recalculate -------------
 		Recalculate();

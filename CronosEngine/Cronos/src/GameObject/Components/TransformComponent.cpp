@@ -29,6 +29,23 @@ namespace Cronos {
 		App->scene->BasicTestShader->Bind();
 		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
+
+		//Just testing if AABB is working
+		/*glPushMatrix();
+		glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		App->renderer3D->DrawQuad(GetAABB().getMin(), GetAABB().getMax());
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
 	}
 
 	void TransformComponent::SetPosition(glm::vec3 position)

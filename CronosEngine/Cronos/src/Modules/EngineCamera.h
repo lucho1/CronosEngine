@@ -91,8 +91,6 @@ namespace Cronos {
 
 		glm::quat m_Orientation;
 
-		bool changeTarget = true;
-
 	private:
 
 		//Camera Common data
