@@ -115,12 +115,20 @@ namespace Cronos {
 		//House Model Load & Floor Plane primitive
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		m_GameObjects.push_back(m_HouseModel);
+
+
+		AABB QT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
+		QT_Test = CnQuadtree(QT_Test_AABB, 2);
+
+
 		return ret;
 	}
 
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
+		QT_Test.CleanUp();
+
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
 		{
@@ -182,6 +190,20 @@ namespace Cronos {
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
+
+
+		QT_Test.Draw();
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			for (uint i = 0; i < m_GameObjects.size(); i++)
+			{
+				QT_Test.Insert(m_GameObjects[i]);
+
+				std::list<GameObject*>::iterator it = m_GameObjects[i]->m_Childs.begin();
+				for (; it != m_GameObjects[i]->m_Childs.end(); it++)
+					QT_Test.Insert(*it);
+			}
+		}
 
 		return UPDATE_CONTINUE;
 	}

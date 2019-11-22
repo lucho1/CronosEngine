@@ -152,6 +152,30 @@ namespace Cronos {
 		//Process all node's children
 		for (uint i = 0; i < as_node->mNumChildren; i++)
 			ProcessAssimpNode(as_node->mChildren[i], as_scene, motherGameObj);
+
+	//if (motherGameObj->m_Childs.size() > 0)
+	//{
+
+	//	aiVector3D translation, scaling;
+	//	aiQuaternion rotation;
+
+	//	as_node->mTransformation.Decompose(scaling, rotation, translation);
+	//	aiVector3D EulerRotation = rotation.GetEuler();
+
+	//	//scaling = scaling / 10.0f;
+	//	//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(scaling.x, scaling.y, scaling.z));
+	//	motherGameObj->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+	//	//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+
+	//	std::list<GameObject*>::iterator it = motherGameObj->m_Childs.begin();
+	//	for (; it != motherGameObj->m_Childs.end(); it++)
+	//	{
+	//		as_node->mTransformation.Decompose(scaling, rotation, translation);
+	//		//(*it)->GetComponent<TransformComponent>()->SetScale(glm::vec3(scaling.x, scaling.y, scaling.z));
+	//		(*it)->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+	//		//(*it)->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+	//	}
+	//}
 	}
 
 	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)

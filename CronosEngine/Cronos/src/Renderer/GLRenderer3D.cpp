@@ -222,6 +222,82 @@ namespace Cronos {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
+	void GLRenderer3D::DrawCube(glm::vec3 maxVec, glm::vec3 minVec)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		
+		
+		//glMatrixMode(GL_MODELVIEW);
+		//glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		//Top
+		glBegin(GL_QUADS);
+		glNormal3f(0.0f, 1.0f, 0.0f);
+
+		glVertex3f(minVec.x, maxVec.y, minVec.z);
+		glVertex3f(maxVec.x, maxVec.y, minVec.z);
+		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
+		glVertex3f(minVec.x, maxVec.y, maxVec.z);
+		glEnd();
+
+		//Front
+		glBegin(GL_QUADS);
+		glNormal3f(0.0f, 0.0f, 1.0f);
+
+		glVertex3f(minVec.x, minVec.y, minVec.z);
+		glVertex3f(maxVec.x, minVec.y, minVec.z);
+		glVertex3f(maxVec.x, maxVec.y, minVec.z);
+		glVertex3f(minVec.x, maxVec.y, minVec.z);
+		glEnd();
+
+		//Right
+		glBegin(GL_QUADS);
+		glNormal3f(1.0f, 0.0f, 0.0f);
+
+		glVertex3f(maxVec.x, minVec.y, minVec.z);
+		glVertex3f(maxVec.x, minVec.y, maxVec.z);
+		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
+		glVertex3f(maxVec.x, maxVec.y, minVec.z);
+		glEnd();
+
+		//Left
+		glBegin(GL_QUADS);
+		glNormal3f(-1.0f, 0.0f, 0.0f);
+
+		glVertex3f(minVec.x, minVec.y, minVec.z);
+		glVertex3f(minVec.x, maxVec.y, minVec.z);
+		glVertex3f(minVec.x, maxVec.y, maxVec.z);
+		glVertex3f(minVec.x, minVec.y, maxVec.z);
+		glEnd();
+
+		//Bottom
+		glBegin(GL_QUADS);
+		glNormal3f(0.0f, -1.0f, 0.0f);
+
+		glVertex3f(minVec.x, minVec.y, minVec.z);
+		glVertex3f(maxVec.x, minVec.y, minVec.z);
+		glVertex3f(maxVec.x, minVec.y, maxVec.z);
+		glVertex3f(minVec.x, minVec.y, maxVec.z);
+		glEnd();
+
+		//Back
+		glBegin(GL_QUADS);
+		glNormal3f(0.0f, 0.0f, -1.0f);
+
+		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
+		glVertex3f(maxVec.x, minVec.y, maxVec.z);
+		glVertex3f(minVec.x, minVec.y, maxVec.z);
+		glVertex3f(minVec.x, maxVec.y, maxVec.z);
+		glEnd();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
 
 	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::SaveModuleData(json& JSONFile) const

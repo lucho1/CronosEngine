@@ -9,6 +9,8 @@
 
 #include "Providers/AssimpImporter.h"
 
+#include "Helpers/CNQuadtree.h"
+
 namespace Cronos {
 
 	class AssimpCronosTranslator;
@@ -43,7 +45,8 @@ namespace Cronos {
 
 		bool drawZBuffer = true;
 		bool changeZBufferDrawing = true;
-		
+
+		CnQuadtree QT_Test;		
 	};
 
 }

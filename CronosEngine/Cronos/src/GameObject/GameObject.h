@@ -40,7 +40,7 @@ namespace Cronos {
 		//}
 		void SetName(const std::string name) { m_Name = name; }
 		void SetPath(const std::string path) { m_Path = path; }
-		void SetParent(GameObject* Go);
+		void SetParent(GameObject* Go) { Parent = Go; }
 		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
 
 		GameObject* GetParentGameObject() { return Parent; }

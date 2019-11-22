@@ -72,6 +72,7 @@ namespace Cronos {
 		//Debug stuff
 		void DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos);
 		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
+		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec);
 
 	public:
 

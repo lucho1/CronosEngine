@@ -5,11 +5,44 @@
 #include "Component.h"
 #include "MaterialComponent.h"
 
+#include "GameObject/PrimitiveGameObject.h"
+
 #include <AABB.hpp>
 
 namespace Cronos {
 
 	class GameObject;
+
+	/*class BoundingBox
+	{
+	public:
+
+		BoundingBox() {}
+		BoundingBox(GameObject* GameObjectAttached);
+		void Update(float dt);
+
+		void CleanUp()
+		{
+			RELEASE(AABBox);
+			RELEASE(OBBox);
+		}
+
+		bool IsNull()
+		{
+			if (this == nullptr)
+				return true;
+			if(AABBox == nullptr || OBBox == nullptr)
+				return true;
+			return false;
+		}
+
+	private:
+
+		PrimitiveGameObject* AABBox = nullptr;
+		PrimitiveGameObject* OBBox = nullptr;
+
+		GameObject* GOAttached = nullptr;
+	};*/
 
 	class TransformComponent : public Component
 	{
@@ -75,6 +108,7 @@ namespace Cronos {
 
 		//AABB Cube
 		AABB m_ContainerAABBCube;
+		//BoundingBox* TrueAABB;
 	};
 
 }

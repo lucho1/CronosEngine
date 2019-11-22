@@ -118,6 +118,7 @@
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
+    <ClInclude Include="src\Helpers\CNQuadtree.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
     <ClInclude Include="src\Helpers\Timers\Timer.h" />
@@ -523,6 +524,7 @@
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
+    <ClCompile Include="src\Helpers\CNQuadtree.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />

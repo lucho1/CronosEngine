@@ -16,16 +16,16 @@
         "CameraMoveSpeed": 10.0,
         "CameraScrollSpeed": 3.5,
         "FOV": 60.0,
-        "FarPlane": 100.0,
+        "FarPlane": 1000.0,
         "InitialLookAt": [
-            -1.666666865348816,
-            6.822786808013916,
-            8.151328086853027
+            -8.169734001159668,
+            178.34454345703125,
+            21.312355041503906
         ],
         "InitialPosition": [
-            -1.666666865348816,
-            9.822784423828125,
-            13.151328086853027
+            -8.169962882995605,
+            178.34925842285156,
+            21.31402587890625
         ],
         "NearPlane": 1.0
     },
@@ -52,8 +52,8 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 494,
+        "ScreenHeight": 631,
         "ScreenSize": 1,
-        "ScreenWidth": 594
+        "ScreenWidth": 1193
     }
 }
