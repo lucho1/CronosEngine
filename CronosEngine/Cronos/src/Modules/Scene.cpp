@@ -109,8 +109,9 @@ namespace Cronos {
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		GameObject* testing = App->filesystem->Load(m_HouseModel->GetMetaPath());
+		int id = m_HouseModel->GetGOID();
 
+		GameObject* testing = App->filesystem->Load(id);
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		m_GameObjects.push_back(testing);
 		return ret;

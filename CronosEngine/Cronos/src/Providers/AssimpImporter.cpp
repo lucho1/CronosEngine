@@ -188,7 +188,7 @@ namespace Cronos {
 			maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
 			tmp_VertexVector.push_back(tmpVertex);
 		}
-
+	
 		//Set the AABB Cube
 		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
 		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
@@ -221,6 +221,15 @@ namespace Cronos {
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		
+		int size = as_mesh->mNumVertices;
+		meshComp->Position = new float[size*3];
+		memcpy(meshComp->Position, as_mesh->mVertices, sizeof(float)*size * 3);
+		meshComp->BufferSize[0] = size;
+		//meshComp->Normal = new float[size * 3];
+
+		//for(int = 0;i<)
+
+
 		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector);
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);

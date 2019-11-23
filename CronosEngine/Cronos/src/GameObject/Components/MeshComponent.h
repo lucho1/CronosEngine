@@ -16,6 +16,7 @@ namespace Cronos {
 		glm::vec2 TexCoords;
 		CronosVertex(){};
 		CronosVertex(std::vector<float>a) { Position.x = a[0], Position.y = a[1], Position.z = a[2], Normal.x = a[3], Normal.y = a[4], Normal.z = a[5], TexCoords.x = a[6], TexCoords.y = a[7]; }
+		
 	};
 
 	class MeshComponent : public Component
@@ -38,6 +39,13 @@ namespace Cronos {
 		static ComponentType GetType() { return ComponentType::MESH; }
 		std::vector<CronosVertex> m_VertexVector;
 
+		uint* Index = nullptr;
+		float*Position = nullptr;
+		float*Normal = nullptr;
+		float*TextureV = nullptr;
+
+		uint BufferSize[4];
+
 	private:
 
 		void CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions);
@@ -54,6 +62,8 @@ namespace Cronos {
 		VertexArray* m_MeshVAO = nullptr;
 		VertexBuffer* m_MeshVBO = nullptr;
 		IndexBuffer* m_MeshIBO = nullptr;
+
+
 
 		bool m_DebugDraw = false;
 		bool m_NormalsCalculated = false;

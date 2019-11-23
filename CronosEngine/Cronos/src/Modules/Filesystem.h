@@ -128,7 +128,7 @@ namespace Cronos {
 		bool SaveOwnFormat(GameObject* RootGameObject);
 		//GameObject* Load(std::string MetaPath);
 		GameObject* Filesystem::Load(int GOID);
-		bool LoadMesh(const char* filepath, std::vector<CronosVertex>&Vertices, std::vector<uint>&Indices);
+		bool LoadMesh(const char* filepath,MeshComponent& mesh);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }

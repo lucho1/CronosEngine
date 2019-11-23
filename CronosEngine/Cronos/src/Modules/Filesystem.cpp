@@ -81,40 +81,109 @@ namespace Cronos {
 			return false;
 		}
 
-		std::vector<CronosVertex>Vertex = mesh->GetVertexVector();
-		std::vector<uint>Index = mesh->GetIndexVector();
+		//std::vector<CronosVertex>Vertex = mesh->GetVertexVector();
+		//std::vector<uint>Index = mesh->GetIndexVector();
 
 		uint totalSize=0;
 		uint bytes = 0;
-	
-		uint range[2] = { Vertex.size(),Index.size() };
+		int a  = sizeof(CronosVertex);
+	//change to 4
+		uint range[1] = { mesh->BufferSize[0]};
 		
-		totalSize = sizeof(range) + sizeof(CronosVertex)*Vertex.size() + sizeof(uint)*Index.size();
+		totalSize = sizeof(range) + sizeof(float) * 3 * range[0];
 
 		char*Data = new char[totalSize];
 		char*cursor = Data;
-
+		
 		//Store Total of Vertices and Indexs
 		bytes = sizeof(range);
 		memcpy(cursor, range, bytes);
 
-		//Store Vector of struct with Vertices/Normals/TextCords
 		cursor += bytes;
-		bytes = sizeof(CronosVertex)*Vertex.size();
-		memcpy(cursor, &Vertex, bytes);
-
-		//Store Vector of Indexes
+		bytes = sizeof(float) * 3 * range[0];
+		memcpy(cursor, mesh->Position, bytes);
 		cursor += bytes;
-		bytes = sizeof(uint)*Index.size();
-		memcpy(cursor, &Index, bytes);
 
+		////Store Vector of Indexes
+		//cursor += bytes;
+		//bytes = sizeof(std::vector<uint>)*Index.size();
+		//memcpy(cursor, &Index, bytes);
+
+		////Store Vector of struct with Vertices/Normals/TextCords
 		
-		std::ofstream MeshData{ filePath,std::ofstream::out };
-		MeshData << std::setw(2) <<cursor;
+	
+
+		//memcpy(cursor, Vertex.data(), bytes);
+		
+	/*	for (auto t = Vertex.begin(); t != Vertex.end();++t) {
+			cursor += bytes;
+			bytes = sizeof(CronosVertex);
+			CronosVertex ToData = *t;
+			CronosVertex* pt = new CronosVertex(*t);
+			CronosVertex* Now = new CronosVertex();
+			memcpy(cursor, pt, bytes);
+			memcpy(Now, cursor, bytes);
+			bool a = true;
+		}*/
+		//for (auto t = Index.begin(); t != Index.end(); ++t) {
+		//	cursor += bytes;
+		//	bytes = sizeof(uint);
+		//	uint* ToData = new uint(*t);
+		//	memcpy(cursor, ToData, bytes);
+		//	uint*temp = malloc(sizeof(uint));
+		//}
+		//uint ranges2[2];
+		//uint bytes2 = sizeof(ranges2);
+		//memcpy(ranges2, cursor, bytes2);
+
+		//std::vector<CronosVertex>Vertex2(ranges2[0]);
+		//cursor += bytes2;
+		//bytes2 = sizeof(CronosVertex)*ranges2[0];
+		//memcpy(&Vertex2[0], cursor, bytes2);
+
+		//uint *Index2 = &Index[0];
+		//cursor += bytes;
+		//bytes = sizeof(uint)*range[1];
+		////memcpy(cursor, Index2, bytes);
+		//std::copy(Index.begin(), Index.end(), cursor);
+		//std::vector<uint>vec(cursor, cursor + range[1]);
+
+
+		//cursor += bytes;
+		//bytes = sizeof(CronosVertex)*range[0];
+		//memcpy(cursor,&Vertex, bytes);
+
+
+
+		//std::copy(Vertex.begin(), Vertex.end(), cursor);
+		//std::vector<CronosVertex>vec2(cursor, cursor + range[0]);
+
+		//std::vector<CronosVertex>vec2(cursor, cursor + range[0]);
+		//CronosVertex*VertexTest = &Vertex[0];
+		////std::vector<CronosVertex>*VertexTest = new std::vector<CronosVertex>(Vertex);
+		//cursor += bytes;
+		//bytes = sizeof(CronosVertex)*range[0];
+		//memcpy(cursor, VertexTest, bytes);
+
+
+		std::ofstream MeshData{filePath, std::ios::binary };
+		MeshData.write(Data, totalSize);
 		MeshData.close();
 
+
 		SDL_free(Data);
-		SDL_free(cursor);
+		//SDL_free(cursor);
+		//cursor = nullptr;
+
+		
+		//delete Index2;
+		//delete VertexTest;
+		//Data = nullptr;
+		//cursor = nullptr;
+		//tempVertex=nullptr;
+		//tempIndex = nullptr;
+	
+		//char*Data2
 	}
 
 	bool Save(GameObject* ToConvert)
@@ -137,36 +206,46 @@ namespace Cronos {
 		aux_JSONFile["Active"] = ToConvert->isActive();
 			
 		TransformComponent* Transform = ToConvert->GetComponent<TransformComponent>();
-		aux_JSONFile["Components"]["ComponentTransform"]["Position"][0] = Transform->GetPosition().x;
-		aux_JSONFile["Components"]["ComponentTransform"]["Position"][1] = Transform->GetPosition().y;
-		aux_JSONFile["Components"]["ComponentTransform"]["Position"][2] = Transform->GetPosition().z;
-		aux_JSONFile["Components"]["ComponentTransform"]["Rotation"][0] = Transform->GetRotation().x;
-		aux_JSONFile["Components"]["ComponentTransform"]["Rotation"][1] = Transform->GetRotation().y;
-		aux_JSONFile["Components"]["ComponentTransform"]["Rotation"][2] = Transform->GetRotation().z;
-		aux_JSONFile["Components"]["ComponentTransform"]["Scale"][0] = Transform->GetScale().x;
-		aux_JSONFile["Components"]["ComponentTransform"]["Scale"][1] = Transform->GetScale().y;
-		aux_JSONFile["Components"]["ComponentTransform"]["Scale"][2] = Transform->GetScale().z;
+		aux_JSONFile["ComponentTransform"]["Position"][0] = Transform->GetPosition().x;
+		aux_JSONFile["ComponentTransform"]["Position"][1] = Transform->GetPosition().y;
+		aux_JSONFile["ComponentTransform"]["Position"][2] = Transform->GetPosition().z;
+		aux_JSONFile["ComponentTransform"]["Rotation"][0] = Transform->GetRotation().x;
+		aux_JSONFile["ComponentTransform"]["Rotation"][1] = Transform->GetRotation().y;
+		aux_JSONFile["ComponentTransform"]["Rotation"][2] = Transform->GetRotation().z;
+		aux_JSONFile["ComponentTransform"]["Scale"][0] = Transform->GetScale().x;
+		aux_JSONFile["ComponentTransform"]["Scale"][1] = Transform->GetScale().y;
+		aux_JSONFile["ComponentTransform"]["Scale"][2] = Transform->GetScale().z;
 
 		if (ToConvert->GetComponent<MaterialComponent>()) {
 			std::unordered_map<TextureType, Texture*>m_TexturesContainer= ToConvert->GetComponent<MaterialComponent>()->GetTextures();
-			aux_JSONFile["Components"]["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
+			aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
 			if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
-				aux_JSONFile["Components"]["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();		
+				aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();		
 		}
 		if (ToConvert->GetComponent<MeshComponent>()) {
 			MeshComponent* mesh = ToConvert->GetComponent<MeshComponent>();
-			aux_JSONFile["Components"]["ComponentMesh"]["VertexSize"] = mesh->GetVertexVector().size();
-			aux_JSONFile["Components"]["ComponentMesh"]["IndexSize"] = mesh->GetIndexVector().size();
+			aux_JSONFile["ComponentMesh"]["VertexSize"] = mesh->GetVertexVector().size();
+			aux_JSONFile["ComponentMesh"]["IndexSize"] = mesh->GetIndexVector().size();
 			std::string Mesh_Path = App->filesystem->GetMeshLib();
 			Mesh_Path += std::to_string(ToConvert->GetGOID())+".mesh";
-			aux_JSONFile["Components"]["ComponentMesh"]["MeshPath"] = Mesh_Path.c_str();
+			aux_JSONFile["ComponentMesh"]["MeshPath"] = Mesh_Path.c_str();
 			saveData(mesh,Mesh_Path.c_str());
 
 		}
 		if (ToConvert->GetParentGameObject() != nullptr) {
 			aux_JSONFile["ParentID"] = ToConvert->GetParentGameObject()->GetGOID();
 		}
-
+		if (ToConvert->GetCountChilds() > 0) 
+		{
+			aux_JSONFile["Childs"]["NumberChilds"] = ToConvert->GetCountChilds();
+			int index = 0;
+			for (auto&childs :ToConvert->m_Childs)
+			{
+				aux_JSONFile["Childs"]["IDChild"][index] = childs->GetGOID();
+				aux_JSONFile["Childs"]["MetaPath"][index] = childs->GetMetaPath();
+				++index;
+			}
+		}
 		std::ofstream OutputFile_Stream{ filePath,std::ofstream::out };
 
 		OutputFile_Stream << std::setw(2) << aux_JSONFile;
@@ -178,7 +257,6 @@ namespace Cronos {
 
 	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject) 
 	{
-
 		Save(RootGameObject);
 
 		for (auto& childs : RootGameObject->m_Childs) {
@@ -229,46 +307,50 @@ namespace Cronos {
 		return testing;
 	}
 
-	bool Filesystem::LoadMesh(const char* filepath,std::vector<CronosVertex>&Vertices, std::vector<uint>&Indices) {
+	bool Filesystem::LoadMesh(const char* filepath, MeshComponent& mesh) {
 		
 		bool ret = false;
 
-		char*data=nullptr;
-		std::ifstream file { filepath,std::ios::binary};
-		
+		char*data2 = nullptr;
+		std::ifstream file{ filepath, std::ios::binary };
 
+		char* cursor2 = nullptr;
 		if (file.is_open()) {
-	
+
 			file.seekg(0, file.end);
 			uint size = file.tellg();
 			//Cursor to beggining;
 			file.seekg(0);
 
 			if (size > 0) {
-				data = new char[size];
-				file.read(data, size);
+				data2 = new char[size];
+				file.read(data2, size);
+
 			}
-			char* cursor = (char*)data;
+			cursor2 = (char*)data2;
+
+			uint ranges[1];
+
+			uint bytes2 = sizeof(ranges);
+			memcpy(ranges, cursor2, bytes2);
+			mesh.BufferSize[0] = ranges[0];
+			cursor2 += bytes2;
 			
-			uint ranges[2];
-			uint bytes = sizeof(ranges);
-			memcpy(ranges, cursor, bytes);
-			std::vector<CronosVertex>Vertextemp(ranges[0]);
-			std::vector<uint>Indextemp(ranges[1]);
+			bytes2 = sizeof(float) * 3 * ranges[0];
+			mesh.Position = new float[ranges[0] * 3];
+			memcpy(mesh.Position, cursor2, bytes2);
+			cursor2+=bytes2;
 
-			cursor += bytes;
-			bytes = sizeof(CronosVertex)*ranges[0];
-			memcpy(&Vertextemp, cursor, bytes);
-
-			cursor += bytes;
-			bytes = sizeof(uint)*ranges[1];
-			memcpy(&Indextemp, cursor, bytes);
-			Vertices = Vertextemp;
-			Indices = Indextemp;
+			bool a = true;
 		}
 		else
 			LOG("FileSystem error loading file %s");
 		
+		//Vertices = std::vector<CronosVertex>(*tempVertex);
+		
+		//std::vector<CronosVertex>asdasef(*tempVertex);
+		SDL_free(data2);
+		cursor2 = nullptr;
 		return ret;
 	}
 
@@ -277,46 +359,73 @@ namespace Cronos {
 		std::string filename = m_LibraryPath + std::to_string(GOID) + ".model";
 		bool exists = std::filesystem::exists(filename);
 		
-		
-		
 		if (exists) {
 			std::ifstream file{ filename.c_str() };
+			
 			if (file.is_open()) {
+
 				json configFile = json::parse(file);
 				int id = GOID;
 				std::string name = configFile["Name"].get<std::string>();
 				std::string Path = configFile["Path"].get<std::string>();
-				int ParentID = configFile["ParentID"].get<int>();
+				if(configFile.contains("ParentID"))
+					int ParentID = configFile["ParentID"].get<int>();
 				bool Active = configFile["Active"].get<bool>();
-				glm::vec3 position = glm::vec3(configFile["Components"]["ComponentTransform"]["Position"][0],
-											   configFile["Components"]["ComponentTransform"]["Position"][1],
-											   configFile["Components"]["ComponentTransform"]["Position"][2]);
-				glm::vec3 Rotation = glm::vec3(configFile["Components"]["ComponentTransform"]["Rotation"][0],
-											   configFile["Components"]["ComponentTransform"]["Rotation"][1],
-											   configFile["Components"]["ComponentTransform"]["Rotation"][2]);
-				glm::vec3 Scale = glm::vec3(configFile["Components"]["ComponentTransform"]["Scale"][0],
-										    configFile["Components"]["ComponentTransform"]["Scale"][1],
-										    configFile["Components"]["ComponentTransform"]["Scale"][2]);
+				glm::vec3 position = glm::vec3(configFile["ComponentTransform"]["Position"][0],
+											   configFile["ComponentTransform"]["Position"][1],
+											   configFile["ComponentTransform"]["Position"][2]);
+				glm::vec3 Rotation = glm::vec3(configFile["ComponentTransform"]["Rotation"][0],
+											   configFile["ComponentTransform"]["Rotation"][1],
+											   configFile["ComponentTransform"]["Rotation"][2]);
+				glm::vec3 Scale = glm::vec3(configFile["ComponentTransform"]["Scale"][0],
+										    configFile["ComponentTransform"]["Scale"][1],
+										    configFile["ComponentTransform"]["Scale"][2]);
 
 				GameObject* Ret = new GameObject(name, id, Path, Active, position, Rotation, Scale);
-				if (configFile["Components"]["ComponentMesh"]) 
-				{
+				if (configFile.contains("ComponentMesh")) {
+					if (configFile.contains("ComponentMesh"))
+					{
+						MeshComponent* MeshComp = ((MeshComponent*)(Ret->CreateComponent(ComponentType::MESH)));
+						std::string MeshPath = configFile["ComponentMesh"]["MeshPath"].get < std::string >();
+						std::vector<CronosVertex>VertexVector;
+						std::vector<uint>IndexVector;
+						LoadMesh(MeshPath.c_str(), *MeshComp);
+						MeshComp->SetupMesh(VertexVector, IndexVector);
+						Ret->m_Components.push_back(MeshComp);
+					}
+					if (configFile.contains("ComponentMaterial"))
+					{
 
+						//MaterialComponent* MatComp = (MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL));
+						//Texture* texTemp = 
+						//for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
+						//	MatComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
+
+						//matComp->SetShader(App->scene->BasicTestShader);
+						//GO->m_Components.push_back(matComp);
+					}
 				}
-					
-					//m_JSONConfigFile["Application"]["FPS Cap"].get<int>();
-
-
+				if (configFile.contains("Childs"))
+				{
+					int numOfChilds = configFile["Childs"]["NumberChilds"].get<int>();
+					for (int i = 0; i < numOfChilds; ++i) {
+						int ChildID = configFile["Childs"]["IDChild"][i].get<int>();					
+						Ret->m_Childs.push_back(Load(ChildID));
+					}
+				}
+				
+				return Ret;
 			}
 			else {
 				CRONOS_WARN(file.is_open(), "Unable to Open file to load!");
 				file.close();
-				return;
+				return nullptr;
 			}
 		}
 		else {
 			CRONOS_WARN(!exists, ("Filepath %s doesn`t exist", filename.c_str()));
 		}
+		return nullptr;
 	}
 
 	std::vector<uint>GetIndexVector(std::ifstream&a, int size) {
