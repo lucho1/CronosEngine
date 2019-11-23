@@ -57,7 +57,7 @@ namespace Cronos {
 			delete[] m_Nodes;
 	}
 
-	void CnQT_Node::Split()
+	/*void CnQT_Node::Split()
 	{
 		m_Leaf = false;
 
@@ -100,6 +100,76 @@ namespace Cronos {
 			m_NodeType= NodeType::PARENT;
 
 		m_ChildsQuantity = 4;
+	}*/
+
+	void CnQT_Node::Split()
+	{
+		m_Leaf = false;
+
+		AABB children[8];
+
+		glm::vec3 max, min;
+		glm::vec3 c_Min = m_CubicSpace.getMin();
+		glm::vec3 c_Max = m_CubicSpace.getMax();
+
+		max = glm::vec3(c_Max.x, c_Max.y, c_Max.z);
+		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+
+		//Set new node with those max and min
+		children[0] = AABB(min, max);
+
+		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Max.y, c_Max.z);
+		min = glm::vec3(c_Min.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+
+		//Set new node with those max and min
+		children[1] = AABB(min, max);
+
+		max = glm::vec3(c_Max.x, c_Max.y, (c_Max.z + c_Min.z) / 2.0f);
+		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Min.z);
+
+		//Set new node with those max and min
+		children[2] = AABB(min, max);
+
+		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Max.y, (c_Max.z + c_Min.z) / 2.0f);
+		min = glm::vec3(c_Min.x, (c_Min.y + c_Max.y) / 2.0f, c_Min.z);
+
+		//Set new node with those max and min
+		children[3] = AABB(min, max);
+
+		//--------------------------------------
+		max = glm::vec3(c_Max.x, (c_Min.y + c_Max.y) / 2.0f, c_Max.z);
+		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Min.y, (c_Max.z + c_Min.z) / 2.0f);
+
+		//Set new node with those max and min
+		children[4] = AABB(min, max);
+
+		max = glm::vec3((c_Max.x + c_Min.x)/ 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Max.z);
+		min = glm::vec3(c_Min.x, c_Min.y, (c_Max.z + c_Min.z) / 2.0f);
+
+		//Set new node with those max and min
+		children[5] = AABB(min, max);
+
+		max = glm::vec3(c_Max.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Min.y, c_Min.z);
+
+		//Set new node with those max and min
+		children[6] = AABB(min, max);
+
+		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Min.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+		min = glm::vec3(c_Min.x, c_Min.y, c_Min.z);
+
+		//Set new node with those max and min
+		children[7] = AABB(min, max);
+
+		//Setup the new nodes ---------------------------------------------------
+		m_Nodes = new CnQT_Node[8];
+		for (int i = 0; i < 8; i++)
+			m_Nodes[i] = CnQT_Node(children[i], NodeType::CHILD, m_Capacity);
+
+		if (m_NodeType != NodeType::ROOT)
+			m_NodeType = NodeType::PARENT;
+
+		m_ChildsQuantity = 8;
 	}
 
 	void CnQT_Node::Draw()
