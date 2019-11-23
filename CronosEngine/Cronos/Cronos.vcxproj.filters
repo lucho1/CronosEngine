@@ -1279,8 +1279,8 @@
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject\Components\MaterialComponent.h" />
-    <ClInclude Include="src\Helpers\CNQuadtree.h" />
     <ClInclude Include="src\Helpers\AABB.h" />
+    <ClInclude Include="src\Helpers\CNOctree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1383,7 +1383,7 @@
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp" />
-    <ClCompile Include="src\Helpers\CNQuadtree.cpp" />
     <ClCompile Include="src\Helpers\AABB.cpp" />
+    <ClCompile Include="src\Helpers\CNOctree.cpp" />
   </ItemGroup>
 </Project>

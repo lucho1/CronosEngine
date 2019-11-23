@@ -43,7 +43,6 @@ namespace Cronos {
 
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
-		void DrawCentralAxis();
 
 	private:
 

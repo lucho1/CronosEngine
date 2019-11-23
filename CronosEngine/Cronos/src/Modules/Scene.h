@@ -9,7 +9,7 @@
 
 #include "Providers/AssimpImporter.h"
 
-#include "Helpers/CNQuadtree.h"
+#include "Helpers/CNOctree.h"
 
 namespace Cronos {
 
@@ -46,7 +46,7 @@ namespace Cronos {
 		//bool drawZBuffer = false;
 		//bool changeZBufferDrawing = true;
 
-		CnQuadtree QT_Test;		
+		CnOctree OT_Test;		
 	};
 
 }

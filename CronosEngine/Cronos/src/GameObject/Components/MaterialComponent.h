@@ -26,7 +26,6 @@ namespace Cronos
 		Shader* m_ShaderAttached = nullptr;
 
 	private:
-
 		
 		std::unordered_map<TextureType, Texture*>m_TexturesContainer;
 	};

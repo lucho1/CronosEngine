@@ -116,9 +116,8 @@ namespace Cronos {
 		m_GameObjects.push_back(m_HouseModel);
 
 
-		AABB QT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		QT_Test = CnQuadtree(QT_Test_AABB, 2);
-
+		AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
+		OT_Test = CnOctree(OT_Test_AABB, 2);
 
 		return ret;
 	}
@@ -126,7 +125,7 @@ namespace Cronos {
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
-		QT_Test.CleanUp();
+		OT_Test.CleanUp();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -191,17 +190,23 @@ namespace Cronos {
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-		QT_Test.Draw();
+		OT_Test.Draw();
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			for (uint i = 0; i < m_GameObjects.size(); i++)
 			{
-				QT_Test.Insert(m_GameObjects[i]);
+				OT_Test.Insert(m_GameObjects[i]);
 
 				std::list<GameObject*>::iterator it = m_GameObjects[i]->m_Childs.begin();
 				for (; it != m_GameObjects[i]->m_Childs.end(); it++)
-					QT_Test.Insert(*it);
+					OT_Test.Insert(*it);
 			}
+		}
+		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN && OT_Test.IsSplitted())
+		{
+			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
+			OT_Test.CleanUp();
+			OT_Test = CnOctree(OT_Test_AABB, 2);
 		}
 
 		return UPDATE_CONTINUE;
