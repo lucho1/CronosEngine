@@ -90,6 +90,8 @@ namespace Cronos {
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
 
 		glPushMatrix();
+
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
 		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
 
 		glMatrixMode(GL_PROJECTION);
@@ -125,6 +127,7 @@ namespace Cronos {
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 
 		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
 		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
 
 		glMatrixMode(GL_PROJECTION);
