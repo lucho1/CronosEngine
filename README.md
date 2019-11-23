@@ -19,6 +19,9 @@ Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho 
 We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/projects/SDL_mixer/), STL, [OpenGL4](https://www.opengl.org/) with [GLAD](https://glad.dav1d.de/), [ImGui](https://github.com/ocornut/imgui), [Premake](https://premake.github.io/), [GLM](https://glm.g-truc.net/0.9.9/index.html), [GPUDetect](https://github.com/GameTechDev/gpudetect), [MMRG](https://www.flipcode.com/archives/Presenting_A_Memory_Manager.shtml), [ParShapes](https://prideout.net/shapes), [Assimp](http://www.assimp.org/), [Devil](http://openil.sourceforge.net/) and [JSON for Modern C++](https://nlohmann.github.io/json/).
 
 ## Innovating Features
+* ZBuffer Real-Time Renderer
+
+### Innovating Features for v0.1
 * Extensive Filesystem with good UX Functionalities
 * Asset Panel
   * Asset Browser (Searcher)
@@ -53,16 +56,30 @@ Just download a release and run the executable! Inside 'res' folder you'll find 
 
 ## Usage
 **Camera Controls**
-* Right Click:			Camera Look Around
-* Right Click + WASD:		Move camera and look around (using camera's forward vector)
-* Alt + Left Click:		Orbit object (or center if none selected)
-* Alt + Left Click + WASD:	Orbit object and move around it (or center if not selected)
-* Shift while Moving:		Duplicate camera moving speed.
-* Right Click + T, G:		Move camera up and down.
-* Mouse Wheel:			Zoom in/out.
-* F:					Focus camera at object (or center if not selected)
+* Right Click:		        	Camera Look Around
+* Right Click + WASD:	    	Move camera and look around (using camera's forward vector)
+* LAlt + Left Click:		    Orbit object (or center if none selected)
+* LAlt + Left Click + WASD:	Orbit object and move around it (or center if not selected)
+* Shift while Moving:	    	Duplicate camera moving speed.
+* Right Click + T, G:	    	Move camera up and down.
+* Mouse Wheel:			        Zoom in/out.
+* F:					              Focus camera at object (or center if not selected)
+
+* Space to test the octree split and M to re-calculate it.
+
+Also, ImGui handles its own controls to navigate through UI.
 
 ## Changelog
+v0.2
+* Rework on Materials: Textures are now inside materials and many can be handled (in code level, not yet on a user level) as they are stored individually in an unordered map storing the texture and its type with a pointer to a main shader.
+* Rework on Camera: Completely changed. Now is based on glm library and its movement has changed.
+* Object Transformations: Now they can be translated, scaled and rotated from the editor.
+* Models Fix: Now any model can be loaded
+* Renderer Little Rework: Now all rendering object is rendered from the render in the PostUpdate. In the mesh update, we call Render->Submit() to send the rendering data. 
+* Octrees implemented to improve performance at renderer.
+* ZBuffer Real-Time rendering.
+* AABBs for Game Objects. 
+
 v0.1
 * Many different types of primitives creation
 * Models Load, including textures.
@@ -99,7 +116,9 @@ v0.1
 * Other external libraries implementation
 
 ## Credits
-Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrig  Garcia [@markitus18].
+Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by **Marc Garrigo Garcia** [@markitus18].
+
+**[TODO]** Put devs fotos. And what each did.
 
 Take a look to our web:
 Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
