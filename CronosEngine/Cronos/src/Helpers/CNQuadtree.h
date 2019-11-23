@@ -1,7 +1,7 @@
 #ifndef _CNQUADTREE_H_
 #define _CNQUADTREE_H_
 
-#include "AABB.hpp"
+#include "Helpers/AABB.h"
 #include "GameObject/GameObject.h"
 
 namespace Cronos {

@@ -40,10 +40,10 @@ namespace Cronos {
 
 		glColor3f(Blue.r, Blue.g, Blue.b);
 
-		glPushMatrix();
+		//glPushMatrix();
 
 		glMultMatrixf(glm::value_ptr(m_LocalTransformationMatrix));
-		glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
+		//glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
@@ -107,17 +107,14 @@ namespace Cronos {
 
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-		m_ContainerAABBCube.translate(position - m_Translation);
+		AABBPos = m_Translation;
 		m_Translation = position;
 		UpdateTransform();
 	}
 
 	void TransformComponent::SetScale(glm::vec3 scale)
 	{
-
-		if(scale.x >= 1.2f && scale.y >= 1.2f && scale.z >= 1.2f)
-			m_ContainerAABBCube.scale(scale - m_Scale, m_ContainerAABBCube.getCenter());
-
+		AABBScale = m_Scale;
 		m_Scale = scale;
 		UpdateTransform();
 	}
@@ -125,6 +122,7 @@ namespace Cronos {
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 euler_angles)
 	{
+		AABBOrientation = m_Orientation;
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
 
@@ -159,6 +157,63 @@ namespace Cronos {
 		m_LocalTransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
 			glm::mat4_cast(m_Orientation) * glm::scale(glm::mat4(1.0f), m_Scale);
 
+		//AABB Transform ------------------------------------------------------------------------------------
+		//glm::mat4 resTrans = glm::translate(glm::mat4(1.0f), (m_Translation - AABBPos));
+		//AABBPos = m_Translation;
+		//
+		//if (glm::length(m_Scale - AABBScale) > 0.1f)
+		//{
+		//	//glm::mat4 matscale = glm::scale(glm::mat4(1.0f), (AABBScale + (m_Scale - AABBScale)));
+		//	//glm::mat4 matscale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f) + m_Scale - AABBScale);
+		//	glm::mat4 matscale = glm::scale(glm::mat4(1.0f), (glm::vec3(1.0f) + (m_Scale - AABBScale)));
+		//	resTrans = resTrans * matscale;
+		//	AABBScale = m_Scale;
+		//}
+		//
+		//m_ContainerAABBCube.transform(resTrans);
+		//AABB Transform ------------------------------------------------------------------------------------
+		
+
+		//That code up ^ it works :) (more or less)
+		//AABB Transform ------------------------------------------------------------------------------------
+
+		glm::mat4 matScale = glm::mat4(1.0f);
+		glm::quat qRot = glm::quat(1.0f, glm::vec3(0.0f));
+
+		glm::mat4 resTrans = glm::translate(glm::mat4(1.0f), (m_Translation - AABBPos));
+		AABBPos = m_Translation;
+
+		if (glm::length(m_Scale - AABBScale) > 0.1f)
+		{
+			//glm::mat4 matscale = glm::scale(glm::mat4(1.0f), (AABBScale + (m_Scale - AABBScale)));
+			//glm::mat4 matscale = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f) + m_Scale - AABBScale);
+			matScale = glm::scale(glm::mat4(1.0f), (glm::vec3(1.0f) + (m_Scale - AABBScale)));
+			//resTrans = resTrans * matScale;
+			AABBScale = m_Scale;
+		}
+
+		//glm::vec3 EA_Rad = glm::radians(euler_angles);
+		//glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
+		//
+		//m_Orientation = m_Orientation * rot;
+		//m_EulerAngles = EA_Rad;
+		
+		
+		//abs(q1.dot(q2)) > 1-EPS
+		if (glm::abs(glm::dot(AABBOrientation, m_Orientation)) < (1.0f - 0.002f))
+		{
+			qRot = glm::quat(m_EulerAngles - glm::eulerAngles(AABBOrientation));
+			AABBOrientation = AABBOrientation * qRot;
+			//resTrans = resTrans * glm::mat4_cast(AABBOrientation) * matscale;
+		}
+		
+		resTrans = resTrans * glm::mat4_cast(qRot) * matScale;
+		m_ContainerAABBCube.transform(resTrans);
+
+		//AABB Transform ------------------------------------------------------------------------------------
+
+		bool changed = false;
+
 		//Update childs' transform
 		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
 		if (GOAttached_Parent != nullptr)
@@ -171,6 +226,17 @@ namespace Cronos {
 
 
 
+		
+		
+		
+		//glm::scale(glm::mat4(1.0f), (m_Scale - AABBScale))
+			
+		//}
+
+		//if((m_Translation - prevAABB_Pos).length() > 0.2f)
+		//	m_ContainerAABBCube.transform(glm::translate(glm::mat4(1.0f), m_Translation));
+
+		//m_ContainerAABBCube.updateMinMax()
 
 		//glm::vec3 v = glm::vec3(0.0f);
 		//glm::vec3 trans = glm::vec3(0.0f);

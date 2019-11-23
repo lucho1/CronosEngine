@@ -124,7 +124,7 @@ namespace Cronos {
 	bool CnQT_Node::Insert(GameObject* GObj)
 	{
 		AABB GOAABB = GObj->GetComponent<TransformComponent>()->GetAABB();
-		if (m_CubicSpace.intersect(GOAABB) == AABB::OUTSIDE)
+		if (m_CubicSpace.intersects(GOAABB) == false)
 			return false;
 
 		int nodesContained = 0, container = 0;
@@ -133,7 +133,7 @@ namespace Cronos {
 		{
 			for (uint i = 0; i < m_ChildsQuantity; i++)
 			{
-				if (m_Nodes[i].m_CubicSpace.intersect(GOAABB) != AABB::OUTSIDE)
+				if (m_Nodes[i].m_CubicSpace.intersects(GOAABB) == true)
 				{
 					nodesContained++;
 					container = i;
@@ -164,7 +164,7 @@ namespace Cronos {
 					container = 0;
 					for (uint i = 0; i < m_ChildsQuantity; i++)
 					{
-						if (m_Nodes[i].m_CubicSpace.intersect(newObjects[j]->GetComponent<TransformComponent>()->GetAABB()) != AABB::OUTSIDE)
+						if (m_Nodes[i].m_CubicSpace.intersects(newObjects[j]->GetComponent<TransformComponent>()->GetAABB()) == true)
 						{
 							nodesContained++;
 							container = i;
@@ -189,7 +189,7 @@ namespace Cronos {
 	std::vector<GameObject*> CnQT_Node::GetObjectsContained(AABB cubicSpace)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (m_CubicSpace.intersect(cubicSpace) == AABB::OUTSIDE)
+		if (m_CubicSpace.intersects(cubicSpace) == true)
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;

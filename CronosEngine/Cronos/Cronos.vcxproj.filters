@@ -1280,6 +1280,7 @@
     </ClInclude>
     <ClInclude Include="src\GameObject\Components\MaterialComponent.h" />
     <ClInclude Include="src\Helpers\CNQuadtree.h" />
+    <ClInclude Include="src\Helpers\AABB.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1383,5 +1384,6 @@
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp" />
     <ClCompile Include="src\Helpers\CNQuadtree.cpp" />
+    <ClCompile Include="src\Helpers\AABB.cpp" />
   </ItemGroup>
 </Project>

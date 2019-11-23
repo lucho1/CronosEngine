@@ -116,6 +116,7 @@
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
+    <ClInclude Include="src\Helpers\AABB.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
     <ClInclude Include="src\Helpers\CNQuadtree.h" />
@@ -524,6 +525,7 @@
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
+    <ClCompile Include="src\Helpers\AABB.cpp" />
     <ClCompile Include="src\Helpers\CNQuadtree.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />

@@ -7,7 +7,7 @@
 
 #include "GameObject/PrimitiveGameObject.h"
 
-#include <AABB.hpp>
+#include "Helpers/AABB.h"
 
 namespace Cronos {
 
@@ -108,6 +108,9 @@ namespace Cronos {
 
 		//AABB Cube
 		AABB m_ContainerAABBCube;
+		glm::vec3 AABBPos = glm::vec3(0.0f);
+		glm::vec3 AABBScale = glm::vec3(1.0f);
+		glm::quat AABBOrientation = glm::quat(1.0f, glm::vec3(0.0f));
 		//BoundingBox* TrueAABB;
 	};
 
