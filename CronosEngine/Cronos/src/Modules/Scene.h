@@ -43,8 +43,8 @@ namespace Cronos {
 		GameObject* m_HouseModel;
 
 
-		bool drawZBuffer = true;
-		bool changeZBufferDrawing = true;
+		//bool drawZBuffer = false;
+		//bool changeZBufferDrawing = true;
 
 		CnQuadtree QT_Test;		
 	};

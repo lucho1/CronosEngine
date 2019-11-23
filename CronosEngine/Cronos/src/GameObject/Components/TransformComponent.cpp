@@ -28,9 +28,9 @@ namespace Cronos {
 
 	void TransformComponent::Update(float dt)
 	{
-		App->scene->BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
-		App->scene->BasicTestShader->Unbind();
+		//App->scene->BasicTestShader->Bind();
+		//App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
+		//App->scene->BasicTestShader->Unbind();
 
 
 		//AABBs---------------------------------------------------------------

@@ -5,6 +5,10 @@
 #include "Providers/Globals.h"
 #include "Light.h"
 
+#include "GameObject/Components/MaterialComponent.h"
+#include "GameObject/Components/TransformComponent.h"
+#include "VertexArray.h"
+
 namespace Cronos {
 
 //#define MAX_LIGHTS 8
@@ -45,6 +49,8 @@ namespace Cronos {
 		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
 
+		void RenderSubmit(GameObject* gameObject);
+
 	public:
 
 		void SetVsync(bool setStatus);
@@ -79,10 +85,13 @@ namespace Cronos {
 		//Light lights[MAX_LIGHTS];
 		Light centerLight;
 		SDL_GLContext context;
-		//mat3x3 NormalMatrix;
-		//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 
 	private:
+
+		std::list<GameObject*>m_RenderingList;
+		bool drawZBuffer = false;
+		bool changeZBufferDrawing = false;
+
 
 		glm::mat4 fPlane = glm::mat4(1.0f);
 

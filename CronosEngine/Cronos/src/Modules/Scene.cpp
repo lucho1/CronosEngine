@@ -167,11 +167,11 @@ namespace Cronos {
 		}
 
 		//Shader bind & uniforms send
-		BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+		//BasicTestShader->Bind();
+		//App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+		//App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
 
-		if (changeZBufferDrawing)
+		/*if (changeZBufferDrawing)
 		{
 			changeZBufferDrawing = false;
 			drawZBuffer = !drawZBuffer;
@@ -184,8 +184,8 @@ namespace Cronos {
 		}
 		if (drawZBuffer)
 			BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
-
-		BasicTestShader->Unbind();
+*/
+		//BasicTestShader->Unbind();
 
 
 		//Game Objects update

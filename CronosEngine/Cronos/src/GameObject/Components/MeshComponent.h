@@ -31,8 +31,10 @@ namespace Cronos {
 		bool &setDebugDraw() { RecalculateNormals(); return m_DebugDraw; }
 
 		//Getters
-		const std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
-		const std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
+		const inline std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
+		const inline std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
+		inline VertexArray* GetVAO() const { return m_MeshVAO; }
+
 		static ComponentType GetType() { return ComponentType::MESH; }
 
 	private:

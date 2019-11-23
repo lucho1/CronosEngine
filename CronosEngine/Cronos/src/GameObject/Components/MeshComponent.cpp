@@ -61,19 +61,20 @@ namespace Cronos {
 		if (!isEnabled())
 			return;
 
-		App->scene->BasicTestShader->Bind();
+		App->renderer3D->RenderSubmit(GetParent());
+		//App->scene->BasicTestShader->Bind();
+		//
+		//if (material != nullptr)
+		//	material->Bind(bindMaterial);
 
-		if (material != nullptr)
-			material->Bind(bindMaterial);
+		//m_MeshVAO->Bind();
+		//glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		m_MeshVAO->Bind();
-		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		//if (material != nullptr)
+		//	material->Unbind();
 
-		if (material != nullptr)
-			material->Unbind();
-
-		App->scene->BasicTestShader->Unbind();
-		m_MeshVAO->UnBind();
+		//App->scene->BasicTestShader->Unbind();
+		//m_MeshVAO->UnBind();
 
 	//	DrawCentralAxis();
 		if (m_DebugDraw)

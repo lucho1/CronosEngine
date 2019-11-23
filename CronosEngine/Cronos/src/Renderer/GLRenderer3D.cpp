@@ -134,6 +134,49 @@ namespace Cronos {
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
+		App->scene->BasicTestShader->Bind();
+		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+
+		if (changeZBufferDrawing)
+		{
+			changeZBufferDrawing = false;
+			drawZBuffer = !drawZBuffer;
+
+			if (drawZBuffer)
+				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
+			else
+				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+
+		}
+		if (drawZBuffer)
+			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+
+
+		std::list<GameObject*>::iterator it = m_RenderingList.begin();
+		for (; it != m_RenderingList.end(); it++)
+		{
+			App->scene->BasicTestShader->Bind();
+			MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
+			VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();			
+
+			if (material != nullptr)
+				material->Bind(true);
+
+			App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+			VAO->Bind();
+
+			glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+			if (material != nullptr)
+				material->Unbind();
+
+			VAO->UnBind();
+		}
+
+		App->scene->BasicTestShader->Unbind();
+		m_RenderingList.clear();
+
 		//SDL_GL_SwapWindow(App->window->window);
 		return UPDATE_CONTINUE;
 	}
@@ -145,6 +188,12 @@ namespace Cronos {
 		SDL_GL_DeleteContext(context);
 
 		return true;
+	}
+
+
+	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
+	{
+		m_RenderingList.push_back(gameObject);
 	}
 
 
@@ -337,15 +386,15 @@ namespace Cronos {
 		m_CurrentSettings.ClipDistance = JSONFile["Renderer"]["ClipDistance"];
 		m_CurrentSettings.FaceCull = JSONFile["Renderer"]["FaceCulling"];
 		m_CurrentSettings.WireframeDraw = JSONFile["Renderer"]["WireframeDraw"];
-		
+
 		m_CurrentSettings.DepthTest = JSONFile["Renderer"]["DepthTest"];
-		m_CurrentSettings.ScissorTest= JSONFile["Renderer"]["ScissorTest"];
-		m_CurrentSettings.StencilTest= JSONFile["Renderer"]["StencilTest"];
-		
+		m_CurrentSettings.ScissorTest = JSONFile["Renderer"]["ScissorTest"];
+		m_CurrentSettings.StencilTest = JSONFile["Renderer"]["StencilTest"];
+
 		m_CurrentSettings.ColorDither = JSONFile["Renderer"]["ColorDither"];
 		m_CurrentSettings.AntialiasedLineAndPolygonSmooth = JSONFile["Renderer"]["AntialiasedLPSmooth"];
 		m_CurrentSettings.Multisample = JSONFile["Renderer"]["Multisampling"];
-		
+
 		m_CurrentSettings.GL_Lighting = JSONFile["Renderer"]["GL_Lighting"];
 		m_CurrentSettings.GL_ColorMaterial = JSONFile["Renderer"]["GL_ColorMaterial"];
 
