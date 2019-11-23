@@ -113,7 +113,7 @@ namespace Cronos {
 	}
 
 
-	inline void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
+	void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
 	{
 		m_Data.AspectRatio = (float)width / (float)height;
 	}

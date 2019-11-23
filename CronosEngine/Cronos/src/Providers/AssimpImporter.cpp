@@ -11,68 +11,6 @@
 
 namespace Cronos {
 
-	// ---------------------------------- CRONOS MESHES ----------------------------------
-	//void CronosMesh::ScaleMesh(glm::vec3 ScaleMagnitude)
-	//{
-	//	//glm::mat4 scale = glm::mat4(1.0f);
-	//	//scale = glm::scale(ScaleMagnitude);
-	//	//m_Transformation *= scale;
-	//	//DecomposeTransformation();
-
-	//	m_Transformation = glm::scale(m_Transformation, ScaleMagnitude);
-	//	DecomposeTransformation();
-
-	//	//ModelMatrix = glm::scale(ModelMatrix, Scale);
-	//	/*glm::mat4 translation = glm::mat4(1.0f);
-	//	translation = glm::scale(translation, ScaleMagnitude);
-
-	//	std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-	//	for (; item != m_VertexVector.end(); item++)
-	//	{
-	//		glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-	//		(*item).Position = translation * pos;
-	//	}*/
-	//}
-
-	//void CronosMesh::MoveMesh(glm::vec3 MoveAxis, float moveMagnitude)
-	//{
-	//	//glm::mat4 translation = glm::mat4(1.0f);
-	//	//translation = glm::translate(translation, MoveAxis);
-
-	//	m_Transformation = glm::translate(m_Transformation, MoveAxis);
-
-	//	//m_Transformation += translation;
-	//	DecomposeTransformation();
-
-	//	//MoveAxis *= moveMagnitude;
-	//	//glm::mat4 translation = glm::mat4(1.0f);
-	//	//translation = glm::translate(translation, MoveAxis);
-	//	//
-	//	//std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-	//	//for (; item != m_VertexVector.end(); item++)
-	//	//{
-	//	//	glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-	//	//	(*item).Position = translation * pos;
-	//	//}
-
-	//}
-
-	//void CronosMesh::RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis)
-	//{
-	//	glm::mat4 rot = glm::mat4(1.0f);
-	//	rot = glm::rotate(rot, glm::radians(RotDegrees), RotAxis);
-	//	m_Transformation *= rot;
-	//	DecomposeTransformation();
-	//}
-
-	//void CronosMesh::DecomposeTransformation()
-	//{
-	//	glm::vec3 skew;
-	//	glm::vec4 perspective;
-	//	glm::decompose(m_Transformation, m_Scale, m_Rotation, m_Translation, skew, perspective);
-	//	m_Rotation = glm::conjugate(m_Rotation);
-	//}
-
 	const aiTextureType ConvertToAssimpTextureType(TextureType CN_textureType)
 	{
 		switch (CN_textureType)
@@ -130,6 +68,8 @@ namespace Cronos {
 		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
 		mother_GO->SetAABB(comp->GetAABB().getMin(), comp->GetAABB().getMax());
 
+
+		aiReleaseImport(scene);
 		// detach log stream
 		aiDetachAllLogStreams();
 
@@ -141,12 +81,25 @@ namespace Cronos {
 	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Assimp Node");
+		aiVector3D translation, scaling, EulerRotation;
+		aiQuaternion rotation;
+		as_node->mTransformation.Decompose(scaling, rotation, translation);
+		EulerRotation = rotation.GetEuler();
+
+		if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
+			scaling = aiVector3D(1.0f);
+
+		////scaling = scaling / 10.0f;
+		motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
+		motherGameObj->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+		motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
 			//Get the mesh from the meshes list of the node in scene's meshes list
 			aiMesh* as_mesh = as_scene->mMeshes[as_node->mMeshes[i]];
-			ProcessCronosMesh(as_mesh, as_scene, motherGameObj);
+			ProcessCronosMesh(as_mesh, as_scene, motherGameObj, as_node);
 		}
 
 		//Process all node's children
@@ -178,7 +131,7 @@ namespace Cronos {
 	//}
 	}
 
-	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)
+	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj, aiNode* as_node)
 	{
 		LOG("	Processing Model Mesh");
 		MeshNum++;
@@ -241,6 +194,19 @@ namespace Cronos {
 
 		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
+
+		aiVector3D translation, scaling, EulerRotation;
+		aiQuaternion rotation;
+		as_node->mTransformation.Decompose(scaling, rotation, translation);
+		EulerRotation = rotation.GetEuler();
+
+		if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
+			scaling = aiVector3D(1.0f);
+
+		motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
+		GO->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+		motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+
 
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));

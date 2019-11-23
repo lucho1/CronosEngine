@@ -32,12 +32,9 @@ namespace Cronos {
 		App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
 		App->scene->BasicTestShader->Unbind();
 
-		
-		
+
+		//AABBs---------------------------------------------------------------
 		//glm::vec3 aabbTrans = m_ContainerAABBCube.getCenter();
-
-
-
 		//m_ContainerAABBCube.translate(m_Translation - aabbTrans);
 		//m_ContainerAABBCube.scale(glm::vec3(0.0f), m_Scale);
 

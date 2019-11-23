@@ -89,6 +89,9 @@ namespace Cronos {
 		float linelength = 0.2f;
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
 
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
@@ -112,6 +115,7 @@ namespace Cronos {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+		glPopMatrix();
 	}
 
 	void MeshComponent::DrawPlanesNormals()
@@ -120,16 +124,14 @@ namespace Cronos {
 		float linelength = 0.5f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
 
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-		
-		//glMatrixMode(GL_PROJECTION);
-			//glLoadIdentity();
-
-		//glLoadMatrixf();
 
 		for (uint i = 0; i < m_IndicesVector.size() - 2; i += 3)
 		{
@@ -157,6 +159,8 @@ namespace Cronos {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+
+		glPopMatrix();
 	}
 
 	void MeshComponent::CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions)

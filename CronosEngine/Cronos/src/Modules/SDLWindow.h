@@ -20,7 +20,7 @@ namespace Cronos {
 		virtual bool OnInit() override;
 		virtual bool OnCleanUp() override;
 
-		inline void ReCalculateAspectRatio(uint width, uint height);
+		void ReCalculateAspectRatio(uint width, uint height);
 		void OnResize(uint width, uint height);
 
 		//Save/Load

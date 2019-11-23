@@ -168,8 +168,8 @@ namespace Cronos {
 
 		//Shader bind & uniforms send
 		BasicTestShader->Bind();
-		BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
 
 		if (changeZBufferDrawing)
 		{
@@ -187,10 +187,10 @@ namespace Cronos {
 
 		BasicTestShader->Unbind();
 
+
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
-
 
 		QT_Test.Draw();
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)

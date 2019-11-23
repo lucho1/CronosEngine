@@ -123,6 +123,8 @@ namespace Cronos {
 		centerLight.SetPos(p.x, p.y, p.z);
 		centerLight.Render();
 
+		//RenderSubmit(nullptr, glm::mat4(1.0f), nullptr);
+
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
 
@@ -132,7 +134,7 @@ namespace Cronos {
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
-		SDL_GL_SwapWindow(App->window->window);
+		//SDL_GL_SwapWindow(App->window->window);
 		return UPDATE_CONTINUE;
 	}
 
@@ -145,6 +147,8 @@ namespace Cronos {
 		return true;
 	}
 
+
+	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos)
 	{
 		glm::vec3 posOpp_Down = glm::vec3(pos.x + oppositePos.x, pos.y, pos.z);

@@ -315,7 +315,7 @@ namespace Cronos {
 		return current_status;
 	}
 
-	update_status ImGuiLayer::OnUpdate(float dt)
+	update_status ImGuiLayer::OnPostUpdate(float dt)
 	{
 		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
@@ -377,8 +377,13 @@ namespace Cronos {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+		SDL_GL_SwapWindow(App->window->window);
 		return current_status;
+	}
+
+	update_status ImGuiLayer::OnUpdate(float dt)
+	{
+		return UPDATE_CONTINUE;
 	}
 
 	void ImGuiLayer::DeleteGameObject(GameObject* go) {
