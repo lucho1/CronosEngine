@@ -65,8 +65,7 @@ namespace Cronos {
 			float LinearizeZ(float depth)
 			{
 				float z = depth*2.0 - 1.0;
-				float ret = (2.0*u_CamPlanes.x*u_CamPlanes.y)/(u_CamPlanes.y + u_CamPlanes.x - z*(u_CamPlanes.y - u_CamPlanes.x));
-				return ret;
+				return (2.0*u_CamPlanes.x*u_CamPlanes.y)/(u_CamPlanes.y + u_CamPlanes.x - z*(u_CamPlanes.y - u_CamPlanes.x));
 			}
 
 			void main()

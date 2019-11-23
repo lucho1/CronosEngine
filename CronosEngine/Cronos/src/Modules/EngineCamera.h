@@ -94,7 +94,7 @@ namespace Cronos {
 	private:
 
 		//Camera Common data
-		float m_NearPlane = 1.0f, m_FarPlane = 100.0f , m_FOV = 60.0f;
+		float m_NearPlane = 1.0f, m_FarPlane = 100.0f, m_FOV = 60.0f;
 		float m_MoveSpeed = 10.0f, m_ScrollSpeed = 3.5f;
 		bool m_ChangeProj = false;
 
