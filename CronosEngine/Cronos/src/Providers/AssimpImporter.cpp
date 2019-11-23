@@ -221,10 +221,21 @@ namespace Cronos {
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 		
-		int size = as_mesh->mNumVertices;
-		meshComp->Position = new float[size*3];
-		memcpy(meshComp->Position, as_mesh->mVertices, sizeof(float)*size * 3);
-		meshComp->BufferSize[0] = size;
+		uint Size[2];
+		Size[0]= as_mesh->mNumVertices;
+		Size[1] = as_mesh->mNumFaces;
+
+		ResourceMesh* rMesh = meshComp->mesh;
+		rMesh = new ResourceMesh(App->m_RandomNumGenerator.GetIntRN());
+		rMesh->setBufferSize(Size);
+
+		memcpy(rMesh->Position, as_mesh->mVertices, sizeof(float)*Size[0] * 3);
+		memcpy(rMesh->Normal, as_mesh->mNormals, sizeof(float)*Size[0] * 3);
+		memcpy(rMesh->TextureV, as_mesh->mTextureCoords, sizeof(float)*Size[0] * 2);
+		memcpy(rMesh->Index, as_mesh->mFaces, sizeof(uint)*Size[1]);
+
+		//memcpy(meshComp->Position, as_mesh->mVertices, sizeof(float)*size * 3);
+		//meshComp->BufferSize[0] = size;
 		//meshComp->Normal = new float[size * 3];
 
 		//for(int = 0;i<)

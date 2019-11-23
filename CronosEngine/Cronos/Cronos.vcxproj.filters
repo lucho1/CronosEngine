@@ -34,6 +34,9 @@
     <Filter Include="src\Renderer">
       <UniqueIdentifier>{73D1DFBF-5F34-6F64-08BA-A71AF4FB3AE7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Resources">
+      <UniqueIdentifier>{D76C8757-432D-038E-0C68-4C0B78E7476A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -170,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="src\Renderer\VertexArray.h">
       <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\Resource.h">
+      <Filter>src\Resources</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1287,7 +1293,7 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\Resources\Resource.h" />
+    <ClInclude Include="src\Resources\ResourceMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1398,5 +1404,7 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resources\ResourceMesh.cpp" />
+    <ClCompile Include="src\Resources\Resource.cpp" />
   </ItemGroup>
 </Project>

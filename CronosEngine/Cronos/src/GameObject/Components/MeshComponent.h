@@ -6,6 +6,7 @@
 #include "Component.h"
 #include "Renderer/VertexArray.h"
 #include "MaterialComponent.h"
+#include "Resources/ResourceMesh.h"
 
 namespace Cronos {
 
@@ -45,6 +46,8 @@ namespace Cronos {
 		float*TextureV = nullptr;
 
 		uint BufferSize[4];
+
+		ResourceMesh*  mesh = nullptr;
 
 	private:
 

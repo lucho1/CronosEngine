@@ -5,6 +5,7 @@
 #include "TextureManager.h"
 #include "PhysFS/include/physfs.h"
 #include "GameObject/Components/TransformComponent.h"
+#include "Resources/ResourceMesh.h"
 
 
 
@@ -81,6 +82,8 @@ namespace Cronos {
 			return false;
 		}
 
+		ResourceMesh* rMesh = mesh->mesh;
+
 		//std::vector<CronosVertex>Vertex = mesh->GetVertexVector();
 		//std::vector<uint>Index = mesh->GetIndexVector();
 
@@ -88,9 +91,10 @@ namespace Cronos {
 		uint bytes = 0;
 		int a  = sizeof(CronosVertex);
 	//change to 4
-		uint range[1] = { mesh->BufferSize[0]};
+		uint range[2];
+		//uint result  = rMesh->GetBufferSize(range);
 		
-		totalSize = sizeof(range) + sizeof(float) * 3 * range[0];
+		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 2 * range[0]) + (sizeof(uint) * range[1]);
 
 		char*Data = new char[totalSize];
 		char*cursor = Data;
@@ -99,10 +103,27 @@ namespace Cronos {
 		bytes = sizeof(range);
 		memcpy(cursor, range, bytes);
 
+		//Store Position
 		cursor += bytes;
 		bytes = sizeof(float) * 3 * range[0];
-		memcpy(cursor, mesh->Position, bytes);
+		memcpy(cursor, rMesh->Position, bytes);
 		cursor += bytes;
+
+		//Store Normal
+		bytes = sizeof(float) * 3 * range[0];
+		memcpy(cursor, rMesh->Normal, bytes);
+		cursor += bytes;
+
+		//Store Texture Vector
+		bytes = sizeof(float) * 2 * range[0];
+		memcpy(cursor, rMesh->Position, bytes);
+		cursor += bytes;
+
+		//Store Index
+		bytes = sizeof(uint) * range[1];
+		memcpy(cursor,rMesh->Index, bytes);
+		cursor += bytes;
+
 
 		////Store Vector of Indexes
 		//cursor += bytes;

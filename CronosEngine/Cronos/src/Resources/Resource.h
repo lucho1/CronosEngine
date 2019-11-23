@@ -4,21 +4,38 @@
 
 namespace Cronos {
 
-	enum Type {
+	enum ResourceType {
 		NONE = -1,
-		MESH = 0,
+		MESH,
 		TEXTURE
 	};
 
 	class Resource {
-		Resource(uint GOID, Type type);
-		~Resource();
+	public:
+		Resource(uint ResID, ResourceType type);
+		//virtual ~Resource();
 
-		virtual bool isLoaded()=0;
+		virtual bool isLoaded(uint m_ResID) const = 0 ;
 		virtual bool Exists()=0;
+		inline uint GetGOID() const { return m_ResID; };
+		
+		//template <typename T>
+		//T* GetResource()
+		//{
+		//	ResourceType type = T::GetType();
+		//	for (auto& comp : m_Components)
+		//		if (comp->GetComponentType() == type)
+		//			return ((T*)(comp));
+
+		//	//LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
+		//	return nullptr;
+		//}
+		//std::vector<Resource>m_Resources;
 
 	private:
-		uint m_GOID;
+
+		
+		uint m_ResID;
 		
 	};
 

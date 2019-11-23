@@ -145,6 +145,7 @@
     <ClInclude Include="src\Renderer\Textures.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="src\Resources\Resource.h" />
+    <ClInclude Include="src\Resources\ResourceMesh.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -555,6 +556,8 @@
     <ClCompile Include="src\Renderer\Shaders.cpp" />
     <ClCompile Include="src\Renderer\Textures.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Resources\Resource.cpp" />
+    <ClCompile Include="src\Resources\ResourceMesh.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />
   </ItemGroup>
