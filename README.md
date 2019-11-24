@@ -18,6 +18,9 @@ Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho 
 
 We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/projects/SDL_mixer/), STL, [OpenGL4](https://www.opengl.org/) with [GLAD](https://glad.dav1d.de/), [ImGui](https://github.com/ocornut/imgui), [Premake](https://premake.github.io/), [GLM](https://glm.g-truc.net/0.9.9/index.html), [GPUDetect](https://github.com/GameTechDev/gpudetect), [MMRG](https://www.flipcode.com/archives/Presenting_A_Memory_Manager.shtml), [ParShapes](https://prideout.net/shapes), [Assimp](http://www.assimp.org/), [Devil](http://openil.sourceforge.net/) and [JSON for Modern C++](https://nlohmann.github.io/json/).
 
+## Screenshots
+![](https://github.com/lucho1/CronosEngine/blob/Assignment2_DevBranch/ScreenShots/Save_Cron1.png)
+
 ## Innovating Features
 * ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
 * GameObjects Copy/Paste with CTRL+C/CTRL+V
