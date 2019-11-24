@@ -433,9 +433,8 @@ namespace Cronos {
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
 		if (ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1)) {
 			ImGuiStyle& style = ImGui::GetStyle();
-			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.170f, 0.170f, 0.17f, 1.0f);
-			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
-			//a->Colors[2] = ImVec4(0.20f, 0.20, 0.20f, 1.00f);
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();
@@ -481,7 +480,6 @@ namespace Cronos {
 
 				ImGui::EndMenuBar();
 			}
-
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y)
 			{

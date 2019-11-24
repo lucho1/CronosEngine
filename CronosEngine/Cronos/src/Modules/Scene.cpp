@@ -120,11 +120,9 @@ namespace Cronos {
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
 		//House Model Load & Floor Plane primitive
-		//m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//int id = m_HouseModel->GetGOID();
-
-		//GameObject* testing = App->filesystem->Load(698105961);
-
+		GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;

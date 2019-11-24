@@ -1,0 +1,34 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      1435391774,
+      1552531453
+    ],
+    "MetaPath": [
+      "lib/1435391774.model",
+      "lib/1552531453.model"
+    ],
+    "NumberChilds": 2
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1318168686,
+  "Name": "BakerHouse",
+  "Path": "D:/Motors3D/CronosEngine/CronosEngine/Cronos/res/models/bakerhouse"
+}

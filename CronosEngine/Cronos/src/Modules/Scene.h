@@ -49,7 +49,7 @@ namespace Cronos {
 	private:
 
 		AssimpCronosImporter m_CNAssimp_Importer;
-		GameObject* m_HouseModel;
+		GameObject* m_StreetModel;
 
 
 		//bool drawZBuffer = false;

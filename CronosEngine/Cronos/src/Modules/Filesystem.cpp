@@ -469,6 +469,24 @@ namespace Cronos {
 		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
 			m_IconTex = App->filesystem->GetIcon(type);
+			std::string path = m_Path;
+			path.erase(path.find(m_Extension));
+			path += ".asset";
+			if (!HasMeta())
+			{
+				GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
+				if (temp != nullptr) {
+					SaveAsset(temp, path.c_str());
+					m_GameObjecID = temp->GetGOID();
+					temp->CleanUp();
+				}
+				else
+					LOG("Failed To Load %s ", m_Path.c_str());
+			}
+			else
+			{
+				m_GameObjecID = loadAsset(path.c_str());
+			}
 		}
 		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
 			type = ItemType::ITEM_FBX;
