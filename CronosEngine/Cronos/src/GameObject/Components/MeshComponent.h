@@ -40,14 +40,7 @@ namespace Cronos {
 		static ComponentType GetType() { return ComponentType::MESH; }
 		std::vector<CronosVertex> m_VertexVector;
 
-		uint* Index = nullptr;
-		float*Position = nullptr;
-		float*Normal = nullptr;
-		float*TextureV = nullptr;
-
-		uint BufferSize[4];
-
-		ResourceMesh*  mesh = nullptr;
+		ResourceMesh* r_mesh;
 
 	private:
 

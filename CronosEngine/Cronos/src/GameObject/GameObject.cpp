@@ -104,4 +104,11 @@ namespace Cronos {
 		}
 		return ret;
 	}
+	void GameObject::SetNewID() {
+		m_GameObjectID = App->m_RandomNumGenerator.GetIntRN();
+		m_MetaPath = App->filesystem->GetMetaPath() + std::to_string(m_GameObjectID) + ".model";
+		for (auto& childs : m_Childs) {
+			childs->SetNewID();
+		}
+	}
 }

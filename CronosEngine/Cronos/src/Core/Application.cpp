@@ -17,6 +17,7 @@ namespace Cronos {
 		filesystem = new Filesystem(this);
 		textureManager = new TextureManager(this);
 		EditorGUI = new ImGuiLayer(this);
+		resourceManager = new ResourceManager(this);
 
 		// The order of calls is very important!
 		// Modules will Init() Start() and Update in this order
@@ -25,13 +26,16 @@ namespace Cronos {
 		// Main Modules
 		AddModule(window);
 		AddModule(renderer3D);
+		AddModule(resourceManager);
 		AddModule(engineCamera);
 		AddModule(input);
 		AddModule(audio);
 		AddModule(textureManager);
+	
 
 		// Scenes
 		AddModule(filesystem);
+
 		AddModule(scene);
 		AddModule(EditorGUI);
 	}

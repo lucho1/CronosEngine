@@ -177,6 +177,9 @@
     <ClInclude Include="src\Resources\Resource.h">
       <Filter>src\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\Resources\ResourceMesh.h">
+      <Filter>src\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
@@ -1293,7 +1296,7 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\Resources\ResourceMesh.h" />
+    <ClInclude Include="src\Modules\ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1398,13 +1401,18 @@
     <ClCompile Include="src\Renderer\VertexArray.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resources\Resource.cpp">
+      <Filter>src\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\ResourceMesh.cpp">
+      <Filter>src\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp">
       <Filter>vendor\gpudetect</Filter>
     </ClCompile>
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="src\Resources\ResourceMesh.cpp" />
-    <ClCompile Include="src\Resources\Resource.cpp" />
+    <ClCompile Include="src\Modules\ResourceManager.cpp" />
   </ItemGroup>
 </Project>

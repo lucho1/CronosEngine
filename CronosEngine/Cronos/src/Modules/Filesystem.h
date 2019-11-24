@@ -128,7 +128,7 @@ namespace Cronos {
 		bool SaveOwnFormat(GameObject* RootGameObject);
 		//GameObject* Load(std::string MetaPath);
 		GameObject* Filesystem::Load(int GOID);
-		bool LoadMesh(const char* filepath,MeshComponent& mesh);
+		bool LoadMesh(const char* filepath,MeshComponent& mesh, uint ResID);
 
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
@@ -136,6 +136,7 @@ namespace Cronos {
 		inline const char* GetMetaPath() const { return m_LibraryPath.c_str(); }
 		inline const char* GetMeshLib() const { return m_HiddenMeshLibPath.c_str(); }
 		inline const char* GetMatLib() const { return m_HiddenMaterialLibPath.c_str(); }
+		inline const char* GetScenePath() const { return m_ScenePath.c_str(); }
 
 		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 		
@@ -146,6 +147,7 @@ namespace Cronos {
 		std::filesystem::path m_RootDirectory; //Temporary
 		std::string m_LabelRootDirectory;
 		std::string m_LibraryPath;
+		std::string m_ScenePath;
 		std::string m_HiddenMeshLibPath;
 		std::string m_HiddenMaterialLibPath;
 		//AssimpCronosImporter m_CNAssimp_Importer;

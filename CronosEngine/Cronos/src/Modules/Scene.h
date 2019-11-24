@@ -30,14 +30,19 @@ namespace Cronos {
 
 		GameObject* CreateModel(const char* path);
 
+		bool SaveScene(const char* SceneName);
+		bool LoadScene(const char* SceneName);
+
 	public:
 
 		std::vector<GameObject*>m_GameObjects;
+		GameObject* ToCopy;
 
 		Shader* BasicTestShader = nullptr; //To test
 
 		std::list<Texture*> m_TexturesLoaded;
 
+		std::string m_SceneName;
 	private:
 
 		Plane m_FloorPlane;

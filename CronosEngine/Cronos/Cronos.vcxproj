@@ -130,6 +130,7 @@
     <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
     <ClInclude Include="src\Modules\Input.h" />
+    <ClInclude Include="src\Modules\ResourceManager.h" />
     <ClInclude Include="src\Modules\SDLWindow.h" />
     <ClInclude Include="src\Modules\Scene.h" />
     <ClInclude Include="src\Modules\TextureManager.h" />
@@ -541,6 +542,7 @@
     <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
     <ClCompile Include="src\Modules\Input.cpp" />
+    <ClCompile Include="src\Modules\ResourceManager.cpp" />
     <ClCompile Include="src\Modules\SDLWindow.cpp" />
     <ClCompile Include="src\Modules\Scene.cpp" />
     <ClCompile Include="src\Modules\TextureManager.cpp" />

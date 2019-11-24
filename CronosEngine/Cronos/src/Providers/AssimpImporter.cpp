@@ -160,54 +160,55 @@ namespace Cronos {
 	{
 		LOG("	Processing Model Mesh");
 		MeshNum++;
-		std::vector<CronosVertex>tmp_VertexVector;
-		std::vector<uint>tmp_IndicesVector;
-		uint facesNumber = 0;
+		//std::vector<CronosVertex>tmp_VertexVector;
+		//std::vector<uint>tmp_IndicesVector;
+		//uint facesNumber = 0;
 
-		float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].z;
-		float maxX = minX, maxY = minY, maxZ = minZ;
+		//float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].z;
+		//float maxX = minX, maxY = minY, maxZ = minZ;
 
-		//Process mesh vertices
-		for (uint i = 0; i < as_mesh->mNumVertices; i++)
-		{
-			//First, position & normals
-			CronosVertex tmpVertex;
-			tmpVertex.Position = glm::vec3(as_mesh->mVertices[i].x, as_mesh->mVertices[i].y, as_mesh->mVertices[i].z);
+		////Process mesh vertices
+		//for (uint i = 0; i < as_mesh->mNumVertices; i++)
+		//{
+		//	//First, position & normals
+		//	CronosVertex tmpVertex;
+		//	tmpVertex.Position = glm::vec3(as_mesh->mVertices[i].x, as_mesh->mVertices[i].y, as_mesh->mVertices[i].z);
 
-			if(as_mesh->HasNormals())
-				tmpVertex.Normal = glm::vec3(as_mesh->mNormals[i].x, as_mesh->mNormals[i].y, as_mesh->mNormals[i].z);
+		//	if(as_mesh->HasNormals())
+		//		tmpVertex.Normal = glm::vec3(as_mesh->mNormals[i].x, as_mesh->mNormals[i].y, as_mesh->mNormals[i].z);
 
-			//Then we see if there are text. coordinates in the first set [0] (OGL has until 8)
-			if (as_mesh->mTextureCoords[0])
-				tmpVertex.TexCoords = glm::vec2(as_mesh->mTextureCoords[0][i].x, as_mesh->mTextureCoords[0][i].y);
-			else
-				tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
+		//	//Then we see if there are text. coordinates in the first set [0] (OGL has until 8)
+		//	if (as_mesh->mTextureCoords[0])
+		//		tmpVertex.TexCoords = glm::vec2(as_mesh->mTextureCoords[0][i].x, as_mesh->mTextureCoords[0][i].y);
+		//	else
+		//		tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
 
 
-			minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
-			maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
-			tmp_VertexVector.push_back(tmpVertex);
-		}
+		//	minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
+		//	maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
+		//	tmp_VertexVector.push_back(tmpVertex);
+		//}
 	
-		//Set the AABB Cube
-		m_AABB_MinVec = glm::vec3(minX, minY, minZ);
-		m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
+		////Set the AABB Cube
+		//m_AABB_MinVec = glm::vec3(minX, minY, minZ);
+		//m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
 
-		//Process mesh's indices
-		for (uint i = 0; i < as_mesh->mNumFaces; i++)
-		{
-			aiFace face = as_mesh->mFaces[i];
-			for (uint j = 0; j < face.mNumIndices; j++)
-				tmp_IndicesVector.push_back(face.mIndices[j]);
+		////Process mesh's indices
+		//for (uint i = 0; i < as_mesh->mNumFaces; i++)
+		//{
+		//	aiFace face = as_mesh->mFaces[i];
+		//	for (uint j = 0; j < face.mNumIndices; j++)
+		//		tmp_IndicesVector.push_back(face.mIndices[j]);
 
-			static uint PolyNum = 0;
-			if (PolyNum == 2)
-			{
-				facesNumber++;
-				PolyNum = 0;
-			}
-			PolyNum++;
-		}
+		//	static uint PolyNum = 0;
+		//	if (PolyNum == 2)
+		//	{
+		//		facesNumber++;
+		//		PolyNum = 0;
+		//	}
+		//	PolyNum++;
+		//}
+		
 		//Now set up the new Game Object
 		std::string GOName;
 		if (as_mesh->mName.length > 0)
@@ -220,28 +221,50 @@ namespace Cronos {
 		GO->HasVertices = true;
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
+
+		//Creating the resource with unique ID
+		meshComp->r_mesh = new ResourceMesh(App->m_RandomNumGenerator.GetIntRN());
+		ResourceMesh* rMesh = meshComp->r_mesh;
 		
-		uint Size[2];
-		Size[0]= as_mesh->mNumVertices;
-		Size[1] = as_mesh->mNumFaces;
+		//Setup of the Buffers Size
+		rMesh->m_BufferSize[0] = as_mesh->mNumVertices;	
 
-		ResourceMesh* rMesh = meshComp->mesh;
-		rMesh = new ResourceMesh(App->m_RandomNumGenerator.GetIntRN());
-		rMesh->setBufferSize(Size);
+		//Iniitialiing the Vector Positions:
+		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+		memcpy(rMesh->Position, as_mesh->mVertices, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		memcpy(rMesh->Position, as_mesh->mVertices, sizeof(float)*Size[0] * 3);
-		memcpy(rMesh->Normal, as_mesh->mNormals, sizeof(float)*Size[0] * 3);
-		memcpy(rMesh->TextureV, as_mesh->mTextureCoords, sizeof(float)*Size[0] * 2);
-		memcpy(rMesh->Index, as_mesh->mFaces, sizeof(uint)*Size[1]);
+		if (as_mesh->HasFaces()) {
+			
+			rMesh->m_BufferSize[1] = as_mesh->mNumFaces;
+			rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
+			for (uint i = 0; i < as_mesh->mNumFaces; i++) {
+				aiFace face = as_mesh->mFaces[i];		
+				memcpy(&rMesh->Index[i*3], face.mIndices ,sizeof(uint) * 3);				
+			}
+		}
+		else
+			rMesh->m_BufferSize[1] = 0;
 
-		//memcpy(meshComp->Position, as_mesh->mVertices, sizeof(float)*size * 3);
-		//meshComp->BufferSize[0] = size;
-		//meshComp->Normal = new float[size * 3];
 
-		//for(int = 0;i<)
+		if (as_mesh->HasNormals()) {
 
+			rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+			memcpy(rMesh->Normal, as_mesh->mNormals, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		meshComp->SetupMesh(tmp_VertexVector, tmp_IndicesVector);
+		}
+
+		if (as_mesh->HasTextureCoords(0)) 
+		{
+			rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+			for (uint i = 0; i < as_mesh->mNumVertices; i++) {
+				rMesh->TextureV[i * 2] = as_mesh->mTextureCoords[0][i].x;
+				rMesh->TextureV[i * 2 + 1] = as_mesh->mTextureCoords[0][i].y;
+			}
+		}
+
+		rMesh->toCronosVertexVector();
+		meshComp->SetupMesh(rMesh->getVector(),rMesh->getIndex());
+
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
 
@@ -262,7 +285,7 @@ namespace Cronos {
 		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
 		motherGameObj->m_Childs.push_back(GO);
 
-		LOG("	Processed Mesh with %i Vertices %i Indices and %i Polygons (Triangles)", tmp_VertexVector.size(), tmp_IndicesVector.size(), facesNumber);
+		LOG("	Processed Mesh with %i Vertices and %i Indices ", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);
 	}
 
 

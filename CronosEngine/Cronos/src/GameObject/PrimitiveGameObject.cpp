@@ -144,10 +144,29 @@ namespace Cronos {
 		for (uint i = 0; i < (ParshapeMesh->ntriangles * 3); i++)
 			tmpIndicesVector.push_back(ParshapeMesh->triangles[i]);
 
-
 		//Now set up the mesh component for the game object
 		MeshComponent* meshComp = ((MeshComponent*)(CreateComponent(ComponentType::MESH)));
-		meshComp->SetupMesh(tmpVertexVector, tmpIndicesVector);
+		meshComp->r_mesh = new ResourceMesh(App->m_RandomNumGenerator.GetIntRN());
+		ResourceMesh* rMesh = meshComp->r_mesh;
+
+		rMesh->m_BufferSize[0] = ParshapeMesh->npoints;
+		rMesh->m_BufferSize[1] = ParshapeMesh->ntriangles * 3;
+
+		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+		memcpy(rMesh->Position, ParshapeMesh->points, sizeof(float)*rMesh->m_BufferSize[0] * 3);
+
+		rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
+		memcpy(rMesh->Index, ParshapeMesh->triangles, sizeof(uint)*rMesh->m_BufferSize[1] * 3);
+
+		rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+		memcpy(rMesh->Normal, ParshapeMesh->normals, sizeof(float)*rMesh->m_BufferSize[0] * 3);
+
+		rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+		memcpy(rMesh->TextureV, ParshapeMesh->tcoords, sizeof(float)*rMesh->m_BufferSize[0] * 2);
+
+
+		rMesh->toCronosVertexVector();
+		meshComp->SetupMesh(rMesh->getVector(), rMesh->getIndex());
 		m_Components.push_back(meshComp);
 
 		//Also, set the material component
@@ -155,12 +174,13 @@ namespace Cronos {
 		matComp->SetShader(App->scene->BasicTestShader);
 		m_Components.push_back(matComp);
 
-
 		//Finally compute AABB
 		float AABBPoints[6];
 		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
 		SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
-
+		
+		App->filesystem->SaveOwnFormat(this);
+		
 		LOG("Processed Primitive Mesh with %i Vertices %i Indices and %i Polygons (Triangles)", tmpVertexVector.size(), tmpIndicesVector.size(), j/3);
 	}
 

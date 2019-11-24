@@ -513,11 +513,16 @@ namespace Cronos {
 			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 			if (ImGui::BeginMenu("File")) {
 
-				ImGui::MenuItem("New Scene");
-				ImGui::MenuItem("Open Scene");
+				if(ImGui::MenuItem("New Scene")) {
+					App->scene->OnCleanUp();
+				}
+				if (ImGui::MenuItem("Open Scene")) {
+					App->scene->LoadScene(App->scene->m_SceneName.c_str());
+				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Save")) {
 					App->SaveEngineData();
+					App->scene->SaveScene(App->scene->m_SceneName.c_str());
 				}
 				ImGui::MenuItem("Save As...");
 				ImGui::Separator();

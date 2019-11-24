@@ -6,7 +6,7 @@
 #include "PhysFS/include/physfs.h"
 #include "GameObject/Components/TransformComponent.h"
 #include "Resources/ResourceMesh.h"
-
+#include "Modules/ResourceManager.h"
 
 
 
@@ -39,6 +39,7 @@ namespace Cronos {
 		m_LibraryPath = "lib/";
 		m_HiddenMeshLibPath = m_LibraryPath + "Meshes/";
 		m_HiddenMaterialLibPath = m_LibraryPath + "Materials/";
+		m_ScenePath = "res/Scenes/";
 
 		std::wstring Temp_lib = std::wstring(m_LibraryPath.begin(),m_LibraryPath.end());
 
@@ -82,7 +83,7 @@ namespace Cronos {
 			return false;
 		}
 
-		ResourceMesh* rMesh = mesh->mesh;
+		ResourceMesh* rMesh = mesh->r_mesh;
 
 		//std::vector<CronosVertex>Vertex = mesh->GetVertexVector();
 		//std::vector<uint>Index = mesh->GetIndexVector();
@@ -90,11 +91,10 @@ namespace Cronos {
 		uint totalSize=0;
 		uint bytes = 0;
 		int a  = sizeof(CronosVertex);
-	//change to 4
-		uint range[2];
-		//uint result  = rMesh->GetBufferSize(range);
+
+		uint range[2] = {rMesh->m_BufferSize[0],rMesh->m_BufferSize[1]};
 		
-		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 2 * range[0]) + (sizeof(uint) * range[1]);
+		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 2 * range[0]) + (sizeof(uint) * range[1]*3);
 
 		char*Data = new char[totalSize];
 		char*cursor = Data;
@@ -116,76 +116,13 @@ namespace Cronos {
 
 		//Store Texture Vector
 		bytes = sizeof(float) * 2 * range[0];
-		memcpy(cursor, rMesh->Position, bytes);
+		memcpy(cursor, rMesh->TextureV, bytes);
 		cursor += bytes;
 
 		//Store Index
-		bytes = sizeof(uint) * range[1];
+		bytes = sizeof(uint) * range[1]*3;
 		memcpy(cursor,rMesh->Index, bytes);
 		cursor += bytes;
-
-
-		////Store Vector of Indexes
-		//cursor += bytes;
-		//bytes = sizeof(std::vector<uint>)*Index.size();
-		//memcpy(cursor, &Index, bytes);
-
-		////Store Vector of struct with Vertices/Normals/TextCords
-		
-	
-
-		//memcpy(cursor, Vertex.data(), bytes);
-		
-	/*	for (auto t = Vertex.begin(); t != Vertex.end();++t) {
-			cursor += bytes;
-			bytes = sizeof(CronosVertex);
-			CronosVertex ToData = *t;
-			CronosVertex* pt = new CronosVertex(*t);
-			CronosVertex* Now = new CronosVertex();
-			memcpy(cursor, pt, bytes);
-			memcpy(Now, cursor, bytes);
-			bool a = true;
-		}*/
-		//for (auto t = Index.begin(); t != Index.end(); ++t) {
-		//	cursor += bytes;
-		//	bytes = sizeof(uint);
-		//	uint* ToData = new uint(*t);
-		//	memcpy(cursor, ToData, bytes);
-		//	uint*temp = malloc(sizeof(uint));
-		//}
-		//uint ranges2[2];
-		//uint bytes2 = sizeof(ranges2);
-		//memcpy(ranges2, cursor, bytes2);
-
-		//std::vector<CronosVertex>Vertex2(ranges2[0]);
-		//cursor += bytes2;
-		//bytes2 = sizeof(CronosVertex)*ranges2[0];
-		//memcpy(&Vertex2[0], cursor, bytes2);
-
-		//uint *Index2 = &Index[0];
-		//cursor += bytes;
-		//bytes = sizeof(uint)*range[1];
-		////memcpy(cursor, Index2, bytes);
-		//std::copy(Index.begin(), Index.end(), cursor);
-		//std::vector<uint>vec(cursor, cursor + range[1]);
-
-
-		//cursor += bytes;
-		//bytes = sizeof(CronosVertex)*range[0];
-		//memcpy(cursor,&Vertex, bytes);
-
-
-
-		//std::copy(Vertex.begin(), Vertex.end(), cursor);
-		//std::vector<CronosVertex>vec2(cursor, cursor + range[0]);
-
-		//std::vector<CronosVertex>vec2(cursor, cursor + range[0]);
-		//CronosVertex*VertexTest = &Vertex[0];
-		////std::vector<CronosVertex>*VertexTest = new std::vector<CronosVertex>(Vertex);
-		//cursor += bytes;
-		//bytes = sizeof(CronosVertex)*range[0];
-		//memcpy(cursor, VertexTest, bytes);
-
 
 		std::ofstream MeshData{filePath, std::ios::binary };
 		MeshData.write(Data, totalSize);
@@ -193,18 +130,7 @@ namespace Cronos {
 
 
 		SDL_free(Data);
-		//SDL_free(cursor);
-		//cursor = nullptr;
 
-		
-		//delete Index2;
-		//delete VertexTest;
-		//Data = nullptr;
-		//cursor = nullptr;
-		//tempVertex=nullptr;
-		//tempIndex = nullptr;
-	
-		//char*Data2
 	}
 
 	bool Save(GameObject* ToConvert)
@@ -244,14 +170,15 @@ namespace Cronos {
 				aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();		
 		}
 		if (ToConvert->GetComponent<MeshComponent>()) {
-			MeshComponent* mesh = ToConvert->GetComponent<MeshComponent>();
-			aux_JSONFile["ComponentMesh"]["VertexSize"] = mesh->GetVertexVector().size();
-			aux_JSONFile["ComponentMesh"]["IndexSize"] = mesh->GetIndexVector().size();
-			std::string Mesh_Path = App->filesystem->GetMeshLib();
-			Mesh_Path += std::to_string(ToConvert->GetGOID())+".mesh";
-			aux_JSONFile["ComponentMesh"]["MeshPath"] = Mesh_Path.c_str();
-			saveData(mesh,Mesh_Path.c_str());
-
+			MeshComponent* mesh = ToConvert->GetComponent<MeshComponent>();	
+				App->resourceManager->AddResource(mesh->r_mesh);
+				aux_JSONFile["ComponentMesh"]["VertexSize"] = mesh->GetVertexVector().size();
+				aux_JSONFile["ComponentMesh"]["IndexSize"] = mesh->GetIndexVector().size();
+				std::string Mesh_Path = App->filesystem->GetMeshLib();
+				Mesh_Path += std::to_string(mesh->r_mesh->GetResID()) + ".mesh";
+				aux_JSONFile["ComponentMesh"]["MeshPath"] = Mesh_Path.c_str();
+				aux_JSONFile["ComponentMesh"]["MeshID"] = mesh->r_mesh->GetResID();
+				saveData(mesh, Mesh_Path.c_str());			
 		}
 		if (ToConvert->GetParentGameObject() != nullptr) {
 			aux_JSONFile["ParentID"] = ToConvert->GetParentGameObject()->GetGOID();
@@ -286,56 +213,19 @@ namespace Cronos {
 		return true;
 	}
 
-	
-	std::vector<CronosVertex>GetVertexVector(std::ifstream& a,int size)
-	{
-		std::vector<CronosVertex> testing(size);
 
-		std::string Vertex;
-		std::vector<float>Values;
-		int position = a.tellg();
-		int index=0;
-		int offset;
-		bool start = false;
-		while (!a.eof()) {
-			getline(a, Vertex);
-			if (!(offset = Vertex.find("EndVertex;", 0) != std::string::npos)) {
-
-				if ((offset = Vertex.find("Vertices:", 0) != std::string::npos)) {
-					start = true;
-					a.seekg(1, std::ios::cur);
-					getline(a, Vertex);
-				}
-				if (start) {
-					float tempvalue;
-					std::stringstream ss(Vertex);
-					while (ss >> tempvalue) {
-						Values.push_back(tempvalue);
-					}
-					if (index == 158) {
-						bool awdadsz = true;
-					}
-					CronosVertex temp(Values);
-					testing[index] = temp;
-					++index;			
-					Values.clear();
-					ss.clear();
-				}
-			}
-			else
-				return testing;
-		}
-		return testing;
-	}
-
-	bool Filesystem::LoadMesh(const char* filepath, MeshComponent& mesh) {
+	bool Filesystem::LoadMesh(const char* filepath, MeshComponent& mesh,uint ResID) {
 		
 		bool ret = false;
 
-		char*data2 = nullptr;
+
+		ResourceMesh* rMesh = new ResourceMesh(ResID);
+		mesh.r_mesh = rMesh;
+
+		char*Data = nullptr;
 		std::ifstream file{ filepath, std::ios::binary };
 
-		char* cursor2 = nullptr;
+		char* cursor = nullptr;
 		if (file.is_open()) {
 
 			file.seekg(0, file.end);
@@ -344,34 +234,54 @@ namespace Cronos {
 			file.seekg(0);
 
 			if (size > 0) {
-				data2 = new char[size];
-				file.read(data2, size);
+				Data = new char[size];
+				file.read(Data, size);
 
 			}
-			cursor2 = (char*)data2;
 
-			uint ranges[1];
-
-			uint bytes2 = sizeof(ranges);
-			memcpy(ranges, cursor2, bytes2);
-			mesh.BufferSize[0] = ranges[0];
-			cursor2 += bytes2;
+			cursor = (char*)Data;
 			
-			bytes2 = sizeof(float) * 3 * ranges[0];
-			mesh.Position = new float[ranges[0] * 3];
-			memcpy(mesh.Position, cursor2, bytes2);
-			cursor2+=bytes2;
+			//Load Total of Vertices and Indices
+			uint range[2];
+			uint bytes = sizeof(range);
+			memcpy(rMesh->m_BufferSize, cursor, bytes);
+			//rMesh->m_BufferSize[0] = range[0];
+			//rMesh->m_BufferSize[1] = range[1];
 
-			bool a = true;
+			//Load Vector Position
+			cursor += bytes;
+			bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
+			rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+			memcpy(rMesh->Position, cursor, bytes);
+			cursor+=bytes;
+
+			//Load Normals
+			bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
+			rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+			memcpy(rMesh->Normal,cursor, bytes);
+			cursor += bytes;
+			
+			//Load TextureCoordinates
+			bytes = sizeof(float) * 2 * rMesh->m_BufferSize[0];
+			rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+			memcpy(rMesh->TextureV, cursor, bytes);
+			cursor += bytes;
+
+			//Load Indices
+			bytes = sizeof(uint) * rMesh->m_BufferSize[1]*3;
+			rMesh->Index = new uint[rMesh->m_BufferSize[1]*3];
+			memcpy(rMesh->Index, cursor, bytes);
+			cursor += bytes;
+
+			rMesh->toCronosVertexVector();
 		}
-		else
+		else {
 			LOG("FileSystem error loading file %s");
+			ret = false;
+		}
 		
-		//Vertices = std::vector<CronosVertex>(*tempVertex);
-		
-		//std::vector<CronosVertex>asdasef(*tempVertex);
-		SDL_free(data2);
-		cursor2 = nullptr;
+		SDL_free(Data);
+
 		return ret;
 	}
 
@@ -407,31 +317,34 @@ namespace Cronos {
 					if (configFile.contains("ComponentMesh"))
 					{
 						MeshComponent* MeshComp = ((MeshComponent*)(Ret->CreateComponent(ComponentType::MESH)));
-						std::string MeshPath = configFile["ComponentMesh"]["MeshPath"].get < std::string >();
-						std::vector<CronosVertex>VertexVector;
-						std::vector<uint>IndexVector;
-						LoadMesh(MeshPath.c_str(), *MeshComp);
-						MeshComp->SetupMesh(VertexVector, IndexVector);
+						uint resID = configFile["ComponentMesh"]["MeshID"].get<uint>();
+						if (App->resourceManager->isMeshLoaded(resID))
+							MeshComp->r_mesh = App->resourceManager->getMeshResource(resID);
+						else {
+							std::string MeshPath = configFile["ComponentMesh"]["MeshPath"].get < std::string >();
+							LoadMesh(MeshPath.c_str(), *MeshComp, resID);
+						}
+						MeshComp->SetupMesh(MeshComp->r_mesh->getVector(), MeshComp->r_mesh->getIndex());
 						Ret->m_Components.push_back(MeshComp);
 					}
 					if (configFile.contains("ComponentMaterial"))
 					{
-
-						//MaterialComponent* MatComp = (MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL));
-						//Texture* texTemp = 
-						//for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
-						//	MatComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
-
-						//matComp->SetShader(App->scene->BasicTestShader);
-						//GO->m_Components.push_back(matComp);
+						MaterialComponent* MatComp = ((MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL)));
+						std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
+						Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
+						MatComp->SetTexture(textTemp,textTemp->GetTextureType());
+						MatComp->SetShader(App->scene->BasicTestShader);
+						Ret->m_Components.push_back(MatComp);
 					}
 				}
 				if (configFile.contains("Childs"))
 				{
 					int numOfChilds = configFile["Childs"]["NumberChilds"].get<int>();
 					for (int i = 0; i < numOfChilds; ++i) {
-						int ChildID = configFile["Childs"]["IDChild"][i].get<int>();					
-						Ret->m_Childs.push_back(Load(ChildID));
+						int ChildID = configFile["Childs"]["IDChild"][i].get<int>();
+						GameObject* Child = Load(ChildID);
+						Child->SetParent(Ret);
+						Ret->m_Childs.push_back(Child);
 					}
 				}
 				
@@ -448,229 +361,6 @@ namespace Cronos {
 		}
 		return nullptr;
 	}
-
-	std::vector<uint>GetIndexVector(std::ifstream&a, int size) {
-
-		std::vector<uint> ret(size);
-		std::vector<float>Values;
-		std::string indexes;
-		int position = a.tellg();
-		int index = 0;
-		int offset;
-		bool start = false;
-		while (!a.eof()) {
-			getline(a, indexes);
-			if (!(offset = indexes.find("EndNode;", 0) != std::string::npos)) {
-
-				if ((offset = indexes.find("Indexes:", 0) != std::string::npos)) {
-					start = true;
-					a.seekg(1, std::ios::cur);
-					getline(a, indexes);
-				}
-				if (start) {
-					float tempvalue;
-					std::stringstream ss(indexes);
-					while (ss >> tempvalue) {
-						ret[index] = tempvalue;
-						++index;
-					}
-					Values.clear();
-					ss.clear();
-				}
-			}
-			else
-				return ret;
-		}
-		return ret;
-	}
-
-	void LoadGameObjects(GameObject* Parent,std::ifstream& a ) {
-		
-		GameObject* Child;
-		int offset;
-		int VertexSize=0;
-		int IndexSize=0;
-		int childs=0;
-		bool SetupMesh = false;
-		bool SetupMaterial = false;
-		std::string atest;
-		int position = a.tellg();
-		//while (std::getline(a, line)) {
-		//	atest += line;
-		//}
-		if (a.is_open()) {
-			std::string name;
-			std::string path;
-			int id;
-			while (!a.eof())
-			{
-				getline(a, atest);
-				if (!(offset = atest.find("EndNode;", 0) != std::string::npos)) {
-
-					if ((offset = atest.find("Childs:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						childs = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-
-					if ((offset = atest.find("VertexSize:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-
-						std::string testing = atest.substr(offset1, offset2);
-						VertexSize= std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("IndexSize:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-
-						std::string testing = atest.substr(offset1, offset2);
-						IndexSize = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("Name:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						name = atest.substr(offset1, offset2).c_str();
-					}
-					if ((offset = atest.find("Path:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						path = atest.substr(offset1, offset2).c_str();
-					}
-					if ((offset = atest.find("ID:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						id = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("MeshComponent", 0)) != std::string::npos) {
-						SetupMesh = true;
-					}
-				}
-				else {
-					Child = new GameObject(name, id, path);
-					Child->SetParent(Parent);
-					if (SetupMesh) {
-						MeshComponent* meshComp = ((MeshComponent*)(Child->CreateComponent(ComponentType::MESH)));
-						std::vector<uint> per;
-						a.seekg(position, std::ios::beg);		
-						std::vector<CronosVertex>VertexVector = GetVertexVector(a, VertexSize);
-						std::vector<uint>IndexVector = GetIndexVector(a, IndexSize);
-						meshComp->SetupMesh(VertexVector, IndexVector);
-						Child->m_Components.push_back(meshComp);
-					}
-					break;
-				}
-			}
-			for (int i = 0; i < childs; ++i)
-				LoadGameObjects(Child, a);
-		}
-		Parent->m_Childs.push_back(Child);
-	}
-
-	GameObject* Load(std::string MetaPath)
-	{
-		//std::vector<CronosVertex>&vertices
-		GameObject* Root;
-
-		std::ifstream a;
-		a.open(MetaPath);
-		
-		int offset;
-		int VertexSize=0,IndexSize=0;
-		int childs=0;
-		bool SetupMesh=false;
-		std::ofstream test;
-		std::string atest,line;
-		//while (std::getline(a, line)) {
-		//	atest += line;
-		//}
-		if (a.is_open()) {
-			std::string name;
-			std::string path;
-			int id;
-			while (!a.eof())
-			{			
-				getline(a, atest);
-				if (!(offset = atest.find("EndNode;", 0) != std::string::npos)) {
-			
-					if ((offset = atest.find("Childs:", 0)) != std::string::npos) {
-						
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						childs = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-
-					if ((offset = atest.find("VertexSize:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-
-						std::string testing = atest.substr(offset1, offset2);
-						VertexSize = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("IndexSize:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-
-						std::string testing = atest.substr(offset1, offset2);
-						IndexSize = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("Name:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						name = atest.substr(offset1, offset2).c_str() ;
-					}
-					if ((offset = atest.find("Path:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						path = atest.substr(offset1, offset2).c_str();
-					}
-					if ((offset = atest.find("ID:", 0)) != std::string::npos) {
-
-						int offset1 = atest.find_first_of(":") + 1;
-						int offset2 = atest.find(";") - offset1;
-						id = std::stoi(atest.substr(offset1, offset2).c_str());
-					}
-					if ((offset = atest.find("MeshComponent", 0)) != std::string::npos) {
-						SetupMesh = true;
-					}
-				}
-				else {
-					Root = new GameObject(name, id, path);
-					if (SetupMesh) {
-						MeshComponent* meshComp = ((MeshComponent*)(Root->CreateComponent(ComponentType::MESH)));
-						std::vector<uint> per;
-						a.seekg(0, std::ios::beg);
-						std::vector<CronosVertex>VertexVector = GetVertexVector(a, VertexSize);
-						std::vector<uint>IndexVector = GetIndexVector(a, IndexSize);
-						meshComp->SetupMesh(VertexVector, IndexVector);
-						Root->m_Components.push_back(meshComp);
-					}
-					break;
-				}
-			}
-			for(int i = 0; i<childs;++i)
-				LoadGameObjects(Root,a);		
-		}
-		return Root;
-	}
-
-	//bool AssetItems:: HasMeta() const {
-	//	std::string test = App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model";
-	//	if (std::filesystem::exists(std::filesystem::path(App->filesystem->GetMetaPath() + m_AssetNameNoExtension.c_str() + ".model")))
-	//		return true;
-	//	return false;
-	//}
-
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		

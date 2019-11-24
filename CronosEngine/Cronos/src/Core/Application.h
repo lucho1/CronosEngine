@@ -15,6 +15,7 @@
 #include "Modules/EngineCamera.h"
 #include "Modules/Filesystem.h"
 #include "Modules/TextureManager.h"
+#include "Modules/ResourceManager.h"
 
 #include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
@@ -40,7 +41,7 @@ namespace Cronos {
 		ImGuiLayer* EditorGUI = nullptr;
 		Filesystem* filesystem = nullptr;
 		TextureManager* textureManager = nullptr;
-
+		ResourceManager* resourceManager = nullptr;
 
 
 		RNGen m_RandomNumGenerator; //Random number generator
@@ -118,9 +119,7 @@ namespace Cronos {
 		inline const float GetLastFrameMS()				const		{	return	(m_Timestep * 1000.0f);		}
 		inline const uint32 GetFramesInLastSecond()		const		{	return	m_PREV_LastSecFrameCount;	}
 		inline const float GetAverageFPS()				const		{	return	m_AverageFPS;				}
-
 		inline const int GetFPSCap()					const		{ return m_FPSCap; }
-
 		inline const std::string GetAppTitle()			const		{ return m_AppName; }
 		inline const std::string GetAppVersion()		const		{ return m_AppVersion; }
 		inline const std::string GetAppOrganization()	const		{ return m_AppOrganization; }

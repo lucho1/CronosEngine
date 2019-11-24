@@ -99,6 +99,8 @@ namespace Cronos {
 			}
 		)";*/
 
+		m_SceneName = "NewScene";
+
 		BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader->Bind();
 		BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrixMAT4());
@@ -110,10 +112,12 @@ namespace Cronos {
 		//if(!m_HouseModel->HasMeta())
 		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
 		int id = m_HouseModel->GetGOID();
-
+		
 		GameObject* testing = App->filesystem->Load(id);
-		////App->filesystem->Load(m_HouseModel->GetMetaPath());
+
+		//App->filesystem->Load(m_HouseModel->GetMetaPath());
 		m_GameObjects.push_back(testing);
+		ToCopy = nullptr;
 		return ret;
 	}
 
@@ -125,7 +129,7 @@ namespace Cronos {
 			element->CleanUp();
 
 		m_GameObjects.clear();
-		RELEASE(BasicTestShader);
+		//RELEASE(BasicTestShader);
 
 		
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
@@ -159,12 +163,97 @@ namespace Cronos {
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
+		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr) {
+				ToCopy = App->EditorGUI->GetCurrentGameObject();
+			}
+		}
+
+		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
+			if (App->EditorGUI->GetCurrentGameObject() !=nullptr&&ToCopy!=nullptr) {
+
+				GameObject* NewGO = App->filesystem->Load(ToCopy->GetGOID());
+				
+				
+				NewGO->SetNewID();
+				if (App->EditorGUI->GetCurrentGameObject()->GetParentGameObject() == nullptr) {
+					NewGO->SetParent(App->EditorGUI->GetCurrentGameObject());
+					App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
+				}
+				else {
+					NewGO->SetParent(App->EditorGUI->GetCurrentGameObject()->GetParentGameObject());
+					App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
+				}
+				App->filesystem->SaveOwnFormat(App->EditorGUI->GetCurrentGameObject());
+				//ToCopy = nullptr;
+			}
+		}
+
+
+
+
 		return UPDATE_CONTINUE;
 	}
 
 	GameObject* Scene::CreateModel(const char* path)
 	{
 		return m_CNAssimp_Importer.LoadModel(path);
+	}
+
+	bool Scene::SaveScene(const char * SceneName)
+	{
+		std::string Path = App->filesystem->GetScenePath();
+		Path += SceneName;
+		Path += ".scene";
+
+		json sceneFile;
+		sceneFile["Name"] = SceneName;
+		sceneFile["Path"] = Path;
+		sceneFile["TotalofRootGO"] = m_GameObjects.size();
+		int index=0;
+		for (auto& Go : m_GameObjects) {
+			App->filesystem->SaveOwnFormat(Go);
+			sceneFile["ParentGOID"][index] = Go->GetGOID();
+			index++;
+		}
+
+		std::ofstream OutputFile_Stream{ Path,std::ofstream::out };
+
+		OutputFile_Stream << std::setw(2) << sceneFile;
+
+		OutputFile_Stream.close();
+
+		return false;
+	}
+
+	bool Scene::LoadScene(const char * SceneName)
+	{
+		App->EditorGUI->CancelGameObject();
+		ToCopy = nullptr;
+		OnCleanUp();
+		std::string Path = App->filesystem->GetScenePath();
+		Path += SceneName;
+		Path += ".scene";
+
+		bool exists = std::filesystem::exists(Path);
+
+		if (exists) {
+			std::ifstream file{ Path.c_str() };
+			if (file.is_open()) 
+			{
+				json LoadSceneFile=json::parse(file);
+				uint numofRootGo = LoadSceneFile["TotalofRootGO"].get<uint>();
+				for (int i = 0; i < numofRootGo; i++) {
+					int id = LoadSceneFile["ParentGOID"][i].get<int>();
+					GameObject* ret = App->filesystem->Load(id);
+					m_GameObjects.push_back(ret);
+				}
+			}
+		}
+
+
+
+		return false;
 	}
 
 	// PreUpdate

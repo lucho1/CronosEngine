@@ -12,12 +12,13 @@ namespace Cronos {
 
 	class Resource {
 	public:
+
 		Resource(uint ResID, ResourceType type);
 		//virtual ~Resource();
 
 		virtual bool isLoaded(uint m_ResID) const = 0 ;
 		virtual bool Exists()=0;
-		inline uint GetGOID() const { return m_ResID; };
+		virtual inline uint GetResID() const { return m_ResID; };
 		
 		//template <typename T>
 		//T* GetResource()
@@ -34,7 +35,6 @@ namespace Cronos {
 
 	private:
 
-		
 		uint m_ResID;
 		
 	};
