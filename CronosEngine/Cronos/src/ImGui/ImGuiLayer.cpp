@@ -11,7 +11,6 @@
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
 #include "Renderer/Buffers.h"
-#include "Renderer/Primitive.h"
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 
@@ -316,7 +315,7 @@ namespace Cronos {
 		return current_status;
 	}
 
-	update_status ImGuiLayer::OnUpdate(float dt)
+	update_status ImGuiLayer::OnPostUpdate(float dt)
 	{
 		int test = DirectoriesArray.size();
 		static bool DockspaceInitiate;
@@ -378,8 +377,13 @@ namespace Cronos {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+		SDL_GL_SwapWindow(App->window->window);
 		return current_status;
+	}
+
+	update_status ImGuiLayer::OnUpdate(float dt)
+	{
+		return UPDATE_CONTINUE;
 	}
 
 	void ImGuiLayer::DeleteGameObject(GameObject* go) {
@@ -449,32 +453,42 @@ namespace Cronos {
 		static ImVec2 LastSize = SizeGame;
 
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+		static bool ZB_RenderingActive = false;
 		ImGui::Begin("Scene",nullptr,GameWindow_flags);
 		{
-
-			if (ImGui::BeginMenuBar()) {
-
+			if (ImGui::BeginMenuBar())
+			{
 				if (ImGui::BeginMenu(m_ShadingModesLabel[(int)m_currentShadingMode].c_str())) {
 
-					for (int i = 0; i < (int)ShadingMode::MaxElements; i++) {
-
+					for (int i = 0; i < (int)ShadingMode::MaxElements; i++)
+					{
 						if (ImGui::MenuItem(m_ShadingModesLabel[i].c_str()))
 							m_currentShadingMode = (ShadingMode)i;
 					}
+
+					ImGui::Separator();
+					if (ImGui::MenuItem("Render Z-Buffer", "", &ZB_RenderingActive))
+					{
+						App->renderer3D->SetZBuffer();
+					}
+
 					ImGui::EndMenu();
 				}
 
-
-
 				ImGui::EndMenuBar();
 			}
+
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
-			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y) {
+			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y)
+			{
+				//TODO: When doing this resize it actually does a window resize, and shouldn't be like that
+				//but resizing through renderer doesn't works
 				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
-				App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
-				//App->window->OnResize(SizeGame.x, SizeGame.y);
+				//App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
+				App->window->OnResize(SizeGame.x, SizeGame.y);
 				LastSize = SizeGame;
 			}
+
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 
 			if (ImGui::BeginDragDropTarget())
@@ -691,27 +705,35 @@ namespace Cronos {
 	{
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			glm::vec3 TempPos = CurrentGameObject->GetComponent<TransformComponent>()->GetPosition();
-			glm::vec3 TempRot = CurrentGameObject->GetComponent<TransformComponent>()->GetRotation();
-			glm::vec3 TempScale = CurrentGameObject->GetComponent<TransformComponent>()->GetScale();
-
+			TransformComponent* test = CurrentGameObject->GetComponent<TransformComponent>();
+			ObjectPos =test->GetTranslation();
+			ObjectRot = test->GetOrientation();
+			ObjectScale = test->GetScale();
+			
+			static bool toChange;
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueX", &TempPos.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueY", &TempPos.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##valueZ", &TempPos.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetPosition(TempPos);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectPos.x, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueY", &ObjectPos.y, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueZ", &ObjectPos.z, 0.1f))toChange=true;
+			if (toChange) {
+				test->SetPosition(ObjectPos);
+				toChange = false;
+			}
 			ImGui::Text("Rotation");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value1", &TempRot.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value2", &TempRot.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value3", &TempRot.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetRotation(TempRot);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, 0.1f))toChange = true;
+			if (toChange) {
+				test->SetOrientation(ObjectRot);
+				toChange = false;
+			}
 			ImGui::Text("Scale");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &TempScale.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &TempScale.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &TempScale.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetScale(TempScale);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f); ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f); ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f);
+			CurrentGameObject->GetComponent<TransformComponent>()->SetScale(ObjectScale);
 
 		}
 		ImGui::Separator();
@@ -826,7 +848,7 @@ namespace Cronos {
 				{
 					int payload_n = *(const int*)payload->Data;
 
-					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_TGA
 						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
 					{
 						AssetItems* AssetData = (AssetItems*)payload->Data;
@@ -840,7 +862,7 @@ namespace Cronos {
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text("\n   Ambient"); ImGui::SameLine();
+			ImGui::Text("\n   Ambient/Albedo"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 			ImVec2 FramePadding(100.0f, 3.0f);
 			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
@@ -848,7 +870,13 @@ namespace Cronos {
 
 			ImGui::SetCursorPosY(test+15);
 
-			ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags);
+			glm::vec4 col = CurrentGameObject->GetComponent<MaterialComponent>()->GetColor();
+			color = ImVec4(col.r, col.g, col.b, col.a);
+
+			if (ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags))
+			{
+				CurrentGameObject->GetComponent<MaterialComponent>()->SetColor(glm::vec4(color.x, color.y, color.z, color.w));
+			}
 			//ImGui::PopStyleVar();
 
 
@@ -1574,56 +1602,64 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawConfigViewPortMenu() {
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
-		static float CameraMoveSpeed= App->engineCamera->GetCameraMoveSpeed();
+
+		static float CameraMoveSpeed = App->engineCamera->GetCameraMoveSpeed();
 		static float CameraScrollSpeed = App->engineCamera->GetCameraScrollSpeed();
 		static float CameraFieldOfView = App->engineCamera->GetFOV();
 		static float CameraNearPlane = App->engineCamera->GetNearPlane();
 		static float CameraFarPlane = App->engineCamera->GetFarPlane();
+
 		ImGui::Text("Viewport");
 		ImGui::Separator();
 		ImGui::Text("Viewport Camera Options");
 		ImGui::BeginChild("Camera Options");
+
+		//Setters -----------------------------------------------------------------------------------------
 		ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
 		if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
 		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+		
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
 		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
 			App->engineCamera->SetFOV(CameraFieldOfView);
+
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Viewing Frustum: ");
+
 		ImGui::NewLine();
 		ImGui::SameLine(30);
 		ImGui::SetNextItemWidth(100);
+
 		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
 			App->engineCamera->SetNearPlane(CameraNearPlane);
+
 		sameLine;
 		ImGui::SetNextItemWidth(100);
 
 		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
 			App->engineCamera->SetFarPlane(CameraFarPlane);
 
-		if (ImGui::Button("Default")) {
-			CameraMoveSpeed = 5.0;
-			CameraScrollSpeed = 20.0;
+		//Set to default values ------------------------------------------------------------------------------
+		if (ImGui::Button("Default"))
+		{
+			//CameraMoveSpeed = 5.0;
+			//CameraScrollSpeed = 20.0;
 			CameraFieldOfView = 60;
-			CameraNearPlane = 0.125;
-			CameraFarPlane = 512.0;
-			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
-			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+			CameraNearPlane = 1.0;
+			CameraFarPlane = 100.0;
+			//App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+			//App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
 			App->engineCamera->SetFOV(CameraFieldOfView);
 			App->engineCamera->SetNearPlane(CameraNearPlane);
 			App->engineCamera->SetFarPlane(CameraFarPlane);
 
 		}
-
-
-
-		//ImGui::Text("Camera ")
 
 		ImGui::EndChild();
 		ImGui::PopStyleVar();

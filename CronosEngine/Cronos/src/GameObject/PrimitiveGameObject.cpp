@@ -2,7 +2,7 @@
 #include "PrimitiveGameObject.h"
 
 #include "Application.h"
-#include "AABB.hpp"
+#include "Helpers/AABB.h"
 
 #include "par_shapes/par_shapes.h"
 

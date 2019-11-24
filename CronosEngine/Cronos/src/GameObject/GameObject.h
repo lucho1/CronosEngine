@@ -13,8 +13,8 @@ namespace Cronos {
 	{
 		friend class PrimitiveGameObject;
 	public:
-		
-		GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f), 
+
+		GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f),
 			glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
 		~GameObject();
@@ -41,10 +41,11 @@ namespace Cronos {
 		//		}
 		//}
 		void SetNewID();
-		void SetName(const std::string name) { m_Name = name; }
-		void SetPath(const std::string path) { m_Path = path; }
-		void SetMeta(const std::string meta) { m_MetaPath = m_Path+meta; }
-		void SetParent(GameObject* Go);
+		void SetName(const std::string name)	{ m_Name = name; }
+		void SetPath(const std::string path)	{ m_Path = path; }
+		void SetMeta(const std::string meta)	{ m_MetaPath = m_Path+meta; }
+		void SetParent(GameObject* Go)			{ Parent = Go; }
+
 		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
 
 		GameObject* GetParentGameObject() { return Parent; }
@@ -60,7 +61,7 @@ namespace Cronos {
 			for (auto& comp : m_Components)
 				if (comp->GetComponentType() == type)
 					return ((T*)(comp));
-			
+
 			//LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
@@ -82,7 +83,7 @@ namespace Cronos {
 		std::string m_Name;
 		std::string m_Path;
 		std::string m_MetaPath;
-	
+
 		bool m_Active;
 		int m_GameObjectID;
 	};

@@ -14,7 +14,7 @@ namespace Cronos
 		MaterialComponent(GameObject* attachedGO);
 		~MaterialComponent();
 
-		void Bind(bool bindShader);
+		void Bind(bool bindMaterial);
 		void Unbind();
 
 		void SetTexture(Texture* texture, TextureType type);
@@ -23,10 +23,15 @@ namespace Cronos
 		inline const std::unordered_map<TextureType, Texture*>GetTextures() const { return m_TexturesContainer; }
 		static ComponentType GetType() { return ComponentType::MATERIAL; };
 
-	private:
-
 		Shader* m_ShaderAttached = nullptr;
+
+		void SetColor(const glm::vec4& col) { m_AmbientColor = col; }
+		const glm::vec4 GetColor() const { return m_AmbientColor; }
+
+	private:
+		
 		std::unordered_map<TextureType, Texture*>m_TexturesContainer;
+		glm::vec4 m_AmbientColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	};
 }
 

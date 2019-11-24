@@ -153,12 +153,12 @@ namespace Cronos {
 		aux_JSONFile["Active"] = ToConvert->isActive();
 			
 		TransformComponent* Transform = ToConvert->GetComponent<TransformComponent>();
-		aux_JSONFile["ComponentTransform"]["Position"][0] = Transform->GetPosition().x;
-		aux_JSONFile["ComponentTransform"]["Position"][1] = Transform->GetPosition().y;
-		aux_JSONFile["ComponentTransform"]["Position"][2] = Transform->GetPosition().z;
-		aux_JSONFile["ComponentTransform"]["Rotation"][0] = Transform->GetRotation().x;
-		aux_JSONFile["ComponentTransform"]["Rotation"][1] = Transform->GetRotation().y;
-		aux_JSONFile["ComponentTransform"]["Rotation"][2] = Transform->GetRotation().z;
+		aux_JSONFile["ComponentTransform"]["Position"][0] = Transform->GetTranslation().x;
+		aux_JSONFile["ComponentTransform"]["Position"][1] = Transform->GetTranslation().y;
+		aux_JSONFile["ComponentTransform"]["Position"][2] = Transform->GetTranslation().z;
+		aux_JSONFile["ComponentTransform"]["Rotation"][0] = Transform->GetOrientation().x;
+		aux_JSONFile["ComponentTransform"]["Rotation"][1] = Transform->GetOrientation().y;
+		aux_JSONFile["ComponentTransform"]["Rotation"][2] = Transform->GetOrientation().z;
 		aux_JSONFile["ComponentTransform"]["Scale"][0] = Transform->GetScale().x;
 		aux_JSONFile["ComponentTransform"]["Scale"][1] = Transform->GetScale().y;
 		aux_JSONFile["ComponentTransform"]["Scale"][2] = Transform->GetScale().z;
@@ -443,6 +443,16 @@ namespace Cronos {
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
+			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+
+			m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			m_IconTex = m_AssetTexture->GetTextureID();
+			m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			m_Details += "x";
+			m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			m_Details += " ";
+			m_Details += m_AssetFullName;
+
 		}
 		if (type == ItemType::ITEM_FOLDER) {
 			m_IconTex = App->filesystem->GetIcon(type);

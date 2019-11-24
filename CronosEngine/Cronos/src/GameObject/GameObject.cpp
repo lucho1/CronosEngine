@@ -12,7 +12,7 @@ namespace Cronos {
 	{
 		Component* Comp = CreateComponent(ComponentType::TRANSFORM);
 		((TransformComponent*)(Comp))->SetPosition(position);
-		((TransformComponent*)(Comp))->SetRotation(rotation);
+		((TransformComponent*)(Comp))->SetOrientation(rotation);
 		((TransformComponent*)(Comp))->SetScale(scale);
 		m_Components.push_back(Comp);
 		m_MetaPath = App->filesystem->GetMetaPath() + std::to_string(gameObjectID) + ".model";
@@ -22,6 +22,7 @@ namespace Cronos {
 	{
 	}
 
+	//---------------------------------------------
 	void GameObject::CleanUp()
 	{
 		for (uint i = 0; i < m_Components.size(); i++)
@@ -36,6 +37,19 @@ namespace Cronos {
 		m_Childs.clear();
 	}
 
+	void GameObject::Update(float dt)
+	{
+		if (m_Active == true)
+		{
+			for (auto& comp : m_Components)
+				comp->Update(dt);
+
+			for (auto& child : m_Childs)
+				child->Update(dt);
+		}
+	}
+
+	//---------------------------------------------
 	void GameObject::Enable() 
 	{
 		if (!m_Active)
@@ -60,20 +74,7 @@ namespace Cronos {
 		}
 	}
 
-	void GameObject::Update(float dt)
-	{
-		if (m_Active == true)
-		{
-			for (auto& comp : m_Components)
-				comp->Update(dt);
-
-			for (auto& child : m_Childs)
-				child->Update(dt);
-		}
-	}
-	void GameObject::SetParent(GameObject* Go) {
-		Parent = Go;
-	}
+	//---------------------------------------------
 	void GameObject::SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec)
 	{
 		auto comp = GetComponent<TransformComponent>();

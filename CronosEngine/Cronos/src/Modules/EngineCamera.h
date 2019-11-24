@@ -3,8 +3,9 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "glmath.h"
 
+#define MIN_FOV 15.0f
+#define MAX_FOV 120.0f
 
 namespace Cronos {
 
@@ -12,72 +13,92 @@ namespace Cronos {
 	{
 	public:
 
+		//Module Methods
 		EngineCamera(Application* app, bool start_enabled = true);
 		~EngineCamera();
 
 		virtual bool			OnStart() override;
 		virtual update_status	OnUpdate(float dt) override;
+		virtual update_status	OnPostUpdate(float dt) override;
 		virtual bool			OnCleanUp() override;
 
-	public:
-
-		inline const float* GetViewMatrix()				const { return &m_ViewMatrix;		}
-		inline const float* GetProjectionMatrix()		const { return &m_ProjectionMatrix;	}
-														
-		inline const vec3 GetX()						const { return m_X;					}
-		inline const vec3 GetY()						const { return m_Y;					}
-		inline const vec3 GetZ()						const { return m_Z;					}
-		inline const vec3 GetPosition()					const { return m_Position;			}
-		inline const vec3 GetReference()				const { return m_Reference;			}
-		inline const mat4x4 GetProjectionMatrixMAT4()	const { return m_ProjectionMatrix;	}
-		inline const mat4x4 GetViewMatrixMAT4()			const { return m_ViewMatrix; }
-
-		inline const float GetCameraMoveSpeed()			const { return m_CameraMoveSpeed;	}
-		inline const float GetCameraScrollSpeed()		const { return m_CameraScrollSpeed; }
-		inline const float GetFOV()						const { return m_FOV; }
-		inline const float GetNearPlane()				const { return m_NearPlane; }
-		inline const float GetFarPlane()				const { return m_FarPlane; }
-
+		//Save/Load
+		void SaveModuleData(json& JSONFile) const;
+		void LoadModuleData(json& JSONFile);
 
 	public:
 
-		void SetMoveSpeed(float speed)		{ m_CameraMoveSpeed = speed; }
-		void SetScrollSpeed(float speed)	{ m_CameraScrollSpeed = speed; }
+		//Getters
+		inline const glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
+		inline const glm::mat4 GetProjectionMatrix() const { return m_ProjectionMatrix; }
 
+		inline const glm::vec3 GetPosition() const { return m_Position; }
+		inline const glm::vec3 GetTarget() const { return m_Target; }
+		inline const glm::vec3 GetFrontVector() const { return m_Front; }
+		inline const glm::vec3 GetUpVector() const { return m_Up; }
+		inline const glm::vec3 GetRightVector() const { return m_Right; }
+
+		inline const float GetNearPlane() const { return m_NearPlane; }
+		inline const float GetFarPlane() const { return m_FarPlane; }
+		inline const float GetFOV() const { return m_FOV; }
+
+		inline const float GetCameraMoveSpeed()			const { return m_MoveSpeed; }
+		inline const float GetCameraScrollSpeed()		const { return m_ScrollSpeed; }
+
+	public:
+
+		//Setters
 		void SetFOV(float FOV);
 		void SetNearPlane(float nPlane);
 		void SetFarPlane(float fPlane);
 
-		void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
-		void LookAt(const vec3 &Spot);
-		void Move(const vec3 &Movement);
-		void OrbitAroundReference(const vec3& Reference);
+		void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
+		void SetScrollSpeed(float speed) { m_ScrollSpeed = speed; }
 
-		void CalculateProjection();
+		void ChangeProjection() { m_ChangeProj = true; }
 
-		//Save/Load
-		virtual void SaveModuleData(json& JSONFile) const override;
-		virtual void LoadModuleData(json& JSONFile) override;
+	public:
+
+		//Camera Methods
+		void Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference = false);
+		void LookAt(const glm::vec3& spot);
+		
+	private:
+
+		//Camera Methods
+		void Recalculate();
+
+		void Move(float dt);
+		void Zoom(float dt);
+		void CameraPanning(float dt);
+		void Focus();
+
+		glm::vec3 MouseRotation(const glm::vec3& pos, const glm::vec3& ref);
+		//glm::vec3 Rotate(const glm::vec3& pos, const glm::vec3& ref);
 
 	private:
 
-		void CalculateViewMatrix();
-		const vec3 CalculateMouseRotation(const vec3& pos, const vec3& ref);
-		void Zoom(float dt);	
+		//Camera Calculation Data
+		glm::mat4 m_ViewMatrix;
+		glm::mat4 m_ProjectionMatrix;
+
+		glm::vec3 m_Position;
+		glm::vec3 m_Target;
+		
+		glm::vec3 m_Front;
+		glm::vec3 m_Right;
+		glm::vec3 m_Up;
+
+		glm::quat m_Orientation;
 
 	private:
 
-		vec3 m_X, m_Y, m_Z;
-		vec3 m_Position, m_Reference;
-		mat4x4 m_ViewMatrix, m_ViewMatrixInverse;
-		mat4x4 m_ProjectionMatrix;
+		//Camera Common data
+		float m_NearPlane = 1.0f, m_FarPlane = 100.0f, m_FOV = 60.0f;
+		float m_MoveSpeed = 10.0f, m_ScrollSpeed = 3.5f;
+		bool m_ChangeProj = false;
 
-		float m_CameraMoveSpeed;
-		float m_CameraScrollSpeed;
-
-		float m_NearPlane;
-		float m_FarPlane;
-		float m_FOV;
+		float m_FocusDistance = 20.0f;
 	};
 }
 

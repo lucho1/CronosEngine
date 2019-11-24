@@ -1,7 +1,7 @@
 #ifndef _PERFTIMER_H_
 #define _PERFTIMER_H_
 
-#include "Globals.h"
+#include "Providers/Globals.h"
 
 namespace Cronos {
 

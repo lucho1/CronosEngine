@@ -56,21 +56,25 @@ namespace Cronos {
 		Draw(GetParent()->GetComponent<MaterialComponent>(), true);
 	}
 
-	void MeshComponent::Draw(MaterialComponent* material, bool bindShader)
+	void MeshComponent::Draw(MaterialComponent* material, bool bindMaterial)
 	{
 		if (!isEnabled())
 			return;
 
-		if (material != nullptr)
-			material->Bind(bindShader);
+		App->renderer3D->RenderSubmit(GetParent());
+		//App->scene->BasicTestShader->Bind();
+		//
+		//if (material != nullptr)
+		//	material->Bind(bindMaterial);
 
-		m_MeshVAO->Bind();
-		glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		//m_MeshVAO->Bind();
+		//glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		if (material != nullptr)
-			material->Unbind();
+		//if (material != nullptr)
+		//	material->Unbind();
 
-		m_MeshVAO->UnBind();
+		//App->scene->BasicTestShader->Unbind();
+		//m_MeshVAO->UnBind();
 
 	//	DrawCentralAxis();
 		if (m_DebugDraw)
@@ -80,34 +84,23 @@ namespace Cronos {
 		}
 	}
 
-	void MeshComponent::DrawCentralAxis()
-	{
-		auto comp = GetParent()->GetComponent<TransformComponent>();
-		if (comp != nullptr)
-		{
-			float linelength = 1.0f;
-			glm::vec3 axis = comp->GetCentralAxis();
-			glLineWidth(5.0f);
-			glBegin(GL_LINES);
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-				glVertex3f(axis.x, axis.y, axis.z);
-				glVertex3f(axis.x + linelength, axis.y, axis.z);
-			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-				glVertex3f(axis.x, axis.y, axis.z);
-				glVertex3f(axis.x, axis.y + linelength, axis.z);
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glVertex3f(axis.x, axis.y, axis.z);
-				glVertex3f(axis.x, axis.y, axis.z + linelength);
-				glColor4f(White.r, White.g, White.b, White.a);
-			glEnd();
-		}
-	}
-
 	void MeshComponent::DrawVerticesNormals()
 	{
 		glLineWidth(2.0f);
 		float linelength = 0.2f;
 		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
+
+		glPushMatrix();
+
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
 		{
@@ -119,6 +112,13 @@ namespace Cronos {
 			glVertex3f(norm.x, norm.y, norm.z);
 			glEnd();
 		}
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
 	}
 
 	void MeshComponent::DrawPlanesNormals()
@@ -126,6 +126,17 @@ namespace Cronos {
 		glLineWidth(2.0f);
 		float linelength = 0.5f;
 		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
+
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
+		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
 		for (uint i = 0; i < m_IndicesVector.size() - 2; i += 3)
 		{
 			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
@@ -146,6 +157,14 @@ namespace Cronos {
 			glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
 			glEnd();
 		}
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		glPopMatrix();
 	}
 
 	void MeshComponent::CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions)

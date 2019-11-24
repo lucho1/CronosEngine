@@ -12,68 +12,6 @@
 
 namespace Cronos {
 
-	// ---------------------------------- CRONOS MESHES ----------------------------------
-	//void CronosMesh::ScaleMesh(glm::vec3 ScaleMagnitude)
-	//{
-	//	//glm::mat4 scale = glm::mat4(1.0f);
-	//	//scale = glm::scale(ScaleMagnitude);
-	//	//m_Transformation *= scale;
-	//	//DecomposeTransformation();
-
-	//	m_Transformation = glm::scale(m_Transformation, ScaleMagnitude);
-	//	DecomposeTransformation();
-
-	//	//ModelMatrix = glm::scale(ModelMatrix, Scale);
-	//	/*glm::mat4 translation = glm::mat4(1.0f);
-	//	translation = glm::scale(translation, ScaleMagnitude);
-
-	//	std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-	//	for (; item != m_VertexVector.end(); item++)
-	//	{
-	//		glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-	//		(*item).Position = translation * pos;
-	//	}*/
-	//}
-
-	//void CronosMesh::MoveMesh(glm::vec3 MoveAxis, float moveMagnitude)
-	//{
-	//	//glm::mat4 translation = glm::mat4(1.0f);
-	//	//translation = glm::translate(translation, MoveAxis);
-
-	//	m_Transformation = glm::translate(m_Transformation, MoveAxis);
-
-	//	//m_Transformation += translation;
-	//	DecomposeTransformation();
-
-	//	//MoveAxis *= moveMagnitude;
-	//	//glm::mat4 translation = glm::mat4(1.0f);
-	//	//translation = glm::translate(translation, MoveAxis);
-	//	//
-	//	//std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
-	//	//for (; item != m_VertexVector.end(); item++)
-	//	//{
-	//	//	glm::vec4 pos = glm::vec4((*item).Position, 1.0f);
-	//	//	(*item).Position = translation * pos;
-	//	//}
-
-	//}
-
-	//void CronosMesh::RotateMesh(float RotDegrees, glm::vec3 RotAxis, glm::vec3 OwnAxis)
-	//{
-	//	glm::mat4 rot = glm::mat4(1.0f);
-	//	rot = glm::rotate(rot, glm::radians(RotDegrees), RotAxis);
-	//	m_Transformation *= rot;
-	//	DecomposeTransformation();
-	//}
-
-	//void CronosMesh::DecomposeTransformation()
-	//{
-	//	glm::vec3 skew;
-	//	glm::vec4 perspective;
-	//	glm::decompose(m_Transformation, m_Scale, m_Rotation, m_Translation, skew, perspective);
-	//	m_Rotation = glm::conjugate(m_Rotation);
-	//}
-
 	const aiTextureType ConvertToAssimpTextureType(TextureType CN_textureType)
 	{
 		switch (CN_textureType)
@@ -132,6 +70,8 @@ namespace Cronos {
 		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
 		mother_GO->SetAABB(comp->GetAABB().getMin(), comp->GetAABB().getMax());
 
+
+		//aiReleaseImport(scene);
 		// detach log stream
 		aiDetachAllLogStreams();
 
@@ -143,20 +83,33 @@ namespace Cronos {
 	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Assimp Node");
+		//aiVector3D translation, scaling, EulerRotation;
+		//aiQuaternion rotation;
+		//as_node->mTransformation.Decompose(scaling, rotation, translation);
+		//EulerRotation = rotation.GetEuler();
+		//
+		//if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
+		//	scaling = aiVector3D(1.0f);
+		//
+		//////scaling = scaling / 10.0f;
+		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
+		//motherGameObj->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
 			//Get the mesh from the meshes list of the node in scene's meshes list
 			aiMesh* as_mesh = as_scene->mMeshes[as_node->mMeshes[i]];
-			ProcessCronosMesh(as_mesh, as_scene, motherGameObj);
+			ProcessCronosMesh(as_mesh, as_scene, motherGameObj, as_node);
 		}
-		
+
 		//Process all node's children
 		for (uint i = 0; i < as_node->mNumChildren; i++)
 			ProcessAssimpNode(as_node->mChildren[i], as_scene, motherGameObj);
 	}
 
-	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj)
+	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj, aiNode* as_node)
 	{
 		LOG("	Processing Model Mesh");
 		MeshNum++;
@@ -188,7 +141,7 @@ namespace Cronos {
 		//	maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
 		//	tmp_VertexVector.push_back(tmpVertex);
 		//}
-	
+
 		////Set the AABB Cube
 		//m_AABB_MinVec = glm::vec3(minX, minY, minZ);
 		//m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
@@ -208,14 +161,14 @@ namespace Cronos {
 		//	}
 		//	PolyNum++;
 		//}
-		
+
 		//Now set up the new Game Object
 		std::string GOName;
-		if (as_mesh->mName.length > 0)
-			GOName = as_mesh->mName.C_Str();
+		if (as_node->mName.length > 0)
+			GOName = as_node->mName.C_Str();
 		else
 			GOName = "Game Object";
-		
+
 		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
 		GO->HasVertices = true;
@@ -225,21 +178,21 @@ namespace Cronos {
 		//Creating the resource with unique ID
 		meshComp->r_mesh = new ResourceMesh(App->m_RandomNumGenerator.GetIntRN());
 		ResourceMesh* rMesh = meshComp->r_mesh;
-		
+
 		//Setup of the Buffers Size
-		rMesh->m_BufferSize[0] = as_mesh->mNumVertices;	
+		rMesh->m_BufferSize[0] = as_mesh->mNumVertices;
 
 		//Iniitialiing the Vector Positions:
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 		memcpy(rMesh->Position, as_mesh->mVertices, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
 		if (as_mesh->HasFaces()) {
-			
+
 			rMesh->m_BufferSize[1] = as_mesh->mNumFaces;
 			rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
 			for (uint i = 0; i < as_mesh->mNumFaces; i++) {
-				aiFace face = as_mesh->mFaces[i];		
-				memcpy(&rMesh->Index[i*3], face.mIndices ,sizeof(uint) * 3);				
+				aiFace face = as_mesh->mFaces[i];
+				memcpy(&rMesh->Index[i*3], face.mIndices ,sizeof(uint) * 3);
 			}
 		}
 		else
@@ -253,10 +206,11 @@ namespace Cronos {
 
 		}
 
-		if (as_mesh->HasTextureCoords(0)) 
+		if (as_mesh->HasTextureCoords(0))
 		{
 			rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
-			for (uint i = 0; i < as_mesh->mNumVertices; i++) {
+			for (uint i = 0; i < as_mesh->mNumVertices; i++)
+			{
 				rMesh->TextureV[i * 2] = as_mesh->mTextureCoords[0][i].x;
 				rMesh->TextureV[i * 2 + 1] = as_mesh->mTextureCoords[0][i].y;
 			}
@@ -264,6 +218,19 @@ namespace Cronos {
 
 		rMesh->toCronosVertexVector();
 		meshComp->SetupMesh(rMesh->getVector(),rMesh->getIndex());
+
+		aiVector3D translation, scaling, EulerRotation;
+		aiQuaternion rotation;
+		as_node->mTransformation.Decompose(scaling, rotation, translation);
+		EulerRotation = rotation.GetEuler();
+
+		if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
+			scaling = aiVector3D(1.0f);
+
+		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
+		GO->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
+		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+
 
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
@@ -276,6 +243,11 @@ namespace Cronos {
 
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
 				matComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
+
+			aiColor3D col = aiColor3D(0, 0, 0);
+			AssimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col);
+			if(col.r >= 0.01f || col.g >= 0.01f || col.b >= 0.01f)
+				matComp->SetColor(glm::vec4(col.r, col.g, col.b, 1.0f));
 
 			matComp->SetShader(App->scene->BasicTestShader);
 			GO->m_Components.push_back(matComp);

@@ -3,12 +3,13 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "Renderer/Primitive.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/PrimitiveGameObject.h"
 #include "Renderer/Shaders.h"
 
 #include "Providers/AssimpImporter.h"
+
+#include "Helpers/CNOctree.h"
 
 namespace Cronos {
 
@@ -39,15 +40,19 @@ namespace Cronos {
 		GameObject* ToCopy;
 
 		Shader* BasicTestShader = nullptr; //To test
-
 		std::list<Texture*> m_TexturesLoaded;
 
 		std::string m_SceneName;
 	private:
 
-		Plane m_FloorPlane;
 		AssimpCronosImporter m_CNAssimp_Importer;
 		GameObject* m_HouseModel;
+
+
+		//bool drawZBuffer = false;
+		//bool changeZBufferDrawing = true;
+
+		CnOctree OT_Test;
 	};
 
 }

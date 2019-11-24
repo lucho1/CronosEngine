@@ -13,27 +13,27 @@
         "SFXVolume": 100
     },
     "EngineCamera": {
-        "CameraMoveSpeed": 60.0,
-        "CameraScrollSpeed": 76.0,
+        "CameraMoveSpeed": 20.0,
+        "CameraScrollSpeed": 3.5,
         "FOV": 60.0,
-        "FarPlane": 512.0,
+        "FarPlane": 267.44000244140625,
         "InitialLookAt": [
-            0.0,
-            0.0,
-            0.0
+            -0.33972930908203125,
+            19.63150405883789,
+            34.40525817871094
         ],
         "InitialPosition": [
-            0.49205759167671204,
-            3.1790225505828857,
-            -6.263606071472168
+            -0.3396400213241577,
+            19.633056640625,
+            34.410011291503906
         ],
-        "NearPlane": 0.125
+        "NearPlane": 1.0
     },
     "Renderer": {
         "AntialiasedLPSmooth": false,
         "Blend": true,
-        "ClipDistance": false,
-        "ColorDither": false,
+        "ClipDistance": true,
+        "ColorDither": true,
         "DepthTest": true,
         "FaceCulling": true,
         "GL_ColorMaterial": true,
@@ -42,9 +42,9 @@
         "OpenGL_MajorV": 4,
         "OpenGL_MinorV": 3,
         "ScissorTest": false,
-        "StencilTest": false,
+        "StencilTest": true,
         "VSYNC": false,
-        "WireframeDraw": true
+        "WireframeDraw": false
     },
     "Window": {
         "Borderless": false,
@@ -52,8 +52,8 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 987,
+        "ScreenHeight": 607,
         "ScreenSize": 1,
-        "ScreenWidth": 1680
+        "ScreenWidth": 1059
     }
 }

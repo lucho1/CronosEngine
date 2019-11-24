@@ -113,7 +113,7 @@ namespace Cronos {
 	}
 
 
-	inline void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
+	void SDLWindow::ReCalculateAspectRatio(uint width, uint height)
 	{
 		m_Data.AspectRatio = (float)width / (float)height;
 	}
@@ -123,8 +123,8 @@ namespace Cronos {
 	{
  		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
-		App->engineCamera->CalculateProjection();
-		m_Data.Width = width; 
+		App->engineCamera->ChangeProjection();
+		m_Data.Width = width;
 		m_Data.Height = height;
 		//SetWindowFullscreen(false);
 		//SetWindowDesktopFullscreen(false);
