@@ -55,6 +55,8 @@ namespace Cronos
 		if (bindMaterial)
 		{
 			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 0);
+			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
+
 			if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			{
 				std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();

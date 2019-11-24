@@ -56,6 +56,8 @@ namespace Cronos {
 			uniform sampler2D u_NormalMap;
 			uniform sampler2D u_HeightMap;
 			uniform sampler2D u_LightMap;
+		
+			uniform vec4 u_AmbientColor = vec4(1.0,1.0,1.0,1.0);
 	
 			uniform int u_TextureEmpty = 1;
 
@@ -73,7 +75,7 @@ namespace Cronos {
 				vec4 texColor = vec4(0.8, 0.8, 0.8, 1.0);
 				if(u_TextureEmpty == 0)
 				{
-					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * vec4(1.0,1.0,1.0,1.0);
+					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor;
 				}
 				
 				color = texColor;

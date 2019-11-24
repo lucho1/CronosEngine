@@ -5,6 +5,9 @@ We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, 
 
 ## Innovating Features
 * ZBuffer Real-Time Renderer
+* GameObjects Copy/Paste with CTRL+C/CTRL+V (also from the GUI Object menu with right click)
+* Modifiable ambient color of the materials.
+* Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
 
 ### Innovating Features for v0.1
 * Extensive Filesystem with good UX Functionalities
@@ -51,8 +54,9 @@ Just download a release and run the executable! Inside 'res' folder you'll find 
 * F:					              Focus camera at object (or center if not selected)
 
 * Space to test the octree split and M to re-calculate it.
+* CTRL+C/CTRL+V to Copy/Paste selected objects
 
-Also, ImGui handles its own controls to navigate through UI.
+Also, ImGui handles its own controls to navigate through UI. You can also Save/Load scene in menu bar and do plenty of stuff through menus (check changelog).
 
 ## Changelog
 v0.2
@@ -63,8 +67,12 @@ v0.2
 * Renderer Little Rework: Now all rendering object is rendered from the render in the PostUpdate. In the mesh update, we call Render->Submit() to send the rendering data. 
 * Octrees implemented to improve performance at renderer.
 * ZBuffer Real-Time rendering.
-* AABBs for Game Objects.  
-
+* AABBs for Game Objects. 
+* GameObjects Copy/Paste
+* Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
+* Scene Save & Load
+* TGA Textures Load/Set
+* Modifiable ambient color of the materials
 
 v0.1
 * Many different types of primitives creation

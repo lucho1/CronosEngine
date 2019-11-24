@@ -1,7 +1,7 @@
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-#include "Globals.h"
+#include "Providers\Globals.h"
 #include "SDL\include\SDL.h"
 
 namespace Cronos {

@@ -8,6 +8,7 @@
 #include "GameObject/PrimitiveGameObject.h"
 
 #include "Helpers/AABB.h"
+#include "Helpers/OBB.h"
 
 namespace Cronos {
 
@@ -111,6 +112,8 @@ namespace Cronos {
 		glm::vec3 AABBPos = glm::vec3(0.0f);
 		glm::vec3 AABBScale = glm::vec3(1.0f);
 		glm::quat AABBOrientation = glm::quat(1.0f, glm::vec3(0.0f));
+
+		OBB m_ContainerOOBB;
 		//BoundingBox* TrueAABB;
 	};
 

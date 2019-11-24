@@ -4,8 +4,6 @@
 
 #include "Application.h"
 
-
-
 namespace Cronos {
 
 	TransformComponent::TransformComponent(GameObject* attachedGO, bool active)
@@ -54,7 +52,23 @@ namespace Cronos {
 		App->renderer3D->DrawCube(m_ContainerAABBCube.getMin(), m_ContainerAABBCube.getMax());
 
 		
+		glColor3f(Green.r, Green.g, Green.b);
 
+		//glPushMatrix();
+		//OBB m_ContainerOOBB = OBB(m_ContainerAABBCube);
+		glMultMatrixf(glm::value_ptr(m_LocalTransformationMatrix));
+		//glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		//glPushMatrix();
+		//glMultMatrixf(glm::value_ptr(m_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glm::vec3 corners[8];
+		m_ContainerOOBB.getCorners(corners);
+		App->renderer3D->DrawCube(corners[1], corners[4]);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -157,6 +171,8 @@ namespace Cronos {
 		m_LocalTransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
 			glm::mat4_cast(m_Orientation) * glm::scale(glm::mat4(1.0f), m_Scale);
 
+		m_ContainerOOBB = OBB(m_ContainerAABBCube);
+		
 		//AABB Transform ------------------------------------------------------------------------------------
 		//glm::mat4 resTrans = glm::translate(glm::mat4(1.0f), (m_Translation - AABBPos));
 		//AABBPos = m_Translation;

@@ -21,6 +21,7 @@ namespace Cronos
 		void Bind() const;
 		void Unbind() const;
 
+		void SetUniformVec4f(const std::string& name, glm::vec4& vector4f);
 		void SetUniformVec3f(const std::string& name, glm::vec3& vector3f);
 		void SetUniformVec2f(const std::string& name, glm::vec2& vector2f);
 		void SetUniformMat4f(const std::string &name, const glm::mat4& mat);

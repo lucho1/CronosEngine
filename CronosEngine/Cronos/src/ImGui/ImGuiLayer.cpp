@@ -453,25 +453,31 @@ namespace Cronos {
 		static ImVec2 LastSize = SizeGame;
 
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+		static bool ZB_RenderingActive = false;
 		ImGui::Begin("Scene",nullptr,GameWindow_flags);
 		{
-
-			if (ImGui::BeginMenuBar()) {
-
+			if (ImGui::BeginMenuBar())
+			{
 				if (ImGui::BeginMenu(m_ShadingModesLabel[(int)m_currentShadingMode].c_str())) {
 
-					for (int i = 0; i < (int)ShadingMode::MaxElements; i++) {
-
+					for (int i = 0; i < (int)ShadingMode::MaxElements; i++)
+					{
 						if (ImGui::MenuItem(m_ShadingModesLabel[i].c_str()))
 							m_currentShadingMode = (ShadingMode)i;
 					}
+
+					ImGui::Separator();
+					if (ImGui::MenuItem("Render Z-Buffer", "", &ZB_RenderingActive))
+					{
+						App->renderer3D->SetZBuffer();
+					}
+
 					ImGui::EndMenu();
 				}
 
-
-
 				ImGui::EndMenuBar();
 			}
+
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y)
 			{
@@ -837,7 +843,7 @@ namespace Cronos {
 				{
 					int payload_n = *(const int*)payload->Data;
 
-					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_TGA
 						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
 					{
 						AssetItems* AssetData = (AssetItems*)payload->Data;
@@ -851,7 +857,7 @@ namespace Cronos {
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text("\n   Ambient"); ImGui::SameLine();
+			ImGui::Text("\n   Ambient/Albedo"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 			ImVec2 FramePadding(100.0f, 3.0f);
 			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
@@ -859,7 +865,13 @@ namespace Cronos {
 
 			ImGui::SetCursorPosY(test+15);
 
-			ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags);
+			glm::vec4 col = CurrentGameObject->GetComponent<MaterialComponent>()->GetColor();
+			color = ImVec4(col.r, col.g, col.b, col.a);
+
+			if (ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags))
+			{
+				CurrentGameObject->GetComponent<MaterialComponent>()->SetColor(glm::vec4(color.x, color.y, color.z, color.w));
+			}
 			//ImGui::PopStyleVar();
 
 

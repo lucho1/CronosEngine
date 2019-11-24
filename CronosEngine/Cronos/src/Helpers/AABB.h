@@ -26,94 +26,96 @@
 #ifndef __AABB_H__
 #define __AABB_H__
 
- /**
-  * Axis Aligned Bounding Box (AABB), usually calculate some rough but fast collision detection.
-  */
-class AABB
-{
-
-public:
+namespace Cronos {
 	/**
-	 * Constructor.
-	 * @lua new
+	 * Axis Aligned Bounding Box (AABB), usually calculate some rough but fast collision detection.
 	 */
-	AABB();
+	class AABB
+	{
 
-	/**
-	 * Constructor.
-	 * @lua new
-	 */
-	AABB(const glm::vec3& min, const glm::vec3& max);
+	public:
+		/**
+		 * Constructor.
+		 * @lua new
+		 */
+		AABB();
 
-	/**
-	 * Gets the center point of the bounding box.
-	 */
-	const glm::vec3 getCenter() const;
+		/**
+		 * Constructor.
+		 * @lua new
+		 */
+		AABB(const glm::vec3& min, const glm::vec3& max);
 
-	/* Near face, specified counter-clockwise looking towards the origin from the positive z-axis.
-	 * verts[0] : left top front
-	 * verts[1] : left bottom front
-	 * verts[2] : right bottom front
-	 * verts[3] : right top front
-	 *
-	 * Far face, specified counter-clockwise looking towards the origin from the negative z-axis.
-	 * verts[4] : right top back
-	 * verts[5] : right bottom back
-	 * verts[6] : left bottom back
-	 * verts[7] : left top back
-	 */
-	void getCorners(glm::vec3 *dst) const;
+		/**
+		 * Gets the center point of the bounding box.
+		 */
+		const glm::vec3 getCenter() const;
 
-	/**
-	 * Tests whether this bounding box intersects the specified bounding object.
-	 */
-	bool intersects(const AABB& aabb) const;
+		/* Near face, specified counter-clockwise looking towards the origin from the positive z-axis.
+		 * verts[0] : left top front
+		 * verts[1] : left bottom front
+		 * verts[2] : right bottom front
+		 * verts[3] : right top front
+		 *
+		 * Far face, specified counter-clockwise looking towards the origin from the negative z-axis.
+		 * verts[4] : right top back
+		 * verts[5] : right bottom back
+		 * verts[6] : left bottom back
+		 * verts[7] : left top back
+		 */
+		void getCorners(glm::vec3 *dst) const;
 
-	/**
-	 * check whether the point is in.
-	 */
-	bool containPoint(const glm::vec3& point) const;
+		/**
+		 * Tests whether this bounding box intersects the specified bounding object.
+		 */
+		bool intersects(const AABB& aabb) const;
 
-	/**
-	 * Sets this bounding box to the smallest bounding box
-	 * that contains both this bounding object and the specified bounding box.
-	 */
-	void merge(const AABB& box);
+		/**
+		 * check whether the point is in.
+		 */
+		bool containPoint(const glm::vec3& point) const;
 
-	/**
-	 * Sets this bounding box to the specified values.
-	 */
-	void set(const glm::vec3& min, const glm::vec3& max);
+		/**
+		 * Sets this bounding box to the smallest bounding box
+		 * that contains both this bounding object and the specified bounding box.
+		 */
+		void merge(const AABB& box);
 
-	/**
-	 * Reset min and max value.If you invoke this method, isEmpty() shall return true.
-	 */
-	void reset();
+		/**
+		 * Sets this bounding box to the specified values.
+		 */
+		void set(const glm::vec3& min, const glm::vec3& max);
 
-	/**
-	 * check the AABB object is empty(reset).
-	 */
-	bool isEmpty() const;
+		/**
+		 * Reset min and max value.If you invoke this method, isEmpty() shall return true.
+		 */
+		void reset();
 
-	/**
-	 * update the _min and _max from the given point.
-	 */
-	void updateMinMax(const glm::vec3* point, size_t num);
+		/**
+		 * check the AABB object is empty(reset).
+		 */
+		bool isEmpty() const;
 
-	/**
-	 * Transforms the bounding box by the given transformation matrix.
-	 */
-	void transform(const glm::mat4& mat);
+		/**
+		 * update the _min and _max from the given point.
+		 */
+		void updateMinMax(const glm::vec3* point, size_t num);
 
-	const glm::vec3 getMin() const { return _min; }
-	const glm::vec3 getMax() const { return _max; }
+		/**
+		 * Transforms the bounding box by the given transformation matrix.
+		 */
+		void transform(const glm::mat4& mat);
 
-public:
-	glm::vec3 _min;
-	glm::vec3 _max;
-};
+		const glm::vec3 getMin() const { return _min; }
+		const glm::vec3 getMax() const { return _max; }
 
-// end of 3d group
-/// @}
+	public:
+		glm::vec3 _min;
+		glm::vec3 _max;
+	};
 
+	// end of 3d group
+	/// @}
+
+}
 #endif

@@ -44,6 +44,11 @@ namespace Cronos {
 		glUniform3f(GetUniformLocation(name), vector3f.x, vector3f.y, vector3f.z);
 	}
 
+	void Shader::SetUniformVec4f(const std::string& name, glm::vec4& vector4f)
+	{
+		glUniform4f(GetUniformLocation(name), vector4f.x, vector4f.y, vector4f.z, vector4f.a);
+	}
+
 	void Shader::SetUniformVec2f(const std::string& name, glm::vec2& vector2f)
 	{
 		glUniform2f(GetUniformLocation(name), vector2f.x, vector2f.y);

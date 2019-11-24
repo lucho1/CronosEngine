@@ -117,6 +117,16 @@ namespace Cronos {
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
+			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+
+			m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			m_IconTex = m_AssetTexture->GetTextureID();
+			m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			m_Details += "x";
+			m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			m_Details += " ";
+			m_Details += m_AssetFullName;
+
 		}
 		if (type == ItemType::ITEM_FOLDER) {
 			m_IconTex = App->filesystem->GetIcon(type);

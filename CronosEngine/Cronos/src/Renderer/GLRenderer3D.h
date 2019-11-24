@@ -80,6 +80,9 @@ namespace Cronos {
 		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
 		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec);
 
+		bool& SetZBufferRendering() { return changeZBufferDrawing; }
+		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
+
 	public:
 
 		//Light lights[MAX_LIGHTS];

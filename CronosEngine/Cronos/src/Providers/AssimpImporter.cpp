@@ -200,6 +200,11 @@ namespace Cronos {
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
 				matComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
 
+			aiColor3D col = aiColor3D(0, 0, 0);
+			AssimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col);
+			if(col.r >= 0.01f || col.g >= 0.01f || col.b >= 0.01f)
+				matComp->SetColor(glm::vec4(col.r, col.g, col.b, 1.0f));
+
 			matComp->SetShader(App->scene->BasicTestShader);
 			GO->m_Components.push_back(matComp);
 		}

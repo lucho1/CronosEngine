@@ -1281,6 +1281,7 @@
     <ClInclude Include="src\GameObject\Components\MaterialComponent.h" />
     <ClInclude Include="src\Helpers\AABB.h" />
     <ClInclude Include="src\Helpers\CNOctree.h" />
+    <ClInclude Include="src\Helpers\OBB.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1385,5 +1386,6 @@
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp" />
     <ClCompile Include="src\Helpers\AABB.cpp" />
     <ClCompile Include="src\Helpers\CNOctree.cpp" />
+    <ClCompile Include="src\Helpers\OBB.cpp" />
   </ItemGroup>
 </Project>
