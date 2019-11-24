@@ -1,0 +1,33 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/bakerhouse/Baker_house.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 324,
+    "MeshID": 1810403633,
+    "MeshPath": "lib/Meshes/1810403633.mesh",
+    "VertexSize": 160
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 371800887,
+  "Name": "Chimney",
+  "ParentID": 663528967,
+  "Path": "res/models/bakerhouse"
+}

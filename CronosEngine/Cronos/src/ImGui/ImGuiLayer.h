@@ -129,7 +129,13 @@ namespace Cronos {
 
 		std::string m_ShadingModesLabel[3];
 
-		Texture* PlayPauseTempImage = nullptr;
+		Texture* PlayEventImage = nullptr;
+		Texture* StopEventImage = nullptr;
+		Texture* PauseEventImage = nullptr;
+		Texture* NextFrameEventImage = nullptr;
+		Texture* FasterEventImage = nullptr;
+		Texture* SlowerEventImage = nullptr;
+
 
 		update_status current_status= update_status::UPDATE_CONTINUE;
 

@@ -115,7 +115,14 @@ namespace Cronos {
 		m_ShadingModesLabel[(int)ShadingMode::Wireframe] = "Wireframe";
 		m_currentShadingMode = ShadingMode::Shaded;
 
-		PlayPauseTempImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icons.png", TextureType::ICON);
+
+		PlayEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icon.png", TextureType::ICON);
+		StopEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Stop_Icon.png", TextureType::ICON);
+		PauseEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Pause_Icon.png", TextureType::ICON);
+		NextFrameEventImage = App->textureManager->CreateTexture("res/Icons/Widget_NextFr_Icon.png", TextureType::ICON);
+		FasterEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Fast_Icon.png", TextureType::ICON);
+		SlowerEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Speed_Icon.png", TextureType::ICON);
+
 		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
 		//Reading License
 		FILE* fp = fopen("LICENSE", "r");
@@ -429,11 +436,64 @@ namespace Cronos {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar | ImGuiWindowFlags_NoMove |ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse;
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.1f, 0.1f));
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
+
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
-		ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172*0.5, 46*0.5), ImVec2(0,0), ImVec2(1, 1),-1);
+		if (ImGui::ImageButton(TOTEX PlayEventImage->GetTextureID(), ImVec2(56 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.170f, 0.170f, 0.17f, 1.0f);
+			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 0.4f);
+
+			App->m_GT_Play = !App->m_GT_Play;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX PauseEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Pause = !App->m_GT_Pause;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX NextFrameEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_NextFrame = !App->m_GT_NextFrame;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX StopEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+
+			App->m_GT_Stop = !App->m_GT_Stop;
+		} ImGui::SameLine(20);
+
+		if (ImGui::ImageButton(TOTEX SlowerEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Slower = !App->m_GT_Slower;
+		} ImGui::SameLine(55);
+
+		if (ImGui::ImageButton(TOTEX FasterEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Faster = !App->m_GT_Faster;
+		}
+				
+		ImGui::SameLine();
+		ImGui::Text("Game Time: "); ImGui::SameLine();
+
+		/*float value = (int)(var * 100 + .5);
+		return (float)value / 100;*/
+
+		float Gtime = App->m_GameTimer_Time; //To round to 2 decimals
+		Gtime = (int)(Gtime * 100 + 0.5f);
+		Gtime = (float)(Gtime / 100);
+		ImGui::Text(std::to_string(Gtime).c_str());
+
+
 		ImGui::End();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 	}

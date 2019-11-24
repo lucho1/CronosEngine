@@ -8,6 +8,7 @@ We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, 
 * GameObjects Copy/Paste with CTRL+C/CTRL+V (also from the GUI Object menu with right click)
 * Modifiable ambient color of the materials.
 * Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
+* All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
 
 ### Innovating Features for v0.1
 * Extensive Filesystem with good UX Functionalities
@@ -70,9 +71,11 @@ v0.2
 * AABBs for Game Objects. 
 * GameObjects Copy/Paste
 * Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
+* All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
 * Scene Save & Load
 * TGA Textures Load/Set
 * Modifiable ambient color of the materials
+* Timing implementation: Ability to play pause and stop the game being done in the editor (even with a little "darkness" included at run-time). Also, possibility of move time faster/slower (at double and half), pass to the next frame and save the changes in run-time. Cute Icons included.
 
 v0.1
 * Many different types of primitives creation

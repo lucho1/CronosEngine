@@ -1,0 +1,33 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/bakerhouse/Baker_house.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 2751,
+    "MeshID": 165881415,
+    "MeshPath": "lib/Meshes/165881415.mesh",
+    "VertexSize": 1641
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 770269011,
+  "Name": "Baker_house",
+  "ParentID": 1230757959,
+  "Path": "res/models/bakerhouse"
+}

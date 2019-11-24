@@ -122,6 +122,7 @@
     <ClInclude Include="src\Helpers\Light.h" />
     <ClInclude Include="src\Helpers\OBB.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
+    <ClInclude Include="src\Helpers\Timers\GameTimer.h" />
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
     <ClInclude Include="src\Helpers\Timers\Timer.h" />
     <ClInclude Include="src\ImGui\ImGuiLayer.h" />
@@ -535,6 +536,7 @@
     <ClCompile Include="src\Helpers\Light.cpp" />
     <ClCompile Include="src\Helpers\OBB.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
+    <ClCompile Include="src\Helpers\Timers\GameTimer.cpp" />
     <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />
     <ClCompile Include="src\Helpers\Timers\Timer.cpp" />
     <ClCompile Include="src\ImGui\ImGuiLayer.cpp" />

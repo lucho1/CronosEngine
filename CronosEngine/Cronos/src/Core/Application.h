@@ -21,6 +21,7 @@
 #include "ImGui/ImGuiLayer.h"
 
 #include "Timers/Timer.h"
+#include "Timers/GameTimer.h"
 
 #include "json/json.hpp"
 using json = nlohmann::json;
@@ -45,6 +46,22 @@ namespace Cronos {
 
 
 		RNGen m_RandomNumGenerator; //Random number generator
+
+	public:
+
+		//Game Timer
+		GameTimer m_GameTimer;
+		float m_GameTimer_Time;
+		float m_Game_dt = 0.0f;
+
+		//"Setters"
+		bool m_Slower_dt = false, m_Faster_dt = false, m_NextFrameUpdate = false;
+
+		//Timer Buttons Methods (bool now)
+		bool m_GT_Play = false, m_GT_Pause = false, m_GT_Stop = false;
+		bool m_GT_Slower = false, m_GT_Faster = false, m_GT_NextFrame = false;
+		bool m_GT_SaveScene = false;
+
 
 	private: //Time stuff
 
