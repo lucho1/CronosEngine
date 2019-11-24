@@ -431,13 +431,18 @@ namespace Cronos {
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
-		ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172*0.5, 46*0.5), ImVec2(0,0), ImVec2(1, 1),-1);
+		if (ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1)) {
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.170f, 0.170f, 0.17f, 1.0f);
+			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
+			//a->Colors[2] = ImVec4(0.20f, 0.20, 0.20f, 1.00f);
+		}
 		ImGui::End();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 	}
-	void ImGuiLayer::UpdateDocking() {
 
+	void ImGuiLayer::UpdateDocking() {
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
@@ -499,9 +504,12 @@ namespace Cronos {
 
 					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_OBJ) {
 						AssetItems* a = (AssetItems*)payload->Data;
-						GameObject* ret = App->scene->CreateModel(a->GetAssetPath().c_str());
-						if(ret != nullptr)
+						GameObject* ret = App->filesystem->Load(a->GetGameObjectID());
+						
+						if (ret != nullptr) {
 							App->scene->m_GameObjects.push_back(ret);
+							ret->SetNewID();
+						}
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -516,8 +524,6 @@ namespace Cronos {
 		m_SceneWindow->PostUpdate();
 		ImGui::End();
 	}
-
-
 
 	void ImGuiLayer::GUIDrawMainBar()
 	{
@@ -1110,11 +1116,12 @@ namespace Cronos {
 			for (auto& a : m_CurrentDir->m_Container) {
 				a->DrawIcons();
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
-					ImGui::SetDragDropPayload("Window",a, sizeof(AssetItems));
+
+					ImGui::SetDragDropPayload("Window", a, sizeof(AssetItems));
 					ImGui::Image((void*)(a->GetIconTexture() - 1), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
 					ImGui::EndDragDropSource();
+				
 				}
-
 				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
 					m_CurrentDir = a->folderDirectory;
 

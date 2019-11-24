@@ -74,6 +74,7 @@ namespace Cronos {
 				RELEASE(ArrayIconTextures[i]);
 
 		return true;
+
 	}
 
 	bool saveData(MeshComponent* mesh,const char* filePath) {
@@ -339,6 +340,7 @@ namespace Cronos {
 						else {
 							std::string MeshPath = configFile["ComponentMesh"]["MeshPath"].get < std::string >();
 							LoadMesh(MeshPath.c_str(), *MeshComp, resID);
+							App->resourceManager->AddResource(MeshComp->r_mesh);
 						}
 						MeshComp->SetupMesh(MeshComp->r_mesh->getVector(), MeshComp->r_mesh->getIndex());
 						Ret->m_Components.push_back(MeshComp);
@@ -391,6 +393,55 @@ namespace Cronos {
 		return nullptr;
 	}
 
+	bool AssetItems::HasMeta() const
+	{
+		
+		std::string APath = m_Path;
+		APath.erase(APath.find(m_Extension));
+		APath += ".asset";
+
+		if (std::filesystem::exists(APath))
+			return true;
+
+		return false;
+	}
+
+	bool saveAssetDetails(GameObject* root, json& config) {
+
+		config[root->GetPath()] = root->GetGOID();
+
+		for(auto& childs : root->m_Childs)
+		{
+			saveAssetDetails(childs,config);
+		}
+		return true;
+	}
+
+	uint loadAsset(const char* Path) {
+		uint ret = 0;
+		json AssetFile;
+
+		std::ifstream file{ Path };
+		if (file.is_open()) {
+			json configFile = json::parse(file);
+			ret = configFile[Path].get<uint>();
+		}
+		return ret;
+	}
+
+	bool SaveAsset(GameObject*Root,const char* Path) {
+
+		json AssetFile;
+		//saveAssetDetails(Root,AssetFile); Needs to be fixed in the future
+		AssetFile[Path] = Root->GetGOID();
+
+		std::ofstream OutputFile_Stream{ Path,std::ofstream::out };
+		OutputFile_Stream << std::setw(2) << AssetFile;
+		OutputFile_Stream.close();
+
+		return true;
+	}
+
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		
 		m_path.make_preferred();
@@ -422,10 +473,24 @@ namespace Cronos {
 		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
 			type = ItemType::ITEM_FBX;
 			m_IconTex = App->filesystem->GetIcon(type);
-		/*	if (!HasMeta()) {
+			std::string path = m_Path;
+			path.erase(path.find(m_Extension));
+			path += ".asset";
+			if(!HasMeta())
+			{		
 				GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
-				temp->CleanUp();
-			}*/
+				if (temp != nullptr) {
+					SaveAsset(temp, path.c_str());
+					m_GameObjecID = temp->GetGOID();
+					temp->CleanUp();
+				}
+				else
+					LOG("Failed To Load %s ", m_Path.c_str());
+			}
+			else
+			{
+				m_GameObjecID = loadAsset(path.c_str());
+			}
 		}
 		else if (m_Extension == ".cpp" || m_Extension == ".h") {
 			type = ItemType::ITEM_SCRIPT;
@@ -564,6 +629,8 @@ namespace Cronos {
 
 		return m_ElementSize;
 	}
+
+
 
 	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
 	{

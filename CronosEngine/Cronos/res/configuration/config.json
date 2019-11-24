@@ -18,14 +18,14 @@
         "FOV": 60.0,
         "FarPlane": 267.44000244140625,
         "InitialLookAt": [
-            1.8829619884490967,
-            8.902923583984375,
-            13.572738647460938
+            0.0,
+            0.0,
+            0.0
         ],
         "InitialPosition": [
-            1.8835381269454956,
-            8.905647277832031,
-            13.576891899108887
+            -3.069078207015991,
+            2.6464972496032715,
+            4.206363201141357
         ],
         "NearPlane": 1.0
     },
@@ -52,8 +52,8 @@
         "DesktopFullscreen": false,
         "Fullscreen": false,
         "Resizable": true,
-        "ScreenHeight": 853,
+        "ScreenHeight": 496,
         "ScreenSize": 1,
-        "ScreenWidth": 1562
+        "ScreenWidth": 830
     }
 }

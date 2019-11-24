@@ -57,9 +57,9 @@ namespace Cronos {
 		std::string GetExtension() const { return m_Extension; }
 		std::string GetDetails() const { return m_Details; }
 		inline int GetAssetID() const { return m_AssetID; }
-		inline bool HasMeta() const;
-
-		void SaveAsset();
+		inline uint GetGameObjectID() const{ return m_GameObjecID; }
+		
+		bool HasMeta() const;
 
 		Directories* folderDirectory = nullptr;
 
@@ -69,6 +69,7 @@ namespace Cronos {
 		int m_ElementSize;
 		char labelID[150];
 		bool hovered;
+		uint m_GameObjecID;
 		std::string m_Path;
 		std::string m_Details;
 		std::string m_AbsolutePath;
