@@ -86,8 +86,8 @@ namespace Cronos {
 	public: //Serialization & Config
 
 		mutable json m_JSONConfigFile;
-		mutable bool m_MustLoad = false;
-		mutable bool m_MustSave = false;
+		mutable bool m_MustLoad = true;
+		mutable bool m_MustSave = true;
 		mutable Timer mt_SaveTimer;
 		float SaveTime;
 

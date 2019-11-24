@@ -28,9 +28,6 @@ namespace Cronos {
 		m_Orientation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 		m_ViewMatrix = m_ProjectionMatrix = glm::mat4(1.0f);
 
-		m_Position = glm::vec3(0.0f, 3.0f, 5.0f);
-		m_Target = glm::vec3(0.0f);
-
 		Recalculate();		
 
 		m_Right = glm::vec3(1.0f, 0.0f, 0.0f);

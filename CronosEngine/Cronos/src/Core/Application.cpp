@@ -306,8 +306,8 @@ namespace Cronos {
 		}
 
 		//As we did first in Load(), we create now an output file stream (ofstream) to save there the json file
-		std::ofstream OutputFile_Stream;
-		OutputFile_Stream.open(filePath);
+		std::ofstream OutputFile_Stream{filePath};
+		//OutputFile_Stream.open(filePath);
 
 		if (OutputFile_Stream.is_open() == false) {
 
@@ -331,7 +331,7 @@ namespace Cronos {
 			element->SaveModuleData(aux_JSONFile);
 
 
-		OutputFile_Stream << std::setw(4) << aux_JSONFile << std::endl;
+		OutputFile_Stream << std::setw(2) << aux_JSONFile;
 		OutputFile_Stream.close();
 		m_JSONConfigFile = aux_JSONFile;
 		m_MustSave = false;

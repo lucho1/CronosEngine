@@ -1,59 +1,59 @@
 {
-    "Application": {
-        "Authors": "Lucho Suaya Leiro and Roger Leon Borras",
-        "FPS Cap": 99,
-        "Name": "Cronos",
-        "Organization": "UPC - CITM (Tech Talent Center, Barcelona)",
-        "SaveTime": 300.0,
-        "Version": "v0.1"
-    },
-    "Audio": {
-        "MasterVolume": 100,
-        "MusicVolume": 100,
-        "SFXVolume": 100
-    },
-    "EngineCamera": {
-        "CameraMoveSpeed": 20.0,
-        "CameraScrollSpeed": 3.5,
-        "FOV": 60.0,
-        "FarPlane": 267.44000244140625,
-        "InitialLookAt": [
-            -21.77208709716797,
-            37.3023567199707,
-            161.84774780273438
-        ],
-        "InitialPosition": [
-            -21.7741641998291,
-            37.30329513549805,
-            161.85220336914063
-        ],
-        "NearPlane": 1.0
-    },
-    "Renderer": {
-        "AntialiasedLPSmooth": false,
-        "Blend": true,
-        "ClipDistance": true,
-        "ColorDither": true,
-        "DepthTest": true,
-        "FaceCulling": true,
-        "GL_ColorMaterial": true,
-        "GL_Lighting": true,
-        "Multisampling": false,
-        "OpenGL_MajorV": 4,
-        "OpenGL_MinorV": 3,
-        "ScissorTest": false,
-        "StencilTest": true,
-        "VSYNC": false,
-        "WireframeDraw": false
-    },
-    "Window": {
-        "Borderless": false,
-        "Bright": 20.0,
-        "DesktopFullscreen": false,
-        "Fullscreen": false,
-        "Resizable": true,
-        "ScreenHeight": 853,
-        "ScreenSize": 1,
-        "ScreenWidth": 1562
-    }
+  "Application": {
+    "Authors": "Lucho Suaya Leiro and Roger Leon Borras",
+    "FPS Cap": 99,
+    "Name": "Cronos",
+    "Organization": "UPC - CITM (Tech Talent Center, Barcelona)",
+    "SaveTime": 300.0,
+    "Version": "v0.1"
+  },
+  "Audio": {
+    "MasterVolume": 100,
+    "MusicVolume": 100,
+    "SFXVolume": 100
+  },
+  "EngineCamera": {
+    "CameraMoveSpeed": 20.0,
+    "CameraScrollSpeed": 3.5,
+    "FOV": 60.0,
+    "FarPlane": 267.44000244140625,
+    "InitialLookAt": [
+      -10.96484661102295,
+      46.40656280517578,
+      69.60417938232422
+    ],
+    "InitialPosition": [
+      -10.964032173156738,
+      46.40812301635742,
+      69.60884857177734
+    ],
+    "NearPlane": 1.0
+  },
+  "Renderer": {
+    "AntialiasedLPSmooth": false,
+    "Blend": true,
+    "ClipDistance": true,
+    "ColorDither": true,
+    "DepthTest": true,
+    "FaceCulling": true,
+    "GL_ColorMaterial": true,
+    "GL_Lighting": true,
+    "Multisampling": false,
+    "OpenGL_MajorV": 4,
+    "OpenGL_MinorV": 3,
+    "ScissorTest": false,
+    "StencilTest": true,
+    "VSYNC": false,
+    "WireframeDraw": false
+  },
+  "Window": {
+    "Borderless": false,
+    "Bright": 20.0,
+    "DesktopFullscreen": false,
+    "Fullscreen": false,
+    "Resizable": true,
+    "ScreenHeight": 574,
+    "ScreenSize": 1,
+    "ScreenWidth": 1060
+  }
 }

@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/street/building05 _c.tga",
+    "Color": {
+      "A": 1.0,
+      "B": 0.5882353186607361,
+      "G": 0.5882353186607361,
+      "R": 0.5882353186607361
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 4530,
+    "MeshID": 98449864,
+    "MeshPath": "lib/Meshes/98449864.mesh",
+    "VertexSize": 2548
+  },
+  "ComponentTransform": {
+    "Position": [
+      -20.31769371032715,
+      -16.16360855102539,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1722329632,
+  "Name": "City_building_037",
+  "ParentID": 1769648706,
+  "Path": "res/models/street"
+}

@@ -82,8 +82,8 @@ namespace Cronos {
 		glm::mat4 m_ViewMatrix;
 		glm::mat4 m_ProjectionMatrix;
 
-		glm::vec3 m_Position;
-		glm::vec3 m_Target;
+		glm::vec3 m_Position { 0.0f, 3.0f, 5.0f };
+		glm::vec3 m_Target { 0.0f };
 		
 		glm::vec3 m_Front;
 		glm::vec3 m_Right;
