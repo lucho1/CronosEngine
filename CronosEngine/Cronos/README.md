@@ -4,11 +4,12 @@ Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho 
 We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, MMRG, ParShapes, Assimp, Devil, a couple of headers of COCO for AABBs and JSON for Modern C++.
 
 ## Innovating Features
-* ZBuffer Real-Time Renderer
+* ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
 * GameObjects Copy/Paste with CTRL+C/CTRL+V (also from the GUI Object menu with right click)
 * Modifiable ambient color of the materials.
 * Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
 * All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
+* Timed-Game Mode
 
 ### Innovating Features for v0.1
 * Extensive Filesystem with good UX Functionalities
