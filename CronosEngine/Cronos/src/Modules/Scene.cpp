@@ -288,33 +288,40 @@ namespace Cronos {
 		return false;
 	}
 
-	bool Scene::LoadScene(const char * SceneName)
+	bool Scene::LoadScene(const char* SceneName)
 	{
-		AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		OT_Test = CnOctree(OT_Test_AABB, 2);
-
-		App->EditorGUI->CancelGameObject();
-		ToCopy = nullptr;
-		OnCleanUp();
 		std::string Path = App->filesystem->GetScenePath();
 		Path += SceneName;
 		Path += ".scene";
-
 		bool exists = std::filesystem::exists(Path);
 
-		if (exists) {
+		if (exists)
+		{
+			AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
+			OT_Test = CnOctree(OT_Test_AABB, 2);
+
+			App->EditorGUI->CancelGameObject();
+			ToCopy = nullptr;
+			OnCleanUp();
+
 			std::ifstream file{ Path.c_str() };
 			if (file.is_open())
 			{
 				json LoadSceneFile=json::parse(file);
 				uint numofRootGo = LoadSceneFile["TotalofRootGO"].get<uint>();
-				for (int i = 0; i < numofRootGo; i++) {
+
+				for (int i = 0; i < numofRootGo; i++)
+				{
 					int id = LoadSceneFile["ParentGOID"][i].get<int>();
 					GameObject* ret = App->filesystem->Load(id);
 					m_GameObjects.push_back(ret);
 				}
 			}
+
+			return true;
 		}
+
+		LOG("Couldn't Found any Scene with that path! Scene not loaded", Path.c_str());
 		return false;
 	}
 

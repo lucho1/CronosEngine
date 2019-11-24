@@ -616,7 +616,8 @@ namespace Cronos {
 				if(ImGui::MenuItem("New Scene")) {
 					App->scene->mustCleanScene = true;
 				}
-				if (ImGui::MenuItem("Open Scene")) {
+				if (ImGui::MenuItem("Load")) {
+					App->LoadEngineData();
 					App->scene->mustLoad = true;
 				}
 				ImGui::Separator();
