@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/people/..\\..\\..\\..\\AppData\\Roaming\\MAXON\\CINEMA 4D R17 Demo_E0A949BC\\tex\\casual04_01.png",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 7698,
+    "MeshID": 1921669878,
+    "MeshPath": "lib/Meshes/1921669878.mesh",
+    "VertexSize": 2128
+  },
+  "ComponentTransform": {
+    "Position": [
+      88.62225341796875,
+      -2.474707571309409e-06,
+      56.68687057495117
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 767514416,
+  "Name": "Casual_04___Walk",
+  "ParentID": 272907654,
+  "Path": "res/models/people"
+}

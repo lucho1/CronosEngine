@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 168,
+    "MeshID": 1336748037,
+    "MeshPath": "lib/Meshes/1336748037.mesh",
+    "VertexSize": 86
+  },
+  "ComponentTransform": {
+    "Position": [
+      -0.0473722480237484,
+      0.6674213409423828,
+      -1.9709144830703735
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1629961585,
+  "Name": "WRectangle",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

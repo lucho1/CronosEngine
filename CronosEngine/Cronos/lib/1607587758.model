@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 12,
+    "MeshID": 1433881856,
+    "MeshPath": "lib/Meshes/1433881856.mesh",
+    "VertexSize": 7
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1607587758,
+  "Name": "pCube1",
+  "ParentID": 756603938,
+  "Path": "res/models/dog"
+}

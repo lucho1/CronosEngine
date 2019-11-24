@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 36,
+    "MeshID": 267993227,
+    "MeshPath": "lib/Meshes/267993227.mesh",
+    "VertexSize": 12
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.9301437735557556,
+      -9.885287284851074,
+      0.1111818179488182
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 870839611,
+  "Name": "Speakers_1",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

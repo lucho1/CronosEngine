@@ -1,0 +1,54 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      120884894,
+      1954852815,
+      1904176301,
+      1662292155,
+      767514416,
+      315500366,
+      112202224,
+      1948671484,
+      1014382375,
+      883479371,
+      2020868591,
+      541734575
+    ],
+    "MetaPath": [
+      "lib/120884894.model",
+      "lib/1954852815.model",
+      "lib/1904176301.model",
+      "lib/1662292155.model",
+      "lib/767514416.model",
+      "lib/315500366.model",
+      "lib/112202224.model",
+      "lib/1948671484.model",
+      "lib/1014382375.model",
+      "lib/883479371.model",
+      "lib/2020868591.model",
+      "lib/541734575.model"
+    ],
+    "NumberChilds": 12
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 272907654,
+  "Name": "people_",
+  "Path": "res/models/people"
+}

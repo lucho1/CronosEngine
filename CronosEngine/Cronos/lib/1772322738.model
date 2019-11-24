@@ -1,0 +1,40 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/nanosuit/body_dif.png",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    },
+    "Specular": "res/models/nanosuit/body_showroom_spec.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 8316,
+    "MeshID": 191756812,
+    "MeshPath": "lib/Meshes/191756812.mesh",
+    "VertexSize": 1930
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1772322738,
+  "Name": "Body",
+  "ParentID": 455641821,
+  "Path": "res/models/nanosuit"
+}

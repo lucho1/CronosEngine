@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 4800,
+    "MeshID": 1778991751,
+    "MeshPath": "lib/Meshes/1778991751.mesh",
+    "VertexSize": 882
+  },
+  "ComponentTransform": {
+    "Position": [
+      789.2261962890625,
+      4825.9912109375,
+      2603.990966796875
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 120884894,
+  "Name": "Plane_2",
+  "ParentID": 272907654,
+  "Path": "res/models/people"
+}

@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 168,
+    "MeshID": 148694278,
+    "MeshPath": "lib/Meshes/148694278.mesh",
+    "VertexSize": 56
+  },
+  "ComponentTransform": {
+    "Position": [
+      -0.020976610481739044,
+      -17.614789962768555,
+      -2.039410352706909
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1644956926,
+  "Name": "Circle01",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

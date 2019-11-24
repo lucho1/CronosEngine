@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/entrenamiento/Carbon..png",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 10362,
+    "MeshID": 438361397,
+    "MeshPath": "lib/Meshes/438361397.mesh",
+    "VertexSize": 5112
+  },
+  "ComponentTransform": {
+    "Position": [
+      1.906419277191162,
+      -10.670368194580078,
+      -0.11645664274692535
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 676153118,
+  "Name": "Xbox_One_by_Frugurt",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

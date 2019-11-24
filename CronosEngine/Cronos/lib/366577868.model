@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 0.05882353335618973,
+      "G": 0.4549019932746887,
+      "R": 0.30980393290519714
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 96,
+    "MeshID": 1182143824,
+    "MeshPath": "lib/Meshes/1182143824.mesh",
+    "VertexSize": 25
+  },
+  "ComponentTransform": {
+    "Position": [
+      -0.02860260009765625,
+      0.026032090187072754,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 366577868,
+  "Name": "Plane001",
+  "ParentID": 2127033319,
+  "Path": "res/models/street"
+}

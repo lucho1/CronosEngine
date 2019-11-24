@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 612,
+    "MeshID": 1243120185,
+    "MeshPath": "lib/Meshes/1243120185.mesh",
+    "VertexSize": 227
+  },
+  "ComponentTransform": {
+    "Position": [
+      -24.896482467651367,
+      0.8749828338623047,
+      7.0166015625
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 2114380154,
+  "Name": "ChamferBo1",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

@@ -84,6 +84,33 @@ namespace Cronos {
 					cursor++;
 				}
 			}
+			/*	if (ImGui::MenuItem("Copy"))
+				{
+					if (currentGameObject != nullptr)
+						App->scene->ToCopy = currentGameObject;
+				}
+				if (ImGui::MenuItem("Paste"))
+				{
+					if (App->scene->ToCopy != nullptr && currentGameObject != nullptr)
+					{
+						GameObject* NewGO = App->filesystem->Load(App->scene->ToCopy->GetGOID());
+
+						NewGO->SetNewID();
+
+						if (App->EditorGUI->GetCurrentGameObject()->GetParentGameObject() == nullptr)
+						{
+							NewGO->SetParent(App->EditorGUI->GetCurrentGameObject());
+							currentGameObject->m_Childs.push_back(NewGO);
+						}
+						else
+						{
+							NewGO->SetParent(App->EditorGUI->GetCurrentGameObject()->GetParentGameObject());
+							currentGameObject->m_Childs.push_back(NewGO);
+						}
+
+						App->filesystem->SaveOwnFormat(App->EditorGUI->GetCurrentGameObject());
+					}
+				}*/
 			ImGui::EndPopup();
 		}
 	}

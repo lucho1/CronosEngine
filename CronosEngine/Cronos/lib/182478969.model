@@ -1,0 +1,32 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      1902824287
+    ],
+    "MetaPath": [
+      "lib/1902824287.model"
+    ],
+    "NumberChilds": 1
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 182478969,
+  "Name": "mod",
+  "Path": "res/models/mod"
+}

@@ -76,12 +76,13 @@ namespace Cronos {
 				if(u_TextureEmpty == 0)
 				{
 					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor;
+					color = texColor;
 				}
 				else
 				{
-					texColor = u_AmbientColor;
+					color = u_AmbientColor;
 				}
-				color = texColor;
+				
 				if(u_drawZBuffer == 1)
 				{
 					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
@@ -120,9 +121,12 @@ namespace Cronos {
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
 		//House Model Load & Floor Plane primitive
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//int id = m_HouseModel->GetGOID();
-		GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
+		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
+
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		m_GameObjects.push_back(m_StreetModel);
+		
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;

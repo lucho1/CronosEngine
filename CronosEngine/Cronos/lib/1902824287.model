@@ -1,0 +1,40 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/mod/diffuse.jpg",
+    "Color": {
+      "A": 1.0,
+      "B": 0.5882353186607361,
+      "G": 0.5882353186607361,
+      "R": 0.5882353186607361
+    },
+    "Specular": "res/models/mod/spec.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 36,
+    "MeshID": 1172775984,
+    "MeshPath": "lib/Meshes/1172775984.mesh",
+    "VertexSize": 24
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1902824287,
+  "Name": "Box001",
+  "ParentID": 182478969,
+  "Path": "res/models/mod"
+}

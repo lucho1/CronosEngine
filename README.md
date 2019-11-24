@@ -20,7 +20,7 @@ We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/proje
 
 ## Innovating Features
 * ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
-* GameObjects Copy/Paste with CTRL+C/CTRL+V (also from the GUI Object menu with right click)
+* GameObjects Copy/Paste with CTRL+C/CTRL+V
 * Modifiable ambient color of the materials.
 * Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
 * All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
@@ -72,6 +72,8 @@ Just download a release and run the executable! Inside 'res' folder you'll find 
 
 * Space to test the octree split and M to re-calculate it.
 * CTRL+C/CTRL+V to Copy/Paste selected objects
+
+For timing: Play/Pause/Stop button work as spected. Faster/Slower/Next-Frame won't be seen very well on the time shown but will on delta time of the scene. For the Faster/Slower be careful, because because they keep active, I mean, if you play and press one of those buttons, the time will go faster/slower, and you have to press again to "unactive" this. Of course, with the stop button they are put to unactive too. 
 
 Also, ImGui handles its own controls to navigate through UI. You can also Save/Load scene in menu bar and do plenty of stuff through menus (check changelog).
 

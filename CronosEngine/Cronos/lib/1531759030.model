@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/nanosuit/glass_dif.png",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 156,
+    "MeshID": 1179847063,
+    "MeshPath": "lib/Meshes/1179847063.mesh",
+    "VertexSize": 52
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1531759030,
+  "Name": "Visor",
+  "ParentID": 455641821,
+  "Path": "res/models/nanosuit"
+}

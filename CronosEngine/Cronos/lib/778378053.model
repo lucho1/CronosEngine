@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 264,
+    "MeshID": 23020883,
+    "MeshPath": "lib/Meshes/23020883.mesh",
+    "VertexSize": 109
+  },
+  "ComponentTransform": {
+    "Position": [
+      -2.3405838012695313,
+      -3.0168404579162598,
+      -0.034969426691532135
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 778378053,
+  "Name": "Volume_button",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/entrenamiento/Home Button.jpg",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 336,
+    "MeshID": 2035093920,
+    "MeshPath": "lib/Meshes/2035093920.mesh",
+    "VertexSize": 88
+  },
+  "ComponentTransform": {
+    "Position": [
+      -2.3054823875427246,
+      -9.248366355895996,
+      0.28047895431518555
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1259967762,
+  "Name": "Home_Button",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 0.5881999731063843,
+      "G": 0.5881999731063843,
+      "R": 0.5881999731063843
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 2160,
+    "MeshID": 154685998,
+    "MeshPath": "lib/Meshes/154685998.mesh",
+    "VertexSize": 480
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1564349028,
+  "Name": "g Object010",
+  "ParentID": 2127890262,
+  "Path": "res/models/street"
+}

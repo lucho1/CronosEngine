@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 4866,
+    "MeshID": 966171118,
+    "MeshPath": "lib/Meshes/966171118.mesh",
+    "VertexSize": 3605
+  },
+  "ComponentTransform": {
+    "Position": [
+      1.5193239450454712,
+      -6.85539436340332,
+      45.47783279418945
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1037217055,
+  "Name": "Bocina_1",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

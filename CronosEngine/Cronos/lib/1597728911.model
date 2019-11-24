@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 2256,
+    "MeshID": 990482319,
+    "MeshPath": "lib/Meshes/990482319.mesh",
+    "VertexSize": 840
+  },
+  "ComponentTransform": {
+    "Position": [
+      1.800079107284546,
+      0.05921187996864319,
+      3.24383544921875
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1597728911,
+  "Name": "Naushniki6",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

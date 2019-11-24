@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 6,
+    "MeshID": 1974242743,
+    "MeshPath": "lib/Meshes/1974242743.mesh",
+    "VertexSize": 4
+  },
+  "ComponentTransform": {
+    "Position": [
+      2.686739444732666,
+      2.6166794300079346,
+      0.06993886083364487
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1487840728,
+  "Name": "Plano",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

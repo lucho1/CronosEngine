@@ -1,0 +1,34 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      1441172747,
+      66129732
+    ],
+    "MetaPath": [
+      "lib/1441172747.model",
+      "lib/66129732.model"
+    ],
+    "NumberChilds": 2
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 457045007,
+  "Name": "BakerHouse",
+  "Path": "BakerHouse.fbx"
+}

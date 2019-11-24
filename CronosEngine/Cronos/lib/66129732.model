@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "BakerHouse.fbx/Baker_house.png",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 2751,
+    "MeshID": 1987306577,
+    "MeshPath": "lib/Meshes/1987306577.mesh",
+    "VertexSize": 1641
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 66129732,
+  "Name": "Baker_house",
+  "ParentID": 457045007,
+  "Path": "BakerHouse.fbx"
+}

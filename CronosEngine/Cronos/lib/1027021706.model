@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/entrenamiento/C:\\Users\\Jasubi\\AppData\\Roaming\\MAXON\\CINEMA 4D R14_4A9E4467\\tex\\news_photo_33342_1380044305.jpg",
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 36,
+    "MeshID": 809185811,
+    "MeshPath": "lib/Meshes/809185811.mesh",
+    "VertexSize": 30
+  },
+  "ComponentTransform": {
+    "Position": [
+      -0.04856015369296074,
+      2.0841281414031982,
+      -1.7963529825210571
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1027021706,
+  "Name": "Rectangle0",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

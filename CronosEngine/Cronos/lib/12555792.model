@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 8706,
+    "MeshID": 142258089,
+    "MeshPath": "lib/Meshes/142258089.mesh",
+    "VertexSize": 3275
+  },
+  "ComponentTransform": {
+    "Position": [
+      -9.155916213989258,
+      3.290322780609131,
+      5.907016277313232
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 12555792,
+  "Name": "obj_22",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}

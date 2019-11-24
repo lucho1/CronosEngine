@@ -1,0 +1,39 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/street/C:\\Users\\Usuario\\Documents\\GitHub\\CronosEngine\\CronosEngine\\Cronos\\res\\models\\street\\Building_V02_C.png",
+    "Color": {
+      "A": 1.0,
+      "B": 0.5879999995231628,
+      "G": 0.5879999995231628,
+      "R": 0.5879999995231628
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 4176,
+    "MeshID": 907746341,
+    "MeshPath": "lib/Meshes/907746341.mesh",
+    "VertexSize": 1997
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1500740441,
+  "Name": "g City_building_041",
+  "ParentID": 2127890262,
+  "Path": "res/models/street"
+}

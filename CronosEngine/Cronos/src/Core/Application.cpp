@@ -177,7 +177,7 @@ namespace Cronos {
 	{
 		update_status ret = UPDATE_CONTINUE;
 
-		if (input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+		/*if (input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 			m_GT_Play = true;
 		if (input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
 			m_GT_Pause = true;
@@ -188,7 +188,7 @@ namespace Cronos {
 		if (input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
 			m_GT_Slower = true;
 		if (input->GetKey(SDL_SCANCODE_H) == KEY_DOWN)
-			m_GT_NextFrame = true;
+			m_GT_NextFrame = true;*/
 
 		//Save scene?
 

@@ -1,0 +1,38 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Color": {
+      "A": 1.0,
+      "B": 1.0,
+      "G": 1.0,
+      "R": 1.0
+    }
+  },
+  "ComponentMesh": {
+    "IndexSize": 918,
+    "MeshID": 827694603,
+    "MeshPath": "lib/Meshes/827694603.mesh",
+    "VertexSize": 443
+  },
+  "ComponentTransform": {
+    "Position": [
+      -0.026033690199255943,
+      -0.008343723602592945,
+      0.010389861650764942
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1003657426,
+  "Name": "Front",
+  "ParentID": 935151951,
+  "Path": "res/models/entrenamiento"
+}
