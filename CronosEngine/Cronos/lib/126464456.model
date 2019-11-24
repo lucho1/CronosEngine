@@ -1,0 +1,34 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/nanosuit/hand_dif.png",
+    "Specular": "res/models/nanosuit/hand_showroom_spec.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 19350,
+    "MeshID": 89072982,
+    "MeshPath": "lib/Meshes/89072982.mesh",
+    "VertexSize": 5557
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 126464456,
+  "Name": "hands",
+  "ParentID": 26113392,
+  "Path": "res/models/nanosuit"
+}

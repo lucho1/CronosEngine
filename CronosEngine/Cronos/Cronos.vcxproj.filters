@@ -1302,6 +1302,7 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
+    <ClInclude Include="src\Helpers\Timers\GameTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1424,5 +1425,6 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
+    <ClCompile Include="src\Helpers\Timers\GameTimer.cpp" />
   </ItemGroup>
 </Project>

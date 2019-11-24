@@ -115,7 +115,14 @@ namespace Cronos {
 		m_ShadingModesLabel[(int)ShadingMode::Wireframe] = "Wireframe";
 		m_currentShadingMode = ShadingMode::Shaded;
 
-		PlayPauseTempImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icons.png", TextureType::ICON);
+
+		PlayEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Play_Icon.png", TextureType::ICON);
+		StopEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Stop_Icon.png", TextureType::ICON);
+		PauseEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Pause_Icon.png", TextureType::ICON);
+		NextFrameEventImage = App->textureManager->CreateTexture("res/Icons/Widget_NextFr_Icon.png", TextureType::ICON);
+		FasterEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Fast_Icon.png", TextureType::ICON);
+		SlowerEventImage = App->textureManager->CreateTexture("res/Icons/Widget_Speed_Icon.png", TextureType::ICON);
+
 		//strcpy(currShaderMode, m_ShadingModesLabel[(int)m_currentShadingMode].c_str());
 		//Reading License
 		FILE* fp = fopen("LICENSE", "r");
@@ -212,7 +219,7 @@ namespace Cronos {
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
 				}
-				
+
 				if (ImGui::IsItemClicked(1))
 				{
 					ImGui::OpenPopup(ID.c_str());
@@ -224,11 +231,11 @@ namespace Cronos {
 					ImGui::TreePop();
 				}
 			}
-			
+
 			if (go->isActive() == false) {
 				ImGui::PopStyleColor();
 			}
-			
+
 		}
 	}
 
@@ -239,7 +246,7 @@ namespace Cronos {
 				GameObject* Temp = Draging;
 				GameObject* LastParent = Temp->GetParentGameObject();
 				//To know if ToParentGo is a child so it will cancel, a parent cannot be a child from his own child.
-				for (auto& a : Temp->m_Childs) { 
+				for (auto& a : Temp->m_Childs) {
 					if (a->GetGOID() == ToParentGo->GetGOID()) {
 						ImGui::EndDragDropTarget();
 						Draging = nullptr;
@@ -278,7 +285,7 @@ namespace Cronos {
 
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
 		{
-		
+
 			GameObject* Temp = Draging;
 			GameObject* LastParent = Temp->GetParentGameObject();
 			if (LastParent == nullptr) {
@@ -389,7 +396,7 @@ namespace Cronos {
 
 		std::list<GameObject*>::iterator it1;
 		for (it1 = go->m_Childs.begin(); it1 != go->m_Childs.end();++it1) {
-			
+
 			if ((*it1)->GetGOID() == CurrentGameObject->GetGOID())
 			{
 				go->m_Childs.erase(it1);
@@ -399,7 +406,7 @@ namespace Cronos {
 				DeleteGameObject((*it1));
 		}
 	}
-	
+
 	void ImGuiLayer::setDocking() {
 
 		static bool opt_fullscreen_persistant = true;
@@ -428,15 +435,64 @@ namespace Cronos {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 		ImGuiWindowFlags WidgetFlags = ImGuiWindowFlags_NoTitleBar|ImGuiDockNodeFlags_AutoHideTabBar | ImGuiWindowFlags_NoMove |ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.1f, 0.1f));
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		ImGui::Begin("##none",nullptr,WidgetFlags);
+
 		ImGui::SameLine(ImGui::GetWindowWidth()/2-172*0.5);
-		if (ImGui::ImageButton(TOTEX PlayPauseTempImage->GetTextureID(), ImVec2(172 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1)) {
+		if (ImGui::ImageButton(TOTEX PlayEventImage->GetTextureID(), ImVec2(56 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			ImGuiStyle& style = ImGui::GetStyle();
+			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.170f, 0.170f, 0.17f, 1.0f);
+			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 0.4f);
+
+			App->m_GT_Play = !App->m_GT_Play;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX PauseEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Pause = !App->m_GT_Pause;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX NextFrameEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_NextFrame = !App->m_GT_NextFrame;
+		} ImGui::SameLine();
+
+		if (ImGui::ImageButton(TOTEX StopEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
 			ImGuiStyle& style = ImGui::GetStyle();
 			style.Colors[ImGuiCol_WindowBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
 			style.Colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+
+			App->m_GT_Stop = !App->m_GT_Stop;
+		} ImGui::SameLine(20);
+
+		if (ImGui::ImageButton(TOTEX SlowerEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Slower = !App->m_GT_Slower;
+		} ImGui::SameLine(55);
+
+		if (ImGui::ImageButton(TOTEX FasterEventImage->GetTextureID(), ImVec2(57 * 0.5, 46 * 0.5), ImVec2(0, 0), ImVec2(1, 1), -1))
+		{
+			App->m_GT_Faster = !App->m_GT_Faster;
 		}
+
+		ImGui::SameLine();
+		ImGui::Text("Game Time: "); ImGui::SameLine();
+
+		/*float value = (int)(var * 100 + .5);
+		return (float)value / 100;*/
+
+		float Gtime = App->m_GameTimer_Time; //To round to 2 decimals
+		Gtime = (int)(Gtime * 100 + 0.5f);
+		Gtime = (float)(Gtime / 100);
+		ImGui::Text(std::to_string(Gtime).c_str());
+
+
 		ImGui::End();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 		ImGui::PopStyleColor();
 	}
@@ -503,7 +559,7 @@ namespace Cronos {
 					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_OBJ) {
 						AssetItems* a = (AssetItems*)payload->Data;
 						GameObject* ret = App->filesystem->Load(a->GetGameObjectID());
-						
+
 						if (ret != nullptr) {
 							App->scene->m_GameObjects.push_back(ret);
 							ret->SetNewID();
@@ -564,7 +620,7 @@ namespace Cronos {
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("GameObject")) {
-				if (ImGui::MenuItem("Empty Object")) 
+				if (ImGui::MenuItem("Empty Object"))
 				{
 					PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
 					App->scene->m_GameObjects.push_back(ret);
@@ -712,7 +768,7 @@ namespace Cronos {
 			ObjectPos =test->GetTranslation();
 			ObjectRot = test->GetOrientation();
 			ObjectScale = test->GetScale();
-			
+
 			static bool toChange;
 			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
@@ -773,11 +829,11 @@ namespace Cronos {
 			int AvSizeX = ImGui::GetWindowWidth();
 			int AvSizeY = ImGui::GetWindowHeight();
 
-			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x) 
+			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x)
 				AvSizeX = m_CurrentAssetSelected->GetResolution().x;
 			else if (AvSizeX > AvSizeY)
 				AvSizeX = AvSizeY;
-			
+
 
 			static float aspectRatio = m_CurrentAssetSelected->GetResolution().x / m_CurrentAssetSelected->GetResolution().y;
 			ImGui::SameLine(ImGui::GetWindowWidth() / 2 - AvSizeX / 2);
@@ -795,18 +851,18 @@ namespace Cronos {
 		ImGui::EndChild();
 	}
 
-	void ImGuiLayer::GUIDrawMeshMenu(GameObject* CurrentGameObject) 
+	void ImGuiLayer::GUIDrawMeshMenu(GameObject* CurrentGameObject)
 	{
 		if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text(CurrentGameObject->GetName().c_str());
-			
+
 			ImGui::Checkbox("Draw Normals", &CurrentGameObject->GetComponent<MeshComponent>()->setDebugDraw());
 			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<TransformComponent>()->SetDrawAxis() );
 
 			if(CurrentGameObject->GetComponent<TransformComponent>()->DrawAxis)
 				CurrentGameObject->GetComponent<TransformComponent>()->DrawCentralAxis();
-			
+
 			ImGui::Separator();
 		}
 	}
@@ -861,7 +917,7 @@ namespace Cronos {
 
 				ImGui::EndDragDropTarget();
 			}
-			
+
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
@@ -916,12 +972,12 @@ namespace Cronos {
 
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
-			
+
 			if (ImGui::BeginMenuBar()) {
 
 				if (ImGui::BeginMenu("Create")) {
 
-					if (ImGui::MenuItem("Empty Object")) 
+					if (ImGui::MenuItem("Empty Object"))
 					{
 						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::EMPTY, "Empty", { 1,1,1 });
 						App->scene->m_GameObjects.push_back(ret);
@@ -1004,7 +1060,7 @@ namespace Cronos {
 				}
 
 			}
-			
+
 			ImGui::PopStyleColor(); //OJU POSIBLE CRASH
 			float Vec2Ytest = ImGui::GetCursorPosY() + 5.0f;
 			ImGui::InvisibleButton("##invisibleButton", ImVec2(ImGui::GetWindowWidth()-30, ImGui::GetWindowHeight() - Vec2Ytest));
@@ -1118,7 +1174,7 @@ namespace Cronos {
 					ImGui::SetDragDropPayload("Window", a, sizeof(AssetItems));
 					ImGui::Image((void*)(a->GetIconTexture() - 1), ImVec2(50, 50), ImVec2(0, 1), ImVec2(1, 0));
 					ImGui::EndDragDropSource();
-				
+
 				}
 				if (a->GetType() == ItemType::ITEM_FOLDER&&ImGui::IsItemClicked(0))
 					m_CurrentDir = a->folderDirectory;
@@ -1626,7 +1682,7 @@ namespace Cronos {
 		ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
 		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
-		
+
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
 		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))

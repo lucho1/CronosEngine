@@ -1,0 +1,44 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      1130242078,
+      831083495,
+      126464456,
+      336737155,
+      1829814795,
+      1382782296,
+      698317436
+    ],
+    "MetaPath": [
+      "lib/1130242078.model",
+      "lib/831083495.model",
+      "lib/126464456.model",
+      "lib/336737155.model",
+      "lib/1829814795.model",
+      "lib/1382782296.model",
+      "lib/698317436.model"
+    ],
+    "NumberChilds": 7
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 26113392,
+  "Name": "nanosuit",
+  "Path": "res/models/nanosuit"
+}

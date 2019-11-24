@@ -76,7 +76,10 @@ namespace Cronos {
 			if (ret)
 				ret = element->OnStart();
 		}
+
 		mt_StartingTime.Start();
+		m_GameTimer.Stop();
+
 		return ret;
 	}
 
@@ -84,12 +87,62 @@ namespace Cronos {
 	// ---------------------------------------------
 	void Application::PrepareUpdate()
 	{
+		if (m_GT_Play)
+		{
+			if (m_GameTimer.IsActive() && m_GameTimer.IsPaused())
+				m_GameTimer.Play();
+			else
+			{
+				m_GameTimer.Start();
+				m_Slower_dt = false;
+				m_Faster_dt = false;
+				m_NextFrameUpdate = false;
+
+				//SavePlayedScene CHECK IF SCENE IS NULLPTR FIRST!!!!!!!!!
+			}
+		}
+
+		if (m_GT_Stop)
+		{
+			m_GameTimer.Stop();
+			m_Slower_dt = false;
+			m_Faster_dt = false;
+			m_NextFrameUpdate = false;
+
+			//LoadPlayedScene CHECK IF SCENE IS NULLPTR FIRST!!!!!!!!!
+		}
+
+		if (m_GT_Pause)
+			m_GameTimer.Pause();
+
+		if (m_GT_Faster && m_GameTimer.IsActive()) m_Faster_dt = !m_Faster_dt;
+		if (m_GT_Slower && m_GameTimer.IsActive()) m_Slower_dt = !m_Slower_dt;
+		if (m_GT_NextFrame && m_GameTimer.IsActive()) m_NextFrameUpdate = !m_NextFrameUpdate;
+
+		m_GT_Play = m_GT_Pause = m_GT_Stop = false;
+		m_GT_Slower = m_GT_Faster = m_GT_NextFrame = false;
+		m_GT_SaveScene = false;
+
+		m_GameTimer_Time = m_GameTimer.ReadSec();
+
+
 		//For performance information purposes
 		m_FrameCount++;
 		m_LastSecFrameCount++;
 
-		m_Timestep = mt_LastFrameTime.ReadSec();
+		m_Game_dt = m_Timestep = mt_LastFrameTime.ReadSec();
 		mt_LastFrameTime.Start();
+
+		if (m_Slower_dt) m_Game_dt = m_Timestep / 2.0f;
+		if (m_Faster_dt) m_Game_dt = m_Timestep * 2.0f;
+		if (m_GameTimer.IsActive() && m_GameTimer.IsPaused()) m_Game_dt = 0.0f;
+		if (m_NextFrameUpdate && !m_GameTimer.IsPaused())
+		{
+			m_Game_dt = m_Timestep;
+			m_NextFrameUpdate = false;
+		}
+
+		//SavePlayedScene with a button CHECK IF SCENE IS NULLPTR FIRST!!!!!!!!!
 	}
 
 	// ---------------------------------------------
@@ -123,6 +176,22 @@ namespace Cronos {
 	update_status Application::OnUpdate()
 	{
 		update_status ret = UPDATE_CONTINUE;
+
+		if (input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+			m_GT_Play = true;
+		if (input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+			m_GT_Pause = true;
+		if (input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
+			m_GT_Stop = true;
+		if (input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
+			m_GT_Faster = true;
+		if (input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
+			m_GT_Slower = true;
+		if (input->GetKey(SDL_SCANCODE_H) == KEY_DOWN)
+			m_GT_NextFrame = true;
+
+		//Save scene?
+
 		PrepareUpdate();
 
 		for (auto& element : m_ModulesList)
@@ -133,7 +202,12 @@ namespace Cronos {
 		for (auto& element : m_ModulesList)
 		{
 			if (ret == UPDATE_CONTINUE)
-				ret = element->OnUpdate(m_Timestep);
+			{
+				if(element == scene /*|| element == engineCamera*/) //Uncomment the thing with camera to test Play/Pause/Stop thing
+					ret = element->OnUpdate(m_Game_dt);
+				else
+					ret = element->OnUpdate(m_Timestep);
+			}
 		}
 		for (auto& element : m_ModulesList)
 		{

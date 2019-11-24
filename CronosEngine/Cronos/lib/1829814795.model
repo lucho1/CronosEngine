@@ -1,0 +1,34 @@
+{
+  "Active": true,
+  "ComponentMaterial": {
+    "Albedo": "res/models/nanosuit/arm_dif.png",
+    "Specular": "res/models/nanosuit/arm_showroom_spec.png"
+  },
+  "ComponentMesh": {
+    "IndexSize": 6804,
+    "MeshID": 1545682819,
+    "MeshPath": "lib/Meshes/1545682819.mesh",
+    "VertexSize": 1684
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 1829814795,
+  "Name": "Arms",
+  "ParentID": 26113392,
+  "Path": "res/models/nanosuit"
+}

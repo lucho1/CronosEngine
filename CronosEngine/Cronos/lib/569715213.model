@@ -1,0 +1,34 @@
+{
+  "Active": true,
+  "Childs": {
+    "IDChild": [
+      319302615,
+      1943543373
+    ],
+    "MetaPath": [
+      "lib/319302615.model",
+      "lib/1943543373.model"
+    ],
+    "NumberChilds": 2
+  },
+  "ComponentTransform": {
+    "Position": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Rotation": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "Scale": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "ID": 569715213,
+  "Name": "BakerHouse",
+  "Path": "res/models/bakerhouse"
+}
