@@ -150,20 +150,36 @@ namespace Cronos {
 		ResourceMesh* rMesh = meshComp->r_mesh;
 
 		rMesh->m_BufferSize[0] = ParshapeMesh->npoints;
-		rMesh->m_BufferSize[1] = ParshapeMesh->ntriangles * 3;
+		rMesh->m_BufferSize[1] = ParshapeMesh->npoints;
+		rMesh->m_BufferSize[2] = ParshapeMesh->npoints;
+		rMesh->m_BufferSize[3] = ParshapeMesh->ntriangles;
 
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 		memcpy(rMesh->Position, ParshapeMesh->points, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
-		memcpy(rMesh->Index, ParshapeMesh->triangles, sizeof(uint)*rMesh->m_BufferSize[1] * 3);
+		int tes = sizeof(ParshapeMesh->triangles);
+		int tes2 = sizeof(uint);
 
-		rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
-		memcpy(rMesh->Normal, ParshapeMesh->normals, sizeof(float)*rMesh->m_BufferSize[0] * 3);
+		uint16_t* test = new uint16_t(rMesh->m_BufferSize[3]);
 
-		rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
-		memcpy(rMesh->TextureV, ParshapeMesh->tcoords, sizeof(float)*rMesh->m_BufferSize[0] * 2);
+		rMesh->Index = new uint[rMesh->m_BufferSize[3]*3];
+		//for(int i =0;i<)
 
+		for (uint i = 0; i < (rMesh->m_BufferSize[3] * 3); i++)
+			rMesh->Index[i] = ParshapeMesh->triangles[i];
+
+	
+		rMesh->Normal = new float[rMesh->m_BufferSize[1] * 3];
+		if (ParshapeMesh->normals != nullptr)
+			memcpy(rMesh->Normal, ParshapeMesh->normals, sizeof(float)*rMesh->m_BufferSize[1] * 3);
+		else			
+			std::fill_n(rMesh->Normal,rMesh->m_BufferSize[1] * 3, 0);		
+
+		rMesh->TextureV = new float[rMesh->m_BufferSize[2] * 2];
+		if(ParshapeMesh->tcoords != nullptr)
+			memcpy(rMesh->TextureV, ParshapeMesh->tcoords, sizeof(float)*rMesh->m_BufferSize[0] * 2);
+		else
+			std::fill_n(rMesh->TextureV, rMesh->m_BufferSize[2] * 2, 0);
 
 		rMesh->toCronosVertexVector();
 		meshComp->SetupMesh(rMesh->getVector(), rMesh->getIndex());

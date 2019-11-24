@@ -188,33 +188,38 @@ namespace Cronos {
 
 		if (as_mesh->HasFaces()) {
 
-			rMesh->m_BufferSize[1] = as_mesh->mNumFaces;
-			rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
+			rMesh->m_BufferSize[3] = as_mesh->mNumFaces;
+			rMesh->Index = new uint[rMesh->m_BufferSize[3] * 3];
 			for (uint i = 0; i < as_mesh->mNumFaces; i++) {
 				aiFace face = as_mesh->mFaces[i];
 				memcpy(&rMesh->Index[i*3], face.mIndices ,sizeof(uint) * 3);
 			}
 		}
 		else
-			rMesh->m_BufferSize[1] = 0;
+			rMesh->m_BufferSize[3] = 0;
 
 
 		if (as_mesh->HasNormals()) {
 
-			rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+			rMesh->m_BufferSize[1] = as_mesh->mNumVertices;
+			rMesh->Normal = new float[rMesh->m_BufferSize[1] * 3];
 			memcpy(rMesh->Normal, as_mesh->mNormals, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		}
+		}else
+			rMesh->m_BufferSize[1] = 0;
 
 		if (as_mesh->HasTextureCoords(0))
 		{
-			rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+			rMesh->m_BufferSize[2] = as_mesh->mNumVertices;
+			rMesh->TextureV = new float[rMesh->m_BufferSize[2] * 2];
 			for (uint i = 0; i < as_mesh->mNumVertices; i++)
 			{
 				rMesh->TextureV[i * 2] = as_mesh->mTextureCoords[0][i].x;
 				rMesh->TextureV[i * 2 + 1] = as_mesh->mTextureCoords[0][i].y;
 			}
 		}
+		else
+			rMesh->m_BufferSize[2] = 0;
 
 		rMesh->toCronosVertexVector();
 		meshComp->SetupMesh(rMesh->getVector(),rMesh->getIndex());

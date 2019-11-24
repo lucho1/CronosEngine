@@ -28,7 +28,7 @@ namespace Cronos {
 		float*Normal = nullptr;
 		float*TextureV = nullptr;
 
-		uint m_BufferSize[2];
+		uint m_BufferSize[4];
 
 		inline uint GetResID() const override { return m_ResID; }
 

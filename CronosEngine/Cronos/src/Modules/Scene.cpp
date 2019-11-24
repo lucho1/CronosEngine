@@ -77,7 +77,10 @@ namespace Cronos {
 				{
 					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor;
 				}
-
+				else
+				{
+					texColor = u_AmbientColor;
+				}
 				color = texColor;
 				if(u_drawZBuffer == 1)
 				{
@@ -117,13 +120,13 @@ namespace Cronos {
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
 		//House Model Load & Floor Plane primitive
-		m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.fbx"));
-		int id = m_HouseModel->GetGOID();
+		//m_HouseModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
+		//int id = m_HouseModel->GetGOID();
 
-		GameObject* testing = App->filesystem->Load(id);
+		//GameObject* testing = App->filesystem->Load(id);
 
-		//App->filesystem->Load(m_HouseModel->GetMetaPath());
-		m_GameObjects.push_back(testing);
+		////App->filesystem->Load(m_HouseModel->GetMetaPath());
+		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
 
 		AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
@@ -310,9 +313,6 @@ namespace Cronos {
 				}
 			}
 		}
-
-
-
 		return false;
 	}
 
@@ -325,6 +325,22 @@ namespace Cronos {
 	// PostUpdate
 	update_status Scene::OnPostUpdate(float dt)
 	{
+		if (mustCleanScene) {
+			if(App->EditorGUI->GetCurrentGameObject()!=nullptr)
+				App->EditorGUI->CancelGameObject();
+			if(ToCopy!=nullptr)
+				ToCopy = nullptr;
+			OnCleanUp();
+			mustCleanScene = false;
+		}
+		if (mustSave) {
+			SaveScene(m_SceneName.c_str());
+			mustSave = false;
+		}
+		if (mustLoad) {
+			LoadScene(m_SceneName.c_str());
+			mustLoad = false;
+		}
 		return UPDATE_CONTINUE;
 	}
 

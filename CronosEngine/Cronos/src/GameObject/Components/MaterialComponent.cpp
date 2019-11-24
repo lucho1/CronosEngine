@@ -70,8 +70,10 @@ namespace Cronos
 			else
 				glColor3f(White.r, White.g, White.b);
 		}
-		else
+		else {
 			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
+			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
+		}
 	}
 
 	void MaterialComponent::Unbind()

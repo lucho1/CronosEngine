@@ -59,6 +59,8 @@ namespace Cronos {
 		inline int GetAssetID() const { return m_AssetID; }
 		inline bool HasMeta() const;
 
+		void SaveAsset();
+
 		Directories* folderDirectory = nullptr;
 
 	private:

@@ -34,6 +34,9 @@ namespace Cronos {
 		bool SaveScene(const char* SceneName);
 		bool LoadScene(const char* SceneName);
 
+		bool mustSave = false;
+		bool mustLoad = false;
+		bool mustCleanScene = false;
 	public:
 
 		std::vector<GameObject*>m_GameObjects;

@@ -92,9 +92,9 @@ namespace Cronos {
 		uint bytes = 0;
 		int a  = sizeof(CronosVertex);
 
-		uint range[2] = {rMesh->m_BufferSize[0],rMesh->m_BufferSize[1]};
+		uint range[4] = {rMesh->m_BufferSize[0],rMesh->m_BufferSize[1],rMesh->m_BufferSize[2],rMesh->m_BufferSize[3]};
 		
-		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 2 * range[0]) + (sizeof(uint) * range[1]*3);
+		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[1]) + (sizeof(float) * 2 * range[2]) + (sizeof(uint) * range[3]*3);
 
 		char*Data = new char[totalSize];
 		char*cursor = Data;
@@ -110,19 +110,24 @@ namespace Cronos {
 		cursor += bytes;
 
 		//Store Normal
-		bytes = sizeof(float) * 3 * range[0];
-		memcpy(cursor, rMesh->Normal, bytes);
-		cursor += bytes;
+		if (range[1] > 0) {
+			bytes = sizeof(float) * 3 * range[1];
+			memcpy(cursor, rMesh->Normal, bytes);
+			cursor += bytes;
+		}
 
 		//Store Texture Vector
-		bytes = sizeof(float) * 2 * range[0];
-		memcpy(cursor, rMesh->TextureV, bytes);
-		cursor += bytes;
-
+		if (range[2] > 0) {
+			bytes = sizeof(float) * 2 * range[2];
+			memcpy(cursor, rMesh->TextureV, bytes);
+			cursor += bytes;
+		}
 		//Store Index
-		bytes = sizeof(uint) * range[1]*3;
-		memcpy(cursor,rMesh->Index, bytes);
-		cursor += bytes;
+		if (range[3] > 0) {
+			bytes = sizeof(uint) * range[3] * 3;
+			memcpy(cursor, rMesh->Index, bytes);
+			cursor += bytes;
+		}
 
 		std::ofstream MeshData{filePath, std::ios::binary };
 		MeshData.write(Data, totalSize);
@@ -164,10 +169,17 @@ namespace Cronos {
 		aux_JSONFile["ComponentTransform"]["Scale"][2] = Transform->GetScale().z;
 
 		if (ToConvert->GetComponent<MaterialComponent>()) {
+		
+			aux_JSONFile["ComponentMaterial"]["Color"]["R"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().r;
+			aux_JSONFile["ComponentMaterial"]["Color"]["G"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().g;
+			aux_JSONFile["ComponentMaterial"]["Color"]["B"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().b;
+			aux_JSONFile["ComponentMaterial"]["Color"]["A"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().a;
 			std::unordered_map<TextureType, Texture*>m_TexturesContainer= ToConvert->GetComponent<MaterialComponent>()->GetTextures();
-			aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
+			if(m_TexturesContainer[TextureType::DIFFUSE]!=nullptr)
+				aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
 			if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
-				aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();		
+				aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();	
+			
 		}
 		if (ToConvert->GetComponent<MeshComponent>()) {
 			MeshComponent* mesh = ToConvert->GetComponent<MeshComponent>();	
@@ -242,7 +254,7 @@ namespace Cronos {
 			cursor = (char*)Data;
 			
 			//Load Total of Vertices and Indices
-			uint range[2];
+			uint range[4];
 			uint bytes = sizeof(range);
 			memcpy(rMesh->m_BufferSize, cursor, bytes);
 			//rMesh->m_BufferSize[0] = range[0];
@@ -256,23 +268,27 @@ namespace Cronos {
 			cursor+=bytes;
 
 			//Load Normals
-			bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
-			rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
-			memcpy(rMesh->Normal,cursor, bytes);
-			cursor += bytes;
+			if (range[1] > 0) {
+				bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
+				rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+				memcpy(rMesh->Normal, cursor, bytes);
+				cursor += bytes;
+			}
 			
 			//Load TextureCoordinates
-			bytes = sizeof(float) * 2 * rMesh->m_BufferSize[0];
-			rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
-			memcpy(rMesh->TextureV, cursor, bytes);
-			cursor += bytes;
-
+			if (range[2] > 0) {
+				bytes = sizeof(float) * 2 * rMesh->m_BufferSize[0];
+				rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+				memcpy(rMesh->TextureV, cursor, bytes);
+				cursor += bytes;
+			}
 			//Load Indices
-			bytes = sizeof(uint) * rMesh->m_BufferSize[1]*3;
-			rMesh->Index = new uint[rMesh->m_BufferSize[1]*3];
-			memcpy(rMesh->Index, cursor, bytes);
-			cursor += bytes;
-
+			if (range[3] > 0) {
+				bytes = sizeof(uint) * rMesh->m_BufferSize[1] * 3;
+				rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
+				memcpy(rMesh->Index, cursor, bytes);
+				cursor += bytes;
+			}
 			rMesh->toCronosVertexVector();
 		}
 		else {
@@ -329,11 +345,24 @@ namespace Cronos {
 					}
 					if (configFile.contains("ComponentMaterial"))
 					{
-						MaterialComponent* MatComp = ((MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL)));
-						std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
-						Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
-						MatComp->SetTexture(textTemp,textTemp->GetTextureType());
-						MatComp->SetShader(App->scene->BasicTestShader);
+						json CompMat = configFile["ComponentMaterial"];
+						
+
+						bool test = CompMat.contains("Albedo");
+
+						MaterialComponent* MatComp = ((MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL)));						
+						glm::vec4 color;
+						color.r = configFile["ComponentMaterial"]["Color"]["R"].get<float>();
+						color.g = configFile["ComponentMaterial"]["Color"]["G"].get<float>();
+						color.b = configFile["ComponentMaterial"]["Color"]["B"].get<float>();
+						color.a = configFile["ComponentMaterial"]["Color"]["A"].get<float>();
+						MatComp->SetColor(color);		
+						if (CompMat.contains("Albedo")) {
+							std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
+							Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
+							MatComp->SetTexture(textTemp, textTemp->GetTextureType());
+							MatComp->SetShader(App->scene->BasicTestShader);
+						}
 						Ret->m_Components.push_back(MatComp);
 					}
 				}

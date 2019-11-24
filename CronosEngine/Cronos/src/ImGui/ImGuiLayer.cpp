@@ -337,7 +337,6 @@ namespace Cronos {
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
@@ -528,15 +527,15 @@ namespace Cronos {
 			if (ImGui::BeginMenu("File")) {
 
 				if(ImGui::MenuItem("New Scene")) {
-					App->scene->OnCleanUp();
+					App->scene->mustCleanScene = true;
 				}
 				if (ImGui::MenuItem("Open Scene")) {
-					App->scene->LoadScene(App->scene->m_SceneName.c_str());
+					App->scene->mustLoad = true;
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Save")) {
 					App->SaveEngineData();
-					App->scene->SaveScene(App->scene->m_SceneName.c_str());
+					App->scene->mustSave = true;
 				}
 				ImGui::MenuItem("Save As...");
 				ImGui::Separator();
@@ -1493,7 +1492,6 @@ namespace Cronos {
 		ImGui::Text("HARDWARE");
 		ImGui::Separator();
 		ImGui::Separator();
-
 
 		ImGui::Text("MEMORY");
 		ImGui::Separator();

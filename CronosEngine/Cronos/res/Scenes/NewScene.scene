@@ -1,10 +1,10 @@
 {
   "Name": "NewScene",
   "ParentGOID": [
-    453642188,
-    1439552890,
-    1807249041,
-    2023643063
+    2079620078,
+    529272227,
+    1395514411,
+    1093729553
   ],
   "Path": "res/Scenes/NewScene.scene",
   "TotalofRootGO": 4
