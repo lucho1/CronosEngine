@@ -16,6 +16,7 @@ namespace Cronos
 	public:
 
 		Shader(const std::string& vertexShader, const std::string& fragmentShader);
+		Shader(const std::string& filepath);
 		~Shader();
 
 		void Bind() const;
@@ -29,6 +30,7 @@ namespace Cronos
 
 	private:
 
+		ShaderProgram ParseShader(const std::string filepath);
 		uint CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
 		uint CompileShader(uint type, const std::string& source);
 

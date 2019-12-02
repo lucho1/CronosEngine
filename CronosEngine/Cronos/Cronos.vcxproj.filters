@@ -1427,4 +1427,7 @@
     </ClCompile>
     <ClCompile Include="src\Helpers\Timers\GameTimer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Shaders\basic.shader" />
+  </ItemGroup>
 </Project>

@@ -5,6 +5,12 @@
 
 namespace Cronos {
 
+	Shader::Shader(const std::string& filepath)
+	{
+		ShaderProgram shaderSource = ParseShader(filepath);
+		m_ID = CreateShader(shaderSource.vertexShader, shaderSource.fragmentShader);
+	}
+
 	Shader::Shader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
 		m_ID = CreateShader(vertexShader, fragmentShader);
@@ -127,5 +133,31 @@ namespace Cronos {
 		}
 
 		return id;
+	}
+
+	ShaderProgram Shader::ParseShader(const std::string filepath)
+	{
+		enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
+
+		std::ifstream stream(filepath);
+		std::string line;
+		std::stringstream ss[2];
+		ShaderType sType = ShaderType::NONE;
+
+		while (std::getline(stream, line)) {
+
+			if (line.find("#shader") != std::string::npos) {
+
+				if (line.find("vertex") != std::string::npos)
+					sType = ShaderType::VERTEX;
+				else if (line.find("fragment") != std::string::npos)
+					sType = ShaderType::FRAGMENT;
+
+			}
+			else
+				ss[(int)sType] << line << '\n';
+		}
+
+		return { ss[0].str(), ss[1].str() };
 	}
 }

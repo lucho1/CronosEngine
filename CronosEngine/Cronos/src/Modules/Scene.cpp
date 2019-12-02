@@ -25,7 +25,7 @@ namespace Cronos {
 		App->renderer3D->SetOpenGLSettings();
 
 		//Shaders
-		std::string vertexShader = R"(
+		/*std::string vertexShader = R"(
 			#version 330 core
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec3 a_Normal;
@@ -89,7 +89,7 @@ namespace Cronos {
 					color = vec4(vec3(depth), 1.0);
 				}
 			}
-		)";
+		)";*/
 
 		//vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
 		//vec3 diffuse = vec3(texture(u_DiffuseTexture, v_TexCoords));
@@ -116,7 +116,8 @@ namespace Cronos {
 		)";*/
 
 		m_SceneName = "NewScene";
-		BasicTestShader = new Shader(vertexShader, fragmentShader);
+		//BasicTestShader = new Shader(vertexShader, fragmentShader);
+		BasicTestShader = new Shader("res/Shaders/basic.shader");
 
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
