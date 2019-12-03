@@ -5,15 +5,36 @@
 
 namespace Cronos {
 
+	GLenum StringToShaderType(const std::string& typeString)
+	{
+		if (typeString == "vertex")
+			return GL_VERTEX_SHADER;
+		if (typeString == "fragment" || typeString == "pixel")
+			return GL_FRAGMENT_SHADER;
+
+		CRONOS_ASSERT(false, "Invalid string Shader Type passed")
+		return 0;
+	}
+
+	//Constructors
 	Shader::Shader(const std::string& filepath)
 	{
-		ShaderProgram shaderSource = ParseShader(filepath);
-		m_ID = CreateShader(shaderSource.vertexShader, shaderSource.fragmentShader);
+		//ShaderProgram shaderSource = ParseShader(filepath);
+		//m_ID = CreateShader(shaderSource.vertexShader, shaderSource.fragmentShader);
+		
+		std::string ShaderSourceCode = ReadFile(filepath);
+		Compile(PreProcess(ShaderSourceCode));
+		m_Path = filepath;
 	}
 
 	Shader::Shader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		m_ID = CreateShader(vertexShader, fragmentShader);
+		//m_ID = CreateShader(vertexShader, fragmentShader);
+
+		std::unordered_map<GLenum, std::string> SourceShaderUMap;
+		SourceShaderUMap[GL_VERTEX_SHADER] = vertexShader;
+		SourceShaderUMap[GL_FRAGMENT_SHADER] = fragmentShader;
+		Compile(SourceShaderUMap);
 	}
 
 	Shader::~Shader()
@@ -21,6 +42,7 @@ namespace Cronos {
 		glDeleteProgram(m_ID);
 	}
 
+	//Shader Methods
 	void Shader::Bind() const
 	{
 		glUseProgram(m_ID);
@@ -31,6 +53,7 @@ namespace Cronos {
 		glUseProgram(0);
 	}
 
+	//Uniforms
 	int Shader::GetUniformLocation(const std::string & name)
 	{
 		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
@@ -69,10 +92,34 @@ namespace Cronos {
 	{
 		glUniform1i(GetUniformLocation(name), value);
 	}
+	
+	//Shader Read & Creation (.shader version)
+	/*ShaderProgram Shader::ParseShader(const std::string filepath)
+	{
+		enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 
+		std::ifstream stream(filepath);
+		std::string line;
+		std::stringstream ss[2];
+		ShaderType sType = ShaderType::NONE;
 
-	//Shader Creation
-	uint Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
+		while (std::getline(stream, line)) {
+
+			if (line.find("#shader") != std::string::npos)
+			{
+				if (line.find("vertex") != std::string::npos)
+					sType = ShaderType::VERTEX;
+				else if (line.find("fragment") != std::string::npos)
+					sType = ShaderType::FRAGMENT;
+			}
+			else
+				ss[(int)sType] << line << '\n';
+		}
+
+		return { ss[0].str(), ss[1].str() };
+	}*/
+
+	/*uint Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
 		uint program = glCreateProgram();
 		uint vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
@@ -84,15 +131,15 @@ namespace Cronos {
 		glValidateProgram(program);
 
 		int result;
-		glGetProgramiv(program, GL_COMPILE_STATUS, &result);
+		glGetProgramiv(program, GL_LINK_STATUS, &result);
 
-		if (result == GL_FALSE) {
-
+		if (result == GL_FALSE)
+		{
 			int length;
 			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 			char *message = (char*)alloca(length * sizeof(char));
 
-			glGetShaderInfoLog(program, length, &length, message);
+			glGetProgramInfoLog(program, length, &length, message);
 			LOG("Error in Shader Program Linking: %s", message);
 		}
 
@@ -108,9 +155,9 @@ namespace Cronos {
 		}
 
 		return program;
-	}
+	}*/
 
-	uint Shader::CompileShader(uint type, const std::string& source)
+	/*uint Shader::CompileShader(uint type, const std::string& source)
 	{
 		uint id = glCreateShader(type);
 		const char* src = source.c_str();
@@ -133,31 +180,122 @@ namespace Cronos {
 		}
 
 		return id;
+	}*/
+	
+	//Shader Read & Creation (.glsl version)
+	std::string Shader::ReadFile(const std::string & filepath)
+	{
+		std::string ret;
+
+		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+		if (in)
+		{
+			//We seek for the end of file so we can set the returning string size
+			in.seekg(0, std::ios::end);
+			ret.resize(in.tellg());
+
+			//We now seek for the file beginning to put it at the string (passing the string's first position and its size)
+			in.seekg(0, std::ios::beg);
+			in.read(&ret[0], ret.size());
+
+			//Finally close the file
+			in.close();
+		}
+		else
+			CRONOS_WARN(false, "Couldn't open the file: " + filepath);
+
+		return ret;
 	}
 
-	ShaderProgram Shader::ParseShader(const std::string filepath)
+	std::unordered_map<GLenum, std::string> Shader::PreProcess(const std::string & SourceShaderCode)
 	{
-		enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
+		std::unordered_map<GLenum, std::string> ret;
 
-		std::ifstream stream(filepath);
-		std::string line;
-		std::stringstream ss[2];
-		ShaderType sType = ShaderType::NONE;
+		const char* typeToken = "#type";
+		size_t typeTokenLength = strlen(typeToken);
+		size_t pos = SourceShaderCode.find(typeToken, 0);
 
-		while (std::getline(stream, line)) {
+		while (pos != std::string::npos)
+		{
+			size_t end_of_line = SourceShaderCode.find_first_of("\r\n", pos);
+			CRONOS_ASSERT(end_of_line != std::string::npos, "Shader Syntax Error");
 
-			if (line.find("#shader") != std::string::npos) {
+			size_t begin_pos = pos + typeTokenLength + 1;
+			std::string shaderType = SourceShaderCode.substr(begin_pos, end_of_line - begin_pos);
+			CRONOS_ASSERT(StringToShaderType(shaderType), "Invalid Shader Type");
 
-				if (line.find("vertex") != std::string::npos)
-					sType = ShaderType::VERTEX;
-				else if (line.find("fragment") != std::string::npos)
-					sType = ShaderType::FRAGMENT;
-
-			}
-			else
-				ss[(int)sType] << line << '\n';
+			size_t next_line_pos = SourceShaderCode.find_first_not_of("\r\n", end_of_line);
+			pos = SourceShaderCode.find(typeToken, next_line_pos);
+			ret[StringToShaderType(shaderType)] = SourceShaderCode.substr(next_line_pos,
+													pos - (next_line_pos == std::string::npos ? SourceShaderCode.size() - 1 : next_line_pos));
 		}
 
-		return { ss[0].str(), ss[1].str() };
+		return ret;
+	}
+
+	void Shader::Compile(const std::unordered_map<GLenum, std::string>& ShadersUMap)
+	{
+		std::vector<GLenum> shaderIDs_vec(ShadersUMap.size());
+		GLuint program = glCreateProgram();
+
+		for (auto element : ShadersUMap)
+		{
+			GLenum shaderType = element.first;
+			const std::string& shaderString = element.second;
+
+			GLuint id = glCreateShader(shaderType);
+
+			const GLchar* shaderSourceString = shaderString.c_str();
+			glShaderSource(id, 1, &shaderSourceString, 0);
+			glCompileShader(id);
+
+			GLint result = 0;
+			glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+			if (result == GL_FALSE)
+			{
+				GLint length = 0;
+				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+				
+				std::vector<GLchar> message(length);
+				glGetShaderInfoLog(id, length, &length, &message[0]);
+				glDeleteShader(id);
+
+				LOG("Error in Shader compilation: %s", message.data());
+				CRONOS_ASSERT(false, "Shader Compilation Failure!");
+				break;
+			}
+
+			glAttachShader(program, id);
+			shaderIDs_vec.push_back(id);
+		}
+
+		m_ID = program;
+		glLinkProgram(program);
+		glValidateProgram(program);
+
+		GLint result = 0;
+		glGetProgramiv(program, GL_LINK_STATUS, (int*)&result);
+		if (result == GL_FALSE)
+		{
+			GLint length;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+			
+			std::vector<GLchar> message(length);
+			glGetProgramInfoLog(program, length, &length, &message[0]);
+			
+			glDeleteProgram(program);
+			for (auto element : shaderIDs_vec)
+				glDeleteShader(element);
+
+			LOG("Error in Shader Program Linking: %s", message.data());
+			CRONOS_ASSERT(false, "Shader Linking Failure!");
+			return;
+		}
+		
+		for (auto element : shaderIDs_vec)
+		{
+			glDetachShader(program, element);
+			glDeleteShader(element);
+		}
 	}
 }

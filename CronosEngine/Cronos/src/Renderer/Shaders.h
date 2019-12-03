@@ -30,9 +30,13 @@ namespace Cronos
 
 	private:
 
-		ShaderProgram ParseShader(const std::string filepath);
-		uint CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
-		uint CompileShader(uint type, const std::string& source);
+		std::string ReadFile(const std::string& filepath);
+		std::unordered_map<GLenum, std::string> PreProcess(const std::string& SourceShaderCode);
+		void Compile(const std::unordered_map<GLenum, std::string>& ShadersUMap);
+
+		//ShaderProgram ParseShader(const std::string filepath);
+		//uint CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+		//uint CompileShader(uint type, const std::string& source);
 
 		int GetUniformLocation(const std::string& name);
 
@@ -41,7 +45,6 @@ namespace Cronos
 		uint m_ID;
 		std::string m_Path;
 		std::unordered_map<std::string, int> m_UniformLocationCache;
-
 	};
 }
 

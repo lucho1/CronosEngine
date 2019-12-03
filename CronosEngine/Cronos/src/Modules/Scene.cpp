@@ -117,7 +117,7 @@ namespace Cronos {
 
 		m_SceneName = "NewScene";
 		//BasicTestShader = new Shader(vertexShader, fragmentShader);
-		BasicTestShader = new Shader("res/Shaders/basic.shader");
+		BasicTestShader = new Shader("res/Shaders/basic.glsl");
 
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
