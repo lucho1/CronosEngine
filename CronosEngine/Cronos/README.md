@@ -42,7 +42,10 @@ We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, 
 
 ## Installation
 Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...).
+
 **Note:** Be careful when modifying things on config file, it will probably modify engine's configuration. And please, don't delete the dll files, they are needed for the engine to work. Also, be careful when scaling objects, the Bounding Boxes transformations are not very well performed and they can be badly deformed (but kinda work).
+
+**Note 2:** Warning! If you wanna work with bullet, first, integrate it, then, go to MathBuildConfig.h, look for the definition of MATH_BULLET_INTEROP, and uncomment it. Should work :)
 
 ## Usage
 **Camera Controls**
@@ -130,6 +133,8 @@ Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
 feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request and we might look into it. :D
+
+Warning! If you wanna work with bullet, first, integrate it, then, go to MathBuildConfig.h, look for the definition of MATH_BULLET_INTEROP, and uncomment it. Should work :)
 
 ## License
 **Copyright (c) 2019 Lucho Suaya Leiro and Roger Leon Borras**

@@ -32,6 +32,15 @@
 
 #include <windows.h>
 
+//Warning! If you wanna work with bullet, first, integrate it, then, go to MathBuildConfig.h, look for
+//the definition of MATH_BULLET_INTEROP, and uncomment it. Should work :)
+#ifdef _DEBUG
+	#pragma comment (lib, "vendor/MathGeoLib/libx86/Debug/MathGeoLib.lib")
+#else
+	#pragma comment (lib, "vendor/MathGeoLib/libx86/Debug/MathGeoLib.lib")
+#endif
+
+#include "MathGeoLib/include/MathGeoLib.h"
 
 #include "Timers/Timer.h"
 #include "Timers/PerfTimer.h"
