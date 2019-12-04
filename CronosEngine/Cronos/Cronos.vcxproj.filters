@@ -108,6 +108,9 @@
     <ClInclude Include="src\Helpers\RNGen.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Helpers\Timers\GameTimer.h">
+      <Filter>src\Helpers\Timers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h">
       <Filter>src\Helpers\Timers</Filter>
     </ClInclude>
@@ -1302,7 +1305,6 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\Helpers\Timers\GameTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1343,6 +1345,9 @@
     </ClCompile>
     <ClCompile Include="src\Helpers\RNGen.cpp">
       <Filter>src\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Helpers\Timers\GameTimer.cpp">
+      <Filter>src\Helpers\Timers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp">
       <Filter>src\Helpers\Timers</Filter>
@@ -1425,6 +1430,5 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="src\Helpers\Timers\GameTimer.cpp" />
   </ItemGroup>
 </Project>

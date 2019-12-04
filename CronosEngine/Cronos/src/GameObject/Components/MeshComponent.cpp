@@ -62,80 +62,36 @@ namespace Cronos {
 			return;
 
 		App->renderer3D->RenderSubmit(GetParent());
-		//App->scene->BasicTestShader->Bind();
-		//
-		//if (material != nullptr)
-		//	material->Bind(bindMaterial);
-
-		//m_MeshVAO->Bind();
-		//glDrawElements(GL_TRIANGLES, m_MeshVAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-
-		//if (material != nullptr)
-		//	material->Unbind();
-
-		//App->scene->BasicTestShader->Unbind();
-		//m_MeshVAO->UnBind();
-
-	//	DrawCentralAxis();
 		if (m_DebugDraw)
 		{
 			DrawVerticesNormals();
 			DrawPlanesNormals();
 		}
+		if (m_DrawAxis)
+			DrawCentralAxis();
 	}
 
 	void MeshComponent::DrawVerticesNormals()
 	{
-		glLineWidth(2.0f);
-		float linelength = 0.2f;
-		glColor4f(0.1f, 0.5f, 0.8f, 1.0f);
+		//glPushMatrix();
 
-		glPushMatrix();
-
-		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
-		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+		//glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
+		//glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+		glm::mat4 matrix = GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
 
 		std::vector<CronosVertex>::iterator item = m_VertexVector.begin();
 		for (; item != m_VertexVector.end(); item++)
 		{
 			glm::vec3 pos = (*item).Position;
-			glm::vec3 norm = (*item).Position + (*item).Normal * linelength;
+			glm::vec3 norm = (*item).Position + (*item).Normal * 0.2f;
 
-			glBegin(GL_LINES);
-			glVertex3f(pos.x, pos.y, pos.z);
-			glVertex3f(norm.x, norm.y, norm.z);
-			glEnd();
+			App->renderer3D->DrawLine(pos, norm, glm::vec3(Blue.r, Blue.g, Blue.b), 2.0f);
 		}
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-		glPopMatrix();
 	}
 
 	void MeshComponent::DrawPlanesNormals()
 	{
-		glLineWidth(2.0f);
-		float linelength = 0.5f;
-		glColor4f(0.0f, 1.0f, 1.0f, 1.0f);
-
-		glPushMatrix();
-		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetLocalTranformationMatrix()));
-		glMultMatrixf(glm::value_ptr(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+		glm::mat4 matrix = GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
 
 		for (uint i = 0; i < m_IndicesVector.size() - 2; i += 3)
 		{
@@ -145,54 +101,33 @@ namespace Cronos {
 
 			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
 			PlaneNormal = glm::normalize(PlaneNormal);
-			PlaneNormal *= linelength;
+			PlaneNormal *= 0.5f;
 
 			glm::vec3 TriCenter = { 0, 0, 0 };
 			TriCenter.x = (p1.x + p2.x + p3.x) / 3;
 			TriCenter.y = (p1.y + p2.y + p3.y) / 3;
 			TriCenter.z = (p1.z + p2.z + p3.z) / 3;
 
-			glBegin(GL_LINES);
-			glVertex3f(TriCenter.x, TriCenter.y, TriCenter.z);
-			glVertex3f(TriCenter.x + PlaneNormal.x, TriCenter.y + PlaneNormal.y, TriCenter.z + PlaneNormal.z);
-			glEnd();
+			App->renderer3D->DrawLine(TriCenter, TriCenter + PlaneNormal, glm::vec3(Green.r, Green.g, Green.b), 2.0f);
 		}
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-		glPopMatrix();
 	}
 
-	void MeshComponent::CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions)
+	//Central Axis
+	void MeshComponent::DrawCentralAxis()
 	{
-		//Clear Vectors passed
-		if (normals.size() > 0 || positions.size() > 0)
-		{
-			positions.clear();
-			normals.clear();
-		}
+		float linelength = 1.0f;
+		glm::vec3 axis = m_Parent->GetComponent<TransformComponent>()->GetCentralAxis();
+		glm::vec3 offset = axis;
 
-		//Calculate normals and add them to the vectors passed
-		for (uint i = 0; i < m_IndicesVector.size(); i += 3)
-		{
-			glm::vec3 p1 = m_VertexVector[m_IndicesVector[i]].Position;
-			glm::vec3 p2 = m_VertexVector[m_IndicesVector[i + 1]].Position;
-			glm::vec3 p3 = m_VertexVector[m_IndicesVector[i + 2]].Position;
+		offset.x += linelength;
+		App->renderer3D->DrawLine(axis, offset, glm::vec3(1.0f, 0.0f, 0.0f), 2.0f);
 
-			glm::vec3 PlaneNormal = glm::cross(p2 - p1, p3 - p1);
-			glm::normalize(PlaneNormal);
+		offset = axis;
+		offset.y += linelength;
+		App->renderer3D->DrawLine(axis, offset, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
 
-			glm::vec3 TriCenter = { 0, 0, 0 };
-			TriCenter.x = (p1.x + p2.x + p3.x) / 3;
-			TriCenter.y = (p1.y + p2.y + p3.y) / 3;
-			TriCenter.z = (p1.z + p2.z + p3.z) / 3;
-
-			positions.push_back(TriCenter);
-			normals.push_back(PlaneNormal);
-		}
+		offset = axis;
+		offset.z += linelength;
+		App->renderer3D->DrawLine(axis, offset, glm::vec3(0.0f, 0.0f, 1.0f), 2.0f);
 	}
 }

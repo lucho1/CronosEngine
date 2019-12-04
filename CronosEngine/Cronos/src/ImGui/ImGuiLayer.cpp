@@ -886,10 +886,7 @@ namespace Cronos {
 			ImGui::Text(CurrentGameObject->GetName().c_str());
 
 			ImGui::Checkbox("Draw Normals", &CurrentGameObject->GetComponent<MeshComponent>()->setDebugDraw());
-			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<TransformComponent>()->SetDrawAxis() );
-
-			if(CurrentGameObject->GetComponent<TransformComponent>()->DrawAxis)
-				CurrentGameObject->GetComponent<TransformComponent>()->DrawCentralAxis();
+			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<MeshComponent>()->SetDrawAxis());
 
 			ImGui::Separator();
 		}

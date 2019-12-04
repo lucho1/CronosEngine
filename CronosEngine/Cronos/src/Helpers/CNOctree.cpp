@@ -77,16 +77,7 @@ namespace Cronos {
 			for (int i = 0; i < m_ChildsQuantity; ++i)
 				m_Nodes[i].Draw();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(0.5f);
-
-		glColor3f(Red.r, Red.g, Red.b);
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-		App->renderer3D->DrawCube(m_CubicSpace.getMax(), m_CubicSpace.getMin());
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		App->renderer3D->DrawCube(m_CubicSpace.getMax(), m_CubicSpace.getMin(), glm::vec3(Red.r, Red.g, Red.b));
 	}
 
 	void CnOT_Node::CleanUp()
@@ -242,6 +233,5 @@ namespace Cronos {
 
 		return false;
 	}
-
 
 }//Namespace Cronos

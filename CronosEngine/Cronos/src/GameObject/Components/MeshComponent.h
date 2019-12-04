@@ -14,16 +14,14 @@ namespace Cronos {
 	{
 		glm::vec3 Position;
 		glm::vec3 Normal;
-		glm::vec2 TexCoords;
-		CronosVertex(){};
-		CronosVertex(std::vector<float>a) { Position.x = a[0], Position.y = a[1], Position.z = a[2], Normal.x = a[3], Normal.y = a[4], Normal.z = a[5], TexCoords.x = a[6], TexCoords.y = a[7]; }
-		
+		glm::vec2 TexCoords;		
 	};
 
 	class MeshComponent : public Component
 	{
 	public:
 
+		//Component Methods
 		MeshComponent(GameObject* attachedGO);
 		~MeshComponent();
 
@@ -31,28 +29,30 @@ namespace Cronos {
 		void Draw(MaterialComponent* material, bool bindMaterial);
 
 		void SetupMesh(std::vector<CronosVertex>vertices, std::vector<uint>indices);
-		void RecalculateNormals() { m_NormalsCalculated = false; }
-		bool &setDebugDraw() { RecalculateNormals(); return m_DebugDraw; }
+		bool &setDebugDraw() { return m_DebugDraw; }
+		bool &SetDrawAxis() { return m_DrawAxis; }
+
+	public:
 
 		//Getters
-		const inline std::vector<CronosVertex> GetVertexVector() const { return m_VertexVector; }
-		const inline std::vector<uint> GetIndexVector() const { return m_IndicesVector; }
-		inline VertexArray* GetVAO() const { return m_MeshVAO; }
+		const inline std::vector<CronosVertex> GetVertexVector()	const { return m_VertexVector; }
+		const inline std::vector<uint> GetIndexVector()				const { return m_IndicesVector; }
+		inline VertexArray* GetVAO()								const { return m_MeshVAO; }
 
-		static ComponentType GetType() { return ComponentType::MESH; }
-		std::vector<CronosVertex> m_VertexVector;
-
-		ResourceMesh* r_mesh;
-
+		static ComponentType GetType()									  { return ComponentType::MESH; }		
+		
 	private:
 
-		void CalculateNormals(std::vector<glm::vec3>& normals, std::vector<glm::vec3>& positions);
-
+		void DrawCentralAxis();
 		void DrawVerticesNormals();
 		void DrawPlanesNormals();
 
-	private:
+	public:
 
+		std::vector<CronosVertex> m_VertexVector;
+		ResourceMesh* r_mesh;
+
+	private:
 		
 		std::vector<uint> m_IndicesVector;
 
@@ -60,10 +60,8 @@ namespace Cronos {
 		VertexBuffer* m_MeshVBO = nullptr;
 		IndexBuffer* m_MeshIBO = nullptr;
 
-
-
 		bool m_DebugDraw = false;
-		bool m_NormalsCalculated = false;
+		bool m_DrawAxis = false;
 	};
 }
 

@@ -31,6 +31,8 @@ namespace Cronos {
 		void CreateRock(glm::vec3 size = { 2, 2, 2 }, glm::vec3 position = { 0, 0, 0 }, int seed = 1, uint nSubdivisions = DEFAULT_SUBDIVISIONS); //To create a Rock, create an Empty primitive and then call this function
 		void CreateSubdividedSphere(glm::vec3 size = { 2, 2, 2 }, glm::vec3 position = { 0, 0, 0 }, uint nSubdivisions = DEFAULT_SUBDIVISIONS); //To create a Subd. Sphere, create an Empty primitive and then call this function
 		void CreateDisk(glm::vec3 center = { 0, 0, 0 }, glm::vec3 size = { 2, 2, 2 }, float radius = DEFAULT_RADIUS, int figure_slices = DEFAULT_SLICE_AND_STACK); //To create a Disk, create an Empty primitive and then call this function
+		
+		const inline PrimitiveType GetPrimitiveType() const { return m_PrimitiveType; }
 
 	private:
 
@@ -38,8 +40,9 @@ namespace Cronos {
 		void CreateCylinder(glm::vec3 size, glm::vec3 position, int figure_slices, int figure_stacks);
 		void CreateCone(glm::vec3 size, glm::vec3 position, int figure_slices, int figure_stacks);
 
+	private:
+		
 		PrimitiveType m_PrimitiveType = PrimitiveType::NONE;
-		const inline PrimitiveType GetPrimitiveType() const { return m_PrimitiveType; }
 	};
 }
 

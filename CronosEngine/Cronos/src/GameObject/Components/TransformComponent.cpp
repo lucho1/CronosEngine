@@ -26,49 +26,25 @@ namespace Cronos {
 
 	void TransformComponent::Update(float dt)
 	{
-		//App->scene->BasicTestShader->Bind();
-		//App->scene->BasicTestShader->SetUniformMat4f("u_Model", m_GlobalTransformationMatrix);
-		//App->scene->BasicTestShader->Unbind();
-
-
 		//AABBs---------------------------------------------------------------
-		//glm::vec3 aabbTrans = m_ContainerAABBCube.getCenter();
-		//m_ContainerAABBCube.translate(m_Translation - aabbTrans);
-		//m_ContainerAABBCube.scale(glm::vec3(0.0f), m_Scale);
-
 		glColor3f(Blue.r, Blue.g, Blue.b);
 
-		//glPushMatrix();
+		App->renderer3D->DrawCube(m_ContainerAABBCube.getMin(), m_ContainerAABBCube.getMax(),
+			glm::vec3(Blue.r, Blue.g, Blue.b), 2.0f, m_LocalTransformationMatrix);
 
-		glMultMatrixf(glm::value_ptr(m_LocalTransformationMatrix));
 		//glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-		//glPushMatrix();
 		//glMultMatrixf(glm::value_ptr(m_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-		App->renderer3D->DrawCube(m_ContainerAABBCube.getMin(), m_ContainerAABBCube.getMax());
 
-		
-		glColor3f(Green.r, Green.g, Green.b);
-
-		//glPushMatrix();
 		//OBB m_ContainerOOBB = OBB(m_ContainerAABBCube);
-		glMultMatrixf(glm::value_ptr(m_LocalTransformationMatrix));
-		//glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
 
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		//glMultMatrixf(glm::value_ptr(m_GlobalTransformationMatrix));
 		//glPushMatrix();
 		//glMultMatrixf(glm::value_ptr(m_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
 
 		glm::vec3 corners[8];
 		m_ContainerOOBB.getCorners(corners);
-		App->renderer3D->DrawCube(corners[1], corners[4]);
+		App->renderer3D->DrawCube(corners[1], corners[4],
+			glm::vec3(Green.r, Green.g, Green.b), 2.0f, m_LocalTransformationMatrix);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -269,79 +245,4 @@ namespace Cronos {
 		//trans = glm::vec3(trans.x, m_ContainerAABBCube.getMax().y, trans.z);
 		//m_ContainerAABBCube.translate(trans - tttt);
 	}
-
-	//Central Axis
-	void TransformComponent::DrawCentralAxis()
-	{
-		float linelength = 1.0f;
-		glm::vec3 axis = GetCentralAxis();
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-
-		glLineWidth(5.0f);
-		glBegin(GL_LINES);
-		glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x + linelength, axis.y, axis.z);
-		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x, axis.y + linelength, axis.z);
-		glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-		glVertex3f(axis.x, axis.y, axis.z);
-		glVertex3f(axis.x, axis.y, axis.z + linelength);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		glEnd();
-		glLineWidth(2.0f);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-	}
-
-	//------------------------------------------------------------------------------------------
-	//BoundingBox::BoundingBox(GameObject* GameObjectAttached) : GOAttached(GameObjectAttached)
-	//{
-	//	AABB GOAABB = GOAttached->GetComponent<TransformComponent>()->GetAABB();
-	//	glm::vec3 size = glm::abs(GOAABB.getMax() - GOAABB.getMin());
-
-	//	//PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Cube", { 1,1,1 });
-	//	OBBox = new PrimitiveGameObject(PrimitiveType::CUBE, GOAttached->GetName() + " OBB", size,
-	//		GOAttached->GetComponent<TransformComponent>()->GetTranslation());
-
-	//	AABBox = new PrimitiveGameObject(PrimitiveType::CUBE, GOAttached->GetName() + " AABB", size + glm::vec3(0.3f),
-	//		GOAttached->GetComponent<TransformComponent>()->GetTranslation());
-	//}
-
-	//void BoundingBox::Update(float dt)
-	//{
-	//	if (OBBox == nullptr || AABBox == nullptr)
-	//		return;
-
-	//	TransformComponent* OBBComp = OBBox->GetComponent<TransformComponent>();
-	//	TransformComponent* AABBComp = AABBox->GetComponent<TransformComponent>();
-	//	TransformComponent* GOComp = GOAttached->GetComponent<TransformComponent>();
-
-	//	OBBComp->SetOrientation(GOComp->GetOrientation());
-	//	OBBComp->SetScale(GOComp->GetScale());
-	//	OBBComp->SetPosition(GOComp->GetTranslation());
-
-	//	AABBComp->SetPosition(OBBComp->GetTranslation());
-	//	AABBComp->SetScale(OBBComp->GetScale() + glm::vec3(0.3f));
-
-	//	glLineWidth(3.5f);
-	//	glColor3f(Blue.r, Blue.g, Blue.b);
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//	OBBox->Update(dt);
-	//	glColor3f(Green.r, Green.g, Green.b);
-	//	AABBox->Update(dt);
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//	glLineWidth(2.0f);
-	//}
-
 }

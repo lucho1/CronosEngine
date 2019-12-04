@@ -167,41 +167,6 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-		//"Floor" Plane
-		App->renderer3D->DrawFloorPlane(true);
-
-		//Wireframe Mode (or not)
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
-		{
-			glLineWidth(0.5f);
-			glColor3f(White.r, White.g, White.b);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-
-		//Shader bind & uniforms send
-		//BasicTestShader->Bind();
-		//App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		//App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
-
-		/*if (changeZBufferDrawing)
-		{
-			changeZBufferDrawing = false;
-			drawZBuffer = !drawZBuffer;
-
-			if (drawZBuffer)
-				BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
-			else
-				BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
-
-		}
-		if (drawZBuffer)
-			BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
-*/
-		//BasicTestShader->Unbind();
-
-
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
@@ -232,7 +197,6 @@ namespace Cronos {
 				//ToCopy = nullptr;
 			}
 		}
-
 
 		//Octree Testing
 		OT_Test.Draw();

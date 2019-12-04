@@ -36,6 +36,7 @@ namespace Cronos {
 	{
 	public:
 
+		//Module Methods
 		GLRenderer3D(Application* app, bool start_enabled = true);
 		~GLRenderer3D();
 
@@ -43,18 +44,23 @@ namespace Cronos {
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
-		void OnResize(uint width, uint height);
 
 		//Save/Load
 		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
 
+		//Renderer Public Methods
 		void RenderSubmit(GameObject* gameObject);
+		void OnResize(uint width, uint height);
 
 	public:
 
+		//Setters
 		void SetVsync(bool setStatus);
 		void SetOpenGLVersion(int MajorVersion, int MinorVersion);
+
+		void SetDefaultColor(glm::vec4 color) { m_DefaultColor = color; }
+		void SetDefaultLineWidth(float LWidth) { m_DefaultLinewidth = LWidth; }
 
 		//OpenGL Settings
 		void SetOpenGLSettings();
@@ -75,10 +81,13 @@ namespace Cronos {
 		void SetGLLighting(bool setStatus);
 		void SetGLColorMaterial(bool setStatus);
 
+	public:
+
 		//Debug stuff
 		void DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos);
 		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
-		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec);
+		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec, glm::vec3 color = glm::vec3(1.0f), float linewidth = 0.5f, glm::mat4 modelMat = glm::mat4(1.0f));
+		void DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color = glm::vec3(1.0f), float linewidth = 1.0f, glm::mat4 modelMat = glm::mat4(1.0f));
 
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }
 		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
@@ -102,6 +111,9 @@ namespace Cronos {
 		int m_OGL_Mv = 4, m_OGL_mv = 3; //Open GL Major and Minor version
 
 		OpenGLSettings m_CurrentSettings;
+
+		glm::vec4 m_DefaultColor = glm::vec4(1.0f);
+		float m_DefaultLinewidth = 1.0f;
 	};
 
 }

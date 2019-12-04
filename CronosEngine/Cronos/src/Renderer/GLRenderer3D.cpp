@@ -134,6 +134,19 @@ namespace Cronos {
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
+		DrawFloorPlane(true);
+
+		//Wireframe Mode (or not)
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
+			SetWireframeDrawMode(false);
+		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
+		{
+			glLineWidth(0.5f);
+			glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+			SetWireframeDrawMode(true);
+			glLineWidth(m_DefaultLinewidth);
+		}
+
 		App->scene->BasicTestShader->Bind();
 		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
 		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
@@ -147,7 +160,6 @@ namespace Cronos {
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
 			else
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
-
 		}
 		if (drawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
@@ -198,6 +210,36 @@ namespace Cronos {
 
 
 	// -----------------------------------------------------------------------------------
+	void GLRenderer3D::DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color, float linewidth, glm::mat4 modelMat)
+	{
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(modelMat));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glLineWidth(linewidth);
+		glColor3f(color.r, color.g, color.b);
+
+		glBegin(GL_LINES);
+
+		glVertex3f(minP.x, minP.y, minP.z);
+		glVertex3f(maxP.x, maxP.y, maxP.z);
+
+		glEnd();
+
+		glLineWidth(1.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
+	}
+
 	void GLRenderer3D::DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos)
 	{
 		glm::vec3 posOpp_Down = glm::vec3(pos.x + oppositePos.x, pos.y, pos.z);
@@ -251,8 +293,8 @@ namespace Cronos {
 		}
 
 		//Plane draw
-		glLineWidth(1.0f);
 		glColor3f(colorIntensity, colorIntensity, colorIntensity);
+		glLineWidth(1.0f);
 		glBegin(GL_LINES);
 
 		float d = size;
@@ -263,7 +305,7 @@ namespace Cronos {
 			glVertex3f(-d, 0.0f, i);
 			glVertex3f(d, 0.0f, i);
 		}
-		glLineWidth(2.0f);
+		
 		glEnd();
 
 		//Set again Identity for OGL Matrices & Polygon draw to fill again
@@ -273,15 +315,22 @@ namespace Cronos {
 		glLoadIdentity();
 		glPopMatrix();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
 	}
 
-	void GLRenderer3D::DrawCube(glm::vec3 maxVec, glm::vec3 minVec)
+	void GLRenderer3D::DrawCube(glm::vec3 maxVec, glm::vec3 minVec, glm::vec3 color, float linewidth, glm::mat4 modelMat)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(modelMat));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glColor3f(color.r, color.g, color.b);
+		glLineWidth(linewidth);		
 
 		//Top
 		glBegin(GL_QUADS);
@@ -349,6 +398,8 @@ namespace Cronos {
 		glLoadIdentity();
 		glPopMatrix();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
 	}
 
 
