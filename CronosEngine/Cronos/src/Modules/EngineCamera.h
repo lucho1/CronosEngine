@@ -99,6 +99,8 @@ namespace Cronos {
 		bool m_ChangeProj = false;
 
 		float m_FocusDistance = 20.0f;
+
+		Frustum camFrustum;
 	};
 }
 

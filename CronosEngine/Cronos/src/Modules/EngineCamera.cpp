@@ -291,6 +291,21 @@ namespace Cronos {
 
 		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV),
 			(float)App->window->GetWidth() / (float)App->window->GetHeight(), m_NearPlane, m_FarPlane);
+
+		//camFrustum = Frustum();
+		camFrustum.type = PerspectiveFrustum;
+		camFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
+		camFrustum.front = float3(m_Front.x, m_Front.y, m_Front.z);
+		camFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);
+		
+
+		camFrustum.nearPlaneDistance = m_NearPlane;
+		camFrustum.farPlaneDistance = m_FarPlane;
+
+		
+
+		camFrustum.verticalFov = glm::radians(m_FOV);
+		//camFrustum.horizontalFov = glm::radians(m_FOV); // calculate it in funcion of m_FOV & width and height (or Aspect Ratio)
 	}
 
 	// -----------------------------------------------------------------

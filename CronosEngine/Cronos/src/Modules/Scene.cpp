@@ -122,7 +122,7 @@ namespace Cronos {
 		//int id = m_HouseModel->GetGOID();
 		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
 
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
 		m_GameObjects.push_back(m_StreetModel);
 		
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());

@@ -265,14 +265,31 @@ namespace Cronos {
 		AABB aabb;
 		aabb.SetNegativeInfinity();
 
-		float3* verts = new float3[as_mesh->mNumVertices];
-		for (uint i = 0; i < as_mesh->mNumVertices; i++)
+		/*float size = rMesh->m_BufferSize[0]/3;
+		float3* res = new float3[size];
+		float* vec = rMesh->Position;
+
+		for (uint i = 0; i <= size; i+=3)
 		{
-			aiVector3D aiVert = as_mesh->mVertices[i];
-			verts[i] = float3(aiVert.x, aiVert.y, aiVert.z);
+			res[i] = float3(vec[i], vec[i+1], vec[i+2]);
+			//verts[i] = float3(vec.x, vec.y, vec.z);
+		}
+
+		aabb.Enclose(res, size);*/
+
+		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+
+		float size = rMesh->getVector().size();
+		std::vector<CronosVertex> Temp = rMesh->getVector();
+		float3* verts = new float3[size];
+
+		for (uint i = 0; i < size; i++)
+		{
+			glm::vec3 vec = Temp[i].Position;
+			verts[i] = float3(vec.x, vec.y, vec.z);
 		}
 		
-		aabb.Enclose((float3*)verts, as_mesh->mNumVertices);
+		aabb.Enclose(verts, size);
 		GO->SetAABB(aabb);
 		//delete[] verts;
 
