@@ -64,7 +64,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -91,7 +91,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -116,11 +116,9 @@
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
-    <ClInclude Include="src\Helpers\AABB.h" />
     <ClInclude Include="src\Helpers\CNOctree.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
-    <ClInclude Include="src\Helpers\OBB.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
     <ClInclude Include="src\Helpers\Timers\GameTimer.h" />
     <ClInclude Include="src\Helpers\Timers\PerfTimer.h" />
@@ -530,11 +528,9 @@
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
-    <ClCompile Include="src\Helpers\AABB.cpp" />
     <ClCompile Include="src\Helpers\CNOctree.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />
-    <ClCompile Include="src\Helpers\OBB.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
     <ClCompile Include="src\Helpers\Timers\GameTimer.cpp" />
     <ClCompile Include="src\Helpers\Timers\PerfTimer.cpp" />

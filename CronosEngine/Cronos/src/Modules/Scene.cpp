@@ -3,8 +3,6 @@
 
 #include "Application.h"
 
-//#include "Renderer/Model.h"
-//#include "Renderer/CronosPrimitive.h"
 #include "GameObject/Components/TransformComponent.h"
 
 #include "mmgr/mmgr.h"
@@ -131,8 +129,8 @@ namespace Cronos {
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
 
-		AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		OT_Test = CnOctree(OT_Test_AABB, 2);
+		//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
+		//OT_Test = CnOctree(OT_Test_AABB, 2);
 
 		return ret;
 	}
@@ -140,7 +138,7 @@ namespace Cronos {
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
-		OT_Test.CleanUp();
+		//OT_Test.CleanUp();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -199,8 +197,8 @@ namespace Cronos {
 		}
 
 		//Octree Testing
-		OT_Test.Draw();
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		//OT_Test.Draw();
+		/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			for (uint i = 0; i < m_GameObjects.size(); i++)
 			{
@@ -211,12 +209,13 @@ namespace Cronos {
 					OT_Test.Insert(*it);
 			}
 		}
+
 		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN && OT_Test.IsSplitted())
 		{
 			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
 			OT_Test.CleanUp();
 			OT_Test = CnOctree(OT_Test_AABB, 2);
-		}
+		}*/
 
 		return UPDATE_CONTINUE;
 	}
@@ -261,8 +260,8 @@ namespace Cronos {
 
 		if (exists)
 		{
-			AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-			OT_Test = CnOctree(OT_Test_AABB, 2);
+			//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
+			//OT_Test = CnOctree(OT_Test_AABB, 2);
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;

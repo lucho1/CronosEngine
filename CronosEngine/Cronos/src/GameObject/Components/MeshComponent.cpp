@@ -116,7 +116,7 @@ namespace Cronos {
 	void MeshComponent::DrawCentralAxis()
 	{
 		float linelength = 1.0f;
-		glm::vec3 axis = m_Parent->GetComponent<TransformComponent>()->GetCentralAxis();
+		glm::vec3 axis = glm::vec3(0.0f);//m_Parent->GetComponent<TransformComponent>()->GetCentralAxis();
 		glm::vec3 offset = axis;
 
 		offset.x += linelength;

@@ -10,7 +10,6 @@ namespace Cronos
 	std::string UniformNameFromTextureType(TextureType textureType)
 	{
 		std::string ret = "";
-
 		switch (textureType)
 		{
 			case TextureType::AMBIENT:		ret = "u_AmbientTexture"; break;

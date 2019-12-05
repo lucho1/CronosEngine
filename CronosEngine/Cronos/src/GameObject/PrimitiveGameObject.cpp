@@ -2,7 +2,6 @@
 #include "PrimitiveGameObject.h"
 
 #include "Application.h"
-#include "Helpers/AABB.h"
 
 #include "par_shapes/par_shapes.h"
 
@@ -191,9 +190,9 @@ namespace Cronos {
 		m_Components.push_back(matComp);
 
 		//Finally compute AABB
-		float AABBPoints[6];
-		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
-		SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+		//float AABBPoints[6];
+		//par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
+		//SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
 		
 		App->filesystem->SaveOwnFormat(this);
 		

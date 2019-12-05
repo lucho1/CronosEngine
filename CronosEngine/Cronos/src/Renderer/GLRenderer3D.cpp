@@ -44,29 +44,6 @@ namespace Cronos {
 				App->EditorGUI->AddLog(std::string("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError()));
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 			}
-			//Initialize Projection Matrix
-			//glMatrixMode(GL_PROJECTION);
-			//glLoadIdentity();
-
-			//Check for error
-		//	GLenum error = glGetError();
-		//	if (error != GL_NO_ERROR)
-		//	{
-		//		LOG("Error initializing OpenGL! %s\n", error);
-		//		ret = false;
-		//	}
-
-		//	//Initialize Modelview Matrix
-		//	//glMatrixMode(GL_MODELVIEW);
-		//	//glLoadIdentity();
-
-		//	//Check for error
-		//	error = glGetError();
-		//	if (error != GL_NO_ERROR)
-		//	{
-		//		LOG("Error initializing OpenGL! %s\n", error);
-		//		ret = false;
-		//	}
 
 		//	/*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		//	glClearDepth(1.0f);*/
@@ -111,10 +88,6 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPreUpdate(float dt)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glLoadIdentity();
-
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(App->engineCamera->GetViewMatrix());
 
 		// light 0 on cam pos
 //		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
@@ -122,8 +95,6 @@ namespace Cronos {
 		glm::vec3 p = App->engineCamera->GetPosition();
 		centerLight.SetPos(p.x, p.y, p.z);
 		centerLight.Render();
-
-		//RenderSubmit(nullptr, glm::mat4(1.0f), nullptr);
 
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();

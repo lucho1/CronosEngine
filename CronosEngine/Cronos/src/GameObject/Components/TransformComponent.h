@@ -7,9 +7,6 @@
 
 #include "GameObject/PrimitiveGameObject.h"
 
-#include "Helpers/AABB.h"
-#include "Helpers/OBB.h"
-
 namespace Cronos {
 
 	class GameObject;
@@ -37,11 +34,7 @@ namespace Cronos {
 		void Scale(glm::vec3 scale);
 		void Rotate(glm::vec3 euler_angles);
 
-		//bool &SetDrawAxis() { return DrawAxis; }
-
 		//AABBs & Axis
-		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec) { m_ContainerAABBCube = AABB(minVec, maxVec); }
-		void SetAABB(const AABB& aabbCube) { m_ContainerAABBCube = AABB(aabbCube); }
 
 	public:
 
@@ -52,9 +45,6 @@ namespace Cronos {
 
 		const inline glm::mat4 GetLocalTranformationMatrix()	const { return m_LocalTransformationMatrix; }
 		const inline glm::mat4 GetGlobalTranformationMatrix()	const { return m_GlobalTransformationMatrix; }
-
-		const inline AABB GetAABB()								const { return m_ContainerAABBCube; }
-		const inline glm::vec3 GetCentralAxis()					const { return m_ContainerAABBCube.getCenter(); }
 		
 		//Type
 		static ComponentType GetType()							{ return ComponentType::TRANSFORM; };
@@ -63,10 +53,6 @@ namespace Cronos {
 
 		//Decompose the matrix in the position, scale vectors and orientation quaternion
 		void UpdateTransform();
-
-	public:
-
-		//bool DrawAxis = false;
 
 	private:
 
@@ -80,13 +66,7 @@ namespace Cronos {
 		glm::vec3 m_EulerAngles;
 
 		//AABB Cube
-		AABB m_ContainerAABBCube;
-		glm::vec3 AABBPos = glm::vec3(0.0f);
-		glm::vec3 AABBScale = glm::vec3(1.0f);
-		glm::quat AABBOrientation = glm::quat(1.0f, glm::vec3(0.0f));
 
-		OBB m_ContainerOOBB;
-		//BoundingBox* TrueAABB;
 	};
 
 }

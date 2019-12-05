@@ -18,6 +18,7 @@ namespace Cronos {
 		friend class Scene;
 		friend class Filesystem;
 		friend class AssetItems;
+
 	private:
 
 		AssimpCronosImporter();
@@ -33,8 +34,7 @@ namespace Cronos {
 		uint MeshNum = 0;
 		glm::vec3 m_AABB_MinVec;
 		glm::vec3 m_AABB_MaxVec;
-		
-		//std::vector<Texture*> m_TexturesLoaded;
+
 	};
 
 }

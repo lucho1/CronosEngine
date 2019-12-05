@@ -90,9 +90,6 @@
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h">
       <Filter>src\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="src\Helpers\AABB.h">
-      <Filter>src\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\Helpers\CNOctree.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
@@ -100,9 +97,6 @@
       <Filter>src\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\Light.h">
-      <Filter>src\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Helpers\OBB.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\RNGen.h">
@@ -1328,9 +1322,6 @@
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp">
       <Filter>src\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="src\Helpers\AABB.cpp">
-      <Filter>src\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Helpers\CNOctree.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
@@ -1338,9 +1329,6 @@
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Light.cpp">
-      <Filter>src\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Helpers\OBB.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\RNGen.cpp">

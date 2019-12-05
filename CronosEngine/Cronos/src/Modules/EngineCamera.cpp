@@ -212,18 +212,18 @@ namespace Cronos {
 		if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
 		{
 			//TODO: Properly perform the focus!
-			TransformComponent* LookAtComp = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>();
+			//TransformComponent* LookAtComp = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>();
+			//
+			//AABB GO_BB = LookAtComp->GetAABB();
+			//glm::vec3 LookPos = LookAtComp->GetCentralAxis();
+			//
+			//glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
+			//size *= 1.5f;
+			//
+			//glm::vec3 pos = glm::vec3(LookPos.x * size.x, LookPos.y + 1.5f, LookPos.z * size.z) + m_Front * 6.0f;
+			//glm::vec3 ref = glm::vec3(LookPos.x, LookPos.y + 0.5f, LookPos.z + 0.5f);
 
-			AABB GO_BB = LookAtComp->GetAABB();
-			glm::vec3 LookPos = LookAtComp->GetCentralAxis();
-
-			glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
-			size *= 1.5f;
-
-			glm::vec3 pos = glm::vec3(LookPos.x * size.x, LookPos.y + 1.5f, LookPos.z * size.z) + m_Front * 6.0f;
-			glm::vec3 ref = glm::vec3(LookPos.x, LookPos.y + 0.5f, LookPos.z + 0.5f);
-
-			Look(pos, ref, true);
+			//Look(pos, ref, true);
 		}
 		else
 			LookAt(glm::vec3(0.0f));
@@ -332,9 +332,9 @@ namespace Cronos {
 
 	void EngineCamera::LoadModuleData(json& JSONFile)
 	{
-		glm::vec3 initialPos = glm::vec3(	JSONFile["EngineCamera"]["InitialPosition"][0],
-											JSONFile["EngineCamera"]["InitialPosition"][1],
-											JSONFile["EngineCamera"]["InitialPosition"][2]);
+		glm::vec3 initialPos = glm::vec3(		JSONFile["EngineCamera"]["InitialPosition"][0],
+												JSONFile["EngineCamera"]["InitialPosition"][1],
+												JSONFile["EngineCamera"]["InitialPosition"][2]);
 		
 		glm::vec3 initialRefence = glm::vec3(	JSONFile["EngineCamera"]["InitialLookAt"][0],
 												JSONFile["EngineCamera"]["InitialLookAt"][1],

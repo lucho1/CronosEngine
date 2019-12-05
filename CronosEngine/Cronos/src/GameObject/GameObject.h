@@ -31,14 +31,16 @@ namespace Cronos {
 	public:
 
 		//Getters
-		inline const std::string GetName() const { return m_Name; }
-		inline const std::string GetPath() const { return m_Path; }
-		inline const std::string GetMetaPath() const { return m_MetaPath; }
+		inline const std::string GetName()			const { return m_Name; }
+		inline const std::string GetPath()			const { return m_Path; }
+		inline const std::string GetMetaPath()		const { return m_MetaPath; }
 
-		inline const int GetGOID() const { return m_GameObjectID; }
-		inline const int GetCountChilds() const { return m_Childs.size(); }
+		inline const int GetGOID()					const { return m_GameObjectID; }
+		inline const int GetCountChilds()			const { return m_Childs.size(); }
 
-		GameObject* GetParentGameObject() { return Parent; }
+		GameObject* GetParentGameObject()			{ return Parent; }
+
+		const AABB GetAABB(AABB aabb)				const { return m_AABB; }
 
 	public:
 
@@ -48,8 +50,7 @@ namespace Cronos {
 		void SetPath(const std::string path)	{ m_Path = path; }
 		void SetMeta(const std::string meta)	{ m_MetaPath = m_Path+meta; }
 		void SetParent(GameObject* Go)			{ Parent = Go; }
-
-		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
+		void SetAABB(AABB aabb)					{ m_AABB = aabb; }
 
 	public:
 		
@@ -94,6 +95,8 @@ namespace Cronos {
 
 		bool m_Active;
 		int m_GameObjectID;
+
+		AABB m_AABB;
 	};
 
 }

@@ -46,6 +46,11 @@ namespace Cronos {
 
 			for (auto& child : m_Childs)
 				child->Update(dt);
+
+			glm::vec3 max = glm::vec3(m_AABB.maxPoint.x, m_AABB.maxPoint.y, m_AABB.maxPoint.z);
+			glm::vec3 min = glm::vec3(m_AABB.minPoint.x, m_AABB.minPoint.y, m_AABB.minPoint.z);
+
+			App->renderer3D->DrawCube(max, min);
 		}
 	}
 
@@ -75,13 +80,6 @@ namespace Cronos {
 	}
 
 	//---------------------------------------------
-	void GameObject::SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec)
-	{
-		auto comp = GetComponent<TransformComponent>();
-		if (comp != nullptr)
-			comp->SetAABB(minVec, maxVec);
-	}
-
 	Component* GameObject::CreateComponent(ComponentType type) 
 	{
 		Component* ret = nullptr;
@@ -105,11 +103,13 @@ namespace Cronos {
 		}
 		return ret;
 	}
-	void GameObject::SetNewID() {
+
+	void GameObject::SetNewID()
+	{
 		m_GameObjectID = App->m_RandomNumGenerator.GetIntRN();
 		m_MetaPath = App->filesystem->GetMetaPath() + std::to_string(m_GameObjectID) + ".model";
-		for (auto& childs : m_Childs) {
-			childs->SetNewID();
-		}
+
+		for (auto& childs : m_Childs) 
+			childs->SetNewID();		
 	}
 }
