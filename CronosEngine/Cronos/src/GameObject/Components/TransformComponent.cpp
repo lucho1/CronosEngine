@@ -82,17 +82,23 @@ namespace Cronos {
 
 	void TransformComponent::UpdateTransform()
 	{
+		//Local transform
 		m_LocalTransformationMatrix = glm::translate(glm::mat4(1.0f), m_Translation) *
 			glm::mat4_cast(m_Orientation) * glm::scale(glm::mat4(1.0f), m_Scale);
 
-		//Update childs' transform
+		//Update global transform
 		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
 		if (GOAttached_Parent != nullptr)
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
 		else
-			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;				
 
+		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
 			child->GetComponent<TransformComponent>()->UpdateTransform();
+
+		//Set OOBB (which will set AABB)
+		GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
+
 	}
 }

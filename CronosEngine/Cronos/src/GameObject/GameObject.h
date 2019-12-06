@@ -40,17 +40,20 @@ namespace Cronos {
 
 		GameObject* GetParentGameObject()			{ return Parent; }
 
-		const AABB GetAABB(AABB aabb)				const { return m_AABB; }
+		const AABB GetAABB()						const { return m_AABB; }
+		const OBB GetOOBB()							const { return m_OBB; }
 
 	public:
 
 		//Setters
 		void SetNewID();
-		void SetName(const std::string name)	{ m_Name = name; }
-		void SetPath(const std::string path)	{ m_Path = path; }
-		void SetMeta(const std::string meta)	{ m_MetaPath = m_Path+meta; }
-		void SetParent(GameObject* Go)			{ Parent = Go; }
-		void SetAABB(AABB aabb)					{ m_AABB = aabb; }
+		void SetName(const std::string name)		{ m_Name = name; }
+		void SetPath(const std::string path)		{ m_Path = path; }
+		void SetMeta(const std::string meta)		{ m_MetaPath = m_Path+meta; }
+		void SetParent(GameObject* Go)				{ Parent = Go; }
+		void SetAABB(AABB aabb)						{ m_AABB = aabb; }
+		void SetOOBB(OBB oobb)						{ m_OBB = oobb; }
+		void SetOOBBTransform(glm::mat4 transform);
 
 	public:
 		
@@ -96,6 +99,7 @@ namespace Cronos {
 		bool m_Active;
 		int m_GameObjectID;
 
+		OBB m_OBB;
 		AABB m_AABB;
 	};
 
