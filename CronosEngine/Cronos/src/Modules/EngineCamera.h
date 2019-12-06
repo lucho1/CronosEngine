@@ -62,6 +62,8 @@ namespace Cronos {
 		//Camera Methods
 		void Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference = false);
 		void LookAt(const glm::vec3& spot);
+
+		const glm::vec3 RaycastForward();
 		
 	private:
 

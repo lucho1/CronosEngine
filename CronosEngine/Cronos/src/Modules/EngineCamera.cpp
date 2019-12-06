@@ -276,6 +276,55 @@ namespace Cronos {
 	}
 
 	// -----------------------------------------------------------------
+	const glm::vec3 EngineCamera::RaycastForward()
+	{
+		//float mouseX = (2.0f * App->input->GetMouseX()) / App->window->GetWidth() - 1.0f;
+		//float mouseY = 1.0f - (2.0f * App->input->GetMouseY()) / App->window->GetHeight();
+
+		float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
+		float mouseY = App->input->GetMouseY() / (App->window->GetHeight() * 0.5f) - 1.0f;
+		
+		glm::vec4 rayClip = glm::vec4(mouseX, mouseY, -1.0f, 1.0f);
+
+		glm::mat4 proj = App->engineCamera->GetProjectionMatrix();
+		glm::mat4 view = App->engineCamera->GetViewMatrix();
+
+		glm::vec4 rayEye = glm::inverse(proj) * rayClip;
+		rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+		glm::vec4 rayWorld = glm::inverse(view) * rayEye;
+		glm::vec3 dir = glm::normalize(rayWorld);
+
+		return dir;
+
+		// -------------------------------------------------------------------------------------------
+		// -------------------------------------------------------------------------------------------
+		/*//float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
+		//float mouseY = App->input->GetMouseY() / (App->window->GetHeight() * 0.5f) - 1.0f;
+
+		float mouseNormX = App->input->GetMouseX() / (float)App->window->GetWidth();
+		float mouseNormY = App->input->GetMouseY() / (float)App->window->GetHeight();
+
+		//Normalizing mouse position in range of -1 / 1 // -1, -1 being at the bottom left corner
+		mouseNormX = (mouseNormX - 0.5) / 0.5;
+		mouseNormY = (mouseNormY - 0.5) / 0.5;
+
+		float mouseX = mouseNormX;
+		float mouseY = -mouseNormY;
+
+		glm::mat4 proj = App->engineCamera->GetProjectionMatrix();
+		glm::mat4 view = App->engineCamera->GetViewMatrix();
+
+		glm::mat4 invVP = glm::inverse(proj * view);
+		glm::vec4 screenPos = glm::vec4(mouseX, -mouseY, 1.0f, 1.0f);
+		glm::vec4 worldPos = invVP * screenPos;
+
+		glm::vec3 dir = glm::normalize(glm::vec3(worldPos));
+
+		return dir;*/
+	}
+
+
 	void EngineCamera::Recalculate()
 	{
 		glm::mat4 camTransform = glm::translate(glm::mat4(1.0f), m_Position) *

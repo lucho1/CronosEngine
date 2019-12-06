@@ -53,6 +53,8 @@ namespace Cronos {
 		void RenderSubmit(GameObject* gameObject);
 		void OnResize(uint width, uint height);
 
+		const glm::vec3 RaycastFromCamera(glm::vec3 camPos);
+
 	public:
 
 		//Setters

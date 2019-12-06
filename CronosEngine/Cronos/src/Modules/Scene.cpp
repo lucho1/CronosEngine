@@ -169,7 +169,34 @@ namespace Cronos {
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-			//Copy & Paste
+		static PrimitiveGameObject* linetoPrimitive = nullptr;
+		static glm::vec3 posspawned = glm::vec3(0.0f);
+		
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			glm::vec3 camPos = App->engineCamera->GetPosition();
+			glm::vec3 spawn = App->renderer3D->RaycastFromCamera(camPos);
+			posspawned = camPos;
+
+			PrimitiveGameObject* GOQuad = new PrimitiveGameObject(PrimitiveType::CUBE, "Instcube", { 1, 1, 1 }, spawn);
+			linetoPrimitive = GOQuad;
+			//m_GameObjects.push_back(GOQuad);
+
+			for (auto GO : m_GameObjects)
+			{
+				math::LineSegment ray = math::LineSegment(float3(camPos.x, camPos.y, camPos.z), float3(spawn.x, spawn.y, spawn.z));
+				if (GO->GetAABB().Intersects(ray))
+				{
+					int a = 1;
+					break;
+				}
+			}
+		}
+
+		if(linetoPrimitive != nullptr)
+			App->renderer3D->DrawLine(posspawned, linetoPrimitive->GetComponent<TransformComponent>()->GetTranslation(), glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+
+		//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr) {
 				ToCopy = App->EditorGUI->GetCurrentGameObject();
