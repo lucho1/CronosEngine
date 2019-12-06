@@ -66,6 +66,17 @@ namespace Cronos {
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
 		App->filesystem->SaveOwnFormat(mother_GO);
 
+		AABB mother_aabb;
+		mother_aabb.SetNegativeInfinity();
+
+		std::list<GameObject*>::iterator it = mother_GO->m_Childs.begin();
+		for (; it != mother_GO->m_Childs.end(); it++)
+			mother_aabb.Enclose((*it)->GetAABB());
+
+		mother_GO->SetAABB(mother_aabb);
+		mother_GO->SetOOBB(mother_aabb);
+
+
 		//For the parent AABB, I'll just get the first child's AABB
 		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
 
@@ -263,32 +274,26 @@ namespace Cronos {
 
 		//Set the GO AABB and finally push it to the mother's child list
 		AABB aabb;
-		
-
 		aabb.SetNegativeInfinity();
 
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 
 		float size = rMesh->getVector().size();
-		std::vector<CronosVertex> rMeshVertexVector = rMesh->getVector();
 		float3* verts = new float3[size];
-
 		for (uint i = 0; i < size; i++)
 		{
-			glm::vec3 vec = rMeshVertexVector[i].Position;
+			glm::vec3 vec = rMesh->getVector()[i].Position;
 			verts[i] = float3(vec.x, vec.y, vec.z);
 		}
 		
 		aabb.Enclose(verts, size);
-
-		// Generate global OBB
-		//OBB obb = aabb;
-		GO->SetAABB(aabb);
-		GO->SetOOBB(aabb);
 		delete[] verts;
 
-		motherGameObj->m_Childs.push_back(GO);
+		// Generate global OBB
+		GO->SetAABB(aabb);
+		GO->SetOOBB(aabb);
 
+		motherGameObj->m_Childs.push_back(GO);
 		LOG("	Processed Mesh with %i Vertices and %i Indices ", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);
 	}
 

@@ -51,7 +51,7 @@ namespace Cronos {
 			glm::vec3 max = glm::vec3(m_AABB.maxPoint.x, m_AABB.maxPoint.y, m_AABB.maxPoint.z);
 			glm::vec3 min = glm::vec3(m_AABB.minPoint.x, m_AABB.minPoint.y, m_AABB.minPoint.z);
 
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f);
+			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
 			
 			//OOBB Draw
 			float3 corners[8] = { float3(0, 0, 0) };
@@ -59,7 +59,7 @@ namespace Cronos {
 			max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
 
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f);
+			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
 		}
 	}
 
@@ -123,15 +123,19 @@ namespace Cronos {
 	}
 
 	//---------------------------------------------
-	void GameObject::SetOOBBTransform(glm::mat4 transform)
+	void GameObject::SetOOBBTransform(glm::vec3 transform)
 	{
+		m_AABBTranslation = transform;
 
-		
-		glm::mat4 mattt = transform;
-		float* m = glm::value_ptr(mattt);
+		//glm::mat4 m = transform;
+		glm::mat4 m = glm::translate(glm::mat4(1.0f), m_AABBTranslation) /**
+			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), transform2)*/;
+
 
 		math::float4x4 mat = math::float4x4::identity;
-		uint index = 0;
+		mat.Set(glm::value_ptr(glm::transpose(m)));
+
+		/*uint index = 0;
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
@@ -139,25 +143,11 @@ namespace Cronos {
 				mat[i][j] = m[index];
 				index++;
 			}
-		}
+		}*/		
 
-		//glm::vec3 pos = glm::vec3(0.0f);
-		//glm::decompose(transform, glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
-		//
-		//float3 transf = float3(pos.x, pos.y, pos.z);
-		//transf = m_OBB.pos - transf;
 		m_OBB = m_AABB;
 		m_OBB.Transform(mat);
 
-		//float3 ftr = float3(tr.x, tr.y, tr.z);
-		//m_OBB.Translate(ftr);
-
-
-		
-
-		//m_AABB.Translate(ftr);
-
-		//m_OBB.Transform(mat);
 		m_AABB.SetNegativeInfinity();
 		m_AABB.Enclose(m_OBB);
 	}

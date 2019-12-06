@@ -53,7 +53,7 @@ namespace Cronos {
 		void SetParent(GameObject* Go)				{ Parent = Go; }
 		void SetAABB(AABB aabb)						{ m_AABB = aabb; }
 		void SetOOBB(OBB oobb)						{ m_OBB = oobb; }
-		void SetOOBBTransform(glm::mat4 transform);
+		void SetOOBBTransform(glm::vec3 transform);
 
 	public:
 		
@@ -101,6 +101,7 @@ namespace Cronos {
 
 		OBB m_OBB;
 		AABB m_AABB;
+		glm::vec3 m_AABBTranslation;
 	};
 
 }

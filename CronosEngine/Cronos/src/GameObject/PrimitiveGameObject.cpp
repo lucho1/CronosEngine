@@ -190,9 +190,31 @@ namespace Cronos {
 		m_Components.push_back(matComp);
 
 		//Finally compute AABB
-		//float AABBPoints[6];
-		//par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
-		//SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+		float AABBPoints[6];
+		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
+		
+		AABB aabb = AABB(math::float3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), math::float3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+
+		//Another way:
+		//Set the GO AABB and finally push it to the mother's child list
+		//AABB aabb;
+		//aabb.SetNegativeInfinity();
+		//rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+		
+		//float arrsize = rMesh->getVector().size();
+		//float3* verts = new float3[arrsize];
+		//for (uint i = 0; i < arrsize; i++)
+		//{
+		//	glm::vec3 vec = rMesh->getVector()[i].Position;
+		//	verts[i] = float3(vec.x, vec.y, vec.z);
+		//}
+		//
+		//aabb.Enclose(verts, arrsize);
+		//delete[] verts;
+		
+		// Generate global OBB
+		SetAABB(aabb);
+		SetOOBB(aabb);
 		
 		App->filesystem->SaveOwnFormat(this);
 		

@@ -98,7 +98,6 @@ namespace Cronos {
 			child->GetComponent<TransformComponent>()->UpdateTransform();
 
 		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
-
+		GetParent()->SetOOBBTransform(m_Translation);
 	}
 }
