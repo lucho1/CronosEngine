@@ -4,6 +4,7 @@
 #include "Application.h"
 
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/CameraComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -168,6 +169,18 @@ namespace Cronos {
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
+
+		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+		{
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 1,1,1 });
+			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
+			ret->m_Components.push_back(ret->CreateComponent(ComponentType::CAMERA));
+			m_GameObjects.push_back(ret);
+			Cam = ret;
+		}
+
+		if (Cam != nullptr)
+			Cam->GetComponent<CameraComponent>()->DrawFrustum();
 
 			//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {

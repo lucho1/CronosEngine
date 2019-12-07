@@ -4,6 +4,7 @@
 #include "Modules/Filesystem.h"
 #include "Components/TransformComponent.h"
 #include "Components/MaterialComponent.h"
+#include "Components/CameraComponent.h"
 
 namespace Cronos {
 
@@ -106,6 +107,9 @@ namespace Cronos {
 				break;
 			case Cronos::ComponentType::MATERIAL:
 				ret = new MaterialComponent(this);
+				break;
+			case Cronos::ComponentType::CAMERA:
+				ret = new CameraComponent(this);
 				break;
 			default:
 				break;
