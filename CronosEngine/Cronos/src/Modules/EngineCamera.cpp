@@ -35,6 +35,7 @@ namespace Cronos {
 		m_Front = glm::vec3(0.0f, 0.0f, 1.0f);
 
 		Look(m_Position, m_Target, false);
+		App->renderer3D->SetFrustum(&m_CamFrustum);
 		return true;
 	}
 
@@ -47,7 +48,7 @@ namespace Cronos {
 	update_status EngineCamera::OnUpdate(float dt)
 	{
 		float3 corners[8];
-		camFrustum.GetCornerPoints(corners);
+		m_CamFrustum.GetCornerPoints(corners);
 
 		glm::vec3 glmCorners[8];
 		glm::vec3 blueColor = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -323,19 +324,18 @@ namespace Cronos {
 			(float)App->window->GetWidth() / (float)App->window->GetHeight(), m_NearPlane, m_FarPlane);
 
 		//camFrustum = Frustum();
-		camFrustum.type = PerspectiveFrustum;
-		camFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
-		camFrustum.front = float3(m_Front.x, m_Front.y, m_Front.z);
-		camFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);
+		m_CamFrustum.type = PerspectiveFrustum;
+		m_CamFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
+		m_CamFrustum.front = -float3(m_Front.x, m_Front.y, m_Front.z);
+		m_CamFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);
 		
+		m_CamFrustum.Transform(math::Quat(m_Orientation.x, m_Orientation.y, m_Orientation.z, m_Orientation.w));
 
-		camFrustum.nearPlaneDistance = m_NearPlane;
-		camFrustum.farPlaneDistance = m_FarPlane;
+		m_CamFrustum.nearPlaneDistance = m_NearPlane;
+		m_CamFrustum.farPlaneDistance = m_FarPlane;
 
-		camFrustum.verticalFov = glm::radians(m_FOV);
-		//camFrustum.horizontalFov = glm::radians(m_FOV); // calculate it in funcion of m_FOV & width and height (or Aspect Ratio)
-		camFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * App->window->GetAspectRatio());
-		//camFrustum.horizontalFov = 2.0f * atanf( tanf(frustum.verticalFov*0.5f)*ar);
+		m_CamFrustum.verticalFov = glm::radians(m_FOV);
+		m_CamFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * App->window->GetAspectRatio());
 	}
 
 	// -----------------------------------------------------------------

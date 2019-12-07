@@ -17,15 +17,14 @@ namespace Cronos {
 
 		m_Position = glm::vec3(0.0f, 3.0f, 5.0f);
 		m_Target = glm::vec3(0.0f);
-
-		m_CamFrustum.type = PerspectiveFrustum;
+		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
+				
 		Recalculate();
 
 		m_Right = glm::vec3(1.0f, 0.0f, 0.0f);
-		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_Front = glm::vec3(0.0f, 0.0f, 1.0f);
 
-		Look(m_Position, m_Target, false);
+		Look(m_Position, m_Target, true);
 	}
 
 	//void CameraComponent::Move(glm::vec3 movement)
@@ -138,6 +137,7 @@ namespace Cronos {
 		math::Quat q2 = math::Quat({ 0, 1, 0 }, eulerRot.y);
 		math::Quat q3 = math::Quat({ 0, 0, 1 }, eulerRot.z);
 		
+		m_CamFrustum.type = PerspectiveFrustum;
 		m_CamFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
 		m_CamFrustum.front = -float3(m_Front.x, m_Front.y, m_Front.z);
 		m_CamFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);		
@@ -148,7 +148,7 @@ namespace Cronos {
 		m_CamFrustum.farPlaneDistance = m_FarPlane;
 
 		m_CamFrustum.verticalFov = glm::radians(m_FOV);
-		m_CamFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * App->window->GetAspectRatio());
+		m_CamFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * m_AspectRatio.x / m_AspectRatio.y);
 	}
 
 	void CameraComponent::DrawFrustum()

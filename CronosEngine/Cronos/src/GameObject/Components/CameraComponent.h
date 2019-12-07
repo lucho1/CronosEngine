@@ -30,6 +30,8 @@ namespace Cronos {
 		inline const float GetFarPlane() const { return m_FarPlane; }
 		inline const float GetFOV() const { return m_FOV; }
 
+		inline Frustum* GetFrustum() { return &m_CamFrustum; }
+
 
 		//const CnFrustum& GetFrustum() const { return m_CamFrustum; }
 		static ComponentType GetType() { return ComponentType::CAMERA; };
@@ -42,7 +44,7 @@ namespace Cronos {
 		void SetFOV(float FOV);
 		void SetNearPlane(float nPlane);
 		void SetFarPlane(float fPlane);
-		void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }
+		void SetMoveSpeed(float speed) { m_MoveSpeed = speed; }		
 
 	private:
 
@@ -51,8 +53,6 @@ namespace Cronos {
 		void LookAt(const glm::vec3& spot);
 
 		void Recalculate();
-		
-
 
 		//void Move(glm::vec3 movement);
 		//void Zoom(float zMovement);
@@ -78,8 +78,7 @@ namespace Cronos {
 		glm::vec2 m_AspectRatio = glm::vec2(1.6f, 0.9f);
 
 		float deltaTime = 0.0f;
-
-		Frustum m_CamFrustum;
+		Frustum m_CamFrustum;		
 	};
 }
 

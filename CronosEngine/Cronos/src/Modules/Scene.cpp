@@ -132,7 +132,6 @@ namespace Cronos {
 
 		//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
 		//OT_Test = CnOctree(OT_Test_AABB, 2);
-
 		return ret;
 	}
 
@@ -174,10 +173,16 @@ namespace Cronos {
 		{
 			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 1,1,1 });
 			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
-			ret->m_Components.push_back(ret->CreateComponent(ComponentType::CAMERA));
+
+			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+			App->renderer3D->SetFrustum(cameraComp->GetFrustum());
+
+			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
 			Cam = ret;
 		}
+		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+			App->renderer3D->SetFrustum(App->engineCamera->GetFrustum());
 
 		if (Cam != nullptr)
 			Cam->GetComponent<CameraComponent>()->DrawFrustum();

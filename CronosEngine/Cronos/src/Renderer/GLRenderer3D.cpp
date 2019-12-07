@@ -117,7 +117,8 @@ namespace Cronos {
 			SetWireframeDrawMode(true);
 			glLineWidth(m_DefaultLinewidth);
 		}
-
+		
+		//Rendering
 		App->scene->BasicTestShader->Bind();
 		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
 		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
@@ -135,13 +136,15 @@ namespace Cronos {
 		if (drawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
-
 		std::list<GameObject*>::iterator it = m_RenderingList.begin();
 		for (; it != m_RenderingList.end(); it++)
 		{
+			if (!m_CurrentFrustum->Intersects((*it)->GetAABB()) && !m_CurrentFrustum->Contains((*it)->GetAABB()))
+				continue;
+
 			App->scene->BasicTestShader->Bind();
 			MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
-			VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();			
+			VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
 
 			if (material != nullptr)
 				material->Bind(true);

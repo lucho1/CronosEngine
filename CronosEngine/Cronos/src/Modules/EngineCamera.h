@@ -45,6 +45,8 @@ namespace Cronos {
 		inline const float GetCameraMoveSpeed()			const { return m_MoveSpeed; }
 		inline const float GetCameraScrollSpeed()		const { return m_ScrollSpeed; }
 
+		inline Frustum* GetFrustum() { return &m_CamFrustum; }
+
 	public:
 
 		//Setters
@@ -100,7 +102,7 @@ namespace Cronos {
 
 		float m_FocusDistance = 20.0f;
 
-		Frustum camFrustum;
+		Frustum m_CamFrustum;
 	};
 }
 

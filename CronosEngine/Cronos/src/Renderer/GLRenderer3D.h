@@ -62,6 +62,8 @@ namespace Cronos {
 		void SetDefaultColor(glm::vec4 color) { m_DefaultColor = color; }
 		void SetDefaultLineWidth(float LWidth) { m_DefaultLinewidth = LWidth; }
 
+		//void SetRenderingCamera(glm::mat4 proj, glm::mat4 view) { m_CurrentCameraProj = proj; m_CurrentCameraView = view; }
+
 		//OpenGL Settings
 		void SetOpenGLSettings();
 
@@ -92,11 +94,14 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }
 		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
 
+		void SetFrustum(Frustum* frust) { m_CurrentFrustum = frust; }
+
 	public:
 
 		//Light lights[MAX_LIGHTS];
 		Light centerLight;
 		SDL_GLContext context;
+		
 
 	private:
 
@@ -104,6 +109,11 @@ namespace Cronos {
 		bool drawZBuffer = false;
 		bool changeZBufferDrawing = false;
 
+		//To change rendering camera, it would be nice to have a camera class and update its matrices each time
+		//then, we get its matrices to change the rendering stuff
+		//glm::mat4 m_CurrentCameraProj = glm::mat4(1.0f);
+		//glm::mat4 m_CurrentCameraView = glm::mat4(1.0f);
+		Frustum* m_CurrentFrustum; //TODO: This should be set with a camera class
 
 		glm::mat4 fPlane = glm::mat4(1.0f);
 
