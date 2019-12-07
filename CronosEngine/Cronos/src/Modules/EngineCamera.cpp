@@ -46,6 +46,36 @@ namespace Cronos {
 
 	update_status EngineCamera::OnUpdate(float dt)
 	{
+		float3 corners[8];
+		camFrustum.GetCornerPoints(corners);
+
+		glm::vec3 glmCorners[8];
+		glm::vec3 blueColor = glm::vec3(0.0f, 0.0f, 1.0f);
+
+		for (uint i = 0; i < 8; i += 2)
+		{
+			glm::vec3 min = glm::vec3(corners[i].x, corners[i].y, corners[i].z);
+			glm::vec3 max = glm::vec3(corners[i+1].x, corners[i+1].y, corners[i+1].z);
+
+			glmCorners[i] = min;
+			glmCorners[i + 1] = max;
+
+			App->renderer3D->DrawLine(max, min, blueColor, 2.0f);
+		}
+
+		//near plane
+		App->renderer3D->DrawLine(glmCorners[2], glmCorners[0], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[6], glmCorners[2], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[0], glmCorners[4], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[4], glmCorners[6], blueColor, 2.0f);
+
+		//Far plane
+		App->renderer3D->DrawLine(glmCorners[1], glmCorners[3], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[3], glmCorners[7], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[5], glmCorners[1], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[7], glmCorners[5], blueColor, 2.0f);
+
+
 		if (App->EditorGUI->isHoveringWinGame())
 		{
 			if (App->input->isMouseScrolling())
@@ -302,10 +332,10 @@ namespace Cronos {
 		camFrustum.nearPlaneDistance = m_NearPlane;
 		camFrustum.farPlaneDistance = m_FarPlane;
 
-		
-
 		camFrustum.verticalFov = glm::radians(m_FOV);
 		//camFrustum.horizontalFov = glm::radians(m_FOV); // calculate it in funcion of m_FOV & width and height (or Aspect Ratio)
+		camFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * App->window->GetAspectRatio());
+		//camFrustum.horizontalFov = 2.0f * atanf( tanf(frustum.verticalFov*0.5f)*ar);
 	}
 
 	// -----------------------------------------------------------------

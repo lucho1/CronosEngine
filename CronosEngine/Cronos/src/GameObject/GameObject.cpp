@@ -51,7 +51,7 @@ namespace Cronos {
 			glm::vec3 max = glm::vec3(m_AABB.maxPoint.x, m_AABB.maxPoint.y, m_AABB.maxPoint.z);
 			glm::vec3 min = glm::vec3(m_AABB.minPoint.x, m_AABB.minPoint.y, m_AABB.minPoint.z);
 
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 			
 			//OOBB Draw
 			float3 corners[8] = { float3(0, 0, 0) };
@@ -59,7 +59,7 @@ namespace Cronos {
 			max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
 
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 		}
 	}
 
@@ -123,27 +123,48 @@ namespace Cronos {
 	}
 
 	//---------------------------------------------
-	void GameObject::SetOOBBTransform(glm::vec3 transform)
+	void GameObject::SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale)
 	{
-		m_AABBTranslation = transform;
+		/*if (GetComponent<TransformComponent>() == nullptr)
+			return;
+
+		glm::vec3 boxPos = glm::vec3(m_OBB.pos.x, m_OBB.pos.y, m_OBB.pos.z);
+		glm::vec3 GObjPos = GetComponent<TransformComponent>()->GetTranslation();
+
+		m_AABBTranslation = transform - ((boxPos + GObjPos) - boxPos);
+		this;
+		
+		if (glm::length(m_AABBTranslation) <= 0.2f)
+			return;
 
 		//glm::mat4 m = transform;
 		glm::mat4 m = glm::translate(glm::mat4(1.0f), m_AABBTranslation) /**
-			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), transform2)*/;
+			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), transform2);*/
+
+		
+		glm::mat4 m = glm::translate(glm::mat4(1.0f), translation) *
+			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), scale);
+
+
+		glm::mat4 resMat = glm::transpose(m);
+
+		glm::vec4 zRow = resMat[2];
+		resMat[2] = resMat[1];
+		resMat[1] = zRow;
+		//resMat[2][1] = -resMat[2][1];
+
+		/*glm::vec2 XYAux = glm::vec2(resMat[0][3], resMat[2][3]);
+
+		glm::vec4 xRow = resMat[0];
+		resMat[0] = resMat[2];
+		resMat[2] = xRow;
+
+		resMat[0][3] = XYAux.x;
+		resMat[2][3] = XYAux.y;*/
 
 
 		math::float4x4 mat = math::float4x4::identity;
-		mat.Set(glm::value_ptr(glm::transpose(m)));
-
-		/*uint index = 0;
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				mat[i][j] = m[index];
-				index++;
-			}
-		}*/		
+		mat.Set(glm::value_ptr(resMat));
 
 		m_OBB = m_AABB;
 		m_OBB.Transform(mat);

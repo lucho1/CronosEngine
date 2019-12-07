@@ -23,14 +23,6 @@ namespace Cronos {
 
 	void TransformComponent::Update(float dt)
 	{
-		//AABBs---------------------------------------------------------------
-		/*App->renderer3D->DrawCube(m_ContainerAABBCube.getMin(), m_ContainerAABBCube.getMax(),
-			glm::vec3(Blue.r, Blue.g, Blue.b), 2.0f, m_LocalTransformationMatrix);
-
-		glm::vec3 corners[8];
-		m_ContainerOOBB.getCorners(corners);
-		App->renderer3D->DrawCube(corners[1], corners[4],
-			glm::vec3(Green.r, Green.g, Green.b), 2.0f, m_LocalTransformationMatrix);*/
 	}
 
 	void TransformComponent::SetPosition(glm::vec3 position)
@@ -91,13 +83,13 @@ namespace Cronos {
 		if (GOAttached_Parent != nullptr)
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
 		else
-			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;				
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
+
+		//Set OOBB (which will set AABB)
+		GetParent()->SetOOBBTransform(m_Translation, m_Orientation, m_Scale);
 
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
-			child->GetComponent<TransformComponent>()->UpdateTransform();
-
-		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(m_Translation);
+			child->GetComponent<TransformComponent>()->UpdateTransform();		
 	}
 }
