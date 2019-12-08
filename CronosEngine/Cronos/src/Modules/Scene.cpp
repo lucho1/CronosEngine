@@ -130,15 +130,15 @@ namespace Cronos {
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
 
-		//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		//OT_Test = CnOctree(OT_Test_AABB, 2);
+		math::AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
+		OT_Test = CnOctree(OT_Test_AABB, 2);
 		return ret;
 	}
 
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
-		//OT_Test.CleanUp();
+		OT_Test.CleanUp();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -148,8 +148,6 @@ namespace Cronos {
 		}
 
 		m_GameObjects.clear();
-		//RELEASE(BasicTestShader);
-
 
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
 		while (it != m_TexturesLoaded.end())
@@ -158,6 +156,8 @@ namespace Cronos {
 			it = m_TexturesLoaded.erase(it);
 		}
 		m_TexturesLoaded.clear();
+
+		RELEASE(BasicTestShader);
 
 		return true;
 	}
@@ -214,8 +214,8 @@ namespace Cronos {
 		}
 
 		//Octree Testing
-		//OT_Test.Draw();
-		/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		OT_Test.Draw();
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			for (uint i = 0; i < m_GameObjects.size(); i++)
 			{
@@ -232,7 +232,7 @@ namespace Cronos {
 			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
 			OT_Test.CleanUp();
 			OT_Test = CnOctree(OT_Test_AABB, 2);
-		}*/
+		}
 
 		return UPDATE_CONTINUE;
 	}
@@ -277,8 +277,8 @@ namespace Cronos {
 
 		if (exists)
 		{
-			//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-			//OT_Test = CnOctree(OT_Test_AABB, 2);
+			AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
+			OT_Test = CnOctree(OT_Test_AABB, 2);
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;
