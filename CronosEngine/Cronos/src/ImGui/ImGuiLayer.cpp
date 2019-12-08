@@ -570,7 +570,7 @@ namespace Cronos {
 				//but resizing through renderer doesn't works
 				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
 				//App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
-				//App->window->OnResize(SizeGame.x, SizeGame.y);
+				App->window->OnResize(SizeGame.x, SizeGame.y);
 				LastSize = SizeGame;
 			}
 

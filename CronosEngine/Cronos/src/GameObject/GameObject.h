@@ -40,19 +40,21 @@ namespace Cronos {
 
 		GameObject* GetParentGameObject()			{ return Parent; }
 
-		const AABB GetAABB()						const { return m_AABB; }
-		const OBB GetOOBB()							const { return m_OBB; }
+		const math::AABB GetAABB()					const { return m_AABB; }
+		const math::OBB GetOOBB()					const { return m_OBB; }
 
 	public:
 
 		//Setters
 		void SetNewID();
+		
 		void SetName(const std::string name)		{ m_Name = name; }
 		void SetPath(const std::string path)		{ m_Path = path; }
 		void SetMeta(const std::string meta)		{ m_MetaPath = m_Path+meta; }
 		void SetParent(GameObject* Go)				{ Parent = Go; }
-		void SetAABB(AABB aabb)						{ m_AABB = aabb; }
-		void SetOOBB(OBB oobb)						{ m_OBB = oobb; }
+		
+		void SetAABB(math::AABB aabb)				{ m_AABB = aabb; }
+		void SetOOBB(math::OBB oobb)				{ m_OBB = oobb; }
 		void SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale);
 
 	public:
@@ -91,7 +93,7 @@ namespace Cronos {
 
 	private:
 
-		GameObject* Parent=nullptr;
+		GameObject* Parent = nullptr;
 		std::string m_Name;
 		std::string m_Path;
 		std::string m_MetaPath;
@@ -99,8 +101,8 @@ namespace Cronos {
 		bool m_Active;
 		int m_GameObjectID;
 
-		OBB m_OBB;
-		AABB m_AABB;
+		math::OBB m_OBB;
+		math::AABB m_AABB;
 
 		glm::vec3 m_AABBTranslation = glm::vec3(0.0f);
 	};

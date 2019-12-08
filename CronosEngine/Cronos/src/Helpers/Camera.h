@@ -21,7 +21,6 @@ namespace Cronos {
 
 	class Camera
 	{
-		//friend class EngineCamera;
 	public:
 
 		Camera();

@@ -192,8 +192,11 @@ namespace Cronos {
 		//Finally compute AABB
 		float AABBPoints[6];
 		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
-		
-		AABB aabb = AABB(math::float3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), math::float3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+		math::AABB aabb = math::AABB(math::float3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), math::float3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+
+		// Generate global OBB
+		SetAABB(aabb);
+		SetOOBB(aabb);
 
 		//Another way:
 		//Set the GO AABB and finally push it to the mother's child list
@@ -211,10 +214,6 @@ namespace Cronos {
 		//
 		//aabb.Enclose(verts, arrsize);
 		//delete[] verts;
-		
-		// Generate global OBB
-		SetAABB(aabb);
-		SetOOBB(aabb);
 		
 		App->filesystem->SaveOwnFormat(this);
 		

@@ -126,19 +126,16 @@ namespace Cronos {
 	{
 		if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
 		{
-			//TODO: Properly perform the focus!
-			//TransformComponent* LookAtComp = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>();
-			//
-			//AABB GO_BB = LookAtComp->GetAABB();
-			//glm::vec3 LookPos = LookAtComp->GetCentralAxis();
-			//
-			//glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
-			//size *= 1.5f;
-			//
-			//glm::vec3 pos = glm::vec3(LookPos.x * size.x, LookPos.y + 1.5f, LookPos.z * size.z) + m_Front * 6.0f;
-			//glm::vec3 ref = glm::vec3(LookPos.x, LookPos.y + 0.5f, LookPos.z + 0.5f);
+			//TODO: Properly perform the focus!			
+			AABB GO_BB = App->EditorGUI->GetCurrentGameObject()->GetAABB();
+			math::float3 center = GO_BB.CenterPoint();
+			math::float3 size = GO_BB.Size();
+			size *= 1.5f;
+			
+			glm::vec3 pos = glm::vec3(center.x * size.x, center.y + 1.5f, center.z * size.z) + m_Front * 6.0f;
+			glm::vec3 ref = glm::vec3(center.x, center.y + 0.5f, center.z + 0.5f);
 
-			//Look(pos, ref, true);
+			Look(pos, ref, true);
 		}
 		else
 			LookAt(glm::vec3(0.0f));
@@ -162,10 +159,10 @@ namespace Cronos {
 			m_AspectRatio.x / m_AspectRatio.y, m_NearPlane, m_FarPlane);
 
 		//camFrustum
-		m_CamFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
-		m_CamFrustum.front = -float3(m_Front.x, m_Front.y, m_Front.z);
-		m_CamFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);
-		m_CamFrustum.Transform(math::Quat(m_Orientation.x, m_Orientation.y, m_Orientation.z, m_Orientation.w));
+		m_CamFrustum.pos	=	 math::float3(m_Position.x, m_Position.y, m_Position.z);
+		m_CamFrustum.front	=	-math::float3(m_Front.x, m_Front.y, m_Front.z);
+		m_CamFrustum.up		=	 math::float3(m_Up.x, m_Up.y, m_Up.z);
+		m_CamFrustum.Transform(	 math::Quat(m_Orientation.x, m_Orientation.y, m_Orientation.z, m_Orientation.w));
 
 		m_CamFrustum.nearPlaneDistance = m_NearPlane;
 		m_CamFrustum.farPlaneDistance = m_FarPlane;
@@ -176,7 +173,7 @@ namespace Cronos {
 
 	void Camera::DrawFrustum()
 	{
-		float3 corners[8];
+		math::float3 corners[8];
 		m_CamFrustum.GetCornerPoints(corners);
 
 		glm::vec3 glmCorners[8];

@@ -55,7 +55,7 @@ namespace Cronos {
 			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 			
 			//OOBB Draw
-			float3 corners[8] = { float3(0, 0, 0) };
+			math::float3 corners[8] = { float3(0, 0, 0) };
 			m_OBB.GetCornerPoints(corners);
 			max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
@@ -148,13 +148,13 @@ namespace Cronos {
 		
 		glm::mat4 m = glm::translate(glm::mat4(1.0f), translation) *
 			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), scale);
-
-
+		
 		glm::mat4 resMat = glm::transpose(m);
 
-		glm::vec4 zRow = resMat[2];
-		resMat[2] = resMat[1];
-		resMat[1] = zRow;
+		//glm::vec4 zRow = resMat[2];
+		//resMat[2] = resMat[1];
+		//resMat[1] = zRow;
+
 		//resMat[2][1] = -resMat[2][1];
 
 		/*glm::vec2 XYAux = glm::vec2(resMat[0][3], resMat[2][3]);

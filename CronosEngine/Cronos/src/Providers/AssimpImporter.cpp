@@ -66,7 +66,8 @@ namespace Cronos {
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
 		App->filesystem->SaveOwnFormat(mother_GO);
 
-		AABB mother_aabb;
+		//Mother's AABB
+		math::AABB mother_aabb;
 		mother_aabb.SetNegativeInfinity();
 
 		std::list<GameObject*>::iterator it = mother_GO->m_Childs.begin();
@@ -250,7 +251,6 @@ namespace Cronos {
 		GO->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
 		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
 
-
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
 
@@ -273,17 +273,17 @@ namespace Cronos {
 		}
 
 		//Set the GO AABB and finally push it to the mother's child list
-		AABB aabb;
+		math::AABB aabb;
 		aabb.SetNegativeInfinity();
 
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 
 		float size = rMesh->getVector().size();
-		float3* verts = new float3[size];
+		math::float3* verts = new math::float3[size];
 		for (uint i = 0; i < size; i++)
 		{
 			glm::vec3 vec = rMesh->getVector()[i].Position;
-			verts[i] = float3(vec.x, vec.y, vec.z);
+			verts[i] = math::float3(vec.x, vec.y, vec.z);
 		}
 		
 		aabb.Enclose(verts, size);

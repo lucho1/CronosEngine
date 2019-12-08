@@ -42,9 +42,9 @@ namespace Cronos {
 		math::Quat q2 = math::Quat({ 0, 1, 0 }, eulerRot.y);
 		math::Quat q3 = math::Quat({ 0, 0, 1 }, eulerRot.z);
 				
-		m_CamFrustum.pos = float3(GetPosition().x, GetPosition().y, GetPosition().z);
-		m_CamFrustum.front = -float3(GetFrontVector().x, GetFrontVector().y, GetFrontVector().z);
-		m_CamFrustum.up = float3(GetUpVector().x, GetUpVector().y, GetUpVector().z);
+		m_CamFrustum.pos =		 math::float3(GetPosition().x, GetPosition().y, GetPosition().z);
+		m_CamFrustum.front =	-math::float3(GetFrontVector().x, GetFrontVector().y, GetFrontVector().z);
+		m_CamFrustum.up =		 math::float3(GetUpVector().x, GetUpVector().y, GetUpVector().z);
 
 		m_CamFrustum.Transform(q1*q2*q3);
 
