@@ -88,6 +88,13 @@ namespace Cronos {
 		//Set OOBB (which will set AABB)
 		GetParent()->SetOOBBTransform(m_Translation, m_Orientation, m_Scale);
 
+		//Update Octree
+		if (GetParent())
+		{
+			App->renderer3D->RenderingOctree.TakeOut(GetParent());
+			App->renderer3D->RenderingOctree.Insert(GetParent());
+		}
+
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
 			child->GetComponent<TransformComponent>()->UpdateTransform();		

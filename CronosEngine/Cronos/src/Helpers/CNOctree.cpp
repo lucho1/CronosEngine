@@ -29,6 +29,11 @@ namespace Cronos {
 		return m_Root->Insert(GObject);
 	}
 
+	void CnOctree::TakeOut(GameObject* GObject)
+	{
+		m_Root->TakeOut(GObject);
+	}
+
 	std::vector<GameObject*> CnOctree::GetObjectsContained(math::AABB cubicSpace)
 	{
 		return m_Root->GetObjectsContained(cubicSpace);
@@ -40,6 +45,7 @@ namespace Cronos {
 		: m_CubicSpace(partitionSpace), m_NodeType(nodeType), m_MaxObjectsInside(maxObjectsInside)
 	{
 	}
+
 
 	std::vector<GameObject*> CnOT_Node::GetObjectsContained(math::AABB cubicSpace)
 	{
@@ -71,6 +77,7 @@ namespace Cronos {
 		return objectsInside;
 	}
 
+
 	void CnOT_Node::Draw()
 	{
 		if (m_IsChild == false)
@@ -82,6 +89,7 @@ namespace Cronos {
 		App->renderer3D->DrawCube(max, min, glm::vec3(Red.r, Red.g, Red.b));
 	}
 
+
 	void CnOT_Node::CleanUp()
 	{
 		for (uint i = 0; i < m_ChildsQuantity; i++)
@@ -92,7 +100,11 @@ namespace Cronos {
 			delete[] m_Nodes;
 			m_Nodes = nullptr;
 		}
+
+		if (m_NodeType != NodeType::ROOT)
+			m_NodeType = NodeType::CHILD;
 	}
+
 
 	void CnOT_Node::Split()
 	{
@@ -171,6 +183,7 @@ namespace Cronos {
 			m_Nodes[i] = CnOT_Node(children[i], NodeType::CHILD, m_MaxObjectsInside);
 	}
 
+
 	bool CnOT_Node::Insert(GameObject* GObj)
 	{
 		math::AABB GOAABB = GObj->GetAABB();
@@ -236,4 +249,39 @@ namespace Cronos {
 		return false;
 	}
 
+
+	void CnOT_Node::TakeOut(GameObject* GObject)
+	{
+		for (int i = 0; i < GObjectsContained_Vector.size(); ++i)
+		{
+			if (GObjectsContained_Vector[i] != GObject)
+				continue;
+
+			GObjectsContained_Vector.erase(GObjectsContained_Vector.begin() + i);
+			return;			
+		}
+
+		if (m_ChildsQuantity > 0)
+		{
+			for (int i = 0; i < m_ChildsQuantity; ++i)
+				m_Nodes[i].TakeOut(GObject);
+
+			//In case the subnodes are the leaves, and become empty
+			//after erasing the object, clear them
+			if (m_Nodes[0].m_NodeType == NodeType::CHILD)
+			{
+				bool nodesEmpty = true;
+				for (int i = 0; i < m_ChildsQuantity; ++i)
+				{
+					if (m_Nodes[i].GObjectsContained_Vector.empty() == false)
+					{
+						nodesEmpty = false;
+						break;
+					}
+				}
+				if (nodesEmpty)
+					CleanUp();
+			}
+		}
+	}
 }

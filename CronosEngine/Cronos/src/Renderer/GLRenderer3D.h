@@ -103,6 +103,7 @@ namespace Cronos {
 		Light centerLight;
 		SDL_GLContext context;
 		
+		CnOctree RenderingOctree;
 
 	private:
 

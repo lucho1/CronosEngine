@@ -21,6 +21,7 @@ namespace Cronos {
 		void CleanUp();
 
 		bool Insert(GameObject* GObj);
+		void TakeOut(GameObject* GObject);
 
 		//Getters 
 		const bool IsChild()  const { return m_IsChild; }
@@ -53,6 +54,7 @@ namespace Cronos {
 		void CleanUp();
 
 		bool Insert(GameObject* GObject);
+		void TakeOut(GameObject* GObject);
 
 		//Getters
 		std::vector<GameObject*> GetObjectsContained(math::AABB cubicSpace);

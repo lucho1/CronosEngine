@@ -56,7 +56,7 @@ namespace Cronos {
 
 		AssimpCronosImporter m_CNAssimp_Importer;
 		GameObject* m_StreetModel;
-		CnOctree OT_Test;
+		//CnOctree OT_Test;
 	};
 
 }

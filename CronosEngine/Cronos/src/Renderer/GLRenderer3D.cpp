@@ -78,9 +78,11 @@ namespace Cronos {
 		//	lights[0].Active(true);
 		}
 
+		math::AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f));
+		RenderingOctree = CnOctree(OT_AABB, 5);
+
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
-
 		return ret;
 	}
 
@@ -106,6 +108,7 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
 		DrawFloorPlane(true);
+		RenderingOctree.Draw();
 
 		//Wireframe Mode (or not)
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
@@ -172,8 +175,8 @@ namespace Cronos {
 	bool GLRenderer3D::OnCleanUp()
 	{
 		LOG("Destroying 3D Renderer");
+		RenderingOctree.CleanUp();
 		SDL_GL_DeleteContext(context);
-
 		return true;
 	}
 
