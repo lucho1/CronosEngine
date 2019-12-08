@@ -26,7 +26,7 @@ namespace Cronos {
 		SetAspectRatio(ar);
 
 		Look(GetPosition(), GetTarget(), false);
-		App->renderer3D->SetCamera(*this);
+		App->renderer3D->SetRenderingCamera(*this);
 		return true;
 	}
 

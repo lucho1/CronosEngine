@@ -175,16 +175,16 @@ namespace Cronos {
 			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
 
 			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
-			App->renderer3D->SetCamera(*cameraComp->GetCamera());
+			App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
 
 			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
 		}
 		
 		if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>() != nullptr)
-			App->renderer3D->SetCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
+			App->renderer3D->SetRenderingCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
 		else if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
-			App->renderer3D->SetCamera(*App->engineCamera->GetCamera());
+			App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());
 
 		//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {

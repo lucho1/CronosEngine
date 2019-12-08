@@ -64,7 +64,6 @@ namespace Cronos {
 		void SetDefaultColor(glm::vec4 color) { m_DefaultColor = color; }
 		void SetDefaultLineWidth(float LWidth) { m_DefaultLinewidth = LWidth; }
 
-		//void SetRenderingCamera(glm::mat4 proj, glm::mat4 view) { m_CurrentCameraProj = proj; m_CurrentCameraView = view; }
 
 		//OpenGL Settings
 		void SetOpenGLSettings();
@@ -96,8 +95,7 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }
 		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
 
-		//void SetFrustum(Frustum* frust) { m_CurrentFrustum = frust; }
-		void SetCamera(Camera& camera) { m_CurrentCamera = &camera; }
+		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
 	public:
 
