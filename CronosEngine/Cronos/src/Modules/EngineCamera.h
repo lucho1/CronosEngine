@@ -5,9 +5,6 @@
 #include "Providers/Globals.h"
 #include "Helpers/Camera.h"
 
-#define MIN_FOV 15.0f
-#define MAX_FOV 120.0f
-
 namespace Cronos {
 
 	class EngineCamera : public Module, public Camera
@@ -30,6 +27,7 @@ namespace Cronos {
 	public:
 
 		void ChangeProjection() { m_ChangeProj = true; }
+		inline Camera* GetCamera() { return this; }
 		
 	private:
 

@@ -14,7 +14,10 @@ namespace Cronos {
 		~CameraComponent() {}
 
 		virtual void Update(float dt);
+
+		//Getters
 		static ComponentType GetType() { return ComponentType::CAMERA; };
+		inline Camera* GetCamera() { return this; }
 
 	private:
 

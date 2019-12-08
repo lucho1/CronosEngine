@@ -3,10 +3,8 @@
 #include "Application.h"
 #include "EngineCamera.h"
 
-#include "GameObject/Components/TransformComponent.h"
-
 #include <glm/gtx/rotate_vector.hpp>
-#include <glm/gtx/euler_angles.hpp>
+//#include <glm/gtx/euler_angles.hpp>
 
 #include "mmgr/mmgr.h"
 
@@ -24,12 +22,11 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
-		
 		glm::vec2 ar = glm::vec2((float)App->window->GetWidth(), (float)App->window->GetHeight());
 		SetAspectRatio(ar);
-		Look(GetPosition(), GetTarget(), false);
-		App->renderer3D->SetFrustum(GetFrustum());
 
+		Look(GetPosition(), GetTarget(), false);
+		App->renderer3D->SetCamera(*this);
 		return true;
 	}
 

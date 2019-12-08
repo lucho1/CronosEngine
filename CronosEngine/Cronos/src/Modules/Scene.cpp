@@ -175,19 +175,18 @@ namespace Cronos {
 			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
 
 			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
-			App->renderer3D->SetFrustum(cameraComp->GetFrustum());
+			App->renderer3D->SetCamera(*cameraComp->GetCamera());
 
 			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
-			Cam = ret;
 		}
-		if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
-			App->renderer3D->SetFrustum(App->engineCamera->GetFrustum());
+		
+		if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>() != nullptr)
+			App->renderer3D->SetCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
+		else if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+			App->renderer3D->SetCamera(*App->engineCamera->GetCamera());
 
-		if (Cam != nullptr)
-			Cam->GetComponent<CameraComponent>()->DrawFrustum();
-
-			//Copy & Paste
+		//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr) {
 				ToCopy = App->EditorGUI->GetCurrentGameObject();
@@ -195,7 +194,7 @@ namespace Cronos {
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
-			if (App->EditorGUI->GetCurrentGameObject() !=nullptr&&ToCopy!=nullptr) {
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
 
 				GameObject* NewGO = App->filesystem->Load(ToCopy->GetGOID());
 

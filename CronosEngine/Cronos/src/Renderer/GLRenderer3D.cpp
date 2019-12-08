@@ -139,7 +139,8 @@ namespace Cronos {
 		std::list<GameObject*>::iterator it = m_RenderingList.begin();
 		for (; it != m_RenderingList.end(); it++)
 		{
-			if (!m_CurrentFrustum->Intersects((*it)->GetAABB()) && !m_CurrentFrustum->Contains((*it)->GetAABB()))
+			if(!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
+				!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
 				continue;
 
 			App->scene->BasicTestShader->Bind();

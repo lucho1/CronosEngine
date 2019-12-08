@@ -4,9 +4,11 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "Light.h"
+#include "Helpers/Camera.h"
 
 #include "GameObject/Components/MaterialComponent.h"
 #include "GameObject/Components/TransformComponent.h"
+
 #include "VertexArray.h"
 
 namespace Cronos {
@@ -94,7 +96,8 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }
 		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
 
-		void SetFrustum(Frustum* frust) { m_CurrentFrustum = frust; }
+		//void SetFrustum(Frustum* frust) { m_CurrentFrustum = frust; }
+		void SetCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
 	public:
 
@@ -109,11 +112,8 @@ namespace Cronos {
 		bool drawZBuffer = false;
 		bool changeZBufferDrawing = false;
 
-		//To change rendering camera, it would be nice to have a camera class and update its matrices each time
-		//then, we get its matrices to change the rendering stuff
-		//glm::mat4 m_CurrentCameraProj = glm::mat4(1.0f);
-		//glm::mat4 m_CurrentCameraView = glm::mat4(1.0f);
-		Frustum* m_CurrentFrustum; //TODO: This should be set with a camera class
+		//Current camera we're rendering with
+		Camera* m_CurrentCamera = nullptr;
 
 		glm::mat4 fPlane = glm::mat4(1.0f);
 
