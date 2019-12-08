@@ -27,6 +27,7 @@ namespace Cronos
 		void SetUniformVec2f(const std::string& name, glm::vec2& vector2f);
 		void SetUniformMat4f(const std::string &name, const glm::mat4& mat);
 		void SetUniform1i(const std::string& name, int value);
+		void SetUniform1f(const std::string& name, float value);
 
 	private:
 

@@ -118,12 +118,19 @@ namespace Cronos {
 		m_SceneName = "NewScene";
 		//BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader = new Shader("res/shaders/basic.glsl");
+		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
+		m_WaveTimer.Start();
 
 		//House Model Load
 		//if(!m_HouseModel->HasMeta())
 		//House Model Load & Floor Plane primitive
 		//int id = m_HouseModel->GetGOID();
 		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
+
+		//res/models/waterPlane/waterPlaneOBJ.obj
+		//res/models/waterPlane/waterPlane.FBX
+		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
+
 
 		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		m_GameObjects.push_back(m_StreetModel);
@@ -142,6 +149,7 @@ namespace Cronos {
 	bool Scene::OnCleanUp()
 	{
 		OT_Test.CleanUp();
+		m_Wave->CleanUp();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -181,26 +189,62 @@ namespace Cronos {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		}
 
-		//Shader bind & uniforms send
-		//BasicTestShader->Bind();
-		//App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		//App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
-
-		/*if (changeZBufferDrawing)
+		//MATERIAL BIND ---------------------------------------------------------------------------------
+		/*App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 		{
-			changeZBufferDrawing = false;
-			drawZBuffer = !drawZBuffer;
+			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
+			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
+			{
+				uint TextureID = (uint)(it->first);
+				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
+				(*it->second).Bind(TextureID);
+			}
+		}*/
 
-			if (drawZBuffer)
-				BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
-			else
-				BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
-		}
-		if (drawZBuffer)
-			BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
-*/
-		//BasicTestShader->Unbind();
+		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+		m_WaterShader->Bind();
+		
+		// Wave Calculations ----------------
+		float maxT = 10.0f;
+		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
+		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
+		m_WaterShader->SetUniform1f("u_Amplitude", 5.0f);
+		m_WaterShader->SetUniform1f("u_WaveLength", 5.0f);
+		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.0f); //Fragment Shader
+
+		if (m_WaveTimer.ReadSec() >= maxT)
+			m_WaveTimer.Start();
+
+		// Shader Stuff ---------------------
+		m_WaterShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+		m_WaterShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+		m_WaterShader->SetUniformMat4f("u_Model", WaveMesh->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+		
+		MaterialComponent* material = WaveMesh->GetComponent<MaterialComponent>();
+		VertexArray* VAO = WaveMesh->GetComponent<MeshComponent>()->GetVAO();
+
+		//Binding ----------------------------
+		if (material != nullptr)
+			material->Bind(true);		
+		VAO->Bind();
+		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.4f });
+
+		//Drawing ----------------------------
+		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+		//Unbinding --------------------------
+		if (material != nullptr)
+			material->Unbind();
+		VAO->UnBind();
+
+		m_WaterShader->Unbind();
+
+		//------------------------------------------------------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------------------------------------------------------
 
 
 		//Game Objects update

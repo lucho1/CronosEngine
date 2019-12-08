@@ -1429,5 +1429,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\basic.glsl" />
+    <None Include="res\Shaders\WaterShader.glsl" />
   </ItemGroup>
 </Project>

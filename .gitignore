@@ -1,3 +1,7 @@
 .vs/
 [Bb]in/
 [Bb]in-int/
+
+*.model
+*.asset
+*.mesh

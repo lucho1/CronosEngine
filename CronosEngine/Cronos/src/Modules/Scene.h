@@ -37,6 +37,7 @@ namespace Cronos {
 		bool mustSave = false;
 		bool mustLoad = false;
 		bool mustCleanScene = false;
+
 	public:
 
 		std::vector<GameObject*>m_GameObjects;
@@ -54,6 +55,9 @@ namespace Cronos {
 
 		//bool drawZBuffer = false;
 		//bool changeZBufferDrawing = true;
+		GameObject* m_Wave = nullptr;
+		Shader* m_WaterShader = nullptr;
+		Timer m_WaveTimer;
 
 		CnOctree OT_Test;
 	};

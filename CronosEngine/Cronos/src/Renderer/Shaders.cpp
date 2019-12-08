@@ -92,6 +92,11 @@ namespace Cronos {
 	{
 		glUniform1i(GetUniformLocation(name), value);
 	}
+
+	void Shader::SetUniform1f(const std::string& name, float value)
+	{
+		glUniform1f(GetUniformLocation(name), value);
+	}
 	
 	//Shader Read & Creation (.shader version)
 	/*ShaderProgram Shader::ParseShader(const std::string filepath)
