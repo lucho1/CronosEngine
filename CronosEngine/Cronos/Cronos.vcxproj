@@ -117,6 +117,7 @@
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
+    <ClInclude Include="src\Helpers\Camera.h" />
     <ClInclude Include="src\Helpers\CNOctree.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\Light.h" />
@@ -530,6 +531,7 @@
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
+    <ClCompile Include="src\Helpers\Camera.cpp" />
     <ClCompile Include="src\Helpers\CNOctree.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\Light.cpp" />

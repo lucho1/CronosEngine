@@ -24,18 +24,12 @@ namespace Cronos {
 	bool EngineCamera::OnStart()
 	{
 		LOG("Setting up the camera");
+		
+		glm::vec2 ar = glm::vec2((float)App->window->GetWidth(), (float)App->window->GetHeight());
+		SetAspectRatio(ar);
+		Look(GetPosition(), GetTarget(), false);
+		App->renderer3D->SetFrustum(GetFrustum());
 
-		m_Orientation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-		m_ViewMatrix = m_ProjectionMatrix = glm::mat4(1.0f);
-
-		Recalculate();		
-
-		m_Right = glm::vec3(1.0f, 0.0f, 0.0f);
-		m_Up = glm::vec3(0.0f, 1.0f, 0.0f);
-		m_Front = glm::vec3(0.0f, 0.0f, 1.0f);
-
-		Look(m_Position, m_Target, false);
-		App->renderer3D->SetFrustum(&m_CamFrustum);
 		return true;
 	}
 
@@ -47,56 +41,60 @@ namespace Cronos {
 
 	update_status EngineCamera::OnUpdate(float dt)
 	{
-		float3 corners[8];
-		m_CamFrustum.GetCornerPoints(corners);
-
-		glm::vec3 glmCorners[8];
-		glm::vec3 blueColor = glm::vec3(0.0f, 0.0f, 1.0f);
-
-		for (uint i = 0; i < 8; i += 2)
-		{
-			glm::vec3 min = glm::vec3(corners[i].x, corners[i].y, corners[i].z);
-			glm::vec3 max = glm::vec3(corners[i+1].x, corners[i+1].y, corners[i+1].z);
-
-			glmCorners[i] = min;
-			glmCorners[i + 1] = max;
-
-			App->renderer3D->DrawLine(max, min, blueColor, 2.0f);
-		}
-
-		//near plane
-		App->renderer3D->DrawLine(glmCorners[2], glmCorners[0], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[6], glmCorners[2], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[0], glmCorners[4], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[4], glmCorners[6], blueColor, 2.0f);
-
-		//Far plane
-		App->renderer3D->DrawLine(glmCorners[1], glmCorners[3], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[3], glmCorners[7], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[5], glmCorners[1], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[7], glmCorners[5], blueColor, 2.0f);
-
+		//DrawFrustum();
 
 		if (App->EditorGUI->isHoveringWinGame())
 		{
-			if (App->input->isMouseScrolling())
-				Zoom(dt);
-
-			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
-				CameraPanning(dt);
-
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 			{
-				Move(dt);
+				//Applying extra impulse if LShift is pressed
+				bool speedup = false;
+				if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
+					speedup = true;
+				else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
+					speedup = false;
+
+				//Movement --------------------------------------------
+				if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_FORWARD, speedup, dt);
+				if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_BACKWARDS, speedup, dt);
+
+				if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_LEFT, speedup, dt);
+				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_RIGHT, speedup, dt);
+
+				/*if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+					movement -= glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;
+				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+					movement += glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;*/
+
+
+				//Take a look here and previous camera if Up movement doesn't work
+				if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_UP, speedup, dt);
+				if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_DOWN, speedup, dt);
+
 				//m_Position = m_Target + Rotate(m_Position, m_Target);
-				m_Position = m_Target + MouseRotation(m_Position, m_Target);
-				LookAt(m_Target);
+				m_Position = GetTarget() + MouseRotation(GetPosition(), GetTarget());
+				LookAt(GetTarget());
 			}
 
+			//Zoom with middle button of mouse
+			if (App->input->isMouseScrolling())
+				Zoom(App->input->GetMouseZ(), dt);
+
+			//Pan with middle button of mouse
+			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
+				Panning((float)App->input->GetMouseXMotion(), (float)App->input->GetMouseYMotion(), dt);
+			
+			//ALT Functionality (orbit)
 			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 			{
 				//Rotate(m_Position, m_Target);
-				m_Position = m_Target + MouseRotation(m_Position, m_Target);
+				m_Position = GetTarget() + MouseRotation(GetPosition(), GetTarget());
 
 				if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
 				{
@@ -109,11 +107,13 @@ namespace Cronos {
 			}
 
 			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_UP)
-				Look(m_Position, m_Target, false);
+				Look(GetPosition(), GetTarget(), false);
 		}
 		
 		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 			Focus();
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_UP)
+			Look(GetPosition(), GetTarget(), false);
 
 		/*if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
 			m_Rotation += 10.0f;
@@ -172,93 +172,6 @@ namespace Cronos {
 
 	//	return glm::vec3(0.0f);
 	//}
-	
-	void EngineCamera::Move(float dt)
-	{
-		//Applying extra impulse if LShift is pressed
-		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
-			m_MoveSpeed *= 2.0f;
-		else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
-			m_MoveSpeed /= 2.0f;
-
-		//Movement --------------------------------------------
-		glm::vec3 movement = glm::vec3(0.0f);
-
-		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			movement -= m_Front * m_MoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			movement += m_Front * m_MoveSpeed * dt;
-
-		if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			movement -= m_Right * m_MoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			movement += m_Right * m_MoveSpeed * dt;
-
-		/*if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			movement -= glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			movement += glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;*/
-
-
-		//Take a look here and previous camera if Up movement doesn't work
-		if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
-			movement += m_Up * m_MoveSpeed * dt;
-		if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
-			movement -= m_Up * m_MoveSpeed * dt;
-
-		m_Position += movement;
-		m_Target += movement;
-	}
-
-	void EngineCamera::Zoom(float dt)
-	{
-		float scroll = m_ScrollSpeed * dt * 0.6f;
-		glm::vec3 newPos(0.0f, 0.0f, 0.0f);
-
-		if (App->input->GetMouseZ() > 0)
-			newPos -= m_ScrollSpeed * m_Front;
-		else
-			newPos += m_ScrollSpeed * m_Front;
-
-		m_Position += newPos;
-		m_Target += newPos;
-	}
-
-	void EngineCamera::CameraPanning(float dt)
-	{
-		float xOffset = (float)App->input->GetMouseXMotion() * (m_MoveSpeed / 3.0f) * dt;
-		float yOffset = (float)App->input->GetMouseYMotion() * (m_MoveSpeed / 3.0f) * dt;
-
-		glm::vec3 newPos(0.0f, 0.0f, 0.0f);
-		newPos += -m_Right * xOffset;
-		newPos += m_Up * yOffset;
-		//newPos.y += -App->input->GetMouseYMotion() / 2.0f * dt;
-
-		m_Position += newPos;
-		m_Target += newPos;
-	}
-
-	void EngineCamera::Focus()
-	{
-		if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->isActive())
-		{
-			//TODO: Properly perform the focus!
-			//TransformComponent* LookAtComp = App->EditorGUI->GetCurrentGameObject()->GetComponent<TransformComponent>();
-			//
-			//AABB GO_BB = LookAtComp->GetAABB();
-			//glm::vec3 LookPos = LookAtComp->GetCentralAxis();
-			//
-			//glm::vec3 size = GO_BB.getMax() - GO_BB.getMin();
-			//size *= 1.5f;
-			//
-			//glm::vec3 pos = glm::vec3(LookPos.x * size.x, LookPos.y + 1.5f, LookPos.z * size.z) + m_Front * 6.0f;
-			//glm::vec3 ref = glm::vec3(LookPos.x, LookPos.y + 0.5f, LookPos.z + 0.5f);
-
-			//Look(pos, ref, true);
-		}
-		else
-			LookAt(glm::vec3(0.0f));
-	}
 
 	glm::vec3 EngineCamera::MouseRotation(const glm::vec3 & pos, const glm::vec3 & ref)
 	{
@@ -268,7 +181,7 @@ namespace Cronos {
 		glm::vec3 refPos = pos - ref;
 		refPos = glm::rotate(refPos, dx, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm::vec3 refPosY = glm::rotate(refPos, dy, m_Right);
+		glm::vec3 refPosY = glm::rotate(refPos, dy, GetRightVector());
 
 		float dotProd = glm::dot(glm::normalize(refPosY), glm::vec3(0.0f, 1.0f, 0.0f));
 		if (dotProd > -0.95f && dotProd < 0.95f)
@@ -277,102 +190,23 @@ namespace Cronos {
 		return refPos;
 	}
 
-	void EngineCamera::Look(const glm::vec3& pos, const glm::vec3& target, bool RotateAroundReference)
-	{
-		m_Position = pos;
-		m_Target = target;
-
-		m_Front = glm::normalize(pos - target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
-		m_Up = glm::cross(m_Front, m_Right);
-
-		if (!RotateAroundReference)
-		{
-			m_Target = m_Position;
-			m_Position += m_Front * 0.005f;
-		}
-
-		Recalculate();
-	}
-
-	void EngineCamera::LookAt(const glm::vec3& spot)
-	{
-		m_Target = spot;
-
-		m_Front = glm::normalize(m_Position - m_Target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Front));
-		m_Up = glm::cross(m_Front, m_Right);
-
-		Recalculate();
-	}
-
-	// -----------------------------------------------------------------
-	void EngineCamera::Recalculate()
-	{
-		glm::mat4 camTransform = glm::translate(glm::mat4(1.0f), m_Position) *
-			glm::mat4_cast(m_Orientation);
-
-		m_ViewMatrix = glm::inverse(camTransform);
-		m_ViewMatrix = glm::lookAt(m_Position, m_Target, m_Up);
-
-		if (m_FOV < MIN_FOV)
-			m_FOV = MIN_FOV;
-		else if (m_FOV > MAX_FOV)
-			m_FOV = MAX_FOV;
-
-		m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV),
-			(float)App->window->GetWidth() / (float)App->window->GetHeight(), m_NearPlane, m_FarPlane);
-
-		//camFrustum = Frustum();
-		m_CamFrustum.type = PerspectiveFrustum;
-		m_CamFrustum.pos = float3(m_Position.x, m_Position.y, m_Position.z);
-		m_CamFrustum.front = -float3(m_Front.x, m_Front.y, m_Front.z);
-		m_CamFrustum.up = float3(m_Up.x, m_Up.y, m_Up.z);
-		
-		m_CamFrustum.Transform(math::Quat(m_Orientation.x, m_Orientation.y, m_Orientation.z, m_Orientation.w));
-
-		m_CamFrustum.nearPlaneDistance = m_NearPlane;
-		m_CamFrustum.farPlaneDistance = m_FarPlane;
-
-		m_CamFrustum.verticalFov = glm::radians(m_FOV);
-		m_CamFrustum.horizontalFov = 2.0f * glm::atan(glm::tan(glm::radians(m_FOV)*0.5f) * App->window->GetAspectRatio());
-	}
-
-	// -----------------------------------------------------------------
-	void EngineCamera::SetFOV(float FOV)
-	{
-		m_FOV = FOV;
-		Recalculate();
-	}
-	void EngineCamera::SetNearPlane(float nPlane)
-	{
-		m_NearPlane = nPlane;
-		Recalculate();
-	}
-	void EngineCamera::SetFarPlane(float fPlane)
-	{
-		m_FarPlane = fPlane;
-		Recalculate();
-	}
-
-
 	// -----------------------------------------------------------------
 	//Save/Load
 	void EngineCamera::SaveModuleData(json& JSONFile) const
 	{
-		JSONFile["EngineCamera"]["CameraMoveSpeed"] = m_MoveSpeed;
-		JSONFile["EngineCamera"]["CameraScrollSpeed"] = m_ScrollSpeed;
-		JSONFile["EngineCamera"]["FOV"] = m_FOV;
-		JSONFile["EngineCamera"]["NearPlane"] = m_NearPlane;
-		JSONFile["EngineCamera"]["FarPlane"] = m_FarPlane;
+		JSONFile["EngineCamera"]["CameraMoveSpeed"] = GetCameraMoveSpeed();
+		JSONFile["EngineCamera"]["CameraScrollSpeed"] = GetCameraScrollSpeed();
+		JSONFile["EngineCamera"]["FOV"] = GetFOV();
+		JSONFile["EngineCamera"]["NearPlane"] = GetNearPlane();
+		JSONFile["EngineCamera"]["FarPlane"] = GetFarPlane();
 
-		JSONFile["EngineCamera"]["InitialPosition"][0] = m_Position.x;
-		JSONFile["EngineCamera"]["InitialPosition"][1] = m_Position.y;
-		JSONFile["EngineCamera"]["InitialPosition"][2] = m_Position.z;
+		JSONFile["EngineCamera"]["InitialPosition"][0] = GetPosition().x;
+		JSONFile["EngineCamera"]["InitialPosition"][1] = GetPosition().y;
+		JSONFile["EngineCamera"]["InitialPosition"][2] = GetPosition().z;
 
-		JSONFile["EngineCamera"]["InitialLookAt"][0] = m_Target.x;
-		JSONFile["EngineCamera"]["InitialLookAt"][1] = m_Target.y;
-		JSONFile["EngineCamera"]["InitialLookAt"][2] = m_Target.z;
+		JSONFile["EngineCamera"]["InitialLookAt"][0] = GetTarget().x;
+		JSONFile["EngineCamera"]["InitialLookAt"][1] = GetTarget().y;
+		JSONFile["EngineCamera"]["InitialLookAt"][2] = GetTarget().z;
 	}
 
 	void EngineCamera::LoadModuleData(json& JSONFile)
@@ -385,11 +219,11 @@ namespace Cronos {
 												JSONFile["EngineCamera"]["InitialLookAt"][1],
 												JSONFile["EngineCamera"]["InitialLookAt"][2]);
 	
-		m_MoveSpeed = JSONFile["EngineCamera"]["CameraMoveSpeed"];
-		m_ScrollSpeed = JSONFile["EngineCamera"]["CameraScrollSpeed"];
-		m_FOV = JSONFile["EngineCamera"]["FOV"];
-		m_NearPlane = JSONFile["EngineCamera"]["NearPlane"];
-		m_FarPlane = JSONFile["EngineCamera"]["FarPlane"];
+		SetMoveSpeed(JSONFile["EngineCamera"]["CameraMoveSpeed"]);
+		SetScrollSpeed(JSONFile["EngineCamera"]["CameraScrollSpeed"]);
+		SetFOV(JSONFile["EngineCamera"]["FOV"]);
+		SetNearPlane(JSONFile["EngineCamera"]["NearPlane"]);
+		SetFarPlane(JSONFile["EngineCamera"]["FarPlane"]);
 	
 		m_Target = initialRefence;
 		m_Position = initialPos;
