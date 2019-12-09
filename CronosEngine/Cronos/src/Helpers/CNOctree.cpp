@@ -34,9 +34,14 @@ namespace Cronos {
 		m_Root->TakeOut(GObject);
 	}
 
-	std::vector<GameObject*> CnOctree::GetObjectsContained(math::AABB cubicSpace)
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		return m_Root->GetObjectsContained(cubicSpace);
+	}
+
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		return m_Root->GetObjectsContained(cameraFrustum);
 	}
 
 
@@ -47,10 +52,10 @@ namespace Cronos {
 	}
 
 
-	std::vector<GameObject*> CnOT_Node::GetObjectsContained(math::AABB cubicSpace)
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (m_CubicSpace.Intersects(cubicSpace))
+		if (!m_CubicSpace.Intersects(cubicSpace) || !m_CubicSpace.Contains(cubicSpace))
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
@@ -66,6 +71,37 @@ namespace Cronos {
 			for (uint i = 0; i < m_ChildsQuantity; i++)
 			{
 				std::vector<GameObject*>nodeObjs = m_Nodes[i].GetObjectsContained(cubicSpace);
+				if (nodeObjs.size() > 0)
+					childrenObjects.insert(childrenObjects.begin(), nodeObjs.begin(), nodeObjs.end());
+			}
+
+			if (childrenObjects.size() > 0)
+				objectsInside.insert(objectsInside.begin(), childrenObjects.begin(), childrenObjects.end());
+		}
+
+		return objectsInside;
+	}
+
+
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		std::vector<GameObject*> objectsInside;
+		if (!m_CubicSpace.Intersects(cameraFrustum) || !m_CubicSpace.Contains(cameraFrustum))
+		{
+			LOG("No Objects intersecting this cube! Return value empty");
+			return objectsInside;
+		}
+
+		std::vector<GameObject*>::iterator it = GObjectsContained_Vector.begin();
+		for (; it != GObjectsContained_Vector.end(); it++)
+			objectsInside.push_back(*it);
+
+		if (m_ChildsQuantity > 0)
+		{
+			std::vector<GameObject*> childrenObjects;
+			for (uint i = 0; i < m_ChildsQuantity; i++)
+			{
+				std::vector<GameObject*>nodeObjs = m_Nodes[i].GetObjectsContained(cameraFrustum);
 				if (nodeObjs.size() > 0)
 					childrenObjects.insert(childrenObjects.begin(), nodeObjs.begin(), nodeObjs.end());
 			}

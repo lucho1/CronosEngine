@@ -78,7 +78,7 @@ namespace Cronos {
 		//	lights[0].Active(true);
 		}
 
-		math::AABB OT_AABB = math::AABB(math::float3(-20.0f), math::float3(20.0f));
+		math::AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f));
 		RenderingOctree = CnOctree(OT_AABB, 5);
 
 		// Projection matrix for
@@ -98,6 +98,8 @@ namespace Cronos {
 		centerLight.SetPos(p.x, p.y, p.z);
 		centerLight.Render();
 
+		ObjectsInOctreeNode = RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
+		
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
 
@@ -110,7 +112,7 @@ namespace Cronos {
 		DrawFloorPlane(true);
 		RenderingOctree.Draw();
 
-		//Wireframe Mode (or not)
+		//Wireframe Mode (or not) ------------------------------------------------------------
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			SetWireframeDrawMode(false);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
@@ -121,10 +123,10 @@ namespace Cronos {
 			glLineWidth(m_DefaultLinewidth);
 		}
 		
-		//Rendering
+		//Shader Stuff & ZBuffer -------------------------------------------------------------
 		App->scene->BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
 
 		if (changeZBufferDrawing)
 		{
@@ -139,36 +141,67 @@ namespace Cronos {
 		if (drawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
-		std::list<GameObject*>::iterator it = m_RenderingList.begin();
-		for (; it != m_RenderingList.end(); it++)
+
+		//Objects Rendering -----------------------------------------------------------------
+		/*bool m_FrustumCulling = true;
+		bool m_OctreeAcceleratedFrustumCulling = true;*/
+
+		if (!m_FrustumCulling)
 		{
-			if(!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
-				!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
-				continue;
-
-			App->scene->BasicTestShader->Bind();
-			MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
-			VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
-
-			if (material != nullptr)
-				material->Bind(true);
-
-			App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
-			VAO->Bind();
-
-			glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-
-			if (material != nullptr)
-				material->Unbind();
-
-			VAO->UnBind();
+			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			for (; it != m_RenderingList.end(); it++)
+				Render(it);
 		}
+		else
+		{
+			if (m_OctreeAcceleratedFrustumCulling)
+			{
+				//std::vector<GameObject*> GObjs;
+				//GObjs = RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
+				std::list<GameObject*>::iterator it = m_RenderingList.begin();
+				for (; it != m_RenderingList.end(); it++)
+					Render(it);
+			}
+			else
+			{
+				std::list<GameObject*>::iterator it = m_RenderingList.begin();
+				for (; it != m_RenderingList.end(); it++)
+				{
+					if (!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
+						!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
+						continue;
+
+					Render(it);
+				}
+			}
+		}		
 
 		App->scene->BasicTestShader->Unbind();
 		m_RenderingList.clear();
+		ObjectsInOctreeNode.clear();
 
 		//SDL_GL_SwapWindow(App->window->window);
 		return UPDATE_CONTINUE;
+	}
+
+	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
+	{
+		App->scene->BasicTestShader->Bind();
+		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
+		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
+
+		if (material != nullptr)
+			material->Bind(true);
+
+		App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+		VAO->Bind();
+
+		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+		if (material != nullptr)
+			material->Unbind();
+
+		VAO->UnBind();
 	}
 
 	// Called before quitting
@@ -183,7 +216,41 @@ namespace Cronos {
 
 	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
 	{
-		m_RenderingList.push_back(gameObject);
+		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !ObjectsInOctreeNode.empty())
+		{
+			auto item = std::find_if(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
+				[&gameObject](GameObject* obj) {return obj; });
+
+			if(item != ObjectsInOctreeNode.end())
+				m_RenderingList.push_back(gameObject);
+
+			//You can also do:
+			/*auto item = std::find(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
+				gameObject);
+
+			if(item != ObjectsInOctreeNode.end())
+				m_RenderingList.push_back(gameObject);*/
+
+			/*
+			
+			std::vector<Type> v = ....;
+			std::string myString = ....;
+			auto it = find_if(v.begin(), v.end(), [&myString](const Type& obj) {return obj.getName() == myString;})
+			
+			if (it != v.end())
+			{
+			  // found element. it is an iterator to the first matching element.
+			  // if you really need the index, you can also get it:
+			  auto index = std::distance(v.begin(), it);
+			}
+			
+
+			*/
+		}
+		else
+			m_RenderingList.push_back(gameObject);
+
+	//	m_RenderingList.push_back(gameObject);
 	}
 
 

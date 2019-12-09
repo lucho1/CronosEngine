@@ -28,7 +28,8 @@ namespace Cronos {
 		const bool IsChild()  const { return m_IsChild; }
 		const math::AABB& GetCubicSpace() const { return m_CubicSpace; }
 
-		std::vector<GameObject*> GetObjectsContained(math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::Frustum cameraFrustum);
 
 	private:
 		
@@ -58,7 +59,10 @@ namespace Cronos {
 		void TakeOut(GameObject* GObject);
 
 		//Getters
-		std::vector<GameObject*> GetObjectsContained(math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::Frustum cameraFrustum);
+		//std::vector<GameObject*> GetObjectsContained(math::LineSegment& ray, std::map<float, const GameObject*>& vector, bool nearest = true);
+
 		const bool IsSplitted() const { return isSplitted; }
 		const math::AABB& GetCubicSpace() const { return m_Root->GetCubicSpace(); }
 

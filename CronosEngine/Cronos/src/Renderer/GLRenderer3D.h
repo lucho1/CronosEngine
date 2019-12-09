@@ -97,6 +97,10 @@ namespace Cronos {
 
 		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
+	private:
+
+		void Render(std::list<GameObject*>::iterator it);
+
 	public:
 
 		//Light lights[MAX_LIGHTS];
@@ -113,6 +117,9 @@ namespace Cronos {
 
 		//Current camera we're rendering with
 		Camera* m_CurrentCamera = nullptr;
+		bool m_FrustumCulling = true;
+		bool m_OctreeAcceleratedFrustumCulling = false;
+		std::vector<GameObject*> ObjectsInOctreeNode;
 
 		glm::mat4 fPlane = glm::mat4(1.0f);
 
