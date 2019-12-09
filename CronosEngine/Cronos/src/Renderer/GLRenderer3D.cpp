@@ -78,7 +78,7 @@ namespace Cronos {
 		//	lights[0].Active(true);
 		}
 
-		math::AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f));
+		math::AABB OT_AABB = math::AABB(math::float3(-20.0f), math::float3(20.0f));
 		RenderingOctree = CnOctree(OT_AABB, 5);
 
 		// Projection matrix for

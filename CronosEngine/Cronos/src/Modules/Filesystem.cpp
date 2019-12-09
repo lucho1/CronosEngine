@@ -230,8 +230,7 @@ namespace Cronos {
 	bool Filesystem::LoadMesh(const char* filepath, MeshComponent& mesh,uint ResID) {
 		
 		bool ret = false;
-
-
+		
 		ResourceMesh* rMesh = new ResourceMesh(ResID);
 		mesh.r_mesh = rMesh;
 
@@ -291,14 +290,40 @@ namespace Cronos {
 				cursor += bytes;
 			}
 			rMesh->toCronosVertexVector();
+
+			//Set the GO AABB and finally push it to the mother's child list
+			math::AABB aabb;
+			aabb.SetNegativeInfinity();
+
+			//rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+
+			float VectorSize = rMesh->getVector().size();
+			math::float3* verts = new math::float3[VectorSize];
+			for (uint i = 0; i < VectorSize; i++)
+			{
+				glm::vec3 vec = rMesh->getVector()[i].Position;
+				verts[i] = math::float3(vec.x, vec.y, vec.z);
+			}
+
+			aabb.Enclose(verts, VectorSize);
+			delete[] verts;
+
+			// Generate global OBB
+			mesh.GetParent()->SetAABB(aabb);
+			mesh.GetParent()->SetOOBB(aabb);
+
+			GameObject* obj = mesh.GetParent();
+			int xx = 0;
+			//Ret->SetAABB(aabb);
+			//Ret->SetOOBB(aabb);
 		}
-		else {
+		else
+		{
 			LOG("FileSystem error loading file %s");
 			ret = false;
 		}
-		
-		SDL_free(Data);
 
+		SDL_free(Data);
 		return ret;
 	}
 
@@ -335,21 +360,23 @@ namespace Cronos {
 					{
 						MeshComponent* MeshComp = ((MeshComponent*)(Ret->CreateComponent(ComponentType::MESH)));
 						uint resID = configFile["ComponentMesh"]["MeshID"].get<uint>();
+
 						if (App->resourceManager->isMeshLoaded(resID))
 							MeshComp->r_mesh = App->resourceManager->getMeshResource(resID);
-						else {
+						else
+						{
 							std::string MeshPath = configFile["ComponentMesh"]["MeshPath"].get < std::string >();
 							LoadMesh(MeshPath.c_str(), *MeshComp, resID);
 							App->resourceManager->AddResource(MeshComp->r_mesh);
 						}
+
 						MeshComp->SetupMesh(MeshComp->r_mesh->getVector(), MeshComp->r_mesh->getIndex());
 						Ret->m_Components.push_back(MeshComp);
 					}
+
 					if (configFile.contains("ComponentMaterial"))
 					{
-						json CompMat = configFile["ComponentMaterial"];
-						
-
+						json CompMat = configFile["ComponentMaterial"];	
 						bool test = CompMat.contains("Albedo");
 
 						MaterialComponent* MatComp = ((MaterialComponent*)(Ret->CreateComponent(ComponentType::MATERIAL)));						
@@ -358,20 +385,25 @@ namespace Cronos {
 						color.g = configFile["ComponentMaterial"]["Color"]["G"].get<float>();
 						color.b = configFile["ComponentMaterial"]["Color"]["B"].get<float>();
 						color.a = configFile["ComponentMaterial"]["Color"]["A"].get<float>();
-						MatComp->SetColor(color);		
-						if (CompMat.contains("Albedo")) {
+						MatComp->SetColor(color);	
+
+						if (CompMat.contains("Albedo"))
+						{
 							std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
 							Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
 							MatComp->SetTexture(textTemp, textTemp->GetTextureType());
 							MatComp->SetShader(App->scene->BasicTestShader);
 						}
+
 						Ret->m_Components.push_back(MatComp);
 					}
 				}
+
 				if (configFile.contains("Childs"))
 				{
 					int numOfChilds = configFile["Childs"]["NumberChilds"].get<int>();
-					for (int i = 0; i < numOfChilds; ++i) {
+					for (int i = 0; i < numOfChilds; ++i)
+					{
 						int ChildID = configFile["Childs"]["IDChild"][i].get<int>();
 						GameObject* Child = Load(ChildID);
 						Child->SetParent(Ret);
@@ -381,15 +413,16 @@ namespace Cronos {
 				
 				return Ret;
 			}
-			else {
+			else
+			{
 				CRONOS_WARN(file.is_open(), "Unable to Open file to load!");
 				file.close();
 				return nullptr;
 			}
 		}
-		else {
+		else
 			CRONOS_WARN(!exists, ("Filepath %s doesn`t exist", filename.c_str()));
-		}
+		
 		return nullptr;
 	}
 

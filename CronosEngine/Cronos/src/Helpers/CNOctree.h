@@ -19,6 +19,7 @@ namespace Cronos {
 		void Draw();
 		void Split();
 		void CleanUp();
+		void CleanNodes();
 
 		bool Insert(GameObject* GObj);
 		void TakeOut(GameObject* GObject);

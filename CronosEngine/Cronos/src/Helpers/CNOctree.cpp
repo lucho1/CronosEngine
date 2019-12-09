@@ -100,7 +100,24 @@ namespace Cronos {
 			delete[] m_Nodes;
 			m_Nodes = nullptr;
 		}
+		
+		GObjectsContained_Vector.clear();
+		//if (m_NodeType != NodeType::ROOT)
+		//	m_NodeType = NodeType::CHILD;
+	}
 
+	void CnOT_Node::CleanNodes()
+	{
+		for (uint i = 0; i < m_ChildsQuantity; i++)
+			m_Nodes[i].CleanUp();
+
+		if (m_Nodes != nullptr)
+		{
+			delete[] m_Nodes;
+			m_Nodes = nullptr;
+		}
+
+		m_ChildsQuantity = 0;
 		if (m_NodeType != NodeType::ROOT)
 			m_NodeType = NodeType::CHILD;
 	}
@@ -217,6 +234,8 @@ namespace Cronos {
 			GObjectsContained_Vector.push_back(GObj);
 			if (GObjectsContained_Vector.size() > m_MaxObjectsInside)
 			{
+				Split();
+
 				std::vector<GameObject*> newObjects = GObjectsContained_Vector;
 				GObjectsContained_Vector.clear();
 
@@ -240,8 +259,6 @@ namespace Cronos {
 					else if (nodesContained > 1)
 						GObjectsContained_Vector.push_back(newObjects[j]);
 				}
-
-				Split();
 			}
 			return true;
 		}
@@ -280,7 +297,7 @@ namespace Cronos {
 					}
 				}
 				if (nodesEmpty)
-					CleanUp();
+					CleanNodes();
 			}
 		}
 	}
