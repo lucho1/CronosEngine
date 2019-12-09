@@ -145,8 +145,10 @@ namespace Cronos {
 		glm::mat4 m = glm::translate(glm::mat4(1.0f), m_AABBTranslation) /**
 			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), transform2);*/
 
-		
-		glm::mat4 m = glm::translate(glm::mat4(1.0f), translation) *
+		glm::vec3 trans = translation - glm::vec3(m_OBB.pos.x, m_OBB.pos.y, m_OBB.pos.z);
+		glm::vec3 sc = scale - glm::vec3(m_OBB.Size().x, m_OBB.Size().y, m_OBB.Size().z);
+
+		glm::mat4 m = glm::translate(glm::mat4(1.0f), trans) *
 			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), scale);
 		
 		glm::mat4 resMat = glm::transpose(m);
