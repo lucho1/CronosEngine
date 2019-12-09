@@ -74,8 +74,8 @@ void main()
 	color.r *= (colorGrading + normalisedHeight);
 	color.g *= (colorGrading + normalisedHeight);
 
-	if(color.r <= 0.0)
-		color.r = 0.2;
-	if(color.g <= 0.0)
-		color.g = 0.2;
+	//if(color.r <= 0.0)
+	//	color.r = 0.2;
+	//if(color.g <= 0.0)
+	//	color.g = 0.2;
 }

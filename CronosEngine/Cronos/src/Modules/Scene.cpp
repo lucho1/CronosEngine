@@ -213,8 +213,8 @@ namespace Cronos {
 		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
 		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
 		m_WaterShader->SetUniform1f("u_Amplitude", 2.0f);
-		m_WaterShader->SetUniform1f("u_WaveLength", 10.0f);
-		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.0f); //Fragment Shader
+		m_WaterShader->SetUniform1f("u_WaveLength", 20.0f);
+		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.1f); //Fragment Shader
 
 		if (m_WaveTimer.ReadSec() >= maxT)
 			m_WaveTimer.Start();
@@ -231,7 +231,7 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Bind(true);		
 		VAO->Bind();
-		material->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		material->SetColor({ 1.0f, 1.0f, 0.8f, 0.8f });
 
 		//Drawing ----------------------------
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
