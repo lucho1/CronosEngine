@@ -130,10 +130,10 @@ namespace Cronos {
 		//res/models/waterPlane/waterPlaneOBJ.obj
 		//res/models/waterPlane/waterPlane.FBX
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
+		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		m_GameObjects.push_back(m_StreetModel);
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		//m_GameObjects.push_back(m_StreetModel);
 		
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
@@ -209,11 +209,11 @@ namespace Cronos {
 		m_WaterShader->Bind();
 		
 		// Wave Calculations ----------------
-		float maxT = 10.0f;
+		float maxT = 15.0f;
 		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
 		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
-		m_WaterShader->SetUniform1f("u_Amplitude", 5.0f);
-		m_WaterShader->SetUniform1f("u_WaveLength", 5.0f);
+		m_WaterShader->SetUniform1f("u_Amplitude", 2.0f);
+		m_WaterShader->SetUniform1f("u_WaveLength", 10.0f);
 		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.0f); //Fragment Shader
 
 		if (m_WaveTimer.ReadSec() >= maxT)
@@ -231,7 +231,7 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Bind(true);		
 		VAO->Bind();
-		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.4f });
+		material->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
 		//Drawing ----------------------------
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
