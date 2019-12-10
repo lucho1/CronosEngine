@@ -129,29 +129,14 @@ namespace Cronos {
 	//---------------------------------------------
 	void GameObject::SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale)
 	{
-		/*if (GetComponent<TransformComponent>() == nullptr)
-			return;
+		glm::vec3 pos = translation - m_AABBTranslation;
+		//glm::vec3 newScale = scale - m_AABBScale;
 
-		glm::vec3 boxPos = glm::vec3(m_OBB.pos.x, m_OBB.pos.y, m_OBB.pos.z);
-		glm::vec3 GObjPos = GetComponent<TransformComponent>()->GetTranslation();
 
-		m_AABBTranslation = transform - ((boxPos + GObjPos) - boxPos);
-		this;
+		glm::mat4 Transformation = glm::translate(glm::mat4(1.0f), pos) *
+			glm::mat4_cast(orientation) * glm::scale(glm::mat4(1.0f), scale);
 		
-		if (glm::length(m_AABBTranslation) <= 0.2f)
-			return;
-
-		//glm::mat4 m = transform;
-		glm::mat4 m = glm::translate(glm::mat4(1.0f), m_AABBTranslation) /**
-			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), transform2);*/
-
-		glm::vec3 trans = translation - glm::vec3(m_OBB.pos.x, m_OBB.pos.y, m_OBB.pos.z);
-		glm::vec3 sc = scale - glm::vec3(m_OBB.Size().x, m_OBB.Size().y, m_OBB.Size().z);
-
-		glm::mat4 m = glm::translate(glm::mat4(1.0f), trans) *
-			glm::mat4(1.0f) * glm::scale(glm::mat4(1.0f), scale);
-		
-		glm::mat4 resMat = glm::transpose(m);
+		glm::mat4 resMat = glm::transpose(Transformation);
 
 		//glm::vec4 zRow = resMat[2];
 		//resMat[2] = resMat[1];

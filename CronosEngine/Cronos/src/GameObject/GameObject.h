@@ -91,6 +91,8 @@ namespace Cronos {
 		bool HasMetaa = false;
 		bool HasVertices = false;
 
+		glm::vec3 m_AABBTranslation = glm::vec3(0.0f);
+
 	private:
 
 		GameObject* Parent = nullptr;
@@ -102,9 +104,7 @@ namespace Cronos {
 		int m_GameObjectID;
 
 		math::OBB m_OBB;
-		math::AABB m_AABB;
-
-		glm::vec3 m_AABBTranslation = glm::vec3(0.0f);
+		math::AABB m_AABB;		
 	};
 
 }
