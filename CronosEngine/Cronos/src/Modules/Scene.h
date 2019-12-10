@@ -57,6 +57,7 @@ namespace Cronos {
 		//bool changeZBufferDrawing = true;
 		GameObject* m_Wave = nullptr;
 		Shader* m_WaterShader = nullptr;
+		Texture* m_WaveTexture = nullptr;
 		Timer m_WaveTimer;
 
 		CnOctree OT_Test;

@@ -22,6 +22,7 @@ const float pi = 3.14159;
 //Data sent to fragment shader (are they called "varying"? I think they are)
 out float v_VertHeight;
 out float v_MaxHeight;
+out vec2 v_TexCoords;
 
 void main()
 {
@@ -31,6 +32,7 @@ void main()
 	
 	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 	gl_Position.y += height;
+	v_TexCoords = a_TexCoords;
 }
 
 
@@ -50,10 +52,12 @@ uniform int u_TextureEmpty = 1;
 //Uniforms
 uniform vec4 u_AmbientColor = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float u_ColorGradingOffset = 0.0f; //Keep it between 0 and 1
+uniform sampler2D u_WaterTexture;
 
 //Data sent from vertex shader
 in float v_VertHeight;
 in float v_MaxHeight;
+in vec2 v_TexCoords;
 
 //Color output
 out vec4 color;
@@ -68,7 +72,7 @@ void main()
 	if(colorGrading <= 0.0)
 		colorGrading = 0.0;
 
-	color = u_AmbientColor;
+	color = texture(u_WaterTexture, v_TexCoords) * u_AmbientColor;
 	//color.r *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
 	//color.g *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
 	color.r *= (colorGrading + normalisedHeight);

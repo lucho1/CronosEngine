@@ -118,7 +118,8 @@ namespace Cronos {
 		m_SceneName = "NewScene";
 		//BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader = new Shader("res/shaders/basic.glsl");
-		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
+		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");		
+		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
 		m_WaveTimer.Start();
 
 		//House Model Load
@@ -150,6 +151,7 @@ namespace Cronos {
 	{
 		OT_Test.CleanUp();
 		m_Wave->CleanUp();
+		m_WaveTexture->~Texture();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -223,7 +225,8 @@ namespace Cronos {
 		m_WaterShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
 		m_WaterShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
 		m_WaterShader->SetUniformMat4f("u_Model", WaveMesh->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
-		
+		m_WaterShader->SetUniform1i("u_WaterTexture", m_WaveTexture->GetTextureID());
+
 		MaterialComponent* material = WaveMesh->GetComponent<MaterialComponent>();
 		VertexArray* VAO = WaveMesh->GetComponent<MeshComponent>()->GetVAO();
 
@@ -231,7 +234,8 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Bind(true);		
 		VAO->Bind();
-		material->SetColor({ 1.0f, 1.0f, 0.8f, 0.8f });
+		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.8f });
+		m_WaveTexture->Bind();
 
 		//Drawing ----------------------------
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
@@ -240,7 +244,7 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Unbind();
 		VAO->UnBind();
-
+		m_WaveTexture->Unbind();
 		m_WaterShader->Unbind();
 
 		//------------------------------------------------------------------------------------------------------------------------------------
