@@ -170,7 +170,7 @@ namespace Cronos {
 			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
 
 			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
-			App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
+			//App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
 
 			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
