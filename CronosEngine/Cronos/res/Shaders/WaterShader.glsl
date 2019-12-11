@@ -24,9 +24,30 @@ out float v_VertHeight;
 out float v_MaxHeight;
 out vec2 v_TexCoords;
 
+float random(vec2 p)
+{
+   // e^pi (Gelfond's constant)
+   // 2^sqrt(2) (Gelfond–Schneider constant)
+     vec2 K1 = vec2(23.14069263277926, 2.665144142690225);
+
+   //return fract( cos( mod( 12345678., 256. * dot(p,K1) ) ) ); // ver1
+     return fract(cos(dot(p,K1)) * 12345.6789); // ver3
+}
+
+float random2(vec2 co)
+{
+    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 void main()
 {
-	float height = u_Amplitude*sin(2.0*pi*((u_Time/u_MaxTime) - (a_Position.x/u_WaveLength)));
+	//float height = u_Amplitude*sin(2.0*pi*((u_Time/u_MaxTime) - (a_Position.x/u_WaveLength)));
+	float Xf = a_Position.x/u_WaveLength - 0.5;
+	float Yf = a_Position.y/u_Amplitude - 0.5;
+
+	vec2 vec = vec2(Xf, Yf);
+	float height = random2(vec) * 2.0*pi*(u_Time/u_MaxTime);
+
 	v_VertHeight = height;
 	v_MaxHeight = u_Amplitude;
 	
