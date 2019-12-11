@@ -55,6 +55,7 @@ namespace Cronos {
 		
 		void SetAABB(math::AABB aabb)				{ m_AABB = aabb; }
 		void SetOOBB(math::OBB oobb)				{ m_OBB = oobb; }
+		void SetInitAABB(math::AABB aabb) { m_InitialAABB = aabb; }
 		void SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale);
 
 	public:
@@ -105,6 +106,7 @@ namespace Cronos {
 
 		math::OBB m_OBB;
 		math::AABB m_AABB;		
+		math::AABB m_InitialAABB;
 	};
 
 }

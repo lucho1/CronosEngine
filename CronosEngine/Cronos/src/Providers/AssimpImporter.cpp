@@ -286,12 +286,29 @@ namespace Cronos {
 			verts[i] = math::float3(vec.x, vec.y, vec.z);
 		}
 		
-		aabb.Enclose(verts, size);
+		//aabb.Enclose(verts, size);
+		aabb.SetFrom(verts, size);
+		GO->SetInitAABB(aabb);
 		delete[] verts;
 
 		// Generate global OBB
+		//GO->SetAABB(aabb);
+
+		OBB oobb;
+		oobb.SetFrom(aabb);
+
+		math::float4x4 mat = math::float4x4::identity;
+		mat.Set(glm::value_ptr(GO->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		oobb.Transform(mat);
+		//GO->SetOOBB(oobb);
+
+		AABB aabb2;
+		aabb2.SetFrom(oobb);
+		
+		GO->SetOOBB(oobb);
 		GO->SetAABB(aabb);
-		GO->SetOOBB(aabb);
+
 
 		motherGameObj->m_Childs.push_back(GO);
 		LOG("	Processed Mesh with %i Vertices and %i Indices ", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);

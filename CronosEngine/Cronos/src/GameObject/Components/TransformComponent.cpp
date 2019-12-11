@@ -91,9 +91,11 @@ namespace Cronos {
 			child->GetComponent<TransformComponent>()->UpdateTransform();		
 
 		glm::vec3 pos = glm::vec3(0.0f);
-		glm::decompose(m_GlobalTransformationMatrix, glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
+		glm::vec3 scale = glm::vec3(0.0f);
+		glm::quat rot = glm::quat();
+		glm::decompose(m_GlobalTransformationMatrix, scale, rot, pos, glm::vec3(), glm::vec4());
 
 		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(m_Translation, m_Orientation, m_Scale);
+		GetParent()->SetOOBBTransform(pos, rot, scale);
 	}
 }

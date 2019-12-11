@@ -138,6 +138,14 @@ namespace Cronos {
 		
 		glm::mat4 resMat = glm::transpose(Transformation);
 
+		math::float4x4 mat = math::float4x4::identity;
+		mat.Set(glm::value_ptr(resMat));
+		
+		m_OBB.SetFrom(m_InitialAABB);
+		m_OBB.Transform(mat);
+
+		m_AABB.SetFrom(m_OBB);
+
 		//glm::vec4 zRow = resMat[2];
 		//resMat[2] = resMat[1];
 		//resMat[1] = zRow;
@@ -154,13 +162,14 @@ namespace Cronos {
 		resMat[2][3] = XYAux.y;*/
 
 
-		math::float4x4 mat = math::float4x4::identity;
+		/*math::float4x4 mat = math::float4x4::identity;
 		mat.Set(glm::value_ptr(resMat));
+
 
 		m_OBB = m_AABB;
 		m_OBB.Transform(mat);
 
 		m_AABB.SetNegativeInfinity();
-		m_AABB.Enclose(m_OBB);
+		m_AABB.Enclose(m_OBB);*/
 	}
 }
