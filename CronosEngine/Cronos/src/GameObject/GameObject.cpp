@@ -56,7 +56,7 @@ namespace Cronos {
 			
 			//OOBB Draw
 			math::float3 corners[8] = { float3(0, 0, 0) };
-			m_OBB.GetCornerPoints(corners);
+			m_OOBB.GetCornerPoints(corners);
 			max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
 
@@ -127,32 +127,25 @@ namespace Cronos {
 	}
 
 	//---------------------------------------------
-	void GameObject::SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale)
+	void GameObject::SetOOBBTransform(glm::mat4 transform)
 	{
-		glm::vec3 pos = translation - m_AABBTranslation;
-		//glm::vec3 newScale = scale - m_AABBScale;
-
-
-		glm::mat4 Transformation = glm::translate(glm::mat4(1.0f), pos) *
-			glm::mat4_cast(orientation) * glm::scale(glm::mat4(1.0f), scale);
+		//glm::mat4 Transformation = glm::translate(glm::mat4(1.0f), translation) *
+		//	glm::mat4_cast(orientation) * glm::scale(glm::mat4(1.0f), scale);
 		
-		glm::mat4 resMat = glm::transpose(Transformation);
+		//glm::mat4 resMat = glm::transpose(Transformation);
+		//
+		//math::float4x4 mat = math::float4x4::identity;
+		//mat.Set(glm::value_ptr(resMat));
 
-		math::float4x4 mat = math::float4x4::identity;
-		mat.Set(glm::value_ptr(resMat));
-		
-		m_OBB.SetFrom(m_InitialAABB);
-		m_OBB.Transform(mat);
+		glm::mat4 resMat = glm::transpose(transform);
 
-		m_AABB.SetFrom(m_OBB);
+		/*glm::vec4 zRow = resMat[2];
+		resMat[2] = resMat[1];
+		resMat[1] = zRow;
 
-		//glm::vec4 zRow = resMat[2];
-		//resMat[2] = resMat[1];
-		//resMat[1] = zRow;
+		resMat[2][1] = -resMat[2][1];
 
-		//resMat[2][1] = -resMat[2][1];
-
-		/*glm::vec2 XYAux = glm::vec2(resMat[0][3], resMat[2][3]);
+		glm::vec2 XYAux = glm::vec2(resMat[0][3], resMat[2][3]);
 
 		glm::vec4 xRow = resMat[0];
 		resMat[0] = resMat[2];
@@ -161,15 +154,11 @@ namespace Cronos {
 		resMat[0][3] = XYAux.x;
 		resMat[2][3] = XYAux.y;*/
 
-
-		/*math::float4x4 mat = math::float4x4::identity;
+		math::float4x4 mat = math::float4x4::identity;
 		mat.Set(glm::value_ptr(resMat));
-
-
-		m_OBB = m_AABB;
-		m_OBB.Transform(mat);
-
-		m_AABB.SetNegativeInfinity();
-		m_AABB.Enclose(m_OBB);*/
+		
+		m_OOBB.SetFrom(m_InitialAABB);
+		m_OOBB.Transform(mat);
+		m_AABB.SetFrom(m_OOBB);
 	}
 }

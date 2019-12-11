@@ -41,7 +41,7 @@ namespace Cronos {
 		GameObject* GetParentGameObject()			{ return Parent; }
 
 		const math::AABB GetAABB()					const { return m_AABB; }
-		const math::OBB GetOOBB()					const { return m_OBB; }
+		const math::OBB GetOOBB()					const { return m_OOBB; }
 
 	public:
 
@@ -54,9 +54,10 @@ namespace Cronos {
 		void SetParent(GameObject* Go)				{ Parent = Go; }
 		
 		void SetAABB(math::AABB aabb)				{ m_AABB = aabb; }
-		void SetOOBB(math::OBB oobb)				{ m_OBB = oobb; }
-		void SetInitAABB(math::AABB aabb) { m_InitialAABB = aabb; }
-		void SetOOBBTransform(glm::vec3 translation, glm::quat orientation, glm::vec3 scale);
+		void SetOOBB(math::OBB oobb)				{ m_OOBB = oobb; }
+		void SetInitialAABB(math::AABB aabb)		{ m_InitialAABB = aabb; }
+
+		void SetOOBBTransform(glm::mat4 transform);
 
 	public:
 		
@@ -92,8 +93,6 @@ namespace Cronos {
 		bool HasMetaa = false;
 		bool HasVertices = false;
 
-		glm::vec3 m_AABBTranslation = glm::vec3(0.0f);
-
 	private:
 
 		GameObject* Parent = nullptr;
@@ -104,7 +103,7 @@ namespace Cronos {
 		bool m_Active;
 		int m_GameObjectID;
 
-		math::OBB m_OBB;
+		math::OBB m_OOBB;
 		math::AABB m_AABB;		
 		math::AABB m_InitialAABB;
 	};

@@ -273,9 +273,6 @@ namespace Cronos {
 		}
 
 		//Set the GO AABB and finally push it to the mother's child list
-		math::AABB aabb;
-		aabb.SetNegativeInfinity();
-
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 
 		float size = rMesh->getVector().size();
@@ -286,28 +283,21 @@ namespace Cronos {
 			verts[i] = math::float3(vec.x, vec.y, vec.z);
 		}
 		
-		//aabb.Enclose(verts, size);
-		aabb.SetFrom(verts, size);
-		GO->SetInitAABB(aabb);
-		delete[] verts;
-
-		// Generate global OBB
-		//GO->SetAABB(aabb);
-
-		OBB oobb;
-		oobb.SetFrom(aabb);
+		math::AABB aabb;
+		math::OBB oobb;
 
 		math::float4x4 mat = math::float4x4::identity;
 		mat.Set(glm::value_ptr(GO->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
 
+		aabb.SetNegativeInfinity();
+		aabb.SetFrom(verts, size);		
+		oobb.SetFrom(aabb);
 		oobb.Transform(mat);
-		//GO->SetOOBB(oobb);
-
-		AABB aabb2;
-		aabb2.SetFrom(oobb);
 		
+		GO->SetInitialAABB(aabb);
 		GO->SetOOBB(oobb);
 		GO->SetAABB(aabb);
+		delete[] verts;
 
 
 		motherGameObj->m_Childs.push_back(GO);

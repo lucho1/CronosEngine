@@ -17,18 +17,8 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
-	TransformComponent::~TransformComponent()
-	{
-	}
-
-	void TransformComponent::Update(float dt)
-	{
-	}
-
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-		GetParent()->m_AABBTranslation = m_Translation;
-
 		m_Translation = position;
 		UpdateTransform();
 	}
@@ -44,8 +34,8 @@ namespace Cronos {
 	{		
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
-		m_Orientation = m_Orientation * rot;		
 		
+		m_Orientation = m_Orientation * rot;			
 		m_EulerAngles = EA_Rad;
 		UpdateTransform();
 	}
@@ -54,8 +44,6 @@ namespace Cronos {
 	{
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat newOrientation = glm::quat(EA_Rad);
-
-		//GetParent()->m_AABBEulerAngles = m_Orientation;
 
 		m_Orientation = m_Orientation * newOrientation;
 		m_EulerAngles = EA_Rad;
@@ -82,20 +70,21 @@ namespace Cronos {
 		//Update global transform
 		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
 		if (GOAttached_Parent != nullptr)
+		{
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
+			
+			//Set OOBB transform (which will set AABB one)
+			GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
+		}
 		else
+		{
 			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
-		
+		}
+
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
-			child->GetComponent<TransformComponent>()->UpdateTransform();		
+			child->GetComponent<TransformComponent>()->UpdateTransform();
 
-		glm::vec3 pos = glm::vec3(0.0f);
-		glm::vec3 scale = glm::vec3(0.0f);
-		glm::quat rot = glm::quat();
-		glm::decompose(m_GlobalTransformationMatrix, scale, rot, pos, glm::vec3(), glm::vec4());
-
-		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(pos, rot, scale);
+		
 	}
 }
