@@ -4,6 +4,7 @@
 #include "Application.h"
 
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/CameraComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -80,7 +81,7 @@ namespace Cronos {
 				{
 					color = u_AmbientColor;
 				}
-				
+
 				if(u_drawZBuffer == 1)
 				{
 					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
@@ -124,21 +125,20 @@ namespace Cronos {
 
 		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
 		m_GameObjects.push_back(m_StreetModel);
-		
+
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
 
-		//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		//OT_Test = CnOctree(OT_Test_AABB, 2);
-
+		math::AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
+		OT_Test = CnOctree(OT_Test_AABB, 2);
 		return ret;
 	}
 
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
-		//OT_Test.CleanUp();
+		OT_Test.CleanUp();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -148,8 +148,6 @@ namespace Cronos {
 		}
 
 		m_GameObjects.clear();
-		//RELEASE(BasicTestShader);
-
 
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
 		while (it != m_TexturesLoaded.end())
@@ -158,6 +156,8 @@ namespace Cronos {
 			it = m_TexturesLoaded.erase(it);
 		}
 		m_TexturesLoaded.clear();
+
+		RELEASE(BasicTestShader);
 
 		return true;
 	}
@@ -171,7 +171,7 @@ namespace Cronos {
 
 		static PrimitiveGameObject* linetoPrimitive = nullptr;
 		static glm::vec3 posspawned = glm::vec3(0.0f);
-		
+
 		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			glm::vec3 camPos = App->engineCamera->GetPosition();
@@ -195,6 +195,22 @@ namespace Cronos {
 
 		if(linetoPrimitive != nullptr)
 			App->renderer3D->DrawLine(posspawned, linetoPrimitive->GetComponent<TransformComponent>()->GetTranslation(), glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+		{
+			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 1,1,1 });
+			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
+
+			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+			App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
+
+			ret->m_Components.push_back(cameraComp);
+			m_GameObjects.push_back(ret);
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>() != nullptr)
+			App->renderer3D->SetRenderingCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
+		else if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+			App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());
 
 		//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
@@ -204,7 +220,7 @@ namespace Cronos {
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
-			if (App->EditorGUI->GetCurrentGameObject() !=nullptr&&ToCopy!=nullptr) {
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
 
 				GameObject* NewGO = App->filesystem->Load(ToCopy->GetGOID());
 
@@ -224,8 +240,8 @@ namespace Cronos {
 		}
 
 		//Octree Testing
-		//OT_Test.Draw();
-		/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		OT_Test.Draw();
+		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			for (uint i = 0; i < m_GameObjects.size(); i++)
 			{
@@ -242,7 +258,7 @@ namespace Cronos {
 			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
 			OT_Test.CleanUp();
 			OT_Test = CnOctree(OT_Test_AABB, 2);
-		}*/
+		}
 
 		return UPDATE_CONTINUE;
 	}
@@ -287,8 +303,8 @@ namespace Cronos {
 
 		if (exists)
 		{
-			//AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-			//OT_Test = CnOctree(OT_Test_AABB, 2);
+			AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
+			OT_Test = CnOctree(OT_Test_AABB, 2);
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;

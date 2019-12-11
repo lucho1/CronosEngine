@@ -17,48 +17,46 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
-	TransformComponent::~TransformComponent()
-	{
-	}
-
 	void TransformComponent::Update(float dt)
 	{
-		//AABBs---------------------------------------------------------------
-		/*App->renderer3D->DrawCube(m_ContainerAABBCube.getMin(), m_ContainerAABBCube.getMax(),
-			glm::vec3(Blue.r, Blue.g, Blue.b), 2.0f, m_LocalTransformationMatrix);
+		//Update Parents' AABBs in function of their childs' AABBs
+		if (GetParent()->m_Childs.size() > 0)
+		{
+			math::AABB aabb;
+			aabb.SetNegativeInfinity();
 
-		glm::vec3 corners[8];
-		m_ContainerOOBB.getCorners(corners);
-		App->renderer3D->DrawCube(corners[1], corners[4],
-			glm::vec3(Green.r, Green.g, Green.b), 2.0f, m_LocalTransformationMatrix);*/
+			for (auto child : GetParent()->m_Childs)
+				aabb.Enclose(child->GetAABB());
+
+			GetParent()->SetAABB(aabb);
+		}
 	}
 
+	//Transform setters ---------------------------------------------------------------------------
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-		//AABBPos = m_Translation;
 		m_Translation = position;
 		UpdateTransform();
 	}
 
 	void TransformComponent::SetScale(glm::vec3 scale)
 	{
-		//AABBScale = m_Scale;
 		m_Scale = scale;
 		UpdateTransform();
 	}
 
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 euler_angles)
-	{
-		//AABBOrientation = m_Orientation;
+	{		
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
-
-		m_Orientation = m_Orientation * rot;
+		
+		m_Orientation = m_Orientation * rot;			
 		m_EulerAngles = EA_Rad;
 		UpdateTransform();
 	}
 
+	//Transform adders ----------------------------------------------------------------------------
 	void TransformComponent::Rotate(glm::vec3 euler_angles)
 	{
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
@@ -80,6 +78,7 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
+	//Update Transform ------------------------------------------------------------------------------
 	void TransformComponent::UpdateTransform()
 	{
 		//Local transform
@@ -89,15 +88,17 @@ namespace Cronos {
 		//Update global transform
 		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
 		if (GOAttached_Parent != nullptr)
+		{
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
+			
+			//Set OOBB transform (which will set AABB one) - Parents one will be set in update
+			GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
+		}
 		else
-			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;				
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;		
 
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
 			child->GetComponent<TransformComponent>()->UpdateTransform();
-
-		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(m_Translation);
 	}
 }

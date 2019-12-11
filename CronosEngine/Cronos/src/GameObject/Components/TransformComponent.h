@@ -17,9 +17,9 @@ namespace Cronos {
 
 		//Component Methods
 		TransformComponent(GameObject* attachedGO, bool active = true);
-		~TransformComponent();
+		~TransformComponent() {}
 
-		virtual void Update(float dt) override;
+		void Update(float dt) override;
 
 	public:
 
@@ -33,8 +33,6 @@ namespace Cronos {
 		void Move(glm::vec3 translation);
 		void Scale(glm::vec3 scale);
 		void Rotate(glm::vec3 euler_angles);
-
-		//AABBs & Axis
 
 	public:
 
@@ -51,7 +49,6 @@ namespace Cronos {
 
 	private:
 
-		//Decompose the matrix in the position, scale vectors and orientation quaternion
 		void UpdateTransform();
 
 	private:
@@ -64,9 +61,6 @@ namespace Cronos {
 
 		glm::quat m_Orientation;
 		glm::vec3 m_EulerAngles;
-
-		//AABB Cube
-
 	};
 
 }

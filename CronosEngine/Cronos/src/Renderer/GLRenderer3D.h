@@ -4,9 +4,11 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "Light.h"
+#include "Helpers/Camera.h"
 
 #include "GameObject/Components/MaterialComponent.h"
 #include "GameObject/Components/TransformComponent.h"
+
 #include "VertexArray.h"
 
 namespace Cronos {
@@ -64,6 +66,7 @@ namespace Cronos {
 		void SetDefaultColor(glm::vec4 color) { m_DefaultColor = color; }
 		void SetDefaultLineWidth(float LWidth) { m_DefaultLinewidth = LWidth; }
 
+
 		//OpenGL Settings
 		void SetOpenGLSettings();
 
@@ -94,11 +97,14 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }
 		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
 
+		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
+
 	public:
 
 		//Light lights[MAX_LIGHTS];
 		Light centerLight;
 		SDL_GLContext context;
+		
 
 	private:
 
@@ -106,6 +112,8 @@ namespace Cronos {
 		bool drawZBuffer = false;
 		bool changeZBufferDrawing = false;
 
+		//Current camera we're rendering with
+		Camera* m_CurrentCamera = nullptr;
 
 		glm::mat4 fPlane = glm::mat4(1.0f);
 

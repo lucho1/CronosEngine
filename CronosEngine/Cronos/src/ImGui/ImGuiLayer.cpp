@@ -817,10 +817,14 @@ namespace Cronos {
 				toChange = false;
 			}
 			ImGui::Text("Scale");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetScale(ObjectScale);
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f))toChange=true;
+			if (toChange) {
+				test->SetScale(ObjectScale);
+				toChange = false;
+			}
+			//CurrentGameObject->GetComponent<TransformComponent>()->SetScale(ObjectScale);
 
 		}
 		ImGui::Separator();
