@@ -17,40 +17,46 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
-	TransformComponent::~TransformComponent()
-	{
-	}
-
 	void TransformComponent::Update(float dt)
 	{
+		//Update Parents' AABBs in function of their childs' AABBs
+		if (GetParent()->m_Childs.size() > 0)
+		{
+			math::AABB aabb;
+			aabb.SetNegativeInfinity();
+
+			for (auto child : GetParent()->m_Childs)
+				aabb.Enclose(child->GetAABB());
+
+			GetParent()->SetAABB(aabb);
+		}
 	}
 
+	//Transform setters ---------------------------------------------------------------------------
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
-		//AABBPos = m_Translation;
 		m_Translation = position;
 		UpdateTransform();
 	}
 
 	void TransformComponent::SetScale(glm::vec3 scale)
 	{
-		//AABBScale = m_Scale;
 		m_Scale = scale;
 		UpdateTransform();
 	}
 
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 euler_angles)
-	{
-		//AABBOrientation = m_Orientation;
+	{		
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
-
-		m_Orientation = m_Orientation * rot;
+		
+		m_Orientation = m_Orientation * rot;			
 		m_EulerAngles = EA_Rad;
 		UpdateTransform();
 	}
 
+	//Transform adders ----------------------------------------------------------------------------
 	void TransformComponent::Rotate(glm::vec3 euler_angles)
 	{
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
@@ -72,6 +78,7 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
+	//Update Transform ------------------------------------------------------------------------------
 	void TransformComponent::UpdateTransform()
 	{
 		//Local transform
@@ -81,12 +88,14 @@ namespace Cronos {
 		//Update global transform
 		GameObject* GOAttached_Parent = GetParent()->GetParentGameObject();
 		if (GOAttached_Parent != nullptr)
+		{
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
+			
+			//Set OOBB transform (which will set AABB one) - Parents one will be set in update
+			GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
+		}
 		else
-			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
-
-		//Set OOBB (which will set AABB)
-		GetParent()->SetOOBBTransform(m_Translation, m_Orientation, m_Scale);
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;		
 
 		//Update Octree
 		if (GetParent())
@@ -97,6 +106,6 @@ namespace Cronos {
 
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
-			child->GetComponent<TransformComponent>()->UpdateTransform();		
+			child->GetComponent<TransformComponent>()->UpdateTransform();
 	}
 }

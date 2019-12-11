@@ -189,31 +189,33 @@ namespace Cronos {
 		matComp->SetShader(App->scene->BasicTestShader);
 		m_Components.push_back(matComp);
 
-		//Finally compute AABB
-		float AABBPoints[6];
-		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
-		math::AABB aabb = math::AABB(math::float3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), math::float3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
 
-		// Generate global OBB
-		SetAABB(aabb);
-		SetOOBB(aabb);
-
-		//Another way:
-		//Set the GO AABB and finally push it to the mother's child list
-		//AABB aabb;
-		//aabb.SetNegativeInfinity();
-		//rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+		//Set the GO AABB and finally push it to the mother's child list		
+		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 		
-		//float arrsize = rMesh->getVector().size();
-		//float3* verts = new float3[arrsize];
-		//for (uint i = 0; i < arrsize; i++)
-		//{
-		//	glm::vec3 vec = rMesh->getVector()[i].Position;
-		//	verts[i] = float3(vec.x, vec.y, vec.z);
-		//}
-		//
-		//aabb.Enclose(verts, arrsize);
-		//delete[] verts;
+		float arrsize = rMesh->getVector().size();
+		float3* verts = new float3[arrsize];
+		for (uint i = 0; i < arrsize; i++)
+		{
+			glm::vec3 vec = rMesh->getVector()[i].Position;
+			verts[i] = float3(vec.x, vec.y, vec.z);
+		}
+		
+		math::AABB aabb;
+		math::OBB oobb;
+
+		math::float4x4 mat = math::float4x4::identity;
+		mat.Set(glm::value_ptr(GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		aabb.SetNegativeInfinity();
+		aabb.SetFrom(verts, arrsize);
+		oobb.SetFrom(aabb);
+		oobb.Transform(mat);
+
+		SetInitialAABB(aabb);
+		SetOOBB(oobb);
+		SetAABB(aabb);
+		delete[] verts;
 		
 		App->filesystem->SaveOwnFormat(this);
 		
