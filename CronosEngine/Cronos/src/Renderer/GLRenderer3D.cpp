@@ -79,7 +79,7 @@ namespace Cronos {
 		}
 
 		math::AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f));
-		RenderingOctree = CnOctree(OT_AABB, 5);
+		RenderingOctree = CnOctree(OT_AABB, 2);
 
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
