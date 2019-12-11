@@ -91,7 +91,7 @@ namespace Cronos {
 		{
 			m_GlobalTransformationMatrix = GOAttached_Parent->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix() * m_LocalTransformationMatrix;
 			
-			//Set OOBB transform (which will set AABB one)
+			//Set OOBB transform (which will set AABB one) - Parents one will be set in update
 			GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
 		}
 		else
