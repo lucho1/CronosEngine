@@ -29,6 +29,8 @@ namespace Cronos {
 		void ChangeProjection() { m_ChangeProj = true; }
 		inline Camera* GetCamera() { return this; }
 
+		const glm::vec3 RaycastForward();
+
 	private:
 
 		//Camera Methods
