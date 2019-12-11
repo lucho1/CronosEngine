@@ -19,6 +19,8 @@ namespace Cronos {
 		TransformComponent(GameObject* attachedGO, bool active = true);
 		~TransformComponent() {}
 
+		void Update(float dt) override;
+
 	public:
 
 		//Setters

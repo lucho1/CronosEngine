@@ -42,6 +42,7 @@ namespace Cronos {
 
 		const math::AABB GetAABB()					const { return m_AABB; }
 		const math::OBB GetOOBB()					const { return m_OOBB; }
+		const math::AABB GetInitialAABB()			const { return m_InitialAABB; }
 
 	public:
 

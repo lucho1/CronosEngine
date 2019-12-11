@@ -54,13 +54,13 @@ namespace Cronos {
 
 			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 			
-			//OOBB Draw
-			math::float3 corners[8] = { float3(0, 0, 0) };
-			m_OOBB.GetCornerPoints(corners);
-			max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
-			min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
-
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
+			////OOBB Draw
+			//math::float3 corners[8] = { float3(0, 0, 0) };
+			//m_OOBB.GetCornerPoints(corners);
+			//max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
+			//min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
+			//
+			//App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 		}
 	}
 

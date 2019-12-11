@@ -17,6 +17,22 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
+	void TransformComponent::Update(float dt)
+	{
+		//Update Parents' AABBs in function of their childs' AABBs
+		if (GetParent()->m_Childs.size() > 0)
+		{
+			math::AABB aabb;
+			aabb.SetNegativeInfinity();
+
+			for (auto child : GetParent()->m_Childs)
+				aabb.Enclose(child->GetAABB());
+
+			GetParent()->SetAABB(aabb);
+		}
+	}
+
+	//Transform setters ---------------------------------------------------------------------------
 	void TransformComponent::SetPosition(glm::vec3 position)
 	{
 		m_Translation = position;
@@ -40,6 +56,7 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
+	//Transform adders ----------------------------------------------------------------------------
 	void TransformComponent::Rotate(glm::vec3 euler_angles)
 	{
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
@@ -61,6 +78,7 @@ namespace Cronos {
 		UpdateTransform();
 	}
 
+	//Update Transform ------------------------------------------------------------------------------
 	void TransformComponent::UpdateTransform()
 	{
 		//Local transform
@@ -77,14 +95,10 @@ namespace Cronos {
 			GetParent()->SetOOBBTransform(m_GlobalTransformationMatrix);
 		}
 		else
-		{
-			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;
-		}
+			m_GlobalTransformationMatrix = m_LocalTransformationMatrix;		
 
 		//Update childs' transform
 		for (auto child : GetParent()->m_Childs)
 			child->GetComponent<TransformComponent>()->UpdateTransform();
-
-		
 	}
 }
