@@ -90,6 +90,7 @@ namespace Cronos {
 		void DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos);
 		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
 		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec, glm::vec3 color = glm::vec3(1.0f), float linewidth = 0.5f, glm::mat4 modelMat = glm::mat4(1.0f));
+		void DrawRotatedCube(glm::vec3 maxVec, glm::vec3 minVec, glm::quat rotation, glm::vec3 color = glm::vec3(1.0f), float linewidth = 0.5f);
 		void DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color = glm::vec3(1.0f), float linewidth = 1.0f, glm::mat4 modelMat = glm::mat4(1.0f));
 
 		bool& SetZBufferRendering() { return changeZBufferDrawing; }

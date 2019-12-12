@@ -60,7 +60,8 @@ namespace Cronos {
 			//max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			//min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
 			
-			//App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
+			//App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, GetComponent<TransformComponent>()->GetLocalTranformationMatrix());
+			//App->renderer3D->DrawRotatedCube(max, min, GetComponent<TransformComponent>()->GetOrientationQuaternion(), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 		}
 	}
 

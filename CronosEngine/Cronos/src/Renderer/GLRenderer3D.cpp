@@ -385,50 +385,40 @@ namespace Cronos {
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
 		glVertex3f(minVec.x, maxVec.y, maxVec.z);
-		glEnd();
 
 		//Front
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, 0.0f, 1.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, minVec.z);
-		glEnd();
 
 		//Right
-		glBegin(GL_QUADS);
 		glNormal3f(1.0f, 0.0f, 0.0f);
 
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, maxVec.z);
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
-		glEnd();
 
 		//Left
-		glBegin(GL_QUADS);
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, maxVec.z);
 		glVertex3f(minVec.x, minVec.y, maxVec.z);
-		glEnd();
 
 		//Bottom
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, -1.0f, 0.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, maxVec.z);
 		glVertex3f(minVec.x, minVec.y, maxVec.z);
-		glEnd();
 
 		//Back
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, 0.0f, -1.0f);
 
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
@@ -445,6 +435,20 @@ namespace Cronos {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
 		glLineWidth(m_DefaultLinewidth);
+	}
+
+	void GLRenderer3D::DrawRotatedCube(glm::vec3 maxVec, glm::vec3 minVec, glm::quat rotation, glm::vec3 color, float linewidth)
+	{
+		glm::quat q1 = glm::quat(0.0f, maxVec);
+		glm::quat q2 = glm::quat(0.0f, minVec);
+
+		glm::quat res1 = rotation * q1 * glm::conjugate(rotation);
+		glm::quat res2 = rotation * q2 * glm::conjugate(rotation);
+
+		glm::vec3 resVecMax = glm::vec3(res1.x, res1.y, res1.z);
+		glm::vec3 resVecMin = glm::vec3(res2.x, res2.y, res2.z);
+
+		DrawCube(resVecMax, resVecMin, color, linewidth);
 	}
 
 
