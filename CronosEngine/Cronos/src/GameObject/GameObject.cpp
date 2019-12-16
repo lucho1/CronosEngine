@@ -53,19 +53,20 @@ namespace Cronos {
 			glm::vec3 min = glm::vec3(m_AABB.minPoint.x, m_AABB.minPoint.y, m_AABB.minPoint.z);
 
 			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
-			
+
 			////OOBB Draw
 			//math::float3 corners[8] = { float3(0, 0, 0) };
 			//m_OOBB.GetCornerPoints(corners);
 			//max = glm::vec3(corners[7].x, corners[7].y, corners[7].z);
 			//min = glm::vec3(corners[0].x, corners[0].y, corners[0].z);
-			//
-			//App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
+			
+			//App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 1.0f, 0.0f), 2.0f, GetComponent<TransformComponent>()->GetLocalTranformationMatrix());
+			//App->renderer3D->DrawRotatedCube(max, min, GetComponent<TransformComponent>()->GetOrientationQuaternion(), glm::vec3(0.0f, 1.0f, 0.0f), 2.0f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 		}
 	}
 
 	//---------------------------------------------
-	void GameObject::Enable() 
+	void GameObject::Enable()
 	{
 		if (!m_Active)
 		{
@@ -90,7 +91,7 @@ namespace Cronos {
 	}
 
 	//---------------------------------------------
-	Component* GameObject::CreateComponent(ComponentType type) 
+	Component* GameObject::CreateComponent(ComponentType type)
 	{
 		Component* ret = nullptr;
 		switch (type)
@@ -122,8 +123,8 @@ namespace Cronos {
 		m_GameObjectID = App->m_RandomNumGenerator.GetIntRN();
 		m_MetaPath = App->filesystem->GetMetaPath() + std::to_string(m_GameObjectID) + ".model";
 
-		for (auto& childs : m_Childs) 
-			childs->SetNewID();		
+		for (auto& childs : m_Childs)
+			childs->SetNewID();
 	}
 
 	//---------------------------------------------
@@ -131,12 +132,6 @@ namespace Cronos {
 	{
 		//glm::mat4 Transformation = glm::translate(glm::mat4(1.0f), translation) *
 		//	glm::mat4_cast(orientation) * glm::scale(glm::mat4(1.0f), scale);
-		
-		//glm::mat4 resMat = glm::transpose(Transformation);
-		//
-		//math::float4x4 mat = math::float4x4::identity;
-		//mat.Set(glm::value_ptr(resMat));
-
 		glm::mat4 resMat = glm::transpose(transform);
 
 		/*glm::vec4 zRow = resMat[2];
@@ -156,7 +151,7 @@ namespace Cronos {
 
 		math::float4x4 mat = math::float4x4::identity;
 		mat.Set(glm::value_ptr(resMat));
-		
+
 		m_OOBB.SetFrom(m_InitialAABB);
 		m_OOBB.Transform(mat);
 		m_AABB.SetFrom(m_OOBB);

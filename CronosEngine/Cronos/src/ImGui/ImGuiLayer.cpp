@@ -13,6 +13,7 @@
 #include "Renderer/Buffers.h"
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/CameraComponent.h"
 
 #include <glad/glad.h>
 
@@ -761,24 +762,28 @@ namespace Cronos {
 		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
 
-			if (CurrentGameObject != nullptr) {
+			if (CurrentGameObject != nullptr)
+			{
 				ImGui::Checkbox(" ", &CurrentGameObject->SetActive()); ImGui::SameLine();
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
-				if (ImGui::InputText("###", buf1, 64)) {
+
+				if (ImGui::InputText("###", buf1, 64)) 
 					CurrentGameObject->SetName(buf1);
-				}
+				
 				ImGui::Separator();
 				GUIDrawTransformPMenu(CurrentGameObject);
 
-				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr)
 					GUIDrawMeshMenu(CurrentGameObject);
-				}
-
-				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+				
 				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) 
 						GUIDrawMaterialsMenu(CurrentGameObject);
-				}
+				
+				if (CurrentGameObject->GetComponent<CameraComponent>() != nullptr)
+					GUIDrawCameraComponentMenu(CurrentGameObject);
+
 			}
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
@@ -893,6 +898,63 @@ namespace Cronos {
 			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<MeshComponent>()->SetDrawAxis());
 
 			ImGui::Separator();
+		}
+	}
+
+	void ImGuiLayer::GUIDrawCameraComponentMenu(GameObject* CurrentGameObject)
+	{
+		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			CameraComponent* camera = CurrentGameObject->GetComponent<CameraComponent>();
+
+			static float CameraMoveSpeed = camera->GetCameraMoveSpeed();
+			static float CameraScrollSpeed = camera->GetCameraScrollSpeed();
+			static float CameraFieldOfView = camera->GetFOV();
+			static float CameraNearPlane = camera->GetNearPlane();
+			static float CameraFarPlane = camera->GetFarPlane();
+
+			//ImGui::Text("Camera Options");
+
+			//Setters -----------------------------------------------------------------------------------------
+			/*ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
+			if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+				camera->SetMoveSpeed(CameraMoveSpeed);
+
+			ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
+			if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+				camera->SetScrollSpeed(CameraScrollSpeed);*/
+
+			ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
+			if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+				camera->SetFOV(CameraFieldOfView);
+
+			ImGui::NewLine();
+			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
+				camera->SetNearPlane(CameraNearPlane);
+
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(100);
+			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
+				camera->SetFarPlane(CameraFarPlane);
+
+			//Set to default values ------------------------------------------------------------------------------
+			if (ImGui::Button("Default"))
+			{
+				//CameraMoveSpeed = 5.0;
+				//CameraScrollSpeed = 20.0;
+				CameraFieldOfView = 60.0f;
+				CameraNearPlane = 1.0f;
+				CameraFarPlane = 100.0f;
+				//App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+				//App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+				camera->SetFOV(CameraFieldOfView);
+				camera->SetNearPlane(CameraNearPlane);
+				camera->SetFarPlane(CameraFarPlane);
+
+			}
 		}
 	}
 
@@ -1724,13 +1786,13 @@ namespace Cronos {
 		ImGui::SameLine(30);
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
 			App->engineCamera->SetNearPlane(CameraNearPlane);
 
 		sameLine;
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
 			App->engineCamera->SetFarPlane(CameraFarPlane);
 
 		//Set to default values ------------------------------------------------------------------------------

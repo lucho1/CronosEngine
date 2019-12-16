@@ -29,9 +29,19 @@ namespace Cronos {
 		return m_Root->Insert(GObject);
 	}
 
-	std::vector<GameObject*> CnOctree::GetObjectsContained(math::AABB cubicSpace)
+	void CnOctree::TakeOut(GameObject* GObject)
+	{
+		m_Root->TakeOut(GObject);
+	}
+
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		return m_Root->GetObjectsContained(cubicSpace);
+	}
+
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		return m_Root->GetObjectsContained(cameraFrustum);
 	}
 
 
@@ -41,10 +51,11 @@ namespace Cronos {
 	{
 	}
 
-	std::vector<GameObject*> CnOT_Node::GetObjectsContained(math::AABB cubicSpace)
+
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (m_CubicSpace.Intersects(cubicSpace))
+		if (!m_CubicSpace.Intersects(cubicSpace) && !m_CubicSpace.Contains(cubicSpace))
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
@@ -71,6 +82,38 @@ namespace Cronos {
 		return objectsInside;
 	}
 
+
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		std::vector<GameObject*> objectsInside;
+		if (!m_CubicSpace.Intersects(cameraFrustum) && !m_CubicSpace.Contains(cameraFrustum))
+		{
+			LOG("No Objects intersecting this cube! Return value empty");
+			return objectsInside;
+		}
+
+		std::vector<GameObject*>::iterator it = GObjectsContained_Vector.begin();
+		for (; it != GObjectsContained_Vector.end(); it++)
+			objectsInside.push_back(*it);
+
+		if (m_ChildsQuantity > 0)
+		{
+			std::vector<GameObject*> childrenObjects;
+			for (uint i = 0; i < m_ChildsQuantity; i++)
+			{
+				std::vector<GameObject*>nodeObjs = m_Nodes[i].GetObjectsContained(cameraFrustum);
+				if (nodeObjs.size() > 0)
+					childrenObjects.insert(childrenObjects.begin(), nodeObjs.begin(), nodeObjs.end());
+			}
+
+			if (childrenObjects.size() > 0)
+				objectsInside.insert(objectsInside.begin(), childrenObjects.begin(), childrenObjects.end());
+		}
+
+		return objectsInside;
+	}
+
+
 	void CnOT_Node::Draw()
 	{
 		if (m_IsChild == false)
@@ -82,6 +125,7 @@ namespace Cronos {
 		App->renderer3D->DrawCube(max, min, glm::vec3(Red.r, Red.g, Red.b));
 	}
 
+
 	void CnOT_Node::CleanUp()
 	{
 		for (uint i = 0; i < m_ChildsQuantity; i++)
@@ -92,7 +136,26 @@ namespace Cronos {
 			delete[] m_Nodes;
 			m_Nodes = nullptr;
 		}
+		
+		GObjectsContained_Vector.clear();
 	}
+
+	void CnOT_Node::CleanNodes()
+	{
+		for (uint i = 0; i < m_ChildsQuantity; i++)
+			m_Nodes[i].CleanUp();
+
+		if (m_Nodes != nullptr)
+		{
+			delete[] m_Nodes;
+			m_Nodes = nullptr;
+		}
+
+		m_ChildsQuantity = 0;
+		if (m_NodeType != NodeType::ROOT)
+			m_NodeType = NodeType::CHILD;
+	}
+
 
 	void CnOT_Node::Split()
 	{
@@ -171,6 +234,7 @@ namespace Cronos {
 			m_Nodes[i] = CnOT_Node(children[i], NodeType::CHILD, m_MaxObjectsInside);
 	}
 
+
 	bool CnOT_Node::Insert(GameObject* GObj)
 	{
 		math::AABB GOAABB = GObj->GetAABB();
@@ -204,6 +268,8 @@ namespace Cronos {
 			GObjectsContained_Vector.push_back(GObj);
 			if (GObjectsContained_Vector.size() > m_MaxObjectsInside)
 			{
+				Split();
+
 				std::vector<GameObject*> newObjects = GObjectsContained_Vector;
 				GObjectsContained_Vector.clear();
 
@@ -227,8 +293,6 @@ namespace Cronos {
 					else if (nodesContained > 1)
 						GObjectsContained_Vector.push_back(newObjects[j]);
 				}
-
-				Split();
 			}
 			return true;
 		}
@@ -236,4 +300,39 @@ namespace Cronos {
 		return false;
 	}
 
+
+	void CnOT_Node::TakeOut(GameObject* GObject)
+	{
+		for (int i = 0; i < GObjectsContained_Vector.size(); ++i)
+		{
+			if (GObjectsContained_Vector[i] != GObject)
+				continue;
+
+			GObjectsContained_Vector.erase(GObjectsContained_Vector.begin() + i);
+			return;			
+		}
+
+		if (m_ChildsQuantity > 0)
+		{
+			for (int i = 0; i < m_ChildsQuantity; ++i)
+				m_Nodes[i].TakeOut(GObject);
+
+			//In case the subnodes are the leaves, and become empty
+			//after erasing the object, clear them
+			if (m_Nodes[0].m_NodeType == NodeType::CHILD)
+			{
+				bool nodesEmpty = true;
+				for (int i = 0; i < m_ChildsQuantity; ++i)
+				{
+					if (m_Nodes[i].GObjectsContained_Vector.empty() == false)
+					{
+						nodesEmpty = false;
+						break;
+					}
+				}
+				if (nodesEmpty)
+					CleanNodes();
+			}
+		}
+	}
 }

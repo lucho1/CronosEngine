@@ -123,23 +123,18 @@ namespace Cronos {
 		//int id = m_HouseModel->GetGOID();
 		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
 
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
-		m_GameObjects.push_back(m_StreetModel);
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
+		//m_GameObjects.push_back(m_StreetModel);
 
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
-
-		math::AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
-		OT_Test = CnOctree(OT_Test_AABB, 2);
 		return ret;
 	}
 
 	// Load assets
 	bool Scene::OnCleanUp()
 	{
-		OT_Test.CleanUp();
-
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
 		{
@@ -156,9 +151,6 @@ namespace Cronos {
 			it = m_TexturesLoaded.erase(it);
 		}
 		m_TexturesLoaded.clear();
-
-		RELEASE(BasicTestShader);
-
 		return true;
 	}
 
@@ -201,7 +193,7 @@ namespace Cronos {
 			ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
 
 			CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
-			App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
+			//App->renderer3D->SetRenderingCamera(*cameraComp->GetCamera());
 
 			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
@@ -237,27 +229,6 @@ namespace Cronos {
 				App->filesystem->SaveOwnFormat(App->EditorGUI->GetCurrentGameObject());
 				//ToCopy = nullptr;
 			}
-		}
-
-		//Octree Testing
-		OT_Test.Draw();
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			for (uint i = 0; i < m_GameObjects.size(); i++)
-			{
-				OT_Test.Insert(m_GameObjects[i]);
-
-				std::list<GameObject*>::iterator it = m_GameObjects[i]->m_Childs.begin();
-				for (; it != m_GameObjects[i]->m_Childs.end(); it++)
-					OT_Test.Insert(*it);
-			}
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN && OT_Test.IsSplitted())
-		{
-			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
-			OT_Test.CleanUp();
-			OT_Test = CnOctree(OT_Test_AABB, 2);
 		}
 
 		return UPDATE_CONTINUE;
@@ -303,8 +274,7 @@ namespace Cronos {
 
 		if (exists)
 		{
-			AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
-			OT_Test = CnOctree(OT_Test_AABB, 2);
+			App->renderer3D->ResetTree();
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;

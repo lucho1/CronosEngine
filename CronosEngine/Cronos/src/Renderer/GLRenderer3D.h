@@ -54,6 +54,11 @@ namespace Cronos {
 		//Renderer Public Methods
 		void RenderSubmit(GameObject* gameObject);
 		void OnResize(uint width, uint height);
+		
+		//Rendering Octree Methods
+		void InsertInTree(GameObject* gameObject)	{ m_RenderingOctree.Insert(gameObject); }
+		void RemoveFromTree(GameObject* gameObject)	{ m_RenderingOctree.TakeOut(gameObject); }
+		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
 
 		const glm::vec3 RaycastFromCamera(glm::vec3 camPos);
 
@@ -92,29 +97,42 @@ namespace Cronos {
 		void DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos);
 		void DrawFloorPlane(bool drawAxis = false, float size = 35.0f);
 		void DrawCube(glm::vec3 maxVec, glm::vec3 minVec, glm::vec3 color = glm::vec3(1.0f), float linewidth = 0.5f, glm::mat4 modelMat = glm::mat4(1.0f));
+		void DrawRotatedCube(glm::vec3 maxVec, glm::vec3 minVec, glm::quat rotation, glm::vec3 color = glm::vec3(1.0f), float linewidth = 0.5f);
 		void DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color = glm::vec3(1.0f), float linewidth = 1.0f, glm::mat4 modelMat = glm::mat4(1.0f));
 
-		bool& SetZBufferRendering() { return changeZBufferDrawing; }
-		void SetZBuffer() { changeZBufferDrawing = !changeZBufferDrawing; }
+		//Z Buffer Rendering
+		bool& SetZBufferRendering() { return m_ChangeZBufferDrawing; }
+		void SetZBuffer() { m_ChangeZBufferDrawing = !m_ChangeZBufferDrawing; }
 
+		//Chose camera to render from
 		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
+
+	private:
+
+		void Render(std::list<GameObject*>::iterator it);
 
 	public:
 
 		//Light lights[MAX_LIGHTS];
 		Light centerLight;
 		SDL_GLContext context;
-		
 
 	private:
+		
+		CnOctree m_RenderingOctree;
+		std::vector<GameObject*> m_ObjectsInOctreeNode;
+		std::list<GameObject*> m_RenderingList;
+		bool m_FrustumCulling = true;
+		bool m_OctreeAcceleratedFrustumCulling = false;
 
-		std::list<GameObject*>m_RenderingList;
-		bool drawZBuffer = false;
-		bool changeZBufferDrawing = false;
+		//ZBuffer rendering
+		bool m_DrawZBuffer = false;
+		bool m_ChangeZBufferDrawing = false;
 
 		//Current camera we're rendering with
 		Camera* m_CurrentCamera = nullptr;
 
+		//Other stuff
 		glm::mat4 fPlane = glm::mat4(1.0f);
 
 		bool m_VSyncActive;

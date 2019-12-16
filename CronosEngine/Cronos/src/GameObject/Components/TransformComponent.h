@@ -40,6 +40,7 @@ namespace Cronos {
 		const inline glm::vec3 GetTranslation()					const { return m_Translation; };
 		const inline glm::vec3 GetScale()						const { return m_Scale; };
 		const inline glm::vec3 GetOrientation()					const { return glm::degrees(m_EulerAngles); };
+		const inline glm::quat GetOrientationQuaternion()		const { return m_Orientation; }
 
 		const inline glm::mat4 GetLocalTranformationMatrix()	const { return m_LocalTransformationMatrix; }
 		const inline glm::mat4 GetGlobalTranformationMatrix()	const { return m_GlobalTransformationMatrix; }
