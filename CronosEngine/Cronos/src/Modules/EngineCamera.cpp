@@ -86,7 +86,7 @@ namespace Cronos {
 			//Pan with middle button of mouse
 			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 				Panning((float)App->input->GetMouseXMotion(), (float)App->input->GetMouseYMotion(), dt);
-
+			
 			//Select an object with LClick
 			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 				App->EditorGUI->SetSelectedGameObject(OnClickSelection());
@@ -193,14 +193,11 @@ namespace Cronos {
 
 	GameObject* EngineCamera::OnClickSelection()
 	{
-		//static glm::vec3 clickInitPos = glm::vec3(0.0f);
-		//static glm::vec3 clickEndPos = glm::vec3(0.0f);
-
 		glm::vec3 spawn = RaycastForward();
-		//clickInitPos = GetPosition();
-		//clickEndPos = spawn;
+		//vecToDraw = GetPosition();
+		//vecOrigin = spawn;
 		
-		for (auto GO : App->scene->m_GameObjects)
+		for (auto& GO : App->scene->m_GameObjects)
 		{
 			math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
 			if (GO->GetAABB().Intersects(ray))
@@ -216,14 +213,18 @@ namespace Cronos {
 			}
 		}
 
-		//App->renderer3D->DrawLine(clickInitPos, clickEndPos, glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+		return nullptr;
+	}
+
+	GameObject* EngineCamera::GetObjectFromSelection(GameObject* parent)
+	{
 		return nullptr;
 	}
 
 	const glm::vec3 EngineCamera::RaycastForward()
 	{
 		float mouseX = (2.0f * App->input->GetMouseX()) / App->window->GetWidth() - 1.0f;
-		float mouseY = 1.0f - (2.0f * App->input->GetMouseY()) / App->window->GetHeight() - 0.35f;
+		float mouseY = 1.0f - (2.0f * App->input->GetMouseY()) / App->window->GetHeight() - 0.6f;
 
 		//float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
 		//float mouseY = App->input->GetMouseY() / (App->window->GetHeight() * 0.5f) - 1.0f;

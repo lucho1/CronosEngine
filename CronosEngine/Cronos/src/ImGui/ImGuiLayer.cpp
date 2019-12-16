@@ -1871,7 +1871,8 @@ namespace Cronos {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9, 13));
 		if (ImGui::BeginPopupModal("##menuQuit",NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Text("Are you sure you want to quit? Have you saved it?");
+			ImGui::Text("Are you sure you want to quit?");
+			ImGui::Text("Have you saved ?");
 			ImGui::Separator();
 
 			//static bool dont_ask_me_next_time = false;
