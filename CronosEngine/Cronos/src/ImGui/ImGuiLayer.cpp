@@ -916,7 +916,7 @@ namespace Cronos {
 			//ImGui::Text("Camera Options");
 
 			//Setters -----------------------------------------------------------------------------------------
-			ImGui::NewLine();
+			/*ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
 			if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
 				camera->SetMoveSpeed(CameraMoveSpeed);
@@ -924,7 +924,7 @@ namespace Cronos {
 			ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
 			if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
-				camera->SetScrollSpeed(CameraScrollSpeed);
+				camera->SetScrollSpeed(CameraScrollSpeed);*/
 
 			ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
@@ -950,9 +950,9 @@ namespace Cronos {
 				CameraFarPlane = 100.0f;
 				//App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
 				//App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
-				App->engineCamera->SetFOV(CameraFieldOfView);
-				App->engineCamera->SetNearPlane(CameraNearPlane);
-				App->engineCamera->SetFarPlane(CameraFarPlane);
+				camera->SetFOV(CameraFieldOfView);
+				camera->SetNearPlane(CameraNearPlane);
+				camera->SetFarPlane(CameraFarPlane);
 
 			}
 		}
