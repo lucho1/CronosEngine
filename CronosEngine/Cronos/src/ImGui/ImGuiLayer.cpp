@@ -1092,6 +1092,19 @@ namespace Cronos {
 						PrimitivesMenu();
 						ImGui::EndMenu();
 					}
+
+					if (ImGui::MenuItem("Camera"))
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 0.5f, 0.5f, 0.8f });
+						ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
+						ret->GetComponent<MaterialComponent>()->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
+
+						CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+
+						ret->m_Components.push_back(cameraComp);
+						App->scene->m_GameObjects.push_back(ret);
+					}
+
 					ImGui::EndMenu();
 				}
 
