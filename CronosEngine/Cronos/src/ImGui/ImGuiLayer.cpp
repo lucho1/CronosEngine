@@ -798,12 +798,12 @@ namespace Cronos {
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			TransformComponent* test = CurrentGameObject->GetComponent<TransformComponent>();
-			ObjectPos =test->GetTranslation();
+			ObjectPos = test->GetTranslation();
+			ObjectGlobalPos = test->GetGlobalTranslation();
 			ObjectRot = test->GetOrientation();
 			ObjectScale = test->GetScale();
 
 			static bool toChange;
-			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectPos.x, 0.1f))toChange = true; ImGui::SameLine();
@@ -813,6 +813,17 @@ namespace Cronos {
 				test->SetPosition(ObjectPos);
 				toChange = false;
 			}
+
+			ImGui::Text("Global Position");
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectGlobalPos.x, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueY", &ObjectGlobalPos.y, 0.1f))toChange = true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueZ", &ObjectGlobalPos.z, 0.1f))toChange = true;
+			if (toChange) {
+				test->SetPosition(ObjectPos);
+				toChange = false;
+			}
+
+
 			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
