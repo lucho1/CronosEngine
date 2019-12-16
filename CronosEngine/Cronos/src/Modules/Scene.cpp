@@ -81,7 +81,7 @@ namespace Cronos {
 				{
 					color = u_AmbientColor;
 				}
-				
+
 				if(u_drawZBuffer == 1)
 				{
 					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
@@ -123,9 +123,9 @@ namespace Cronos {
 		//int id = m_HouseModel->GetGOID();
 		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
 
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
-		m_GameObjects.push_back(m_StreetModel);
-		
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
+		//m_GameObjects.push_back(m_StreetModel);
+
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
@@ -172,7 +172,7 @@ namespace Cronos {
 			ret->m_Components.push_back(cameraComp);
 			m_GameObjects.push_back(ret);
 		}
-		
+
 		if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>() != nullptr)
 			App->renderer3D->SetRenderingCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
 		else if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
