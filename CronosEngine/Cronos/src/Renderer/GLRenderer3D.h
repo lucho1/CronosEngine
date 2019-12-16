@@ -59,9 +59,7 @@ namespace Cronos {
 		void InsertInTree(GameObject* gameObject)	{ m_RenderingOctree.Insert(gameObject); }
 		void RemoveFromTree(GameObject* gameObject)	{ m_RenderingOctree.TakeOut(gameObject); }
 		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
-
-		const glm::vec3 RaycastFromCamera(glm::vec3 camPos);
-
+		
 	public:
 
 		//Setters

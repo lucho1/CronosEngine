@@ -28,6 +28,7 @@ namespace Cronos {
 		virtual void LoadModuleData(json& JSONFile) override;
 
 	public:
+
 		//The window we'll be rendering to
 		SDL_Window* window = nullptr;
 

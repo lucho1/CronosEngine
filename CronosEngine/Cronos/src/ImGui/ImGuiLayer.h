@@ -59,7 +59,7 @@ namespace Cronos {
 		GameObject* GetCurrentGameObject() { return CurrentGameObject; }
 		void CancelGameObject() { CurrentGameObject = nullptr; }
 
-		void SetSelectedGameObject(GameObject* gameObject) { CurrentGameObject = gameObject; nodeHirearchySelected = gameObject->GetGOID(); }
+		void SetSelectedGameObject(GameObject* gameObject);
 
 		void AddLog(std::string log);
 		inline bool isHoveringWinGame() const { return HoverGameWin; }

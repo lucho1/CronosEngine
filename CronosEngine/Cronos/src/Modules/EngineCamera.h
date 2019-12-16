@@ -29,12 +29,14 @@ namespace Cronos {
 		void ChangeProjection() { m_ChangeProj = true; }
 		inline Camera* GetCamera() { return this; }
 
-		const glm::vec3 RaycastForward();
-
 	private:
 
 		//Camera Methods
 		glm::vec3 MouseRotation(const glm::vec3& pos, const glm::vec3& ref);
+		
+		//Returns a ray (vec3) that goes from camera pos in forward direction and has length of far plane distance
+		const glm::vec3 RaycastForward();
+		GameObject* OnClickSelection();
 
 	private:
 

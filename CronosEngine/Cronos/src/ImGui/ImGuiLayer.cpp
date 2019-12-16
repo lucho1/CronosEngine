@@ -343,6 +343,15 @@ namespace Cronos {
 		ImGui::EndDragDropSource();
 	}
 
+	void ImGuiLayer::SetSelectedGameObject(GameObject* gameObject)
+	{
+		if (!gameObject)
+			return;
+
+		CurrentGameObject = gameObject;
+		nodeHirearchySelected = gameObject->GetGOID();
+	}
+
 	update_status ImGuiLayer::OnPreUpdate(float dt) {
 		if (ShowDrawGameWindow)
 			m_SceneWindow->PreUpdate();
@@ -1069,7 +1078,6 @@ namespace Cronos {
 
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
-
 			if (ImGui::BeginMenuBar()) {
 
 				if (ImGui::BeginMenu("Create")) {
@@ -1091,7 +1099,8 @@ namespace Cronos {
 			}
 			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 0.70f));
 
-			for (auto&go : App->scene->m_GameObjects) {
+			for (auto&go : App->scene->m_GameObjects)
+			{
 				std::string GameObject_Name = go->GetName();
 				std::string ID = std::to_string(go->GetGOID());
 				ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -1862,7 +1871,7 @@ namespace Cronos {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(9, 13));
 		if (ImGui::BeginPopupModal("##menuQuit",NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::Text("Are you sure you want to quit?");
+			ImGui::Text("Are you sure you want to quit? Have you saved it?");
 			ImGui::Separator();
 
 			//static bool dont_ask_me_next_time = false;

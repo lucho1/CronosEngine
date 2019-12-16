@@ -161,47 +161,7 @@ namespace Cronos {
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-		static glm::vec3 clickInitPos = glm::vec3(0.0f);
-		static glm::vec3 clickEndPos = glm::vec3(0.0f);
-
-		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
-		{
-			glm::vec3 camPos = App->engineCamera->GetPosition();
-			glm::vec3 spawn = App->renderer3D->RaycastFromCamera(camPos);
-			clickInitPos = camPos;
-			clickEndPos = spawn;
-
-			for (auto GO : m_GameObjects)
-			{
-				math::LineSegment ray = math::LineSegment(float3(camPos.x, camPos.y, camPos.z), float3(spawn.x, spawn.y, spawn.z));
-				if (GO->GetAABB().Intersects(ray))
-				{
-					if (GO->m_Childs.size() > 0)
-					{
-						for (auto GOChild : GO->m_Childs)
-						{
-							if (GOChild->GetAABB().Intersects(ray))
-							{
-								App->EditorGUI->SetSelectedGameObject(GOChild);
-								break;
-							}
-						}
-
-						break;
-					}
-					else
-					{
-						App->EditorGUI->SetSelectedGameObject(GO);
-						break;
-					}
-				}
-			}
-
-		}
-
-		App->renderer3D->DrawLine(clickInitPos, clickEndPos, glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
-
-
+		//Creating Camera
 		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 		{
 			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 1,1,1 });

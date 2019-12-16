@@ -227,17 +227,6 @@ namespace Cronos {
 		App->engineCamera->ChangeProjection();
 	}
 
-	//Cast a Ray from camera
-	const glm::vec3 GLRenderer3D::RaycastFromCamera(glm::vec3 camPos)
-	{
-		//return App->engineCamera->CreateRay() + glm::vec3(0, 0, 5);
-		glm::vec3 dir = App->engineCamera->RaycastForward();
-		float dist = App->engineCamera->GetFarPlane();
-
-		//dir.z *= 2.0f;
-
-		return camPos + dir * dist; //Ray End
-	}
 
 	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color, float linewidth, glm::mat4 modelMat)

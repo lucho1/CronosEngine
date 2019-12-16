@@ -69,9 +69,9 @@ namespace Cronos {
 
 
 				//Take a look here and previous camera if Up movement doesn't work
-				if (App->input->GetKey(SDL_SCANCODE_T) == KEY_REPEAT)
+				if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 					Move(CameraMovement::CAMMOVE_UP, speedup, dt);
-				if (App->input->GetKey(SDL_SCANCODE_G) == KEY_REPEAT)
+				if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
 					Move(CameraMovement::CAMMOVE_DOWN, speedup, dt);
 
 				//m_Position = m_Target + Rotate(m_Position, m_Target);
@@ -86,6 +86,10 @@ namespace Cronos {
 			//Pan with middle button of mouse
 			if (App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT)
 				Panning((float)App->input->GetMouseXMotion(), (float)App->input->GetMouseYMotion(), dt);
+
+			//Select an object with LClick
+			if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+				App->EditorGUI->SetSelectedGameObject(OnClickSelection());
 
 			//ALT Functionality (orbit)
 			if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
@@ -187,6 +191,35 @@ namespace Cronos {
 		return refPos;
 	}
 
+	GameObject* EngineCamera::OnClickSelection()
+	{
+		//static glm::vec3 clickInitPos = glm::vec3(0.0f);
+		//static glm::vec3 clickEndPos = glm::vec3(0.0f);
+
+		glm::vec3 spawn = RaycastForward();
+		//clickInitPos = GetPosition();
+		//clickEndPos = spawn;
+		
+		for (auto GO : App->scene->m_GameObjects)
+		{
+			math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
+			if (GO->GetAABB().Intersects(ray))
+			{
+				if (GO->m_Childs.size() > 0)
+				{
+					for (auto GOChild : GO->m_Childs)
+						if (GOChild->GetAABB().Intersects(ray))
+							return GOChild;
+				}
+				else
+					return GO;
+			}
+		}
+
+		//App->renderer3D->DrawLine(clickInitPos, clickEndPos, glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+		return nullptr;
+	}
+
 	const glm::vec3 EngineCamera::RaycastForward()
 	{
 		float mouseX = (2.0f * App->input->GetMouseX()) / App->window->GetWidth() - 1.0f;
@@ -197,17 +230,15 @@ namespace Cronos {
 
 		glm::vec4 rayClip = glm::vec4(mouseX, mouseY, -1.0f, 1.0f);
 
-		glm::mat4 proj = App->engineCamera->GetProjectionMatrix();
-		glm::mat4 view = App->engineCamera->GetViewMatrix();
-
-		glm::vec4 rayEye = glm::inverse(proj) * rayClip;
+		glm::vec4 rayEye = glm::inverse(GetProjectionMatrix()) * rayClip;
 		rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
 
-		glm::vec4 rayWorld = glm::inverse(view) * rayEye;
-		glm::vec3 dir = glm::normalize(rayWorld);
+		glm::vec4 rayWorld = glm::inverse(GetViewMatrix()) * rayEye;
+		glm::vec3 dir = glm::normalize(rayWorld); //This are the screen coordinates (of mouse) converted into worldPos as a forward direction
 
-		return dir;
-
+		return GetPosition() + dir * GetFarPlane(); //Ray End -- distance or length = FarPlane, so it gives a vec3 going from pos to farplane in forward direction
+	
+	
 		// -------------------------------------------------------------------------------------------
 		// -------------------------------------------------------------------------------------------
 		/*//float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
@@ -234,6 +265,7 @@ namespace Cronos {
 
 		return dir;*/
 	}
+
 
 	// -----------------------------------------------------------------
 	//Save/Load
