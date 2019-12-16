@@ -197,28 +197,50 @@ namespace Cronos {
 		//vecToDraw = GetPosition();
 		//vecOrigin = spawn;
 		
+		//TODO: Once Rendering octree is fixed, do this with objects in visible nodes
 		for (auto& GO : App->scene->m_GameObjects)
 		{
+			//if (!GO->GetAABB().Intersects(*GetFrustum())) //What if parent is outside frustum and child isn't?
+			//	continue;
+
+			GameObject* SelectedGobj = nullptr;
 			math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
 			if (GO->GetAABB().Intersects(ray))
-			{
-				if (GO->m_Childs.size() > 0)
-				{
-					for (auto GOChild : GO->m_Childs)
-						if (GOChild->GetAABB().Intersects(ray))
-							return GOChild;
-				}
-				else
-					return GO;
-			}
+				SelectedGobj = GetObjectFromSelection(GO, ray);
+
+			if (SelectedGobj)
+				return SelectedGobj;
 		}
 
 		return nullptr;
 	}
 
-	GameObject* EngineCamera::GetObjectFromSelection(GameObject* parent)
+	GameObject* EngineCamera::GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting)
 	{
-		return nullptr;
+		if (parent->m_Childs.size() > 0)
+		{
+			for (auto& child : parent->m_Childs)
+			{
+				//if (!child->GetAABB().Intersects(*GetFrustum()))
+				//	continue;
+
+				GameObject* SelectedGobj = nullptr;
+				if (child->GetAABB().Intersects(rayIntersecting))
+					SelectedGobj = GetObjectFromSelection(child, rayIntersecting);
+
+				if (SelectedGobj && child->GetAABB().Intersects(*GetFrustum()) && SelectedGobj->GetComponent<MeshComponent>())
+					return SelectedGobj;
+			}
+
+			if (!parent->GetComponent<MeshComponent>() || !parent->GetAABB().Intersects(*GetFrustum()))
+				return nullptr;
+
+			return parent;
+		}
+		else if(!parent->GetComponent<MeshComponent>())
+			return nullptr;
+		else
+			return parent;
 	}
 
 	const glm::vec3 EngineCamera::RaycastForward()

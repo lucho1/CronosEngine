@@ -114,10 +114,10 @@ namespace Cronos {
 		//Light lights[MAX_LIGHTS];
 		Light centerLight;
 		SDL_GLContext context;
+		CnOctree m_RenderingOctree;
 
 	private:
 		
-		CnOctree m_RenderingOctree;
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
 		std::list<GameObject*> m_RenderingList;
 		bool m_FrustumCulling = true;
