@@ -47,7 +47,10 @@ namespace Cronos {
 
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 euler_angles)
-	{		
+	{	
+		if (euler_angles.x > 0.0f || euler_angles.y > 0.0f || euler_angles.z > 0.0f)
+			int a = 0;
+
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
 		

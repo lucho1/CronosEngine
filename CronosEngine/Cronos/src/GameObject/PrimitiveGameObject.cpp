@@ -11,7 +11,7 @@ namespace Cronos {
 
 	// --------------------------------- PRIMITIVE MODEL ---------------------------------
 	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, const std::string& name, glm::vec3 size, glm::vec3 position, float radius, int figure_slices, int figure_stacks)
-		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), ""), m_PrimitiveType(primitve_type)
+		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), "", true, position, glm::vec3(0.0f), size), m_PrimitiveType(primitve_type)
 	{
 		if (primitve_type == PrimitiveType::DISK || primitve_type == PrimitiveType::ROCK || primitve_type == PrimitiveType::SUBDIVIDED_SPHERE)
 		{

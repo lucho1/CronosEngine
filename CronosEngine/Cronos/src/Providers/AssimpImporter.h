@@ -27,14 +27,11 @@ namespace Cronos {
 		void ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj);
 		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj, aiNode* as_node);
 
-		Texture * LoadTextures(aiMaterial* material, TextureType TexType, const std::string& GOPath);
+		Texture* LoadTextures(aiMaterial* material, TextureType TexType, const std::string& GOPath);
 
 	private:
 
 		uint MeshNum = 0;
-		glm::vec3 m_AABB_MinVec;
-		glm::vec3 m_AABB_MaxVec;
-
 	};
 
 }

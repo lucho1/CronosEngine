@@ -51,8 +51,12 @@ namespace Cronos {
 			//AABB Draw
 			glm::vec3 max = glm::vec3(m_AABB.maxPoint.x, m_AABB.maxPoint.y, m_AABB.maxPoint.z);
 			glm::vec3 min = glm::vec3(m_AABB.minPoint.x, m_AABB.minPoint.y, m_AABB.minPoint.z);
+			glm::vec3 color = glm::vec3(0.93f, 0.93f, 0.93f);
 
-			App->renderer3D->DrawCube(max, min, glm::vec3(0.0f, 0.0, 1.0f), 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
+			if (App->EditorGUI->GetCurrentGameObject() == this)
+				color = glm::vec3(0.87f, 0.83f, 0.04f);
+
+			App->renderer3D->DrawCube(max, min, color, 1.2f/*, GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()*/);
 
 			////OOBB Draw
 			//math::float3 corners[8] = { float3(0, 0, 0) };

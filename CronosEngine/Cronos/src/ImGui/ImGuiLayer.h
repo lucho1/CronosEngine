@@ -59,8 +59,9 @@ namespace Cronos {
 		GameObject* GetCurrentGameObject() { return CurrentGameObject; }
 		void CancelGameObject() { CurrentGameObject = nullptr; }
 
-		void AddLog(std::string log);
+		void SetSelectedGameObject(GameObject* gameObject) { CurrentGameObject = gameObject; nodeHirearchySelected = gameObject->GetGOID(); }
 
+		void AddLog(std::string log);
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
 	private:
@@ -184,7 +185,6 @@ namespace Cronos {
 
 		//For transformations
 		glm::vec3 ObjectPos;
-		glm::vec3 ObjectGlobalPos;
 		glm::vec3 ObjectRot;
 		glm::vec3 ObjectScale;
 	};

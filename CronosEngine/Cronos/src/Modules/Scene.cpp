@@ -123,7 +123,7 @@ namespace Cronos {
 		//int id = m_HouseModel->GetGOID();
 		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
 
-		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/bakerhouse/BakerHouse.FBX"));
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
 
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
@@ -161,32 +161,47 @@ namespace Cronos {
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-		static PrimitiveGameObject* linetoPrimitive = nullptr;
-		static glm::vec3 posspawned = glm::vec3(0.0f);
+		static glm::vec3 clickInitPos = glm::vec3(0.0f);
+		static glm::vec3 clickEndPos = glm::vec3(0.0f);
 
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 		{
 			glm::vec3 camPos = App->engineCamera->GetPosition();
 			glm::vec3 spawn = App->renderer3D->RaycastFromCamera(camPos);
-			posspawned = camPos;
-
-			PrimitiveGameObject* GOQuad = new PrimitiveGameObject(PrimitiveType::CUBE, "Instcube", { 1, 1, 1 }, spawn);
-			linetoPrimitive = GOQuad;
-			//m_GameObjects.push_back(GOQuad);
+			clickInitPos = camPos;
+			clickEndPos = spawn;
 
 			for (auto GO : m_GameObjects)
 			{
 				math::LineSegment ray = math::LineSegment(float3(camPos.x, camPos.y, camPos.z), float3(spawn.x, spawn.y, spawn.z));
 				if (GO->GetAABB().Intersects(ray))
 				{
-					int a = 1;
-					break;
+					if (GO->m_Childs.size() > 0)
+					{
+						for (auto GOChild : GO->m_Childs)
+						{
+							if (GOChild->GetAABB().Intersects(ray))
+							{
+								App->EditorGUI->SetSelectedGameObject(GOChild);
+								break;
+							}
+						}
+
+						break;
+					}
+					else
+					{
+						App->EditorGUI->SetSelectedGameObject(GO);
+						break;
+					}
 				}
 			}
+
 		}
 
-		if(linetoPrimitive != nullptr)
-			App->renderer3D->DrawLine(posspawned, linetoPrimitive->GetComponent<TransformComponent>()->GetTranslation(), glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+		App->renderer3D->DrawLine(clickInitPos, clickEndPos, glm::vec3(1.0f, 1.0f, 0.0f), 3.0f);
+
+
 		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 		{
 			PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 1,1,1 });

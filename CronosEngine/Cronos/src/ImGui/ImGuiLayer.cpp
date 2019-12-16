@@ -799,7 +799,6 @@ namespace Cronos {
 		{
 			TransformComponent* test = CurrentGameObject->GetComponent<TransformComponent>();
 			ObjectPos = test->GetTranslation();
-			ObjectGlobalPos = test->GetGlobalTranslation();
 			ObjectRot = test->GetOrientation();
 			ObjectScale = test->GetScale();
 
@@ -809,40 +808,36 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectPos.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueY", &ObjectPos.y, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueZ", &ObjectPos.z, 0.1f))toChange=true;
-			if (toChange) {
+			
+			if (toChange)
+			{
 				test->SetPosition(ObjectPos);
 				toChange = false;
 			}
-
-			ImGui::Text("Global Position");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectGlobalPos.x, 0.1f))toChange = true; ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueY", &ObjectGlobalPos.y, 0.1f))toChange = true; ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueZ", &ObjectGlobalPos.z, 0.1f))toChange = true;
-			if (toChange) {
-				test->SetPosition(ObjectPos);
-				toChange = false;
-			}
-
 
 			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, 0.1f))toChange = true;
-			if (toChange) {
+			
+			if (toChange)
+			{
 				test->SetOrientation(ObjectRot);
 				toChange = false;
 			}
+
 			ImGui::Text("Scale");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f))toChange=true;
-			if (toChange) {
+			
+			if (toChange)
+			{
 				test->SetScale(ObjectScale);
 				toChange = false;
 			}
-			//CurrentGameObject->GetComponent<TransformComponent>()->SetScale(ObjectScale);
-
 		}
+
 		ImGui::Separator();
 	}
 

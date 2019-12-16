@@ -189,11 +189,11 @@ namespace Cronos {
 
 	const glm::vec3 EngineCamera::RaycastForward()
 	{
-		//float mouseX = (2.0f * App->input->GetMouseX()) / App->window->GetWidth() - 1.0f;
-		//float mouseY = 1.0f - (2.0f * App->input->GetMouseY()) / App->window->GetHeight();
+		float mouseX = (2.0f * App->input->GetMouseX()) / App->window->GetWidth() - 1.0f;
+		float mouseY = 1.0f - (2.0f * App->input->GetMouseY()) / App->window->GetHeight() - 0.35f;
 
-		float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
-		float mouseY = App->input->GetMouseY() / (App->window->GetHeight() * 0.5f) - 1.0f;
+		//float mouseX = App->input->GetMouseX() / (App->window->GetWidth()  * 0.5f) - 1.0f;
+		//float mouseY = App->input->GetMouseY() / (App->window->GetHeight() * 0.5f) - 1.0f;
 
 		glm::vec4 rayClip = glm::vec4(mouseX, mouseY, -1.0f, 1.0f);
 
