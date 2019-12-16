@@ -55,7 +55,7 @@ namespace Cronos {
 	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (!m_CubicSpace.Intersects(cubicSpace) || !m_CubicSpace.Contains(cubicSpace))
+		if (!m_CubicSpace.Intersects(cubicSpace) && !m_CubicSpace.Contains(cubicSpace))
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
@@ -86,7 +86,7 @@ namespace Cronos {
 	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::Frustum cameraFrustum)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (!m_CubicSpace.Intersects(cameraFrustum) || !m_CubicSpace.Contains(cameraFrustum))
+		if (!m_CubicSpace.Intersects(cameraFrustum) && !m_CubicSpace.Contains(cameraFrustum))
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
@@ -138,8 +138,6 @@ namespace Cronos {
 		}
 		
 		GObjectsContained_Vector.clear();
-		//if (m_NodeType != NodeType::ROOT)
-		//	m_NodeType = NodeType::CHILD;
 	}
 
 	void CnOT_Node::CleanNodes()

@@ -151,9 +151,6 @@ namespace Cronos {
 			it = m_TexturesLoaded.erase(it);
 		}
 		m_TexturesLoaded.clear();
-
-		RELEASE(BasicTestShader);
-
 		return true;
 	}
 
@@ -208,26 +205,6 @@ namespace Cronos {
 			}
 		}
 
-		//Octree Testing
-		/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			for (uint i = 0; i < m_GameObjects.size(); i++)
-			{
-				OT_Test.Insert(m_GameObjects[i]);
-
-				std::list<GameObject*>::iterator it = m_GameObjects[i]->m_Childs.begin();
-				for (; it != m_GameObjects[i]->m_Childs.end(); it++)
-					OT_Test.Insert(*it);
-			}
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN && OT_Test.IsSplitted())
-		{
-			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
-			OT_Test.CleanUp();
-			OT_Test = CnOctree(OT_Test_AABB, 2);
-		}*/
-
 		return UPDATE_CONTINUE;
 	}
 
@@ -271,8 +248,7 @@ namespace Cronos {
 
 		if (exists)
 		{
-			//AABB OT_Test_AABB = math::AABB(math::float3(-50.0f), math::float3(50.0f));
-			//OT_Test = CnOctree(OT_Test_AABB, 2);
+			App->renderer3D->ResetTree();
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;

@@ -98,8 +98,8 @@ namespace Cronos {
 		//Update Octree
 		if (GetParent())
 		{
-			App->renderer3D->RenderingOctree.TakeOut(GetParent());
-			App->renderer3D->RenderingOctree.Insert(GetParent());
+			App->renderer3D->RemoveFromTree(GetParent());
+			App->renderer3D->InsertInTree(GetParent());
 		}
 
 		//Update childs' transform

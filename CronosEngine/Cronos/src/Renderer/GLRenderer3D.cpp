@@ -78,12 +78,23 @@ namespace Cronos {
 		//	lights[0].Active(true);
 		}
 
-		math::AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f));
-		RenderingOctree = CnOctree(OT_AABB, 2);
+		ResetTree();
 
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
 		return ret;
+	}
+
+	// Called before quitting
+	bool GLRenderer3D::OnCleanUp()
+	{
+		LOG("Destroying 3D Renderer");
+
+		m_RenderingOctree.CleanUp();
+		RELEASE(App->scene->BasicTestShader);
+		SDL_GL_DeleteContext(context);
+
+		return true;
 	}
 
 	// PreUpdate: clear buffer
@@ -98,7 +109,7 @@ namespace Cronos {
 		centerLight.SetPos(p.x, p.y, p.z);
 		centerLight.Render();
 
-		ObjectsInOctreeNode = RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
+		m_ObjectsInOctreeNode = m_RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
 		
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
@@ -110,7 +121,7 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
 		DrawFloorPlane(true);
-		RenderingOctree.Draw();
+		m_RenderingOctree.Draw();
 
 		//Wireframe Mode (or not) ------------------------------------------------------------
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
@@ -128,25 +139,22 @@ namespace Cronos {
 		App->scene->BasicTestShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
 		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
 
-		if (changeZBufferDrawing)
+		if (m_ChangeZBufferDrawing)
 		{
-			changeZBufferDrawing = false;
-			drawZBuffer = !drawZBuffer;
+			m_ChangeZBufferDrawing = false;
+			m_DrawZBuffer = !m_DrawZBuffer;
 
-			if (drawZBuffer)
+			if (m_DrawZBuffer)
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
 			else
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
 		}
-		if (drawZBuffer)
+		if (m_DrawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
 
 		//Objects Rendering -----------------------------------------------------------------
-		/*bool m_FrustumCulling = true;
-		bool m_OctreeAcceleratedFrustumCulling = true;*/
-
-		if (!m_FrustumCulling)
+		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
 		{
 			std::list<GameObject*>::iterator it = m_RenderingList.begin();
 			for (; it != m_RenderingList.end(); it++)
@@ -154,34 +162,41 @@ namespace Cronos {
 		}
 		else
 		{
-			if (m_OctreeAcceleratedFrustumCulling)
+			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			for (; it != m_RenderingList.end(); it++)
 			{
-				//std::vector<GameObject*> GObjs;
-				//GObjs = RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
-				std::list<GameObject*>::iterator it = m_RenderingList.begin();
-				for (; it != m_RenderingList.end(); it++)
-					Render(it);
-			}
-			else
-			{
-				std::list<GameObject*>::iterator it = m_RenderingList.begin();
-				for (; it != m_RenderingList.end(); it++)
-				{
-					if (!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
-						!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
-						continue;
+				if (!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
+					!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
+					continue;
 
-					Render(it);
-				}
+				Render(it);
 			}
-		}		
+		}
 
 		App->scene->BasicTestShader->Unbind();
 		m_RenderingList.clear();
-		ObjectsInOctreeNode.clear();
 
 		//SDL_GL_SwapWindow(App->window->window);
 		return UPDATE_CONTINUE;
+	}
+
+	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
+	{
+		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !m_ObjectsInOctreeNode.empty())
+		{
+			//You can also do:
+			//auto item = std::find_if(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
+			//	[&gameObject](GameObject* obj) {return obj;});
+			//
+			//if(item != ObjectsInOctreeNode.end())
+			//	m_RenderingList.push_back(gameObject);
+
+			auto item = std::find(m_ObjectsInOctreeNode.begin(), m_ObjectsInOctreeNode.end(), gameObject);
+			if (item != m_ObjectsInOctreeNode.end())
+				m_RenderingList.push_back(gameObject);
+		}
+		else
+			m_RenderingList.push_back(gameObject);
 	}
 
 	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
@@ -202,55 +217,6 @@ namespace Cronos {
 			material->Unbind();
 
 		VAO->UnBind();
-	}
-
-	// Called before quitting
-	bool GLRenderer3D::OnCleanUp()
-	{
-		LOG("Destroying 3D Renderer");
-		RenderingOctree.CleanUp();
-		SDL_GL_DeleteContext(context);
-		return true;
-	}
-
-
-	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
-	{
-		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !ObjectsInOctreeNode.empty())
-		{
-			auto item = std::find_if(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
-				[&gameObject](GameObject* obj) {return obj; });
-
-			if(item != ObjectsInOctreeNode.end())
-				m_RenderingList.push_back(gameObject);
-
-			//You can also do:
-			/*auto item = std::find(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
-				gameObject);
-
-			if(item != ObjectsInOctreeNode.end())
-				m_RenderingList.push_back(gameObject);*/
-
-			/*
-			
-			std::vector<Type> v = ....;
-			std::string myString = ....;
-			auto it = find_if(v.begin(), v.end(), [&myString](const Type& obj) {return obj.getName() == myString;})
-			
-			if (it != v.end())
-			{
-			  // found element. it is an iterator to the first matching element.
-			  // if you really need the index, you can also get it:
-			  auto index = std::distance(v.begin(), it);
-			}
-			
-
-			*/
-		}
-		else
-			m_RenderingList.push_back(gameObject);
-
-	//	m_RenderingList.push_back(gameObject);
 	}
 
 
