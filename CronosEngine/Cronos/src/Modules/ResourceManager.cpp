@@ -40,13 +40,14 @@ namespace Cronos {
 		return false;
 	}
 
-	ResourceMesh * ResourceManager::getMeshResource(uint resID)
+	ResourceMesh* ResourceManager::getMeshResource(uint resID)
 	{
-		for (auto&res : m_ResourceList) {
+		for (auto& res : m_ResourceList)
+		{
 			if (res->GetResID() == resID)
 				return (ResourceMesh*)res;
 		}
+
 		return nullptr;
 	}
-
 }

@@ -63,8 +63,7 @@ namespace Cronos {
 		GameObject* mother_GO = new GameObject(GOName, App->m_RandomNumGenerator.GetIntRN(), filepath.substr(0, filepath.find_last_of('/')));
 
 		//If all is correct, we process all the nodes passing the first one (root)
-		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
-		App->filesystem->SaveOwnFormat(mother_GO);
+		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);		
 
 		//Mother's AABB
 		math::AABB mother_aabb;
@@ -76,10 +75,13 @@ namespace Cronos {
 
 		mother_GO->SetAABB(mother_aabb);
 		mother_GO->SetOOBB(mother_aabb);
+		mother_GO->SetInitialAABB(mother_aabb);
 
+		//Abd save in own format
+		App->filesystem->SaveOwnFormat(mother_GO);
 
 		//For the parent AABB, I'll just get the first child's AABB
-		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
+		//auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
 
 		//aiReleaseImport(scene);
 		// detach log stream
@@ -273,7 +275,8 @@ namespace Cronos {
 		}
 
 		//Set the GO AABB and finally push it to the mother's child list
-		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+
+		//rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 
 		float size = rMesh->getVector().size();
 		math::float3* verts = new math::float3[size];

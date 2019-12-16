@@ -105,7 +105,7 @@ namespace Cronos {
 		int m_GameObjectID;
 
 		math::OBB m_OOBB;
-		math::AABB m_AABB;		
+		math::AABB m_AABB;
 		math::AABB m_InitialAABB;
 	};
 
