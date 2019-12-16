@@ -45,7 +45,7 @@ namespace Cronos {
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 			{
 				//Applying extra impulse if LShift is pressed
-				bool speedup = false;
+				static bool speedup = false;
 				if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN)
 					speedup = true;
 				else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
