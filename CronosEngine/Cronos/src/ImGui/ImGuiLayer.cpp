@@ -612,6 +612,11 @@ namespace Cronos {
 			HoverGameWin = false;
 
 		m_SceneWindow->PostUpdate();
+
+		//TODO: Make this nicer xddd
+		if (App->engineCamera->m_ScrollingSpeedChange)
+			ImGui::Text("Camera Speed Multiplicator: x%.2f", App->engineCamera->GetSpeedMultiplicator());
+
 		ImGui::End();
 	}
 

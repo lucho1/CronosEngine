@@ -47,6 +47,7 @@ namespace Cronos {
 
 		inline const float GetCameraMoveSpeed()			const { return m_MoveSpeed; }
 		inline const float GetCameraScrollSpeed()		const { return m_ScrollSpeed; }
+		inline const float GetSpeedMultiplicator()		const { return m_SpeedMultiplicator; }
 
 		inline math::Frustum* GetFrustum()				{ return &m_CamFrustum; }
 
@@ -102,11 +103,14 @@ namespace Cronos {
 
 		math::Frustum m_CamFrustum;
 
+		float m_SpeedMultiplicator = 1.0f;
+		float m_ScrollSpeed = 3.5f;
+		
 	private:
 
 		//Camera Common data
 		float m_NearPlane = 1.0f, m_FarPlane = 100.0f, m_FOV = 60.0f;
-		float m_MoveSpeed = 10.0f, m_ScrollSpeed = 3.5f;
+		float m_MoveSpeed = 10.0f;
 
 		float m_FocusDistance = 20.0f;		
 	};

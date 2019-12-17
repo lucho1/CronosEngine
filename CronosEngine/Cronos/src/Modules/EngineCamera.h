@@ -29,10 +29,15 @@ namespace Cronos {
 		void ChangeProjection() { m_ChangeProj = true; }
 		inline Camera* GetCamera() { return this; }
 
+		bool m_ScrollingSpeedChange = false;
+
 	private:
 
 		//Camera Methods
 		glm::vec3 MouseRotation(const glm::vec3& pos, const glm::vec3& ref);
+
+		//Modify engine's camera speed (for the mouse mid button scroll)
+		void ModifySpeedMultiplicator(float ZMovement, float dt);
 		
 		//Returns a ray (vec3) that goes from camera pos in forward direction and has length of far plane distance
 		const glm::vec3 RaycastForward();

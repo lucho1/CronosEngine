@@ -51,6 +51,10 @@ namespace Cronos {
 				else if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_UP)
 					speedup = false;
 
+				//Modifying camera speed with mouse central button scroll
+				if (App->input->isMouseScrolling())
+					ModifySpeedMultiplicator(App->input->GetMouseZ(), dt);
+
 				//Movement --------------------------------------------
 				if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 					Move(CameraMovement::CAMMOVE_FORWARD, speedup, dt);
@@ -61,12 +65,6 @@ namespace Cronos {
 					Move(CameraMovement::CAMMOVE_LEFT, speedup, dt);
 				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 					Move(CameraMovement::CAMMOVE_RIGHT, speedup, dt);
-
-				/*if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-					movement -= glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;
-				if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-					movement += glm::normalize(glm::cross(m_Front, m_Up)) * m_MoveSpeed * dt;*/
-
 
 				//Take a look here and previous camera if Up movement doesn't work
 				if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
@@ -79,8 +77,8 @@ namespace Cronos {
 				LookAt(GetTarget());
 			}
 
-			//Zoom with middle button of mouse
-			if (App->input->isMouseScrolling())
+			//Zoom with middle button of mouse (if scrolling)
+			if (App->input->isMouseScrolling() && App->input->GetMouseButton(SDL_BUTTON_RIGHT) != KEY_REPEAT)
 				Zoom(App->input->GetMouseZ(), dt);
 
 			//Pan with middle button of mouse
@@ -144,7 +142,7 @@ namespace Cronos {
 			Recalculate();
 			m_ChangeProj = false;
 		}
-
+				
 		return UPDATE_CONTINUE;
 	}
 
@@ -173,6 +171,22 @@ namespace Cronos {
 
 	//	return glm::vec3(0.0f);
 	//}
+
+	void EngineCamera::ModifySpeedMultiplicator(float ZMovement, float dt)
+	{
+		m_ScrollingSpeedChange = true;
+		float scroll = m_ScrollSpeed * dt * 3.0f;
+
+		if (ZMovement > 0)
+			m_SpeedMultiplicator += scroll;
+		else
+			m_SpeedMultiplicator -= scroll;
+
+		if (m_SpeedMultiplicator > 15.0f)
+			m_SpeedMultiplicator = 15.0f;
+		if (m_SpeedMultiplicator < 0.3f)
+			m_SpeedMultiplicator = 0.3f;
+	}
 
 	glm::vec3 EngineCamera::MouseRotation(const glm::vec3 & pos, const glm::vec3 & ref)
 	{

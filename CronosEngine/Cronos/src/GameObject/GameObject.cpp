@@ -157,24 +157,7 @@ namespace Cronos {
 	//---------------------------------------------
 	void GameObject::SetOOBBTransform(glm::mat4 transform)
 	{
-		//glm::mat4 Transformation = glm::translate(glm::mat4(1.0f), translation) *
-		//	glm::mat4_cast(orientation) * glm::scale(glm::mat4(1.0f), scale);
 		glm::mat4 resMat = glm::transpose(transform);
-
-		/*glm::vec4 zRow = resMat[2];
-		resMat[2] = resMat[1];
-		resMat[1] = zRow;
-
-		resMat[2][1] = -resMat[2][1];
-
-		glm::vec2 XYAux = glm::vec2(resMat[0][3], resMat[2][3]);
-
-		glm::vec4 xRow = resMat[0];
-		resMat[0] = resMat[2];
-		resMat[2] = xRow;
-
-		resMat[0][3] = XYAux.x;
-		resMat[2][3] = XYAux.y;*/
 
 		math::float4x4 mat = math::float4x4::identity;
 		mat.Set(glm::value_ptr(resMat));

@@ -58,7 +58,7 @@ namespace Cronos {
 	// -----------------------------------------------------------------
 	void Camera::Move(CameraMovement direction, bool speedUp, float dt)
 	{
-		float speed = m_MoveSpeed;
+		float speed = m_MoveSpeed * m_SpeedMultiplicator;
 		if(speedUp)
 			speed *= 2.0f;
 
