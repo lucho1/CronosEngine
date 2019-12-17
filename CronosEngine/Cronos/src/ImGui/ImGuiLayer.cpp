@@ -313,7 +313,6 @@ namespace Cronos {
 
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
 		{
-
 			GameObject* Temp = Draging;
 			GameObject* LastParent = Temp->GetParentGameObject();
 			if (LastParent == nullptr) {
@@ -1093,6 +1092,7 @@ namespace Cronos {
 						ImGui::EndMenu();
 					}
 
+					//Creating Camera
 					if (ImGui::MenuItem("Camera"))
 					{
 						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 0.5f, 0.5f, 0.8f });

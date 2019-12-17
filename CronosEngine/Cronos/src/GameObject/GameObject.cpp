@@ -131,6 +131,40 @@ namespace Cronos {
 			childs->SetNewID();
 	}
 
+	void GameObject::SetParent(GameObject* Go)
+	{
+		if (Go == nullptr && GetParentGameObject())
+		{
+			TransformComponent* comp = GetParentGameObject()->GetComponent<TransformComponent>();
+			glm::mat4 res = comp->GetGlobalTranformationMatrix() * GetComponent<TransformComponent>()->GetLocalTranformationMatrix();
+
+			glm::vec3 pos, scale;
+			glm::quat rot;
+			glm::decompose(res, scale, rot, pos, glm::vec3(), glm::vec4());
+
+			Parent = Go;
+
+			comp->SetPosition(pos);
+			comp->SetScale(scale);
+			comp->SetOrientation(glm::degrees(glm::eulerAngles(rot)));
+		}
+		else
+		{
+			TransformComponent* comp = Go->GetComponent<TransformComponent>();
+
+			glm::vec3 pos, scale;
+			glm::quat rot;
+			glm::decompose(comp->GetGlobalTranformationMatrix(), scale, rot, pos, glm::vec3(), glm::vec4());
+
+			comp->SetPosition(pos);
+			comp->SetScale(scale);
+			comp->SetOrientation(glm::degrees(glm::eulerAngles(rot)));
+		}
+
+		Parent = Go;
+		//GetComponent<TransformComponent>()->SetPosition(GetComponent<TransformComponent>()->GetTranslation());
+	}
+
 	//---------------------------------------------
 	void GameObject::SetOOBBTransform(glm::mat4 transform)
 	{

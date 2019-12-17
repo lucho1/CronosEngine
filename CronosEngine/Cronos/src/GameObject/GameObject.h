@@ -52,7 +52,7 @@ namespace Cronos {
 		void SetName(const std::string name)		{ m_Name = name; }
 		void SetPath(const std::string path)		{ m_Path = path; }
 		void SetMeta(const std::string meta)		{ m_MetaPath = m_Path+meta; }
-		void SetParent(GameObject* Go)				{ Parent = Go; }
+		void SetParent(GameObject* Go);
 		
 		void SetAABB(math::AABB aabb)				{ m_AABB = aabb; }
 		void SetOOBB(math::OBB oobb)				{ m_OOBB = oobb; }
@@ -63,7 +63,7 @@ namespace Cronos {
 	public:
 		
 		//Others
-		void BreakParent() { Parent = nullptr; }
+		void BreakParent() { /*Parent = nullptr;*/SetParent(nullptr); }
 		Component* CreateComponent(ComponentType type);
 
 		template <typename T>
