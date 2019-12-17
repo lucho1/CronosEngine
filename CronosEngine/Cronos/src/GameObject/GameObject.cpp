@@ -133,36 +133,25 @@ namespace Cronos {
 
 	void GameObject::SetParent(GameObject* Go)
 	{
-		if (Go == nullptr && GetParentGameObject())
-		{
-			TransformComponent* comp = GetParentGameObject()->GetComponent<TransformComponent>();
-			glm::mat4 res = comp->GetGlobalTranformationMatrix() * GetComponent<TransformComponent>()->GetLocalTranformationMatrix();
+		TransformComponent* comp = GetComponent<TransformComponent>();
+		glm::vec3 pos, scale;
+		glm::quat rot;
 
-			glm::vec3 pos, scale;
-			glm::quat rot;
-			glm::decompose(res, scale, rot, pos, glm::vec3(), glm::vec4());
-
-			Parent = Go;
-
-			comp->SetPosition(pos);
-			comp->SetScale(scale);
-			comp->SetOrientation(glm::degrees(glm::eulerAngles(rot)));
-		}
+		if (Go == nullptr)	
+			glm::decompose(comp->GetGlobalTranformationMatrix(), scale, rot, pos, glm::vec3(), glm::vec4());
 		else
 		{
-			TransformComponent* comp = Go->GetComponent<TransformComponent>();
-
-			glm::vec3 pos, scale;
-			glm::quat rot;
-			glm::decompose(comp->GetGlobalTranformationMatrix(), scale, rot, pos, glm::vec3(), glm::vec4());
-
-			comp->SetPosition(pos);
-			comp->SetScale(scale);
-			comp->SetOrientation(glm::degrees(glm::eulerAngles(rot)));
+			glm::mat4 parentMat = Go->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
+			glm::mat4 inverseParentMat = glm::inverse(parentMat);
+			glm::mat4 localDesiredMat = inverseParentMat * comp->GetGlobalTranformationMatrix();
+			
+			glm::decompose(localDesiredMat, scale, rot, pos, glm::vec3(), glm::vec4());
 		}
 
 		Parent = Go;
-		//GetComponent<TransformComponent>()->SetPosition(GetComponent<TransformComponent>()->GetTranslation());
+		comp->SetPosition(pos);
+		comp->SetScale(scale);
+		comp->SetOrientation(glm::degrees(glm::eulerAngles(rot)));
 	}
 
 	//---------------------------------------------

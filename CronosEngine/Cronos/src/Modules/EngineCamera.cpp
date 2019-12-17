@@ -69,9 +69,9 @@ namespace Cronos {
 
 
 				//Take a look here and previous camera if Up movement doesn't work
-				if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
-					Move(CameraMovement::CAMMOVE_UP, speedup, dt);
 				if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT)
+					Move(CameraMovement::CAMMOVE_UP, speedup, dt);
+				if (App->input->GetKey(SDL_SCANCODE_Q) == KEY_REPEAT)
 					Move(CameraMovement::CAMMOVE_DOWN, speedup, dt);
 
 				//m_Position = m_Target + Rotate(m_Position, m_Target);
@@ -200,8 +200,8 @@ namespace Cronos {
 		//TODO: Once Rendering octree is fixed, do this with objects in visible nodes
 		for (auto& GO : App->scene->m_GameObjects)
 		{
-			//if (!GO->GetAABB().Intersects(*GetFrustum())) //What if parent is outside frustum and child isn't?
-			//	continue;
+			if (!GO->GetAABB().Intersects(*GetFrustum()))
+				continue;
 
 			GameObject* SelectedGobj = nullptr;
 			math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
@@ -221,14 +221,14 @@ namespace Cronos {
 		{
 			for (auto& child : parent->m_Childs)
 			{
-				//if (!child->GetAABB().Intersects(*GetFrustum()))
-				//	continue;
+				if (!child->GetAABB().Intersects(*GetFrustum()))
+					continue;
 
 				GameObject* SelectedGobj = nullptr;
 				if (child->GetAABB().Intersects(rayIntersecting))
 					SelectedGobj = GetObjectFromSelection(child, rayIntersecting);
 
-				if (SelectedGobj && child->GetAABB().Intersects(*GetFrustum()) && SelectedGobj->GetComponent<MeshComponent>())
+				if (SelectedGobj && SelectedGobj->GetComponent<MeshComponent>())
 					return SelectedGobj;
 			}
 
