@@ -63,12 +63,22 @@ namespace Cronos {
 		GameObject* mother_GO = new GameObject(GOName, App->m_RandomNumGenerator.GetIntRN(), filepath.substr(0, filepath.find_last_of('/')));
 
 		//If all is correct, we process all the nodes passing the first one (root)
-		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);
-		App->filesystem->SaveOwnFormat(mother_GO);
+		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);		
 
-		//For the parent AABB, I'll just get the first child's AABB
-		auto comp = (*mother_GO->m_Childs.begin())->GetComponent<TransformComponent>();
-		mother_GO->SetAABB(comp->GetAABB().getMin(), comp->GetAABB().getMax());
+		//Mother's AABB
+		math::AABB mother_aabb;
+		mother_aabb.SetNegativeInfinity();
+
+		std::list<GameObject*>::iterator it = mother_GO->m_Childs.begin();
+		for (; it != mother_GO->m_Childs.end(); it++)
+			mother_aabb.Enclose((*it)->GetAABB());
+
+		mother_GO->SetAABB(mother_aabb);
+		mother_GO->SetOOBB(mother_aabb);
+		mother_GO->SetInitialAABB(mother_aabb);
+
+		//Abd save in own format
+		App->filesystem->SaveOwnFormat(mother_GO);
 
 
 		//aiReleaseImport(scene);
@@ -82,19 +92,7 @@ namespace Cronos {
 
 	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
-		LOG("	Processing Assimp Node");
-		//aiVector3D translation, scaling, EulerRotation;
-		//aiQuaternion rotation;
-		//as_node->mTransformation.Decompose(scaling, rotation, translation);
-		//EulerRotation = rotation.GetEuler();
-		//
-		//if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
-		//	scaling = aiVector3D(1.0f);
-		//
-		//////scaling = scaling / 10.0f;
-		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
-		//motherGameObj->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
-		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
+		LOG("	Processing Assimp Node");	
 
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
@@ -112,57 +110,9 @@ namespace Cronos {
 	void AssimpCronosImporter::ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj, aiNode* as_node)
 	{
 		LOG("	Processing Model Mesh");
-		MeshNum++;
-		//std::vector<CronosVertex>tmp_VertexVector;
-		//std::vector<uint>tmp_IndicesVector;
-		//uint facesNumber = 0;
+		MeshNum++;		
 
-		//float minX = as_mesh->mVertices[0].x, minY = as_mesh->mVertices[0].y, minZ = as_mesh->mVertices[0].z;
-		//float maxX = minX, maxY = minY, maxZ = minZ;
-
-		////Process mesh vertices
-		//for (uint i = 0; i < as_mesh->mNumVertices; i++)
-		//{
-		//	//First, position & normals
-		//	CronosVertex tmpVertex;
-		//	tmpVertex.Position = glm::vec3(as_mesh->mVertices[i].x, as_mesh->mVertices[i].y, as_mesh->mVertices[i].z);
-
-		//	if(as_mesh->HasNormals())
-		//		tmpVertex.Normal = glm::vec3(as_mesh->mNormals[i].x, as_mesh->mNormals[i].y, as_mesh->mNormals[i].z);
-
-		//	//Then we see if there are text. coordinates in the first set [0] (OGL has until 8)
-		//	if (as_mesh->mTextureCoords[0])
-		//		tmpVertex.TexCoords = glm::vec2(as_mesh->mTextureCoords[0][i].x, as_mesh->mTextureCoords[0][i].y);
-		//	else
-		//		tmpVertex.TexCoords = glm::vec2(0.0f, 0.0f);
-
-
-		//	minX = MIN(minX, tmpVertex.Position.x); minY = MIN(minY, tmpVertex.Position.y); minZ = MIN(minZ, tmpVertex.Position.z);
-		//	maxX = MAX(maxX, tmpVertex.Position.x); maxY = MAX(maxY, tmpVertex.Position.y); maxZ = MAX(maxZ, tmpVertex.Position.z);
-		//	tmp_VertexVector.push_back(tmpVertex);
-		//}
-
-		////Set the AABB Cube
-		//m_AABB_MinVec = glm::vec3(minX, minY, minZ);
-		//m_AABB_MaxVec = glm::vec3(maxX, maxY, maxZ);
-
-		////Process mesh's indices
-		//for (uint i = 0; i < as_mesh->mNumFaces; i++)
-		//{
-		//	aiFace face = as_mesh->mFaces[i];
-		//	for (uint j = 0; j < face.mNumIndices; j++)
-		//		tmp_IndicesVector.push_back(face.mIndices[j]);
-
-		//	static uint PolyNum = 0;
-		//	if (PolyNum == 2)
-		//	{
-		//		facesNumber++;
-		//		PolyNum = 0;
-		//	}
-		//	PolyNum++;
-		//}
-
-		//Now set up the new Game Object
+		//Let's first look for the name to set the new game object (or a default one)
 		std::string GOName;
 		if (as_node->mName.length > 0)
 			GOName = as_node->mName.C_Str();
@@ -172,6 +122,7 @@ namespace Cronos {
 		//Create a Game Object
 		GameObject* GO = new GameObject(GOName.substr(0, GOName.find_last_of('.')), App->m_RandomNumGenerator.GetIntRN(), motherGameObj->GetPath());
 		GO->HasVertices = true;
+
 		//Setup the component mesh and put GO into the mother's childs list
 		MeshComponent* meshComp = ((MeshComponent*)(GO->CreateComponent(ComponentType::MESH)));
 
@@ -182,15 +133,18 @@ namespace Cronos {
 		//Setup of the Buffers Size
 		rMesh->m_BufferSize[0] = as_mesh->mNumVertices;
 
-		//Iniitialiing the Vector Positions:
+		//Loading Vertex Positions
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 		memcpy(rMesh->Position, as_mesh->mVertices, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		if (as_mesh->HasFaces()) {
-
+		//Loading Indexes
+		if (as_mesh->HasFaces())
+		{
 			rMesh->m_BufferSize[3] = as_mesh->mNumFaces;
 			rMesh->Index = new uint[rMesh->m_BufferSize[3] * 3];
-			for (uint i = 0; i < as_mesh->mNumFaces; i++) {
+
+			for (uint i = 0; i < as_mesh->mNumFaces; i++)
+			{
 				aiFace face = as_mesh->mFaces[i];
 				memcpy(&rMesh->Index[i*3], face.mIndices ,sizeof(uint) * 3);
 			}
@@ -198,20 +152,23 @@ namespace Cronos {
 		else
 			rMesh->m_BufferSize[3] = 0;
 
-
-		if (as_mesh->HasNormals()) {
-
+		//Loading Vertex Normals
+		if (as_mesh->HasNormals())
+		{
 			rMesh->m_BufferSize[1] = as_mesh->mNumVertices;
 			rMesh->Normal = new float[rMesh->m_BufferSize[1] * 3];
 			memcpy(rMesh->Normal, as_mesh->mNormals, sizeof(float)*rMesh->m_BufferSize[0] * 3);
 
-		}else
+		}
+		else
 			rMesh->m_BufferSize[1] = 0;
 
+		//Loading Vertex Texture Coordinates
 		if (as_mesh->HasTextureCoords(0))
 		{
 			rMesh->m_BufferSize[2] = as_mesh->mNumVertices;
 			rMesh->TextureV = new float[rMesh->m_BufferSize[2] * 2];
+
 			for (uint i = 0; i < as_mesh->mNumVertices; i++)
 			{
 				rMesh->TextureV[i * 2] = as_mesh->mTextureCoords[0][i].x;
@@ -221,21 +178,28 @@ namespace Cronos {
 		else
 			rMesh->m_BufferSize[2] = 0;
 
+		//Transform information into cronos vertex data
 		rMesh->toCronosVertexVector();
 		meshComp->SetupMesh(rMesh->getVector(),rMesh->getIndex());
 
-		aiVector3D translation, scaling, EulerRotation;
+		//Getting & Setting the transformation
+		aiVector3D translation, scaling;
 		aiQuaternion rotation;
 		as_node->mTransformation.Decompose(scaling, rotation, translation);
-		EulerRotation = rotation.GetEuler();
 
-		if (scaling.x > 50.0f || scaling.y > 50.0f || scaling.z > 50.0f)
-			scaling = aiVector3D(1.0f);
+		aiVector3D translation2, scaling2;
+		aiQuaternion rotation2;
+		as_scene->mRootNode;
+		as_scene->mRootNode->mTransformation.Decompose(scaling2, rotation2, translation2);
 
-		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(1.0f/*scaling.x, scaling.y, scaling.z*/));
+		glm::vec3 EulerAnglesRotation = glm::eulerAngles(glm::quat(rotation.w, rotation.x, rotation.y, rotation.z));
+
+		if (scaling.x > 95.0f || scaling.y > 95.0f || scaling.z > 95.0f)
+			scaling = aiVector3D(95.0f);
+
+		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(scaling.x, scaling.y, scaling.z));
 		GO->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
-		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(glm::vec3(EulerRotation.x, EulerRotation.y, EulerRotation.z)));
-
+		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(EulerAnglesRotation));
 
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
@@ -258,11 +222,34 @@ namespace Cronos {
 			GO->m_Components.push_back(matComp);
 		}
 
-		//Set the GO AABB and finally push it to the mother's child list
-		GO->SetAABB(m_AABB_MinVec, m_AABB_MaxVec);
-		motherGameObj->m_Childs.push_back(GO);
+		//Set the Game Object's AABB, OOBB and Initial AABB
+		float size = rMesh->getVector().size();
+		math::float3* verts = new math::float3[size];
+		for (uint i = 0; i < size; i++)
+		{
+			glm::vec3 vec = rMesh->getVector()[i].Position;
+			verts[i] = math::float3(vec.x, vec.y, vec.z);
+		}
+		
+		math::AABB aabb;
+		math::OBB oobb;
 
-		LOG("	Processed Mesh with %i Vertices and %i Indices ", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);
+		math::float4x4 mat = math::float4x4::identity;
+		mat.Set(glm::value_ptr(GO->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		aabb.SetNegativeInfinity();
+		aabb.SetFrom(verts, size);		
+		oobb.SetFrom(aabb);
+		oobb.Transform(mat);
+		
+		GO->SetInitialAABB(aabb);
+		GO->SetOOBB(oobb);
+		GO->SetAABB(aabb);
+		delete[] verts;
+
+		//Push the child game object into the mother
+		motherGameObj->m_Childs.push_back(GO);
+		LOG("	Processed Mesh with %i Vertices and %i Indices", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);
 	}
 
 
@@ -281,23 +268,14 @@ namespace Cronos {
 			material->GetTexture(Ass_TextureType, 0, &str);
 			std::string path = GOPath + '/' + str.C_Str();
 
-
 			//If it has been already loaded, then return it without creating a new one
 			std::list<Texture*>::iterator it = App->scene->m_TexturesLoaded.begin();
 			for (; it != App->scene->m_TexturesLoaded.end() && (*it) != nullptr; it++)
 				if (std::strcmp((*it)->GetTexturePath().data(), path.c_str()) == 0)
-					return (*it);
-
-
-			//If it has been already loaded, then return it without creating a new one
-			/*for (unsigned int j = 0; j < m_TexturesLoaded.size(); j++)
-				if (std::strcmp(m_TexturesLoaded[j]->GetTexturePath().data(), path.c_str()) == 0)
-					return m_TexturesLoaded[j];*/
+					return (*it);		
 
 			//Else, create it and put it in the loaded textures vector
 			Texture* tex = App->textureManager->CreateTexture(path.c_str(), TexType);
-
-			//m_TexturesLoaded.push_back(tex);
 			return tex;
 		}
 

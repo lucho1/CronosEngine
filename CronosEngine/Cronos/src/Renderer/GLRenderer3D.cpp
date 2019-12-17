@@ -44,29 +44,6 @@ namespace Cronos {
 				App->EditorGUI->AddLog(std::string("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError()));
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 			}
-			//Initialize Projection Matrix
-			//glMatrixMode(GL_PROJECTION);
-			//glLoadIdentity();
-
-			//Check for error
-		//	GLenum error = glGetError();
-		//	if (error != GL_NO_ERROR)
-		//	{
-		//		LOG("Error initializing OpenGL! %s\n", error);
-		//		ret = false;
-		//	}
-
-		//	//Initialize Modelview Matrix
-		//	//glMatrixMode(GL_MODELVIEW);
-		//	//glLoadIdentity();
-
-		//	//Check for error
-		//	error = glGetError();
-		//	if (error != GL_NO_ERROR)
-		//	{
-		//		LOG("Error initializing OpenGL! %s\n", error);
-		//		ret = false;
-		//	}
 
 		//	/*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		//	glClearDepth(1.0f);*/
@@ -101,20 +78,29 @@ namespace Cronos {
 		//	lights[0].Active(true);
 		}
 
+		ResetTree();
+
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
-
 		return ret;
+	}
+
+	// Called before quitting
+	bool GLRenderer3D::OnCleanUp()
+	{
+		LOG("Destroying 3D Renderer");
+
+		m_RenderingOctree.CleanUp();
+		RELEASE(App->scene->BasicTestShader);
+		SDL_GL_DeleteContext(context);
+
+		return true;
 	}
 
 	// PreUpdate: clear buffer
 	update_status GLRenderer3D::OnPreUpdate(float dt)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//glLoadIdentity();
-
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(App->engineCamera->GetViewMatrix());
 
 		// light 0 on cam pos
 //		lights[0].SetPos(App->engineCamera->GetPosition().x, App->engineCamera->GetPosition().y, App->engineCamera->GetPosition().z);
@@ -123,7 +109,7 @@ namespace Cronos {
 		centerLight.SetPos(p.x, p.y, p.z);
 		centerLight.Render();
 
-		//RenderSubmit(nullptr, glm::mat4(1.0f), nullptr);
+		m_ObjectsInOctreeNode = m_RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
 
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
@@ -134,44 +120,57 @@ namespace Cronos {
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
-		App->scene->BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+		DrawFloorPlane(true);
+		m_RenderingOctree.Draw();
 
-		if (changeZBufferDrawing)
+		//Wireframe Mode (or not) ------------------------------------------------------------
+		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
+			SetWireframeDrawMode(false);
+		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
 		{
-			changeZBufferDrawing = false;
-			drawZBuffer = !drawZBuffer;
+			glLineWidth(0.5f);
+			glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+			SetWireframeDrawMode(true);
+			glLineWidth(m_DefaultLinewidth);
+		}
 
-			if (drawZBuffer)
+		//Shader Stuff & ZBuffer -------------------------------------------------------------
+		App->scene->BasicTestShader->Bind();
+		App->scene->BasicTestShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+
+		if (m_ChangeZBufferDrawing)
+		{
+			m_ChangeZBufferDrawing = false;
+			m_DrawZBuffer = !m_DrawZBuffer;
+
+			if (m_DrawZBuffer)
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
 			else
 				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
-
 		}
-		if (drawZBuffer)
+		if (m_DrawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
 
-		std::list<GameObject*>::iterator it = m_RenderingList.begin();
-		for (; it != m_RenderingList.end(); it++)
+		//Objects Rendering -----------------------------------------------------------------
+		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
 		{
-			App->scene->BasicTestShader->Bind();
-			MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
-			VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();			
+			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			for (; it != m_RenderingList.end(); it++)
+				Render(it);
+		}
+		else
+		{
+			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			for (; it != m_RenderingList.end(); it++)
+			{
+				if (!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
+					!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
+					continue;
 
-			if (material != nullptr)
-				material->Bind(true);
-
-			App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
-			VAO->Bind();
-
-			glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-
-			if (material != nullptr)
-				material->Unbind();
-
-			VAO->UnBind();
+				Render(it);
+			}
 		}
 
 		App->scene->BasicTestShader->Unbind();
@@ -181,23 +180,85 @@ namespace Cronos {
 		return UPDATE_CONTINUE;
 	}
 
-	// Called before quitting
-	bool GLRenderer3D::OnCleanUp()
-	{
-		LOG("Destroying 3D Renderer");
-		SDL_GL_DeleteContext(context);
-
-		return true;
-	}
-
-
 	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
 	{
-		m_RenderingList.push_back(gameObject);
+		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !m_ObjectsInOctreeNode.empty())
+		{
+			//You can also do:
+			//auto item = std::find_if(ObjectsInOctreeNode.begin(), ObjectsInOctreeNode.end(),
+			//	[&gameObject](GameObject* obj) {return obj;});
+			//
+			//if(item != ObjectsInOctreeNode.end())
+			//	m_RenderingList.push_back(gameObject);
+
+			auto item = std::find(m_ObjectsInOctreeNode.begin(), m_ObjectsInOctreeNode.end(), gameObject);
+			if (item != m_ObjectsInOctreeNode.end())
+				m_RenderingList.push_back(gameObject);
+		}
+		else
+			m_RenderingList.push_back(gameObject);
+	}
+
+	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
+	{
+		App->scene->BasicTestShader->Bind();
+		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
+		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
+
+		if (material != nullptr)
+			material->Bind(true);
+
+		App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+		VAO->Bind();
+
+		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+		if (material != nullptr)
+			material->Unbind();
+
+		VAO->UnBind();
+	}
+
+	//Resize window
+	void GLRenderer3D::OnResize(uint width, uint height)
+	{
+		glViewport(0, 0, width, height);
+		App->window->ReCalculateAspectRatio(width, height);
+		App->engineCamera->ChangeProjection();
 	}
 
 
 	// -----------------------------------------------------------------------------------
+	void GLRenderer3D::DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color, float linewidth, glm::mat4 modelMat)
+	{
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(modelMat));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glLineWidth(linewidth);
+		glColor3f(color.r, color.g, color.b);
+
+		glBegin(GL_LINES);
+
+		glVertex3f(minP.x, minP.y, minP.z);
+		glVertex3f(maxP.x, maxP.y, maxP.z);
+
+		glEnd();
+
+		glLineWidth(1.0f);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glPopMatrix();
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
+	}
+
 	void GLRenderer3D::DrawQuad(const glm::vec3& pos, const glm::vec3& oppositePos)
 	{
 		glm::vec3 posOpp_Down = glm::vec3(pos.x + oppositePos.x, pos.y, pos.z);
@@ -251,8 +312,8 @@ namespace Cronos {
 		}
 
 		//Plane draw
-		glLineWidth(1.0f);
 		glColor3f(colorIntensity, colorIntensity, colorIntensity);
+		glLineWidth(1.0f);
 		glBegin(GL_LINES);
 
 		float d = size;
@@ -263,7 +324,7 @@ namespace Cronos {
 			glVertex3f(-d, 0.0f, i);
 			glVertex3f(d, 0.0f, i);
 		}
-		glLineWidth(2.0f);
+
 		glEnd();
 
 		//Set again Identity for OGL Matrices & Polygon draw to fill again
@@ -273,15 +334,22 @@ namespace Cronos {
 		glLoadIdentity();
 		glPopMatrix();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
 	}
 
-	void GLRenderer3D::DrawCube(glm::vec3 maxVec, glm::vec3 minVec)
+	void GLRenderer3D::DrawCube(glm::vec3 maxVec, glm::vec3 minVec, glm::vec3 color, float linewidth, glm::mat4 modelMat)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		
-		
-		//glMatrixMode(GL_MODELVIEW);
-		//glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+		glPushMatrix();
+		glMultMatrixf(glm::value_ptr(modelMat));
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
+
+		glColor3f(color.r, color.g, color.b);
+		glLineWidth(linewidth);
 
 		//Top
 		glBegin(GL_QUADS);
@@ -291,50 +359,40 @@ namespace Cronos {
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
 		glVertex3f(minVec.x, maxVec.y, maxVec.z);
-		glEnd();
 
 		//Front
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, 0.0f, 1.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, minVec.z);
-		glEnd();
 
 		//Right
-		glBegin(GL_QUADS);
 		glNormal3f(1.0f, 0.0f, 0.0f);
 
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, maxVec.z);
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
 		glVertex3f(maxVec.x, maxVec.y, minVec.z);
-		glEnd();
 
 		//Left
-		glBegin(GL_QUADS);
 		glNormal3f(-1.0f, 0.0f, 0.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, minVec.z);
 		glVertex3f(minVec.x, maxVec.y, maxVec.z);
 		glVertex3f(minVec.x, minVec.y, maxVec.z);
-		glEnd();
 
 		//Bottom
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, -1.0f, 0.0f);
 
 		glVertex3f(minVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, minVec.z);
 		glVertex3f(maxVec.x, minVec.y, maxVec.z);
 		glVertex3f(minVec.x, minVec.y, maxVec.z);
-		glEnd();
 
 		//Back
-		glBegin(GL_QUADS);
 		glNormal3f(0.0f, 0.0f, -1.0f);
 
 		glVertex3f(maxVec.x, maxVec.y, maxVec.z);
@@ -349,6 +407,22 @@ namespace Cronos {
 		glLoadIdentity();
 		glPopMatrix();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
+		glLineWidth(m_DefaultLinewidth);
+	}
+
+	void GLRenderer3D::DrawRotatedCube(glm::vec3 maxVec, glm::vec3 minVec, glm::quat rotation, glm::vec3 color, float linewidth)
+	{
+		glm::quat q1 = glm::quat(0.0f, maxVec);
+		glm::quat q2 = glm::quat(0.0f, minVec);
+
+		glm::quat res1 = rotation * q1 * glm::conjugate(rotation);
+		glm::quat res2 = rotation * q2 * glm::conjugate(rotation);
+
+		glm::vec3 resVecMax = glm::vec3(res1.x, res1.y, res1.z);
+		glm::vec3 resVecMin = glm::vec3(res2.x, res2.y, res2.z);
+
+		DrawCube(resVecMax, resVecMin, color, linewidth);
 	}
 
 
@@ -443,7 +517,7 @@ namespace Cronos {
 		SetColorDither(m_CurrentSettings.ColorDither);
 		SetAntialiasedSmooth(m_CurrentSettings.AntialiasedLineAndPolygonSmooth);
 		SetMultisampling(m_CurrentSettings.Multisample);
-		
+
 		SetGLLighting(m_CurrentSettings.GL_Lighting);
 		SetGLColorMaterial(m_CurrentSettings.GL_ColorMaterial);
 	}
@@ -452,7 +526,7 @@ namespace Cronos {
 	{
 		if (setStatus == true && glIsEnabled(GL_BLEND))
 			return;
-		
+
 		m_CurrentSettings.Blend = setStatus;
 		if (setStatus == true)
 		{
@@ -461,13 +535,6 @@ namespace Cronos {
 		}
 		else
 			glDisable(GL_BLEND);
-	}
-
-	void GLRenderer3D::OnResize(uint width, uint height)
-	{
-		glViewport(0, 0, width, height);
-		App->window->ReCalculateAspectRatio(width, height);
-		App->engineCamera->ChangeProjection();
 	}
 
 	//void GLRenderer3D::SetClipDistance(bool setStatus)
@@ -510,7 +577,7 @@ namespace Cronos {
 	{
 		if (setStatus == true && glIsEnabled(GL_CULL_FACE))
 			return;
-		
+
 		m_CurrentSettings.FaceCull = setStatus;
 		if (setStatus == true)
 			glEnable(GL_CULL_FACE);
@@ -531,7 +598,7 @@ namespace Cronos {
 	{
 		if (setStatus == true && glIsEnabled(GL_DEPTH_TEST))
 			return;
-				
+
 		m_CurrentSettings.DepthTest = setStatus;
 		if (setStatus == true)
 			glEnable(GL_DEPTH_TEST);
@@ -543,7 +610,7 @@ namespace Cronos {
 	{
 		if (setStatus == true && glIsEnabled(GL_SCISSOR_TEST))
 			return;
-					
+
 		m_CurrentSettings.ScissorTest = setStatus;
 		if (setStatus == true)
 			glEnable(GL_SCISSOR_TEST);
@@ -597,7 +664,7 @@ namespace Cronos {
 	{
 		if (setStatus == true && glIsEnabled(GL_MULTISAMPLE))
 			return;
-		
+
 		m_CurrentSettings.Multisample = setStatus;
 		if (setStatus == true)
 			glEnable(GL_MULTISAMPLE);

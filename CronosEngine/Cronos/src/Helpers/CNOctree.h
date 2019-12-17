@@ -1,7 +1,6 @@
-#ifndef _CNQUADTREE_H_
-#define _CNQUADTREE_H_
+#ifndef _CNOCTREE_H_
+#define _CNOCTREE_H_
 
-#include "Helpers/AABB.h"
 #include "GameObject/GameObject.h"
 
 namespace Cronos {
@@ -10,25 +9,27 @@ namespace Cronos {
 
 	class CnOT_Node
 	{
-		//friend class CnQuadtree;
 	public:
 
 		CnOT_Node() {}
-		CnOT_Node(AABB partitionSpace, NodeType nodeType, int maxObjectsInside);
+		CnOT_Node(math::AABB partitionSpace, NodeType nodeType, int maxObjectsInside);
 		~CnOT_Node() {}
 
 		//Node methods
 		void Draw();
 		void Split();
 		void CleanUp();
+		void CleanNodes();
 
 		bool Insert(GameObject* GObj);
+		void TakeOut(GameObject* GObject);
 
 		//Getters 
 		const bool IsChild()  const { return m_IsChild; }
-		const AABB& GetCubicSpace() const { return m_CubicSpace; }
+		const math::AABB& GetCubicSpace() const { return m_CubicSpace; }
 
-		std::vector<GameObject*> GetObjectsContained(AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::Frustum cameraFrustum);
 
 	private:
 		
@@ -36,7 +37,7 @@ namespace Cronos {
 		int m_ChildsQuantity = 0, m_MaxObjectsInside = 0;
 
 		bool m_IsChild = true;
-		AABB m_CubicSpace;
+		math::AABB m_CubicSpace;
 		NodeType m_NodeType = NodeType::NONE;
 		
 		std::vector<GameObject*> GObjectsContained_Vector;
@@ -47,7 +48,7 @@ namespace Cronos {
 	public:
 
 		CnOctree() {}
-		CnOctree(AABB space, int maxObjectsInside);
+		CnOctree(math::AABB space, int maxObjectsInside);
 		~CnOctree() {}
 
 		//Octree Methods
@@ -55,11 +56,15 @@ namespace Cronos {
 		void CleanUp();
 
 		bool Insert(GameObject* GObject);
+		void TakeOut(GameObject* GObject);
 
 		//Getters
-		std::vector<GameObject*> GetObjectsContained(AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::AABB cubicSpace);
+		std::vector<GameObject*> GetObjectsContained(const math::Frustum cameraFrustum);
+		//std::vector<GameObject*> GetObjectsContained(math::LineSegment& ray, std::map<float, const GameObject*>& vector, bool nearest = true);
+
 		const bool IsSplitted() const { return isSplitted; }
-		const AABB& GetCubicSpace() const { return m_Root->GetCubicSpace(); }
+		const math::AABB& GetCubicSpace() const { return m_Root->GetCubicSpace(); }
 
 	private:
 

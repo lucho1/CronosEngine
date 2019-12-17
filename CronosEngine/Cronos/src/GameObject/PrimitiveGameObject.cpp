@@ -2,7 +2,6 @@
 #include "PrimitiveGameObject.h"
 
 #include "Application.h"
-#include "Helpers/AABB.h"
 
 #include "par_shapes/par_shapes.h"
 
@@ -12,7 +11,7 @@ namespace Cronos {
 
 	// --------------------------------- PRIMITIVE MODEL ---------------------------------
 	PrimitiveGameObject::PrimitiveGameObject(PrimitiveType primitve_type, const std::string& name, glm::vec3 size, glm::vec3 position, float radius, int figure_slices, int figure_stacks)
-		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), ""), m_PrimitiveType(primitve_type)
+		: GameObject(name, App->m_RandomNumGenerator.GetIntRN(), "", true, position, glm::vec3(0.0f), size), m_PrimitiveType(primitve_type)
 	{
 		if (primitve_type == PrimitiveType::DISK || primitve_type == PrimitiveType::ROCK || primitve_type == PrimitiveType::SUBDIVIDED_SPHERE)
 		{
@@ -190,10 +189,33 @@ namespace Cronos {
 		matComp->SetShader(App->scene->BasicTestShader);
 		m_Components.push_back(matComp);
 
-		//Finally compute AABB
-		float AABBPoints[6];
-		par_shapes_compute_aabb(ParshapeMesh, AABBPoints);
-		SetAABB(glm::vec3(AABBPoints[0], AABBPoints[1], AABBPoints[2]), glm::vec3(AABBPoints[3], AABBPoints[4], AABBPoints[5]));
+
+		//Set the GO AABB and finally push it to the mother's child list		
+		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
+		
+		float arrsize = rMesh->getVector().size();
+		float3* verts = new float3[arrsize];
+		for (uint i = 0; i < arrsize; i++)
+		{
+			glm::vec3 vec = rMesh->getVector()[i].Position;
+			verts[i] = float3(vec.x, vec.y, vec.z);
+		}
+		
+		math::AABB aabb;
+		math::OBB oobb;
+
+		math::float4x4 mat = math::float4x4::identity;
+		mat.Set(glm::value_ptr(GetComponent<TransformComponent>()->GetGlobalTranformationMatrix()));
+
+		aabb.SetNegativeInfinity();
+		aabb.SetFrom(verts, arrsize);
+		oobb.SetFrom(aabb);
+		oobb.Transform(mat);
+
+		SetInitialAABB(aabb);
+		SetOOBB(oobb);
+		SetAABB(aabb);
+		delete[] verts;
 		
 		App->filesystem->SaveOwnFormat(this);
 		

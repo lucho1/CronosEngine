@@ -3,9 +3,8 @@
 
 #include "Application.h"
 
-//#include "Renderer/Model.h"
-//#include "Renderer/CronosPrimitive.h"
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/CameraComponent.h"
 
 #include "mmgr/mmgr.h"
 
@@ -82,7 +81,7 @@ namespace Cronos {
 				{
 					color = u_AmbientColor;
 				}
-				
+
 				if(u_drawZBuffer == 1)
 				{
 					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
@@ -118,7 +117,7 @@ namespace Cronos {
 		m_SceneName = "NewScene";
 		//BasicTestShader = new Shader(vertexShader, fragmentShader);
 		BasicTestShader = new Shader("res/shaders/basic.glsl");
-		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");		
+		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
 		m_WaveTimer.Start();
 
@@ -135,21 +134,17 @@ namespace Cronos {
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
-		
+
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
 		ToCopy = nullptr;
-
-		AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-		OT_Test = CnOctree(OT_Test_AABB, 2);
-
 		return ret;
 	}
 
-	// Load assets
+	// CleanUp
 	bool Scene::OnCleanUp()
 	{
-		OT_Test.CleanUp();
+
 		m_Wave->CleanUp();
 		m_WaveTexture->~Texture();
 
@@ -161,8 +156,6 @@ namespace Cronos {
 		}
 
 		m_GameObjects.clear();
-		//RELEASE(BasicTestShader);
-
 
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
 		while (it != m_TexturesLoaded.end())
@@ -171,45 +164,24 @@ namespace Cronos {
 			it = m_TexturesLoaded.erase(it);
 		}
 		m_TexturesLoaded.clear();
-
 		return true;
+	}
+
+	// PreUpdate
+	update_status Scene::OnPreUpdate(float dt)
+	{
+		return UPDATE_CONTINUE;
 	}
 
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
-		//"Floor" Plane
-		App->renderer3D->DrawFloorPlane(true);
-
-		//Wireframe Mode (or not)
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
-		{
-			glLineWidth(0.5f);
-			glColor3f(White.r, White.g, White.b);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-
-		//MATERIAL BIND ---------------------------------------------------------------------------------
-		/*App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
-		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-		{
-			std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
-			for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
-			{
-				uint TextureID = (uint)(it->first);
-				m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
-				(*it->second).Bind(TextureID);
-			}
-		}*/
-
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
 		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
-		
+
 		// Wave Calculations ----------------
 		float maxT = 15.0f;
 		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
@@ -232,7 +204,7 @@ namespace Cronos {
 
 		//Binding ----------------------------
 		if (material != nullptr)
-			material->Bind(true);		
+			material->Bind(true);
 		VAO->Bind();
 		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.8f });
 		m_WaveTexture->Bind();
@@ -250,12 +222,17 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
 
-
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
 
-			//Copy & Paste
+		//Creating Camera
+		if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN && App->EditorGUI->GetCurrentGameObject() != nullptr && App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>() != nullptr)
+			App->renderer3D->SetRenderingCamera(*App->EditorGUI->GetCurrentGameObject()->GetComponent<CameraComponent>()->GetCamera());
+		else if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
+			App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());
+
+		//Copy & Paste
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr) {
 				ToCopy = App->EditorGUI->GetCurrentGameObject();
@@ -263,7 +240,7 @@ namespace Cronos {
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
-			if (App->EditorGUI->GetCurrentGameObject() !=nullptr&&ToCopy!=nullptr) {
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
 
 				GameObject* NewGO = App->filesystem->Load(ToCopy->GetGOID());
 
@@ -282,35 +259,38 @@ namespace Cronos {
 			}
 		}
 
-
-		//Octree Testing
-		OT_Test.Draw();
-		if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			for (uint i = 0; i < m_GameObjects.size(); i++)
-			{
-				OT_Test.Insert(m_GameObjects[i]);
-
-				std::list<GameObject*>::iterator it = m_GameObjects[i]->m_Childs.begin();
-				for (; it != m_GameObjects[i]->m_Childs.end(); it++)
-					OT_Test.Insert(*it);
-			}
-		}
-		if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN && OT_Test.IsSplitted())
-		{
-			AABB OT_Test_AABB = OT_Test.GetCubicSpace();
-			OT_Test.CleanUp();
-			OT_Test = CnOctree(OT_Test_AABB, 2);
-		}
-
 		return UPDATE_CONTINUE;
 	}
 
+	// PostUpdate
+	update_status Scene::OnPostUpdate(float dt)
+	{
+		if (mustCleanScene) {
+			if(App->EditorGUI->GetCurrentGameObject()!=nullptr)
+				App->EditorGUI->CancelGameObject();
+			if(ToCopy!=nullptr)
+				ToCopy = nullptr;
+			OnCleanUp();
+			mustCleanScene = false;
+		}
+		if (mustSave) {
+			SaveScene(m_SceneName.c_str());
+			mustSave = false;
+		}
+		if (mustLoad) {
+			LoadScene(m_SceneName.c_str());
+			mustLoad = false;
+		}
+		return UPDATE_CONTINUE;
+	}
+
+	//----------------------------------------------------------------------------
 	GameObject* Scene::CreateModel(const char* path)
 	{
 		return m_CNAssimp_Importer.LoadModel(path);
 	}
 
+	//----------------------------------------------------------------------------
 	bool Scene::SaveScene(const char * SceneName)
 	{
 		std::string Path = App->filesystem->GetScenePath();
@@ -346,8 +326,7 @@ namespace Cronos {
 
 		if (exists)
 		{
-			AABB OT_Test_AABB = AABB(glm::vec3(-50.0f), glm::vec3(50.0f));
-			OT_Test = CnOctree(OT_Test_AABB, 2);
+			App->renderer3D->ResetTree();
 
 			App->EditorGUI->CancelGameObject();
 			ToCopy = nullptr;
@@ -373,33 +352,4 @@ namespace Cronos {
 		LOG("Couldn't Found any Scene with that path! Scene not loaded", Path.c_str());
 		return false;
 	}
-
-	// PreUpdate
-	update_status Scene::OnPreUpdate(float dt)
-	{
-		return UPDATE_CONTINUE;
-	}
-
-	// PostUpdate
-	update_status Scene::OnPostUpdate(float dt)
-	{
-		if (mustCleanScene) {
-			if(App->EditorGUI->GetCurrentGameObject()!=nullptr)
-				App->EditorGUI->CancelGameObject();
-			if(ToCopy!=nullptr)
-				ToCopy = nullptr;
-			OnCleanUp();
-			mustCleanScene = false;
-		}
-		if (mustSave) {
-			SaveScene(m_SceneName.c_str());
-			mustSave = false;
-		}
-		if (mustLoad) {
-			LoadScene(m_SceneName.c_str());
-			mustLoad = false;
-		}
-		return UPDATE_CONTINUE;
-	}
-
 }

@@ -10,7 +10,6 @@ namespace Cronos
 	std::string UniformNameFromTextureType(TextureType textureType)
 	{
 		std::string ret = "";
-
 		switch (textureType)
 		{
 			case TextureType::AMBIENT:		ret = "u_AmbientTexture"; break;
@@ -70,14 +69,15 @@ namespace Cronos
 					(*it->second).Bind(TextureID);
 				}
 			}
-			else
-				glColor3f(White.r, White.g, White.b);
 		}
 		else
 		{
 			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
 			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
 		}
+
+		if(App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
+			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
 	}
 
 	void MaterialComponent::Unbind()

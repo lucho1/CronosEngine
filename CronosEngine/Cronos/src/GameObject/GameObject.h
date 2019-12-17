@@ -14,6 +14,7 @@ namespace Cronos {
 		friend class PrimitiveGameObject;
 	public:
 
+		//Game Object Methods
 		GameObject(const std::string& name, int gameObjectID, const std::string& path, bool start_enabled = true, glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f),
 			glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -27,32 +28,43 @@ namespace Cronos {
 		inline bool isActive() const { return m_Active; }
 		bool &SetActive() { return m_Active; }
 
-		inline const std::string GetName() const { return m_Name; }
-		inline const std::string GetPath() const { return m_Path; }
-		inline const std::string GetMetaPath() const { return m_MetaPath; }
+	public:
 
-		inline const int GetGOID() const { return m_GameObjectID; }
-		inline const int GetCountChilds() const { return m_Childs.size(); }
+		//Getters
+		inline const std::string GetName()			const { return m_Name; }
+		inline const std::string GetPath()			const { return m_Path; }
+		inline const std::string GetMetaPath()		const { return m_MetaPath; }
 
-		//const bool hasMaterial() {
-		//	for(auto& a : m_Components)
-		//		if (a->GetComponentType == ComponentType::MATERIAL) {
-		//			return true;
-		//		}
-		//}
+		inline const int GetGOID()					const { return m_GameObjectID; }
+		inline const int GetCountChilds()			const { return m_Childs.size(); }
+
+		GameObject* GetParentGameObject()			{ return Parent; }
+
+		const math::AABB GetAABB()					const { return m_AABB; }
+		const math::OBB GetOOBB()					const { return m_OOBB; }
+		const math::AABB GetInitialAABB()			const { return m_InitialAABB; }
+
+	public:
+
+		//Setters
 		void SetNewID();
-		void SetName(const std::string name)	{ m_Name = name; }
-		void SetPath(const std::string path)	{ m_Path = path; }
-		void SetMeta(const std::string meta)	{ m_MetaPath = m_Path+meta; }
-		void SetParent(GameObject* Go)			{ Parent = Go; }
+		
+		void SetName(const std::string name)		{ m_Name = name; }
+		void SetPath(const std::string path)		{ m_Path = path; }
+		void SetMeta(const std::string meta)		{ m_MetaPath = m_Path+meta; }
+		void SetParent(GameObject* Go);
+		
+		void SetAABB(math::AABB aabb)				{ m_AABB = aabb; }
+		void SetOOBB(math::OBB oobb)				{ m_OOBB = oobb; }
+		void SetInitialAABB(math::AABB aabb)		{ m_InitialAABB = aabb; }
 
-		void SetAABB(const glm::vec3& minVec, const glm::vec3& maxVec);
+		void SetOOBBTransform(glm::mat4 transform);
 
-		GameObject* GetParentGameObject() { return Parent; }
-		void BreakParent() { Parent = nullptr; }
+	public:
+		
+		//Others
+		void BreakParent() { /*Parent = nullptr;*/SetParent(nullptr); }
 		Component* CreateComponent(ComponentType type);
-		std::list<GameObject*> m_Childs;
-		std::vector<Component*> m_Components;
 
 		template <typename T>
 		T* GetComponent()
@@ -62,10 +74,11 @@ namespace Cronos {
 				if (comp->GetComponentType() == type)
 					return ((T*)(comp));
 
-			//LOG("Component %i in %s Game Object NOT Found!", (int)type, m_Name.c_str());
 			return nullptr;
 		}
-		bool HasMeta() {
+
+		bool HasMeta()
+		{
 			if (std::filesystem::exists(m_MetaPath))
 				return true;
 			return false;
@@ -73,19 +86,27 @@ namespace Cronos {
 
 	public:
 
+		std::list<GameObject*> m_Childs;
+		std::vector<Component*> m_Components;
+
 		bool m_IsPrimitive = false;
 		bool tempHasMaterial = false;
 		bool HasMetaa = false;
 		bool HasVertices = false;
 
 	private:
-		GameObject* Parent=nullptr;
+
+		GameObject* Parent = nullptr;
 		std::string m_Name;
 		std::string m_Path;
 		std::string m_MetaPath;
 
 		bool m_Active;
 		int m_GameObjectID;
+
+		math::OBB m_OOBB;
+		math::AABB m_AABB;
+		math::AABB m_InitialAABB;
 	};
 
 }

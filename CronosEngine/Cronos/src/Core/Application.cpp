@@ -176,22 +176,7 @@ namespace Cronos {
 	update_status Application::OnUpdate()
 	{
 		update_status ret = UPDATE_CONTINUE;
-
-		/*if (input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
-			m_GT_Play = true;
-		if (input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
-			m_GT_Pause = true;
-		if (input->GetKey(SDL_SCANCODE_I) == KEY_DOWN)
-			m_GT_Stop = true;
-		if (input->GetKey(SDL_SCANCODE_U) == KEY_DOWN)
-			m_GT_Faster = true;
-		if (input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
-			m_GT_Slower = true;
-		if (input->GetKey(SDL_SCANCODE_H) == KEY_DOWN)
-			m_GT_NextFrame = true;*/
-
-		//Save scene?
-
+		
 		PrepareUpdate();
 
 		for (auto& element : m_ModulesList)

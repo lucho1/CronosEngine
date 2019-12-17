@@ -19,6 +19,7 @@ namespace Cronos {
 	{
 	public:
 
+		//Module Methods
 		Scene(Application* app, bool start_enabled = true);
 		~Scene();
 
@@ -29,10 +30,15 @@ namespace Cronos {
 		virtual update_status OnUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
 
+	public:
+
+		//Scene Methods
 		GameObject* CreateModel(const char* path);
 
 		bool SaveScene(const char* SceneName);
 		bool LoadScene(const char* SceneName);
+
+	public:
 
 		bool mustSave = false;
 		bool mustLoad = false;
@@ -47,20 +53,16 @@ namespace Cronos {
 		std::list<Texture*> m_TexturesLoaded;
 
 		std::string m_SceneName;
+
 	private:
 
 		AssimpCronosImporter m_CNAssimp_Importer;
 		GameObject* m_StreetModel;
 
-
-		//bool drawZBuffer = false;
-		//bool changeZBufferDrawing = true;
 		GameObject* m_Wave = nullptr;
 		Shader* m_WaterShader = nullptr;
 		Texture* m_WaveTexture = nullptr;
 		Timer m_WaveTimer;
-
-		CnOctree OT_Test;
 	};
 
 }

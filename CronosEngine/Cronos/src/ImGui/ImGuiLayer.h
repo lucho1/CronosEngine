@@ -59,8 +59,9 @@ namespace Cronos {
 		GameObject* GetCurrentGameObject() { return CurrentGameObject; }
 		void CancelGameObject() { CurrentGameObject = nullptr; }
 
-		void AddLog(std::string log);
+		void SetSelectedGameObject(GameObject* gameObject);
 
+		void AddLog(std::string log);
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
 	private:
@@ -74,6 +75,7 @@ namespace Cronos {
 		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
 		void GUIDrawMeshMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
+		void GUIDrawCameraComponentMenu(GameObject* CurrentGameObject);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();

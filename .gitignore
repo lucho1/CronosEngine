@@ -1,7 +1,8 @@
 .vs/
 [Bb]in/
 [Bb]in-int/
-
+*.meta
 *.model
 *.asset
 *.mesh
+*.scene

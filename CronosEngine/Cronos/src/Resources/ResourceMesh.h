@@ -38,9 +38,6 @@ namespace Cronos {
 		uint m_ResID;
 		std::vector<CronosVertex> m_VertexVector;
 		std::vector<uint> m_IndicesVector;
-
-
-
 	};
 }
 

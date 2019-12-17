@@ -13,6 +13,7 @@
 #include "Renderer/Buffers.h"
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/CameraComponent.h"
 
 #include <glad/glad.h>
 
@@ -312,7 +313,6 @@ namespace Cronos {
 
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GameObject"))
 		{
-
 			GameObject* Temp = Draging;
 			GameObject* LastParent = Temp->GetParentGameObject();
 			if (LastParent == nullptr) {
@@ -340,6 +340,15 @@ namespace Cronos {
 		Draging = Go;
 		ImGui::Text(Go->GetName().c_str());
 		ImGui::EndDragDropSource();
+	}
+
+	void ImGuiLayer::SetSelectedGameObject(GameObject* gameObject)
+	{
+		if (!gameObject)
+			return;
+
+		CurrentGameObject = gameObject;
+		nodeHirearchySelected = gameObject->GetGOID();
 	}
 
 	update_status ImGuiLayer::OnPreUpdate(float dt) {
@@ -603,6 +612,11 @@ namespace Cronos {
 			HoverGameWin = false;
 
 		m_SceneWindow->PostUpdate();
+
+		//TODO: Make this nicer xddd
+		if (App->engineCamera->m_ScrollingSpeedChange)
+			ImGui::Text("Camera Speed Multiplicator: x%.2f", App->engineCamera->GetSpeedMultiplicator());
+
 		ImGui::End();
 	}
 
@@ -761,24 +775,28 @@ namespace Cronos {
 		//ImGui::SetNextWindowSize(ImVec2(500, 400));
 		ImGui::Begin("Inspector", &ShowInspectorPanel);
 
-			if (CurrentGameObject != nullptr) {
+			if (CurrentGameObject != nullptr)
+			{
 				ImGui::Checkbox(" ", &CurrentGameObject->SetActive()); ImGui::SameLine();
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
-				if (ImGui::InputText("###", buf1, 64)) {
+
+				if (ImGui::InputText("###", buf1, 64)) 
 					CurrentGameObject->SetName(buf1);
-				}
+				
 				ImGui::Separator();
 				GUIDrawTransformPMenu(CurrentGameObject);
 
-				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr)
 					GUIDrawMeshMenu(CurrentGameObject);
-				}
-
-				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) {
+				
 				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) 
 						GUIDrawMaterialsMenu(CurrentGameObject);
-				}
+				
+				if (CurrentGameObject->GetComponent<CameraComponent>() != nullptr)
+					GUIDrawCameraComponentMenu(CurrentGameObject);
+
 			}
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
@@ -793,36 +811,46 @@ namespace Cronos {
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			TransformComponent* test = CurrentGameObject->GetComponent<TransformComponent>();
-			ObjectPos =test->GetTranslation();
+			ObjectPos = test->GetTranslation();
 			ObjectRot = test->GetOrientation();
 			ObjectScale = test->GetScale();
 
 			static bool toChange;
-			static float f0 = 1.0f, f1 = 2.0f, f2 = 3.0f;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Position");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectPos.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueY", &ObjectPos.y, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueZ", &ObjectPos.z, 0.1f))toChange=true;
-			if (toChange) {
+			
+			if (toChange)
+			{
 				test->SetPosition(ObjectPos);
 				toChange = false;
 			}
+
 			ImGui::Text("Rotation");
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, 0.1f))toChange = true;
-			if (toChange) {
+			
+			if (toChange)
+			{
 				test->SetOrientation(ObjectRot);
 				toChange = false;
 			}
-			ImGui::Text("Scale");
-			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f); ImGui::SameLine();
-			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f); ImGui::SameLine();
-			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f);
-			CurrentGameObject->GetComponent<TransformComponent>()->SetScale(ObjectScale);
 
+			ImGui::Text("Scale");
+			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f))toChange=true; ImGui::SameLine();
+			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f))toChange=true;
+			
+			if (toChange)
+			{
+				test->SetScale(ObjectScale);
+				toChange = false;
+			}
 		}
+
 		ImGui::Separator();
 	}
 
@@ -886,12 +914,66 @@ namespace Cronos {
 			ImGui::Text(CurrentGameObject->GetName().c_str());
 
 			ImGui::Checkbox("Draw Normals", &CurrentGameObject->GetComponent<MeshComponent>()->setDebugDraw());
-			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<TransformComponent>()->SetDrawAxis() );
-
-			if(CurrentGameObject->GetComponent<TransformComponent>()->DrawAxis)
-				CurrentGameObject->GetComponent<TransformComponent>()->DrawCentralAxis();
+			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<MeshComponent>()->SetDrawAxis());
 
 			ImGui::Separator();
+		}
+	}
+
+	void ImGuiLayer::GUIDrawCameraComponentMenu(GameObject* CurrentGameObject)
+	{
+		if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			CameraComponent* camera = CurrentGameObject->GetComponent<CameraComponent>();
+
+			static float CameraMoveSpeed = camera->GetCameraMoveSpeed();
+			static float CameraScrollSpeed = camera->GetCameraScrollSpeed();
+			static float CameraFieldOfView = camera->GetFOV();
+			static float CameraNearPlane = camera->GetNearPlane();
+			static float CameraFarPlane = camera->GetFarPlane();
+
+			//ImGui::Text("Camera Options");
+
+			//Setters -----------------------------------------------------------------------------------------
+			/*ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
+			if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+				camera->SetMoveSpeed(CameraMoveSpeed);
+
+			ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
+			if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+				camera->SetScrollSpeed(CameraScrollSpeed);*/
+
+			ImGui::NewLine();
+			ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
+			if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+				camera->SetFOV(CameraFieldOfView);
+
+			ImGui::NewLine();
+			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
+				camera->SetNearPlane(CameraNearPlane);
+
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(100);
+			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
+				camera->SetFarPlane(CameraFarPlane);
+
+			//Set to default values ------------------------------------------------------------------------------
+			if (ImGui::Button("Default"))
+			{
+				//CameraMoveSpeed = 5.0;
+				//CameraScrollSpeed = 20.0;
+				CameraFieldOfView = 60.0f;
+				CameraNearPlane = 1.0f;
+				CameraFarPlane = 100.0f;
+				//App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
+				//App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
+				camera->SetFOV(CameraFieldOfView);
+				camera->SetNearPlane(CameraNearPlane);
+				camera->SetFarPlane(CameraFarPlane);
+
+			}
 		}
 	}
 
@@ -1000,7 +1082,6 @@ namespace Cronos {
 
 		ImGui::Begin("Hierarchy", &ShowHierarchyMenu, ImGuiWindowFlags_MenuBar);
 		{
-
 			if (ImGui::BeginMenuBar()) {
 
 				if (ImGui::BeginMenu("Create")) {
@@ -1015,6 +1096,20 @@ namespace Cronos {
 						PrimitivesMenu();
 						ImGui::EndMenu();
 					}
+
+					//Creating Camera
+					if (ImGui::MenuItem("Camera"))
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 0.5f, 0.5f, 0.8f });
+						ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
+						ret->GetComponent<MaterialComponent>()->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
+
+						CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+
+						ret->m_Components.push_back(cameraComp);
+						App->scene->m_GameObjects.push_back(ret);
+					}
+
 					ImGui::EndMenu();
 				}
 
@@ -1022,7 +1117,8 @@ namespace Cronos {
 			}
 			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.392f, 0.369f, 0.376f, 0.70f));
 
-			for (auto&go : App->scene->m_GameObjects) {
+			for (auto&go : App->scene->m_GameObjects)
+			{
 				std::string GameObject_Name = go->GetName();
 				std::string ID = std::to_string(go->GetGOID());
 				ImGuiTreeNodeFlags Treenode_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -1723,13 +1819,13 @@ namespace Cronos {
 		ImGui::SameLine(30);
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0, 500, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
 			App->engineCamera->SetNearPlane(CameraNearPlane);
 
 		sameLine;
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0, 1000, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
 			App->engineCamera->SetFarPlane(CameraFarPlane);
 
 		//Set to default values ------------------------------------------------------------------------------
@@ -1794,6 +1890,7 @@ namespace Cronos {
 		if (ImGui::BeginPopupModal("##menuQuit",NULL, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::Text("Are you sure you want to quit?");
+			ImGui::Text("Have you saved ?");
 			ImGui::Separator();
 
 			//static bool dont_ask_me_next_time = false;

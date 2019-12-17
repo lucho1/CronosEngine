@@ -7,8 +7,8 @@
 
 namespace Cronos {
 
-	//Quadtree -----------------------------------------------------------------
-	CnOctree::CnOctree(AABB space, int maxObjectsInside)
+	//Octree ------------------------------------------------------------------
+	CnOctree::CnOctree(math::AABB space, int maxObjectsInside)
 	{
 		m_Root = new CnOT_Node(space, NodeType::ROOT, maxObjectsInside);
 	}
@@ -29,22 +29,33 @@ namespace Cronos {
 		return m_Root->Insert(GObject);
 	}
 
-	std::vector<GameObject*> CnOctree::GetObjectsContained(AABB cubicSpace)
+	void CnOctree::TakeOut(GameObject* GObject)
+	{
+		m_Root->TakeOut(GObject);
+	}
+
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		return m_Root->GetObjectsContained(cubicSpace);
 	}
 
+	std::vector<GameObject*> CnOctree::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		return m_Root->GetObjectsContained(cameraFrustum);
+	}
+
 
 	//Octree Node ------------------------------------------------------------
-	CnOT_Node::CnOT_Node(AABB partitionSpace, NodeType nodeType, int maxObjectsInside)
+	CnOT_Node::CnOT_Node(math::AABB partitionSpace, NodeType nodeType, int maxObjectsInside)
 		: m_CubicSpace(partitionSpace), m_NodeType(nodeType), m_MaxObjectsInside(maxObjectsInside)
 	{
 	}
 
-	std::vector<GameObject*> CnOT_Node::GetObjectsContained(AABB cubicSpace)
+
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::AABB cubicSpace)
 	{
 		std::vector<GameObject*> objectsInside;
-		if (m_CubicSpace.intersects(cubicSpace) == true)
+		if (!m_CubicSpace.Intersects(cubicSpace) && !m_CubicSpace.Contains(cubicSpace))
 		{
 			LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
@@ -71,23 +82,49 @@ namespace Cronos {
 		return objectsInside;
 	}
 
+
+	std::vector<GameObject*> CnOT_Node::GetObjectsContained(const math::Frustum cameraFrustum)
+	{
+		std::vector<GameObject*> objectsInside;
+		if (!m_CubicSpace.Intersects(cameraFrustum) && !m_CubicSpace.Contains(cameraFrustum))
+		{
+			LOG("No Objects intersecting this cube! Return value empty");
+			return objectsInside;
+		}
+
+		std::vector<GameObject*>::iterator it = GObjectsContained_Vector.begin();
+		for (; it != GObjectsContained_Vector.end(); it++)
+			objectsInside.push_back(*it);
+
+		if (m_ChildsQuantity > 0)
+		{
+			std::vector<GameObject*> childrenObjects;
+			for (uint i = 0; i < m_ChildsQuantity; i++)
+			{
+				std::vector<GameObject*>nodeObjs = m_Nodes[i].GetObjectsContained(cameraFrustum);
+				if (nodeObjs.size() > 0)
+					childrenObjects.insert(childrenObjects.begin(), nodeObjs.begin(), nodeObjs.end());
+			}
+
+			if (childrenObjects.size() > 0)
+				objectsInside.insert(objectsInside.begin(), childrenObjects.begin(), childrenObjects.end());
+		}
+
+		return objectsInside;
+	}
+
+
 	void CnOT_Node::Draw()
 	{
 		if (m_IsChild == false)
 			for (int i = 0; i < m_ChildsQuantity; ++i)
 				m_Nodes[i].Draw();
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glLineWidth(0.5f);
-
-		glColor3f(Red.r, Red.g, Red.b);
-		glMatrixMode(GL_PROJECTION);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetProjectionMatrix()));
-		glMatrixMode(GL_MODELVIEW);
-		glLoadMatrixf(glm::value_ptr(App->engineCamera->GetViewMatrix()));
-		App->renderer3D->DrawCube(m_CubicSpace.getMax(), m_CubicSpace.getMin());
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glm::vec3 max = glm::vec3(m_CubicSpace.MaxX(), m_CubicSpace.MaxY(), m_CubicSpace.MaxZ());
+		glm::vec3 min = glm::vec3(m_CubicSpace.MinX(), m_CubicSpace.MinY(), m_CubicSpace.MinZ());
+		App->renderer3D->DrawCube(max, min, glm::vec3(Red.r, Red.g, Red.b));
 	}
+
 
 	void CnOT_Node::CleanUp()
 	{
@@ -99,73 +136,92 @@ namespace Cronos {
 			delete[] m_Nodes;
 			m_Nodes = nullptr;
 		}
+		
+		GObjectsContained_Vector.clear();
 	}
+
+	void CnOT_Node::CleanNodes()
+	{
+		for (uint i = 0; i < m_ChildsQuantity; i++)
+			m_Nodes[i].CleanUp();
+
+		if (m_Nodes != nullptr)
+		{
+			delete[] m_Nodes;
+			m_Nodes = nullptr;
+		}
+
+		m_ChildsQuantity = 0;
+		if (m_NodeType != NodeType::ROOT)
+			m_NodeType = NodeType::CHILD;
+	}
+
 
 	void CnOT_Node::Split()
 	{
 		//Get the current AABB Max and Min
-		glm::vec3 c_Min = m_CubicSpace.getMin();
-		glm::vec3 c_Max = m_CubicSpace.getMax();
-		glm::vec3 max, min;
+		math::float3 c_Min = m_CubicSpace.minPoint;
+		math::float3 c_Max = m_CubicSpace.maxPoint;
+		math::float3 max, min;
 
 		//Let's begin
-		AABB children[8];
+		math::AABB children[8];
 
 		//First Node
-		max = glm::vec3(c_Max.x, c_Max.y, c_Max.z);
-		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+		max = c_Max;
+		min = { (c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f };
 
 		///Set new node with those max and min
-		children[0] = AABB(min, max);
+		children[0] = math::AABB(min, max);
 
 		//Second Node
-		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Max.y, c_Max.z);
-		min = glm::vec3(c_Min.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
+		max = { (c_Max.x + c_Min.x) / 2.0f, c_Max.y, c_Max.z };
+		min = { c_Min.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f };
 
 		///Set new node with those max and min
-		children[1] = AABB(min, max);
+		children[1] = math::AABB(min, max);
 
 		//Third Node
-		max = glm::vec3(c_Max.x, c_Max.y, (c_Max.z + c_Min.z) / 2.0f);
-		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Min.z);
+		max = { c_Max.x, c_Max.y, (c_Max.z + c_Min.z) / 2.0f };
+		min = { (c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Min.z };
 
 		///Set new node with those max and min
-		children[2] = AABB(min, max);
+		children[2] = math::AABB(min, max);
 
 		//Fourth Node
-		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Max.y, (c_Max.z + c_Min.z) / 2.0f);
-		min = glm::vec3(c_Min.x, (c_Min.y + c_Max.y) / 2.0f, c_Min.z);
+		max = { (c_Max.x + c_Min.x) / 2.0f, c_Max.y, (c_Max.z + c_Min.z) / 2.0f };
+		min = { c_Min.x, (c_Min.y + c_Max.y) / 2.0f, c_Min.z };
 
 		///Set new node with those max and min
-		children[3] = AABB(min, max);
+		children[3] = math::AABB(min, max);
 
 		//Fifth Node
-		max = glm::vec3(c_Max.x, (c_Min.y + c_Max.y) / 2.0f, c_Max.z);
-		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Min.y, (c_Max.z + c_Min.z) / 2.0f);
+		max = { c_Max.x, (c_Min.y + c_Max.y) / 2.0f, c_Max.z };
+		min = { (c_Max.x + c_Min.x) / 2.0f, c_Min.y, (c_Max.z + c_Min.z) / 2.0f };
 
 		///Set new node with those max and min
-		children[4] = AABB(min, max);
+		children[4] = math::AABB(min, max);
 
 		//Sixth Node
-		max = glm::vec3((c_Max.x + c_Min.x)/ 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Max.z);
-		min = glm::vec3(c_Min.x, c_Min.y, (c_Max.z + c_Min.z) / 2.0f);
+		max = { (c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Max.y) / 2.0f, c_Max.z };
+		min = { c_Min.x, c_Min.y, (c_Max.z + c_Min.z) / 2.0f };
 
 		///Set new node with those max and min
-		children[5] = AABB(min, max);
+		children[5] = math::AABB(min, max);
 
 		//Seventh Node
-		max = glm::vec3(c_Max.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
-		min = glm::vec3((c_Max.x + c_Min.x) / 2.0f, c_Min.y, c_Min.z);
+		max = { c_Max.x, (c_Min.y + c_Max.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f };
+		min = { (c_Max.x + c_Min.x) / 2.0f, c_Min.y, c_Min.z };
 
 		///Set new node with those max and min
-		children[6] = AABB(min, max);
+		children[6] = math::AABB(min, max);
 
 		//Eight and Final Node
-		max = glm::vec3((c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Min.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f);
-		min = glm::vec3(c_Min.x, c_Min.y, c_Min.z);
+		max = { (c_Max.x + c_Min.x) / 2.0f, (c_Min.y + c_Min.y) / 2.0f, (c_Max.z + c_Min.z) / 2.0f };
+		min = { c_Min.x, c_Min.y, c_Min.z };
 
 		///Set new node with those max and min
-		children[7] = AABB(min, max);
+		children[7] = math::AABB(min, max);
 
 		//Create those new nodes as actual Octree Nodes ---------------------------------------------------------
 		if (m_NodeType != NodeType::ROOT)
@@ -178,10 +234,11 @@ namespace Cronos {
 			m_Nodes[i] = CnOT_Node(children[i], NodeType::CHILD, m_MaxObjectsInside);
 	}
 
+
 	bool CnOT_Node::Insert(GameObject* GObj)
 	{
-		AABB GOAABB = GObj->GetComponent<TransformComponent>()->GetAABB();
-		if (m_CubicSpace.intersects(GOAABB) == false)
+		math::AABB GOAABB = GObj->GetAABB();
+		if (!m_CubicSpace.Intersects(GOAABB))
 			return false;
 
 		int nodesContained = 0, container = 0;
@@ -189,7 +246,7 @@ namespace Cronos {
 		{
 			for (uint i = 0; i < m_ChildsQuantity; i++)
 			{
-				if (m_Nodes[i].m_CubicSpace.intersects(GOAABB) == true)
+				if (m_Nodes[i].m_CubicSpace.Intersects(GOAABB))
 				{
 					nodesContained++;
 					container = i;
@@ -211,6 +268,8 @@ namespace Cronos {
 			GObjectsContained_Vector.push_back(GObj);
 			if (GObjectsContained_Vector.size() > m_MaxObjectsInside)
 			{
+				Split();
+
 				std::vector<GameObject*> newObjects = GObjectsContained_Vector;
 				GObjectsContained_Vector.clear();
 
@@ -220,7 +279,7 @@ namespace Cronos {
 					container = 0;
 					for (uint i = 0; i < m_ChildsQuantity; i++)
 					{
-						if (m_Nodes[i].m_CubicSpace.intersects(newObjects[j]->GetComponent<TransformComponent>()->GetAABB()) == true)
+						if (m_Nodes[i].m_CubicSpace.Intersects(newObjects[j]->GetAABB()))
 						{
 							nodesContained++;
 							container = i;
@@ -234,8 +293,6 @@ namespace Cronos {
 					else if (nodesContained > 1)
 						GObjectsContained_Vector.push_back(newObjects[j]);
 				}
-
-				Split();
 			}
 			return true;
 		}
@@ -244,4 +301,38 @@ namespace Cronos {
 	}
 
 
-}//Namespace Cronos
+	void CnOT_Node::TakeOut(GameObject* GObject)
+	{
+		for (int i = 0; i < GObjectsContained_Vector.size(); ++i)
+		{
+			if (GObjectsContained_Vector[i] != GObject)
+				continue;
+
+			GObjectsContained_Vector.erase(GObjectsContained_Vector.begin() + i);
+			return;			
+		}
+
+		if (m_ChildsQuantity > 0)
+		{
+			for (int i = 0; i < m_ChildsQuantity; ++i)
+				m_Nodes[i].TakeOut(GObject);
+
+			//In case the subnodes are the leaves, and become empty
+			//after erasing the object, clear them
+			if (m_Nodes[0].m_NodeType == NodeType::CHILD)
+			{
+				bool nodesEmpty = true;
+				for (int i = 0; i < m_ChildsQuantity; ++i)
+				{
+					if (m_Nodes[i].GObjectsContained_Vector.empty() == false)
+					{
+						nodesEmpty = false;
+						break;
+					}
+				}
+				if (nodesEmpty)
+					CleanNodes();
+			}
+		}
+	}
+}
