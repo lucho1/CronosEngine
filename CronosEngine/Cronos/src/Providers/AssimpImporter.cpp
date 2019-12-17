@@ -197,9 +197,9 @@ namespace Cronos {
 		if (scaling.x > 95.0f || scaling.y > 95.0f || scaling.z > 95.0f)
 			scaling = aiVector3D(95.0f);
 
-		motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(scaling.x, scaling.y, scaling.z));
+		//motherGameObj->GetComponent<TransformComponent>()->SetScale(glm::vec3(scaling.x, scaling.y, scaling.z));
 		GO->GetComponent<TransformComponent>()->SetPosition(glm::vec3(translation.x, translation.y, translation.z));
-		motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(EulerAnglesRotation));
+		//motherGameObj->GetComponent<TransformComponent>()->SetOrientation(glm::degrees(EulerAnglesRotation));
 
 		GO->SetParent(motherGameObj);
 		GO->m_Components.push_back(meshComp);
