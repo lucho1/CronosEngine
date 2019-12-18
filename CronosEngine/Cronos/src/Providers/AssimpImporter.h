@@ -28,10 +28,12 @@ namespace Cronos {
 		void ProcessCronosMesh(aiMesh* as_mesh, const aiScene* as_scene, GameObject* motherGameObj, aiNode* as_node);
 
 		Texture* LoadTextures(aiMaterial* material, TextureType TexType, const std::string& GOPath);
+		void LoadSceneMaterials(const aiScene* as_scene, const std::string& path);
 
 	private:
 
 		uint MeshNum = 0;
+		std::vector<Material*> m_SceneCronosMaterials; //Materials of each scene
 	};
 
 }

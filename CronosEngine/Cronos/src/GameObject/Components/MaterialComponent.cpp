@@ -26,38 +26,6 @@ namespace Cronos
 
 		glm::mat4 transform = GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
 		m_Material->Bind(!GetParent()->m_IsPrimitive, transform);
-
-
-		/*if (GetParent()->m_IsPrimitive == true)
-			bindMaterial = false;
-
-		if (bindMaterial)
-		{
-			if(m_TexturesContainer.size() > 0)
-				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", false);
-			else
-				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);
-
-			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
-			if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
-			{
-				std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
-				for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
-				{
-					uint TextureID = (uint)(it->first);
-					m_ShaderAttached->SetUniform1i(UniformNameFromTextureType(it->first), TextureID);
-					(*it->second).Bind(TextureID);
-				}
-			}
-		}
-		else
-		{
-			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);
-			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
-		}
-
-		if(App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
-			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);*/
 	}
 
 	void MaterialComponent::SetMaterial(Material& material)

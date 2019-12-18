@@ -60,6 +60,7 @@ namespace Cronos {
 			RELEASE(*it);
 			it = m_TexturesLoaded.erase(it);
 		}
+
 		m_TexturesLoaded.clear();
 		return true;
 	}

@@ -24,24 +24,26 @@ namespace Cronos
 
 	Material::Material()
 	{
-		m_MaterialName = "Unnamed Material";
+		m_MaterialName = "New Material";
 		m_ID = App->m_RandomNumGenerator.GetIntRN();
 
 		m_MaterialShader = App->renderer3D->GetBasicShader();
 		App->renderer3D->AddMaterialToList(this);
 	}
 
-
 	Material::~Material()
 	{
-		std::unordered_map<TextureType, Texture*>::iterator TextureItem = m_MaterialTextures.begin();
-		for (; TextureItem != m_MaterialTextures.end() && (*TextureItem).second; TextureItem++)
+		if (m_MaterialTextures.size() > 0)
 		{
-			RELEASE(TextureItem->second);
-			m_MaterialTextures.erase(TextureItem);
-		}
+			std::unordered_map<TextureType, Texture*>::iterator TextureItem = m_MaterialTextures.begin();
+			for (; TextureItem != m_MaterialTextures.end() && (*TextureItem).second; TextureItem++)
+			{
+				RELEASE(TextureItem->second);
+				m_MaterialTextures.erase(TextureItem);
+			}
 
-		m_MaterialTextures.clear();
+			m_MaterialTextures.clear();
+		}
 	}
 
 

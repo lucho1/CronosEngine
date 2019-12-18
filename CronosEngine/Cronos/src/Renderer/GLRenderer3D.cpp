@@ -86,12 +86,17 @@ namespace Cronos {
 	{
 		LOG("Destroying 3D Renderer");
 
-		for (auto& mat : m_MaterialsList)
-			RELEASE(mat);
-
+		std::list<Material*>::iterator item = m_MaterialsList.begin();
+		while(item !=  m_MaterialsList.end())
+		{
+			RELEASE(*item);
+			item = m_MaterialsList.erase(item);			
+		}
+		
 		RELEASE(m_BasicShader);
 		m_RenderingOctree.CleanUp();
-		
+		m_MaterialsList.clear();
+
 		SDL_GL_DeleteContext(context);
 		return true;
 	}

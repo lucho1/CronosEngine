@@ -61,6 +61,9 @@ namespace Cronos {
 		std::string GOName = filepath.substr(filepath.find_last_of('/') + 1, filepath.find_last_of('.') - filepath.find_last_of('/') - 1);
 		GameObject* mother_GO = new GameObject(GOName, App->m_RandomNumGenerator.GetIntRN(), filepath.substr(0, filepath.find_last_of('/')));
 
+		//Assimp scene's materials conversion
+		LoadSceneMaterials(scene, mother_GO->GetPath());
+		
 		//If all is correct, we process all the nodes passing the first one (root)
 		ProcessAssimpNode(scene->mRootNode, scene, mother_GO);		
 
@@ -79,21 +82,20 @@ namespace Cronos {
 		//Abd save in own format
 		App->filesystem->SaveOwnFormat(mother_GO);
 
-
 		//aiReleaseImport(scene);
 		// detach log stream
 		aiDetachAllLogStreams();
 
 		LOG("FINISHED LOADING MODEL -- Model With %i Meshes", MeshNum);
 		MeshNum = 0;
+		m_SceneCronosMaterials.clear();
 		return mother_GO;
 	}
 
 	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
 		LOG("	Processing Assimp Node");
-
-
+		
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
 		{
@@ -210,14 +212,7 @@ namespace Cronos {
 			aiMaterial* AssimpMaterial = as_scene->mMaterials[as_mesh->mMaterialIndex];
 
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
-
-			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
-				matComp->SetTexture(LoadTextures(AssimpMaterial, TextureType(i), GO->GetPath()), TextureType(i));
-
-			aiColor3D col = aiColor3D(0, 0, 0);
-			AssimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, col);
-			if(col.r >= 0.01f || col.g >= 0.01f || col.b >= 0.01f)
-				matComp->SetColor(glm::vec4(col.r, col.g, col.b, 1.0f));
+			matComp->SetMaterial(*m_SceneCronosMaterials[as_mesh->mMaterialIndex]);
 
 			GO->m_Components.push_back(matComp);
 		}
@@ -250,6 +245,33 @@ namespace Cronos {
 		//Push the child game object into the mother
 		motherGameObj->m_Childs.push_back(GO);
 		LOG("	Processed Mesh with %i Vertices and %i Indices", rMesh->m_BufferSize[0], rMesh->m_BufferSize[1]);
+	}
+
+
+	void AssimpCronosImporter::LoadSceneMaterials(const aiScene* as_scene, const std::string& path)
+	{
+		m_SceneCronosMaterials.clear();
+		for (uint i = 0; i < as_scene->mNumMaterials; i++)
+		{
+			aiMaterial* AssMat = as_scene->mMaterials[i];
+			Material* CnMat = new Material();
+
+			aiString matName;
+			AssMat->Get(AI_MATKEY_NAME, matName);
+
+			aiColor3D matColor = aiColor3D(0, 0, 0);
+			float alphaValue = 1.0f;
+			AssMat->Get(AI_MATKEY_COLOR_AMBIENT, matColor);
+			AssMat->Get(AI_MATKEY_OPACITY, alphaValue);
+
+			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
+				CnMat->SetTexture(LoadTextures(AssMat, TextureType(i), path), TextureType(i));
+
+			CnMat->SetName(matName.C_Str());
+			CnMat->SetColor({ matColor.r, matColor.g, matColor.b, alphaValue });
+			
+			m_SceneCronosMaterials.push_back(CnMat);
+		}
 	}
 
 
