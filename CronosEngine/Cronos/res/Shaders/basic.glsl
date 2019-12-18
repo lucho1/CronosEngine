@@ -33,7 +33,7 @@ uniform sampler2D u_SpecularTexture;
 //uniform sampler2D u_HeightMap;
 //uniform sampler2D u_LightMap;
 
-uniform vec4 u_AmbientColor = vec4(0.8, 0.8, 0.8, 1.0);
+uniform vec4 u_AmbientColor;
 
 //ZBuffer rendering
 uniform vec2 u_CamPlanes; //x for near plane, y for far plane

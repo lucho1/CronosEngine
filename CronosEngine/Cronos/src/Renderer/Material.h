@@ -32,7 +32,7 @@ namespace Cronos
 		
 		std::string m_MaterialName;
 
-		glm::vec4 m_MaterialAmbientColor = glm::vec4(1.0f);
+		glm::vec4 m_MaterialAmbientColor = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 		std::unordered_map<TextureType, Texture*> m_MaterialTextures;
 
 		Shader* m_MaterialShader = nullptr;
