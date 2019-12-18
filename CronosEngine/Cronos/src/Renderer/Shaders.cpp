@@ -19,9 +19,6 @@ namespace Cronos {
 	//Constructors
 	Shader::Shader(const std::string& filepath)
 	{
-		//ShaderProgram shaderSource = ParseShader(filepath);
-		//m_ID = CreateShader(shaderSource.vertexShader, shaderSource.fragmentShader);
-		
 		std::string ShaderSourceCode = ReadFile(filepath);
 		Compile(PreProcess(ShaderSourceCode));
 		m_Path = filepath;
@@ -29,8 +26,6 @@ namespace Cronos {
 
 	Shader::Shader(const std::string& vertexShader, const std::string& fragmentShader)
 	{
-		//m_ID = CreateShader(vertexShader, fragmentShader);
-
 		std::unordered_map<GLenum, std::string> SourceShaderUMap;
 		SourceShaderUMap[GL_VERTEX_SHADER] = vertexShader;
 		SourceShaderUMap[GL_FRAGMENT_SHADER] = fragmentShader;
@@ -68,6 +63,11 @@ namespace Cronos {
 		return loc;
 	}
 
+	void Shader::SetUniformVec2f(const std::string& name, glm::vec2& vector2f)
+	{
+		glUniform2f(GetUniformLocation(name), vector2f.x, vector2f.y);
+	}
+
 	void Shader::SetUniformVec3f(const std::string& name, glm::vec3& vector3f)
 	{
 		glUniform3f(GetUniformLocation(name), vector3f.x, vector3f.y, vector3f.z);
@@ -76,11 +76,6 @@ namespace Cronos {
 	void Shader::SetUniformVec4f(const std::string& name, glm::vec4& vector4f)
 	{
 		glUniform4f(GetUniformLocation(name), vector4f.x, vector4f.y, vector4f.z, vector4f.a);
-	}
-
-	void Shader::SetUniformVec2f(const std::string& name, glm::vec2& vector2f)
-	{
-		glUniform2f(GetUniformLocation(name), vector2f.x, vector2f.y);
 	}
 
 	void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& mat)
@@ -97,95 +92,11 @@ namespace Cronos {
 	{
 		glUniform1f(GetUniformLocation(name), value);
 	}
-	
-	//Shader Read & Creation (.shader version)
-	/*ShaderProgram Shader::ParseShader(const std::string filepath)
+
+	void Shader::SetUniformBool(const std::string& name, bool value)
 	{
-		enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
-
-		std::ifstream stream(filepath);
-		std::string line;
-		std::stringstream ss[2];
-		ShaderType sType = ShaderType::NONE;
-
-		while (std::getline(stream, line)) {
-
-			if (line.find("#shader") != std::string::npos)
-			{
-				if (line.find("vertex") != std::string::npos)
-					sType = ShaderType::VERTEX;
-				else if (line.find("fragment") != std::string::npos)
-					sType = ShaderType::FRAGMENT;
-			}
-			else
-				ss[(int)sType] << line << '\n';
-		}
-
-		return { ss[0].str(), ss[1].str() };
-	}*/
-
-	/*uint Shader::CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
-	{
-		uint program = glCreateProgram();
-		uint vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-		uint fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-		glAttachShader(program, vs);
-		glAttachShader(program, fs);
-		glLinkProgram(program);
-		glValidateProgram(program);
-
-		int result;
-		glGetProgramiv(program, GL_LINK_STATUS, &result);
-
-		if (result == GL_FALSE)
-		{
-			int length;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
-			char *message = (char*)alloca(length * sizeof(char));
-
-			glGetProgramInfoLog(program, length, &length, message);
-			LOG("Error in Shader Program Linking: %s", message);
-		}
-
-		glDetachShader(program, vs);
-		glDetachShader(program, fs);
-		glDeleteShader(vs);
-		glDeleteShader(fs);
-
-		if (result == GL_FALSE)
-		{
-			glDeleteProgram(program);
-			return 0;
-		}
-
-		return program;
-	}*/
-
-	/*uint Shader::CompileShader(uint type, const std::string& source)
-	{
-		uint id = glCreateShader(type);
-		const char* src = source.c_str();
-		glShaderSource(id, 1, &src, nullptr);
-		glCompileShader(id);
-
-		int result;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-
-		if (result == GL_FALSE) {
-
-			int length;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-			char *message = (char*)alloca(length * sizeof(char));
-
-			glGetShaderInfoLog(id, length, &length, message);
-			LOG("Error in %s Shader compilation: %s", (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment"), message);
-			glDeleteShader(id);
-			return 0;
-		}
-
-		return id;
-	}*/
+		glUniform1f(GetUniformLocation(name), value);
+	}
 	
 	//Shader Read & Creation (.glsl version)
 	std::string Shader::ReadFile(const std::string & filepath)

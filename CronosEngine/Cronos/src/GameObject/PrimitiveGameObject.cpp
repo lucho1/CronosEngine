@@ -186,7 +186,7 @@ namespace Cronos {
 
 		//Also, set the material component
 		MaterialComponent* matComp = (MaterialComponent*)(CreateComponent(ComponentType::MATERIAL));
-		matComp->SetShader(App->scene->BasicTestShader);
+		//matComp->SetShader(App->scene->BasicTestShader);
 		m_Components.push_back(matComp);
 
 

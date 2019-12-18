@@ -1301,6 +1301,7 @@
     </ClInclude>
     <ClInclude Include="src\GameObject\Components\CameraComponent.h" />
     <ClInclude Include="src\Helpers\Camera.h" />
+    <ClInclude Include="src\Renderer\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1422,5 +1423,6 @@
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\CameraComponent.cpp" />
     <ClCompile Include="src\Helpers\Camera.cpp" />
+    <ClCompile Include="src\Renderer\Material.cpp" />
   </ItemGroup>
 </Project>

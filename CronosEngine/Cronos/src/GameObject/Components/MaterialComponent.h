@@ -5,6 +5,8 @@
 #include "Renderer/Shaders.h"
 #include "Renderer/Textures.h"
 
+#include "Renderer/Material.h"
+
 namespace Cronos
 {
 	class MaterialComponent : public Component
@@ -12,26 +14,27 @@ namespace Cronos
 	public:
 
 		MaterialComponent(GameObject* attachedGO);
-		~MaterialComponent();
+		~MaterialComponent() {}
 
-		void Bind(bool bindMaterial);
-		void Unbind();
+		void Bind();
+		void Unbind() { m_Material->Unbind(); }
 
+		//Setters
+		void SetMaterial(Material& material);
+		void SetShader(Shader& shader);
+		void SetColor(const glm::vec4& col);
 		void SetTexture(Texture* texture, TextureType type);
-		void SetShader(Shader* shader) { m_ShaderAttached = shader; }
 
-		inline const std::unordered_map<TextureType, Texture*>GetTextures() const { return m_TexturesContainer; }
-		static ComponentType GetType() { return ComponentType::MATERIAL; };
+		//Getters
+		static ComponentType GetType()										{ return ComponentType::MATERIAL; };
+		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_Material->GetTextures(); }
+		inline const glm::vec4 GetColor()									const { return m_Material->GetMaterialColor(); }
+		inline const Material* GetMaterial()								const { return m_Material; }
 
-		void SetColor(const glm::vec4& col) { m_AmbientColor = col; }
-		const glm::vec4 GetColor() const { return m_AmbientColor; }
 
 	private:
-		
-		Shader* m_ShaderAttached = nullptr;
-		
-		std::unordered_map<TextureType, Texture*>m_TexturesContainer;
-		glm::vec4 m_AmbientColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+		Material* m_Material = nullptr;
 	};
 }
 

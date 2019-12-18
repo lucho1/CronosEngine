@@ -10,7 +10,7 @@
 
 namespace Cronos {
 
-	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled)
+	Scene::Scene(Application* app, bool start_enabled) : Module(app, "Module Scene", start_enabled), m_SceneName("NewScene")
 	{}
 
 	Scene::~Scene()
@@ -23,120 +23,19 @@ namespace Cronos {
 		bool ret = true;
 		App->renderer3D->SetOpenGLSettings();
 
-		//Shaders
-		/*std::string vertexShader = R"(
-			#version 330 core
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec3 a_Normal;
-			layout(location = 2) in vec2 a_TexCoords;
-
-			uniform mat4 u_View;
-			uniform mat4 u_Proj;
-			uniform mat4 u_Model;
-
-			out vec2 v_TexCoords;
-
-			void main()
-			{
-				gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
-				v_TexCoords = a_TexCoords;
-			}
-		)";
-
-		std::string fragmentShader = R"(
-			#version 330 core
-
-			out vec4 color;
-			in vec2 v_TexCoords;
-
-			uniform sampler2D u_AmbientTexture;
-			uniform sampler2D u_DiffuseTexture;
-			uniform sampler2D u_SpecularTexture;
-			uniform sampler2D u_NormalMap;
-			uniform sampler2D u_HeightMap;
-			uniform sampler2D u_LightMap;
-
-			uniform vec4 u_AmbientColor = vec4(1.0,1.0,1.0,1.0);
-
-			uniform int u_TextureEmpty = 1;
-
-			uniform vec2 u_CamPlanes; //x for near plane, y for far plane
-			uniform int u_drawZBuffer = 0;
-
-			float LinearizeZ(float depth)
-			{
-				float z = depth*2.0 - 1.0;
-				return (2.0*u_CamPlanes.x*u_CamPlanes.y)/(u_CamPlanes.y + u_CamPlanes.x - z*(u_CamPlanes.y - u_CamPlanes.x));
-			}
-
-			void main()
-			{
-				vec4 texColor = vec4(0.8, 0.8, 0.8, 1.0);
-				if(u_TextureEmpty == 0)
-				{
-					texColor = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor;
-					color = texColor;
-				}
-				else
-				{
-					color = u_AmbientColor;
-				}
-
-				if(u_drawZBuffer == 1)
-				{
-					float depth = (LinearizeZ(gl_FragCoord.z)/u_CamPlanes.y);
-					color = vec4(vec3(depth), 1.0);
-				}
-			}
-		)";*/
-
-		//vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
-		//vec3 diffuse = vec3(texture(u_DiffuseTexture, v_TexCoords));
-		//vec4 texColor = mix(texture2D(u_DiffuseTexture, v_TexCoords), texture2D(u_SpecularTexture, v_TexCoords), 0.0);
-
-		/*std::string fragmentShader = R"(
-			#version 330 core
-
-			out vec4 color;
-			in vec2 v_TexCoords;
-
-			uniform sampler2D u_AmbientTexture;
-			uniform sampler2D u_DiffuseTexture;
-			uniform sampler2D u_SpecularTexture;
-			uniform sampler2D u_NormalMap;
-			uniform sampler2D u_HeightMap;
-			uniform sampler2D u_LightMap;
-
-			void main()
-			{
-				vec4 texColor = mix(texture(u_DiffuseTexture, v_TexCoords), texture(u_SpecularTexture, v_TexCoords), 0.0);
-				color = texColor;
-			}
-		)";*/
-
-		m_SceneName = "NewScene";
-		//BasicTestShader = new Shader(vertexShader, fragmentShader);
+		//Shader & Water Simulation
 		BasicTestShader = new Shader("res/shaders/basic.glsl");
 		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
-		m_WaveTimer.Start();
+		//m_WaveTimer.Start();
 
-		//House Model Load
-		//if(!m_HouseModel->HasMeta())
-		//House Model Load & Floor Plane primitive
-		//int id = m_HouseModel->GetGOID();
-		//GameObject* testing = App->filesystem->Load(m_StreetModel->GetGOID());
-
-		//res/models/waterPlane/waterPlaneOBJ.obj
-		//res/models/waterPlane/waterPlane.FBX
+		//Wave Object
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		//m_GameObjects.push_back(m_StreetModel);
-
-		////App->filesystem->Load(m_HouseModel->GetMetaPath());
-		//m_GameObjects.push_back(testing);
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		m_GameObjects.push_back(m_StreetModel);
+		
 		ToCopy = nullptr;
 		return ret;
 	}
@@ -144,7 +43,6 @@ namespace Cronos {
 	// CleanUp
 	bool Scene::OnCleanUp()
 	{
-
 		m_Wave->CleanUp();
 		m_WaveTexture->~Texture();
 
@@ -179,7 +77,7 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
-		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+		/*GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
@@ -217,7 +115,7 @@ namespace Cronos {
 			material->Unbind();
 		VAO->UnBind();
 		m_WaveTexture->Unbind();
-		m_WaterShader->Unbind();
+		m_WaterShader->Unbind();*/
 
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------

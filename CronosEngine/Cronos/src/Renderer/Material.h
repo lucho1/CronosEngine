@@ -1,0 +1,42 @@
+#ifndef _MATERIAL_H_
+#define _MATERIAL_H_
+
+#include "Renderer/Shaders.h"
+#include "Renderer/Textures.h"
+
+namespace Cronos
+{
+	class Material
+	{
+	public:
+
+		Material();
+		~Material();
+
+		void Bind(bool bindTextures);
+		void Unbind();
+		
+	public:
+
+		//Getters
+		const glm::vec4 GetMaterialColor()									const { return m_MaterialAmbientColor; }
+		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_MaterialTextures; }
+
+		//Setters
+		void SetName(const std::string& name)								{ m_MaterialName = name; }
+		void SetShader(Shader& shader)										{ m_MaterialShader = &shader; }
+		void SetColor(const glm::vec4& color)								{ m_MaterialAmbientColor = color; }
+		void SetTexture(Texture* texture, TextureType type);
+
+	private:
+		
+		std::string m_MaterialName;
+
+		glm::vec4 m_MaterialAmbientColor = glm::vec4(1.0f);
+		std::unordered_map<TextureType, Texture*> m_MaterialTextures;
+
+		Shader* m_MaterialShader = nullptr;
+	};
+}
+
+#endif

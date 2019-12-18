@@ -5,12 +5,12 @@
 
 namespace Cronos {
 
-	enum class TextureType { NONE = -1, ICON, AMBIENT, DIFFUSE, SPECULAR, NORMALMAP, HEIGHTMAP, LIGHTMAP, MAX_TEXTURES};
+	enum class TextureType { NONE = -1, ICON, DIFFUSE, SPECULAR, /*NORMALMAP, HEIGHTMAP, LIGHTMAP,*/ MAX_TEXTURES};
 
 	class Texture
 	{
 		friend class TextureManager;
-		std::string TypeStr[(int)TextureType::MAX_TEXTURES] = { "ICON", "AMBIENT", "DIFFUSE", "SPECULAR", "NORMALMAP", "HEIGHTMAP", "LIGHTMAP" };
+		std::string TypeStr[(int)TextureType::MAX_TEXTURES] = { "ICON", "DIFFUSE", "SPECULAR", /*"NORMALMAP", "HEIGHTMAP", "LIGHTMAP"*/ };
 
 	public:
 

@@ -7,56 +7,34 @@
 
 namespace Cronos
 {
-	std::string UniformNameFromTextureType(TextureType textureType)
-	{
-		std::string ret = "";
-		switch (textureType)
-		{
-			case TextureType::AMBIENT:		ret = "u_AmbientTexture"; break;
-			case TextureType::DIFFUSE:		ret = "u_DiffuseTexture"; break;
-			case TextureType::SPECULAR:		ret = "u_SpecularTexture"; break;
-			case TextureType::NORMALMAP:	ret = "u_NormalMap"; break;
-			case TextureType::HEIGHTMAP:	ret = "u_HeightMap"; break;
-			case TextureType::LIGHTMAP:		ret = "u_LightMap"; break;
-		}
-
-		CRONOS_ASSERT(ret != "", "COULDN'T CONVERT TO ASSIMP TEXTURE TYPE!");
-		return ret;
-	}
-
-
 	MaterialComponent::MaterialComponent(GameObject* attachedGO)
 		: Component(ComponentType::MATERIAL, attachedGO)
 	{
+		m_Material = new Material();
 	}
 
-	MaterialComponent::~MaterialComponent()
+	void MaterialComponent::Bind()
 	{
-		std::unordered_map<TextureType, Texture*>::iterator TextureItem = m_TexturesContainer.begin();
-		for (; TextureItem != m_TexturesContainer.end(); TextureItem++)
-		{
-			RELEASE(TextureItem->second);
-			m_TexturesContainer.erase(TextureItem);
-		}
-
-		m_TexturesContainer.clear();
-		RELEASE(m_ShaderAttached);
-	}
-
-	void MaterialComponent::Bind(bool bindMaterial)
-	{
-		if (!isEnabled() || m_ShaderAttached == nullptr)
+		if (!isEnabled())
 			return;
 
-		if (GetParent()->m_IsPrimitive == true)
+		if (m_Material == nullptr)
+		{
+			CRONOS_WARN(0, "Component's Material is null");
+			return;
+		}
+
+		m_Material->Bind(!GetParent()->m_IsPrimitive);
+
+		/*if (GetParent()->m_IsPrimitive == true)
 			bindMaterial = false;
 
 		if (bindMaterial)
 		{
 			if(m_TexturesContainer.size() > 0)
-				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 0);
+				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", false);
 			else
-				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
+				App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);
 
 			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
 			if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
@@ -72,48 +50,28 @@ namespace Cronos
 		}
 		else
 		{
-			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
+			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);
 			App->scene->BasicTestShader->SetUniformVec4f("u_AmbientColor", m_AmbientColor);
 		}
 
 		if(App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
-			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", 1);
+			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);*/
 	}
 
-	void MaterialComponent::Unbind()
+	void MaterialComponent::SetMaterial(Material & material)
 	{
-		std::unordered_map<TextureType, Texture*>::iterator it = m_TexturesContainer.begin();
-		for (; it != m_TexturesContainer.end() && (it->second) != nullptr; it++)
-			(*it->second).Unbind();
-
-		m_ShaderAttached->Unbind();
+		m_Material = &material;
 	}
-
-	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
+	void MaterialComponent::SetShader(Shader & shader)
+	{		
+		m_Material->SetShader(shader);
+	}
+	void MaterialComponent::SetColor(const glm::vec4 & col)
 	{
-		CRONOS_ASSERT((type != TextureType::MAX_TEXTURES || type != TextureType::NONE), "Invalid Texture Type passed!");
-		if (texture == nullptr || type == TextureType::ICON)
-		{
-			LOG("Texture was nullptr or Icon type!");
-			return;
-		}
-
-		std::list<Texture*>::iterator itemFound_inTexturesList = std::find(App->scene->m_TexturesLoaded.begin(), App->scene->m_TexturesLoaded.end(), texture);
-		std::unordered_map<TextureType, Texture*>::iterator itemFound = m_TexturesContainer.find(type);
-
-		if (itemFound != m_TexturesContainer.end() && itemFound->second != texture)
-		{
-			if (itemFound_inTexturesList == App->scene->m_TexturesLoaded.end())
-				App->scene->m_TexturesLoaded.push_back(texture);
-
-			m_TexturesContainer[type] = texture;
-		}
-		else if(itemFound == m_TexturesContainer.end())
-		{
-			if (itemFound_inTexturesList == App->scene->m_TexturesLoaded.end())
-				App->scene->m_TexturesLoaded.push_back(texture);
-
-			m_TexturesContainer.insert(std::pair(type, texture));
-		}
+		m_Material->SetColor(col);
+	}
+	void MaterialComponent::SetTexture(Texture * texture, TextureType type)
+	{
+		m_Material->SetTexture(texture, type);
 	}
 }

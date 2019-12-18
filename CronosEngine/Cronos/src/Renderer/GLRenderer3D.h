@@ -60,6 +60,8 @@ namespace Cronos {
 		void RemoveFromTree(GameObject* gameObject)	{ m_RenderingOctree.TakeOut(gameObject); }
 		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
 		
+		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
+
 	public:
 
 		//Setters
@@ -118,6 +120,9 @@ namespace Cronos {
 
 	private:
 		
+		std::list<Material*> m_MaterialsList;
+
+		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
 		std::list<GameObject*> m_RenderingList;
 		bool m_FrustumCulling = true;

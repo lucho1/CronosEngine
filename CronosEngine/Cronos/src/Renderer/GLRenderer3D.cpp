@@ -90,10 +90,13 @@ namespace Cronos {
 	{
 		LOG("Destroying 3D Renderer");
 
-		m_RenderingOctree.CleanUp();
-		RELEASE(App->scene->BasicTestShader);
-		SDL_GL_DeleteContext(context);
+		for (auto& mat : m_MaterialsList)
+			RELEASE(mat);
 
+		RELEASE(App->scene->BasicTestShader);
+		m_RenderingOctree.CleanUp();
+		
+		SDL_GL_DeleteContext(context);
 		return true;
 	}
 
@@ -145,9 +148,9 @@ namespace Cronos {
 			m_DrawZBuffer = !m_DrawZBuffer;
 
 			if (m_DrawZBuffer)
-				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 1);
+				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", true);
 			else
-				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", 0);
+				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", false);
 		}
 		if (m_DrawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
@@ -180,6 +183,26 @@ namespace Cronos {
 		return UPDATE_CONTINUE;
 	}
 
+	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
+	{
+		App->scene->BasicTestShader->Bind();
+		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
+		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
+
+		if (material != nullptr)
+			material->Bind();
+
+		App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+		VAO->Bind();
+
+		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+
+		if (material != nullptr)
+			material->Unbind();
+
+		VAO->UnBind();
+	}
+
 	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
 	{
 		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !m_ObjectsInOctreeNode.empty())
@@ -197,26 +220,6 @@ namespace Cronos {
 		}
 		else
 			m_RenderingList.push_back(gameObject);
-	}
-
-	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
-	{
-		App->scene->BasicTestShader->Bind();
-		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
-		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
-
-		if (material != nullptr)
-			material->Bind(true);
-
-		App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
-		VAO->Bind();
-
-		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
-
-		if (material != nullptr)
-			material->Unbind();
-
-		VAO->UnBind();
 	}
 
 	//Resize window

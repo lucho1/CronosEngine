@@ -16,12 +16,11 @@ namespace Cronos {
 	{
 		switch (CN_textureType)
 		{
-			case TextureType::AMBIENT:		return aiTextureType_AMBIENT;
 			case TextureType::DIFFUSE:		return aiTextureType_DIFFUSE;
 			case TextureType::SPECULAR:		return aiTextureType_SPECULAR;
-			case TextureType::NORMALMAP:	return aiTextureType_NORMALS;
-			case TextureType::HEIGHTMAP:	return aiTextureType_HEIGHT;
-			case TextureType::LIGHTMAP:		return aiTextureType_LIGHTMAP;
+			//case TextureType::NORMALMAP:	return aiTextureType_NORMALS;
+			//case TextureType::HEIGHTMAP:	return aiTextureType_HEIGHT;
+			//case TextureType::LIGHTMAP:		return aiTextureType_LIGHTMAP;
 		}
 
 		CRONOS_ASSERT(0, "COULDN'T CONVERT TO ASSIMP TEXTURE TYPE!");
@@ -218,7 +217,7 @@ namespace Cronos {
 			if(col.r >= 0.01f || col.g >= 0.01f || col.b >= 0.01f)
 				matComp->SetColor(glm::vec4(col.r, col.g, col.b, 1.0f));
 
-			matComp->SetShader(App->scene->BasicTestShader);
+			//matComp->SetShader(App->scene->BasicTestShader);
 			GO->m_Components.push_back(matComp);
 		}
 
