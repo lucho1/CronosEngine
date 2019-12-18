@@ -91,7 +91,8 @@ namespace Cronos {
 
 	void AssimpCronosImporter::ProcessAssimpNode(aiNode* as_node, const aiScene* as_scene, GameObject* motherGameObj)
 	{
-		LOG("	Processing Assimp Node");	
+		LOG("	Processing Assimp Node");
+
 
 		//Process node's meshes if there are
 		for (uint i = 0; i < as_node->mNumMeshes; i++)
@@ -207,6 +208,7 @@ namespace Cronos {
 		if (as_mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* AssimpMaterial = as_scene->mMaterials[as_mesh->mMaterialIndex];
+
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
 
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)

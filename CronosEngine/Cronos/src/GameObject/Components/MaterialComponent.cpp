@@ -10,7 +10,7 @@ namespace Cronos
 	MaterialComponent::MaterialComponent(GameObject* attachedGO)
 		: Component(ComponentType::MATERIAL, attachedGO)
 	{
-		m_Material = new Material();
+		m_DefMaterial = App->renderer3D->GetDefaultMaterial();
 	}
 
 	void MaterialComponent::Bind()
@@ -26,6 +26,7 @@ namespace Cronos
 
 		glm::mat4 transform = GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
 		m_Material->Bind(!GetParent()->m_IsPrimitive, transform);
+
 
 		/*if (GetParent()->m_IsPrimitive == true)
 			bindMaterial = false;

@@ -51,6 +51,8 @@ namespace Cronos {
 		virtual void SaveModuleData(json& JSONFile) const override;
 		virtual void LoadModuleData(json& JSONFile) override;
 
+	public:
+
 		//Renderer Public Methods
 		void RenderSubmit(GameObject* gameObject);
 		void OnResize(uint width, uint height);
@@ -61,6 +63,9 @@ namespace Cronos {
 		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
 		
 		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
+
+		inline const std::list<Material*> GetMaterialsList() const { return m_MaterialsList; }
+		inline const Material* GetDefaultMaterial() const { return *m_MaterialsList.begin(); }
 
 	public:
 

@@ -80,6 +80,9 @@ namespace Cronos {
 
 		ResetTree();
 
+		Material* DefaultMat = new Material();
+		DefaultMat->SetName("Default Material");
+
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
 		return ret;
