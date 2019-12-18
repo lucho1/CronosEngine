@@ -13,14 +13,14 @@ namespace Cronos
 		Material();
 		~Material();
 
-		void Bind(bool bindTextures);
+		void Bind(bool bindTextures, const glm::mat4& ModelTransform = glm::mat4(1.0f));
 		void Unbind();
 		
 	public:
 
 		//Getters
-		const glm::vec4 GetMaterialColor()									const { return m_MaterialAmbientColor; }
 		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_MaterialTextures; }
+		inline const glm::vec4 GetMaterialColor()							const { return m_MaterialAmbientColor; }
 
 		//Setters
 		void SetName(const std::string& name)								{ m_MaterialName = name; }

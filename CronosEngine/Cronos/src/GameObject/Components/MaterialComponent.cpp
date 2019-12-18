@@ -24,7 +24,8 @@ namespace Cronos
 			return;
 		}
 
-		m_Material->Bind(!GetParent()->m_IsPrimitive);
+		glm::mat4 transform = GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
+		m_Material->Bind(!GetParent()->m_IsPrimitive, transform);
 
 		/*if (GetParent()->m_IsPrimitive == true)
 			bindMaterial = false;

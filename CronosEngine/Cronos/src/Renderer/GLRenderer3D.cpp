@@ -124,20 +124,19 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
 		DrawFloorPlane(true);
-		m_RenderingOctree.Draw();
+		//m_RenderingOctree.Draw();
 
 		//Wireframe Mode (or not) ------------------------------------------------------------
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			SetWireframeDrawMode(false);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
 		{
-			glLineWidth(0.5f);
 			glColor4f(m_DefaultColor.r, m_DefaultColor.g, m_DefaultColor.b, m_DefaultColor.a);
-			SetWireframeDrawMode(true);
 			glLineWidth(m_DefaultLinewidth);
+			SetWireframeDrawMode(true);
 		}
 
-		//Shader Stuff & ZBuffer -------------------------------------------------------------
+		//Shader Generic Stuff & ZBuffer -----------------------------------------------------
 		App->scene->BasicTestShader->Bind();
 		App->scene->BasicTestShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
 		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
@@ -146,15 +145,12 @@ namespace Cronos {
 		{
 			m_ChangeZBufferDrawing = false;
 			m_DrawZBuffer = !m_DrawZBuffer;
-
-			if (m_DrawZBuffer)
-				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", true);
-			else
-				App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", false);
+			App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
 		}
 		if (m_DrawZBuffer)
 			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
+		App->scene->BasicTestShader->Unbind();
 
 		//Objects Rendering -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
@@ -176,30 +172,24 @@ namespace Cronos {
 			}
 		}
 
-		App->scene->BasicTestShader->Unbind();
+		
 		m_RenderingList.clear();
-
-		//SDL_GL_SwapWindow(App->window->window);
 		return UPDATE_CONTINUE;
 	}
 
 	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
 	{
-		App->scene->BasicTestShader->Bind();
 		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
 		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
 
 		if (material != nullptr)
 			material->Bind();
-
-		App->scene->BasicTestShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
 		VAO->Bind();
 
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
 		if (material != nullptr)
 			material->Unbind();
-
 		VAO->UnBind();
 	}
 

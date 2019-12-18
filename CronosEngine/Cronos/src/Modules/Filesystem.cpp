@@ -473,7 +473,6 @@ namespace Cronos {
 						std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
 						Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
 						MatComp->SetTexture(textTemp, textTemp->GetTextureType());
-						//MatComp->SetShader(App->scene->BasicTestShader);
 					}
 
 					//Put the Material Component into the Game Object

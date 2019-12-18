@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "GLRenderer3D.h"
 
+#include "GameObject/Components/TransformComponent.h"
+
 namespace Cronos
 {
 	std::string UniformNameFromTextureType(TextureType textureType)
@@ -38,11 +40,10 @@ namespace Cronos
 		}
 
 		m_MaterialTextures.clear();
-		RELEASE(m_MaterialShader);
 	}
 
 
-	void Material::Bind(bool bindTextures)
+	void Material::Bind(bool bindTextures, const glm::mat4& ModelTransform)
 	{
 		if (m_MaterialShader == nullptr)
 		{
@@ -50,7 +51,10 @@ namespace Cronos
 			return;
 		}
 
+		m_MaterialShader->Bind();
+		m_MaterialShader->SetUniformMat4f("u_Model", ModelTransform);
 		m_MaterialShader->SetUniformVec4f("u_AmbientColor", m_MaterialAmbientColor);
+		
 		if(!bindTextures || m_MaterialTextures.size() <= 0 || App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
 			m_MaterialShader->SetUniform1i("u_TextureEmpty", true);
 		else

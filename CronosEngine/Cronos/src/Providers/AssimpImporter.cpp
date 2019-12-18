@@ -217,7 +217,6 @@ namespace Cronos {
 			if(col.r >= 0.01f || col.g >= 0.01f || col.b >= 0.01f)
 				matComp->SetColor(glm::vec4(col.r, col.g, col.b, 1.0f));
 
-			//matComp->SetShader(App->scene->BasicTestShader);
 			GO->m_Components.push_back(matComp);
 		}
 

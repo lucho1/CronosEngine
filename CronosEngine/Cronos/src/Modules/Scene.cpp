@@ -33,8 +33,8 @@ namespace Cronos {
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		m_GameObjects.push_back(m_StreetModel);
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		//m_GameObjects.push_back(m_StreetModel);
 		
 		ToCopy = nullptr;
 		return ret;
