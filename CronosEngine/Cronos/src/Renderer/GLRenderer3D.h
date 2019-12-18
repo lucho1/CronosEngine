@@ -69,6 +69,7 @@ namespace Cronos {
 		inline const std::list<Material*> GetMaterialsList() const { return m_MaterialsList; }
 		inline Material* GetDefaultMaterial() const { return *m_MaterialsList.begin(); }
 		inline const uint GetDefaultMaterialID() const { return (*m_MaterialsList.begin())->GetMaterialID(); }
+		inline Shader* GetBasicShader() const { return m_BasicShader; }
 
 	public:
 
@@ -126,11 +127,11 @@ namespace Cronos {
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
 
-		Shader* BasicShader = nullptr;
 
 	private:
 		
 		std::list<Material*> m_MaterialsList;
+		Shader* m_BasicShader = nullptr;
 
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;

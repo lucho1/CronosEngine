@@ -184,12 +184,10 @@ namespace Cronos {
 		meshComp->SetupMesh(rMesh->getVector(), rMesh->getIndex());
 		m_Components.push_back(meshComp);
 
-		//Also, set the material component
+		//Also, set the material component (setted to default material)
 		MaterialComponent* matComp = (MaterialComponent*)(CreateComponent(ComponentType::MATERIAL));
-		//matComp->SetMaterial(*App->renderer3D->GetDefaultMaterial());
 		m_Components.push_back(matComp);
-
-
+		
 		//Set the GO AABB and finally push it to the mother's child list		
 		rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 		
@@ -217,8 +215,7 @@ namespace Cronos {
 		SetAABB(aabb);
 		delete[] verts;
 		
-		App->filesystem->SaveOwnFormat(this);
-		
+		App->filesystem->SaveOwnFormat(this);		
 		LOG("Processed Primitive Mesh with %i Vertices %i Indices and %i Polygons (Triangles)", tmpVertexVector.size(), tmpIndicesVector.size(), j/3);
 	}
 

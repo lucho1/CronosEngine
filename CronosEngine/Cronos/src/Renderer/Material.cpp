@@ -27,7 +27,7 @@ namespace Cronos
 		m_MaterialName = "Unnamed Material";
 		m_ID = App->m_RandomNumGenerator.GetIntRN();
 
-		m_MaterialShader = App->renderer3D->BasicShader;
+		m_MaterialShader = App->renderer3D->GetBasicShader();
 		App->renderer3D->AddMaterialToList(this);
 	}
 

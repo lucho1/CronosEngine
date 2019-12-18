@@ -75,7 +75,7 @@ namespace Cronos {
 	{
 		ResetTree();
 
-		BasicShader = new Shader("res/shaders/basic.glsl");
+		m_BasicShader = new Shader("res/shaders/basic.glsl");
 		Material* DefaultMat = new Material();
 		DefaultMat->SetName("Default Material");
 		return true;
@@ -89,7 +89,7 @@ namespace Cronos {
 		for (auto& mat : m_MaterialsList)
 			RELEASE(mat);
 
-		RELEASE(BasicShader);
+		RELEASE(m_BasicShader);
 		m_RenderingOctree.CleanUp();
 		
 		SDL_GL_DeleteContext(context);
@@ -133,20 +133,20 @@ namespace Cronos {
 		}
 
 		//Shader Generic Stuff & ZBuffer -----------------------------------------------------
-		BasicShader->Bind();
-		BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
-		BasicShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+		m_BasicShader->Bind();
+		m_BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+		m_BasicShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
 
 		if (m_ChangeZBufferDrawing)
 		{
 			m_ChangeZBufferDrawing = false;
 			m_DrawZBuffer = !m_DrawZBuffer;
-			BasicShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
+			m_BasicShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
 		}
 		if (m_DrawZBuffer)
-			BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
-		BasicShader->Unbind();
+		m_BasicShader->Unbind();
 
 		//Objects Rendering -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
