@@ -43,6 +43,7 @@ namespace Cronos {
 		~GLRenderer3D();
 
 		virtual bool OnInit() override;
+		virtual bool OnStart() override;
 		virtual update_status OnPreUpdate(float dt) override;
 		virtual update_status OnPostUpdate(float dt) override;
 		virtual bool OnCleanUp() override;
@@ -62,10 +63,12 @@ namespace Cronos {
 		void RemoveFromTree(GameObject* gameObject)	{ m_RenderingOctree.TakeOut(gameObject); }
 		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
 		
+		//Materials things
 		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
 
 		inline const std::list<Material*> GetMaterialsList() const { return m_MaterialsList; }
-		inline const Material* GetDefaultMaterial() const { return *m_MaterialsList.begin(); }
+		inline Material* GetDefaultMaterial() const { return *m_MaterialsList.begin(); }
+		inline const uint GetDefaultMaterialID() const { return (*m_MaterialsList.begin())->GetMaterialID(); }
 
 	public:
 
@@ -122,6 +125,8 @@ namespace Cronos {
 		Light centerLight;
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
+
+		Shader* BasicShader = nullptr;
 
 	private:
 		

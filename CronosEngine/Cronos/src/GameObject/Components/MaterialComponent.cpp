@@ -10,7 +10,7 @@ namespace Cronos
 	MaterialComponent::MaterialComponent(GameObject* attachedGO)
 		: Component(ComponentType::MATERIAL, attachedGO)
 	{
-		m_DefMaterial = App->renderer3D->GetDefaultMaterial();
+		SetMaterial(*App->renderer3D->GetDefaultMaterial());
 	}
 
 	void MaterialComponent::Bind()
@@ -60,20 +60,47 @@ namespace Cronos
 			App->scene->BasicTestShader->SetUniform1i("u_TextureEmpty", true);*/
 	}
 
-	void MaterialComponent::SetMaterial(Material & material)
+	void MaterialComponent::SetMaterial(Material& material)
 	{
+		if (&material == nullptr)
+		{
+			CRONOS_WARN(0, "Couldn't Assign Material, the one passed is NULL -- Function: SetMaterial()")
+			return;
+		}
+
 		m_Material = &material;
 	}
+
 	void MaterialComponent::SetShader(Shader & shader)
-	{		
+	{	
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetShader()")
+			return;
+		}
+
 		m_Material->SetShader(shader);
 	}
+
 	void MaterialComponent::SetColor(const glm::vec4 & col)
 	{
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
+			return;
+		}
+
 		m_Material->SetColor(col);
 	}
+
 	void MaterialComponent::SetTexture(Texture * texture, TextureType type)
 	{
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetTexture()")
+			return;
+		}
+
 		m_Material->SetTexture(texture, type);
 	}
 }

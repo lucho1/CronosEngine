@@ -35,7 +35,6 @@ namespace Cronos
 	private:
 
 		Material* m_Material = nullptr;
-		const Material* m_DefMaterial = nullptr;
 	};
 }
 

@@ -24,7 +24,6 @@ namespace Cronos {
 		App->renderer3D->SetOpenGLSettings();
 
 		//Shader & Water Simulation
-		BasicTestShader = new Shader("res/shaders/basic.glsl");
 		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
 		//m_WaveTimer.Start();

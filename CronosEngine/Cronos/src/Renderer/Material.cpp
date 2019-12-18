@@ -24,9 +24,11 @@ namespace Cronos
 
 	Material::Material()
 	{
-		App->renderer3D->AddMaterialToList(this);
 		m_MaterialName = "Unnamed Material";
-		m_MaterialShader = App->scene->BasicTestShader;
+		m_ID = App->m_RandomNumGenerator.GetIntRN();
+
+		m_MaterialShader = App->renderer3D->BasicShader;
+		App->renderer3D->AddMaterialToList(this);
 	}
 
 

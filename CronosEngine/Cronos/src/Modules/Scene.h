@@ -48,8 +48,7 @@ namespace Cronos {
 
 		std::vector<GameObject*>m_GameObjects;
 		GameObject* ToCopy;
-
-		Shader* BasicTestShader = nullptr; //To test
+				
 		std::list<Texture*> m_TexturesLoaded;
 
 		std::string m_SceneName;

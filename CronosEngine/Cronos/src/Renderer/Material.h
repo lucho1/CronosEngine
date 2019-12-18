@@ -21,6 +21,7 @@ namespace Cronos
 		//Getters
 		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_MaterialTextures; }
 		inline const glm::vec4 GetMaterialColor()							const { return m_MaterialAmbientColor; }
+		inline const uint GetMaterialID()									const { return m_ID; }
 
 		//Setters
 		void SetName(const std::string& name)								{ m_MaterialName = name; }
@@ -31,6 +32,7 @@ namespace Cronos
 	private:
 		
 		std::string m_MaterialName;
+		uint m_ID = 0;
 
 		glm::vec4 m_MaterialAmbientColor = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 		std::unordered_map<TextureType, Texture*> m_MaterialTextures;

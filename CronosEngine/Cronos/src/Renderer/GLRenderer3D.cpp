@@ -40,24 +40,11 @@ namespace Cronos {
 		if (ret == true)
 		{
 			//Use Vsync
-			if (m_VSyncActive && SDL_GL_SetSwapInterval(1) < 0) {
+			if (m_VSyncActive && SDL_GL_SetSwapInterval(1) < 0)
+			{
 				App->EditorGUI->AddLog(std::string("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError()));
 				LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 			}
-
-		//	/*glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		//	glClearDepth(1.0f);*/
-
-		//	//Initialize clear color
-		//	//glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-
-		//	//Check for error
-		//	error = glGetError();
-		//	if (error != GL_NO_ERROR)
-		//	{
-		//		LOG("Error initializing OpenGL! %s\n", error);
-		//		ret = false;
-		//	}
 
 			GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 			glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
@@ -77,15 +64,21 @@ namespace Cronos {
 
 		//	lights[0].Active(true);
 		}
-
-		ResetTree();
-
-		Material* DefaultMat = new Material();
-		DefaultMat->SetName("Default Material");
-
+		
 		// Projection matrix for
 		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
 		return ret;
+	}
+
+	//Called when renderer is available, at module start
+	bool GLRenderer3D::OnStart()
+	{
+		ResetTree();
+
+		BasicShader = new Shader("res/shaders/basic.glsl");
+		Material* DefaultMat = new Material();
+		DefaultMat->SetName("Default Material");
+		return true;
 	}
 
 	// Called before quitting
@@ -96,7 +89,7 @@ namespace Cronos {
 		for (auto& mat : m_MaterialsList)
 			RELEASE(mat);
 
-		RELEASE(App->scene->BasicTestShader);
+		RELEASE(BasicShader);
 		m_RenderingOctree.CleanUp();
 		
 		SDL_GL_DeleteContext(context);
@@ -140,20 +133,20 @@ namespace Cronos {
 		}
 
 		//Shader Generic Stuff & ZBuffer -----------------------------------------------------
-		App->scene->BasicTestShader->Bind();
-		App->scene->BasicTestShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
-		App->scene->BasicTestShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+		BasicShader->Bind();
+		BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+		BasicShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
 
 		if (m_ChangeZBufferDrawing)
 		{
 			m_ChangeZBufferDrawing = false;
 			m_DrawZBuffer = !m_DrawZBuffer;
-			App->scene->BasicTestShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
+			BasicShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
 		}
 		if (m_DrawZBuffer)
-			App->scene->BasicTestShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+			BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
-		App->scene->BasicTestShader->Unbind();
+		BasicShader->Unbind();
 
 		//Objects Rendering -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
