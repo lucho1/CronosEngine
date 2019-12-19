@@ -209,10 +209,13 @@ namespace Cronos {
 		//Process Mesh's textures/material
 		if (as_mesh->mMaterialIndex >= 0)
 		{
-			aiMaterial* AssimpMaterial = as_scene->mMaterials[as_mesh->mMaterialIndex];
-
 			MaterialComponent* matComp = (MaterialComponent*)(GO->CreateComponent(ComponentType::MATERIAL));
-			matComp->SetMaterial(*m_SceneCronosMaterials[as_mesh->mMaterialIndex]);
+
+			std::vector<Material*> MatVec = App->renderer3D->GetMaterialsList();
+			uint CnMatIndex = std::distance(MatVec.begin(), std::find(MatVec.begin(), MatVec.end(), m_SceneCronosMaterials[as_mesh->mMaterialIndex]));
+
+			matComp->SetMaterial(CnMatIndex);
+			matComp->m_MaterialIndex = CnMatIndex;
 
 			GO->m_Components.push_back(matComp);
 		}
@@ -256,19 +259,25 @@ namespace Cronos {
 			aiMaterial* AssMat = as_scene->mMaterials[i];
 			Material* CnMat = new Material();
 
+			//Material Name
 			aiString matName;
 			AssMat->Get(AI_MATKEY_NAME, matName);
+			CnMat->SetName(matName.C_Str());
 
+			//Material Color
 			aiColor3D matColor = aiColor3D(0, 0, 0);
 			float alphaValue = 1.0f;
 			AssMat->Get(AI_MATKEY_COLOR_AMBIENT, matColor);
 			AssMat->Get(AI_MATKEY_OPACITY, alphaValue);
 
+			if (matColor.r >= 0.01f || matColor.g >= 0.01f || matColor.b >= 0.01f)
+				CnMat->SetColor({ matColor.r, matColor.g, matColor.b, alphaValue });
+			else
+				CnMat->SetColor(glm::vec4(glm::vec3(1.0f), alphaValue));
+			
+			//Material Textures
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
 				CnMat->SetTexture(LoadTextures(AssMat, TextureType(i), path), TextureType(i));
-
-			CnMat->SetName(matName.C_Str());
-			CnMat->SetColor({ matColor.r, matColor.g, matColor.b, alphaValue });
 			
 			m_SceneCronosMaterials.push_back(CnMat);
 		}

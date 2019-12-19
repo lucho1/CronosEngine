@@ -86,11 +86,12 @@ namespace Cronos {
 	{
 		LOG("Destroying 3D Renderer");
 
-		std::list<Material*>::iterator item = m_MaterialsList.begin();
-		while(item !=  m_MaterialsList.end())
+		//std::vector<Material*>::iterator item = m_MaterialsList.begin();
+
+		for (uint i = 0; i < m_MaterialsList.size(); i++)
 		{
-			RELEASE(*item);
-			item = m_MaterialsList.erase(item);			
+			RELEASE(m_MaterialsList[i]);
+			m_MaterialsList.erase(m_MaterialsList.begin() + i);
 		}
 		
 		RELEASE(m_BasicShader);

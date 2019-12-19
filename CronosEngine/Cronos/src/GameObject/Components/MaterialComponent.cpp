@@ -39,6 +39,17 @@ namespace Cronos
 		m_Material = &material;
 	}
 
+	void MaterialComponent::SetMaterial(uint index)
+	{
+		if (App->renderer3D->GetMaterialInMaterialsList(index) == nullptr)
+		{
+			CRONOS_WARN(0, "Couldn't Assign Material, the one passed is NULL -- Function: SetMaterial()")
+				return;
+		}
+
+		m_Material = App->renderer3D->GetMaterialInMaterialsList(index);
+	}
+
 	void MaterialComponent::SetShader(Shader & shader)
 	{	
 		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())

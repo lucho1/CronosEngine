@@ -21,6 +21,7 @@ namespace Cronos
 
 		//Setters
 		void SetMaterial(Material& material);
+		void SetMaterial(uint index); //This is temporary too, to assign materials with an index from renderer's material list
 		void SetShader(Shader& shader);
 		void SetColor(const glm::vec4& col);
 		void SetTexture(Texture* texture, TextureType type);
@@ -31,6 +32,9 @@ namespace Cronos
 		inline const glm::vec4 GetColor()									const { return m_Material->GetMaterialColor(); }
 		inline const Material* GetMaterial()								const { return m_Material; }
 
+
+		//Temporary index to find own material. TODO: Change this, materials should be serialized
+		uint m_MaterialIndex = 0;
 
 	private:
 

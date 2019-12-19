@@ -189,18 +189,20 @@ namespace Cronos {
 		//Game Object's Material
 		if (ToConvert->GetComponent<MaterialComponent>())
 		{
-			//Color
-			aux_JSONFile["ComponentMaterial"]["Color"]["R"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().r;
-			aux_JSONFile["ComponentMaterial"]["Color"]["G"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().g;
-			aux_JSONFile["ComponentMaterial"]["Color"]["B"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().b;
-			aux_JSONFile["ComponentMaterial"]["Color"]["A"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().a;
+			aux_JSONFile["ComponentMaterial"]["MaterialIndex"] = ToConvert->GetComponent<MaterialComponent>()->m_MaterialIndex;
 
-			//Textures
-			std::unordered_map<TextureType, Texture*>m_TexturesContainer= ToConvert->GetComponent<MaterialComponent>()->GetTextures();
-			if(m_TexturesContainer[TextureType::DIFFUSE]!=nullptr)
-				aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
-			if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
-				aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();
+			//Color
+			//aux_JSONFile["ComponentMaterial"]["Color"]["R"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().r;
+			//aux_JSONFile["ComponentMaterial"]["Color"]["G"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().g;
+			//aux_JSONFile["ComponentMaterial"]["Color"]["B"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().b;
+			//aux_JSONFile["ComponentMaterial"]["Color"]["A"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().a;
+			//
+			////Textures
+			//std::unordered_map<TextureType, Texture*>m_TexturesContainer= ToConvert->GetComponent<MaterialComponent>()->GetTextures();
+			//if(m_TexturesContainer[TextureType::DIFFUSE]!=nullptr)
+			//	aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
+			//if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
+			//	aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();
 
 		}
 
@@ -459,21 +461,29 @@ namespace Cronos {
 					json CompMat = configFile["ComponentMaterial"];
 					MaterialComponent* MatComp = ((MaterialComponent*)(ret->CreateComponent(ComponentType::MATERIAL)));
 
-					//Set the color
-					glm::vec4 color;
-					color.r = configFile["ComponentMaterial"]["Color"]["R"].get<float>();
-					color.g = configFile["ComponentMaterial"]["Color"]["G"].get<float>();
-					color.b = configFile["ComponentMaterial"]["Color"]["B"].get<float>();
-					color.a = configFile["ComponentMaterial"]["Color"]["A"].get<float>();
-					MatComp->SetColor(color);
+					uint matIndex = configFile["ComponentMaterial"]["MaterialIndex"].get<uint>();
+					if (matIndex < 0 || matIndex >= App->renderer3D->GetMaterialsList().size())
+						matIndex = 0;
 
-					//Set the Albedo texture (if any)
-					if (CompMat.contains("Albedo"))
-					{
-						std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
-						Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
-						MatComp->SetTexture(textTemp, textTemp->GetTextureType());
-					}
+					MatComp->m_MaterialIndex = matIndex;
+					MatComp->SetMaterial(matIndex);
+									
+
+					//Set the color
+					//glm::vec4 color;
+					//color.r = configFile["ComponentMaterial"]["Color"]["R"].get<float>();
+					//color.g = configFile["ComponentMaterial"]["Color"]["G"].get<float>();
+					//color.b = configFile["ComponentMaterial"]["Color"]["B"].get<float>();
+					//color.a = configFile["ComponentMaterial"]["Color"]["A"].get<float>();
+					//MatComp->SetColor(color);
+					//
+					////Set the Albedo texture (if any)
+					//if (CompMat.contains("Albedo"))
+					//{
+					//	std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
+					//	Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
+					//	MatComp->SetTexture(textTemp, textTemp->GetTextureType());
+					//}
 
 					//Put the Material Component into the Game Object
 					ret->m_Components.push_back(MatComp);

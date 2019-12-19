@@ -66,10 +66,11 @@ namespace Cronos {
 		//Materials things
 		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
 
-		inline const std::list<Material*> GetMaterialsList() const { return m_MaterialsList; }
-		inline Material* GetDefaultMaterial() const { return *m_MaterialsList.begin(); }
-		inline const uint GetDefaultMaterialID() const { return (*m_MaterialsList.begin())->GetMaterialID(); }
-		inline Shader* GetBasicShader() const { return m_BasicShader; }
+		inline const std::vector<Material*> GetMaterialsList()	const { return m_MaterialsList; }
+		inline Material* GetMaterialInMaterialsList(uint index)	const { return m_MaterialsList[index]; }
+		inline Material* GetDefaultMaterial()					const { return *m_MaterialsList.begin(); }
+		inline const uint GetDefaultMaterialID()				const { return (*m_MaterialsList.begin())->GetMaterialID(); }
+		inline Shader* GetBasicShader()							const { return m_BasicShader; }
 
 	public:
 
@@ -130,7 +131,7 @@ namespace Cronos {
 
 	private:
 		
-		std::list<Material*> m_MaterialsList;
+		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
 
 		//Octree Rendrering

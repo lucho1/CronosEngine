@@ -36,7 +36,7 @@ namespace Cronos
 		if (m_MaterialTextures.size() > 0)
 		{
 			std::unordered_map<TextureType, Texture*>::iterator TextureItem = m_MaterialTextures.begin();
-			for (; TextureItem != m_MaterialTextures.end() && (*TextureItem).second; TextureItem++)
+			for (; TextureItem != m_MaterialTextures.end() && (TextureItem->second) != nullptr; TextureItem++)
 			{
 				RELEASE(TextureItem->second);
 				m_MaterialTextures.erase(TextureItem);
