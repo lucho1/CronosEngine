@@ -145,6 +145,7 @@ namespace Cronos {
 		m_BasicShader->Bind();
 		m_BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
 		m_BasicShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+		m_BasicShader->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
 
 		if (m_ChangeZBufferDrawing)
 		{
@@ -156,7 +157,7 @@ namespace Cronos {
 			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
 		for (uint i = 0; i < m_LightsList.size(); ++i)
-			m_LightsList[i]->SendUniformsLightData(*m_BasicShader);
+			m_LightsList[i]->SendUniformsLightData(m_BasicShader);
 
 		m_BasicShader->Unbind();
 
