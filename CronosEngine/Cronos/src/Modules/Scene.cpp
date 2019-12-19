@@ -55,7 +55,7 @@ namespace Cronos {
 		m_GameObjects.clear();
 
 		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
-		while (it != m_TexturesLoaded.end())
+		while (it != m_TexturesLoaded.end() && *it)
 		{
 			RELEASE(*it);
 			it = m_TexturesLoaded.erase(it);
