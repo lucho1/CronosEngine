@@ -945,6 +945,30 @@ namespace Cronos {
 				LightComp->SetLightColor(LightColor);
 				toChange = false;
 			}
+
+			//Change Light Direction
+			static glm::vec3 LightDir = LightComp->GetLightDirection();
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("Light Direction");
+			ImGui::Text("dX"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valuedX", &LightDir.x, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("dY"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valuedY", &LightDir.y, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("dZ"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valuedZ", &LightDir.z, 0.001f))toChange = true;
+
+			if (toChange)
+			{
+				LightComp->SetLightDirection(LightDir);
+				toChange = false;
+			}
+
+			//Light intensity
+			static float LightIntensity = LightComp->GetLightIntensity();
+
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(100);
+			if (ImGui::SliderFloat("Light Intensity", &LightIntensity, 0.0f, 1.0f, "%.2f", 0.05f))
+				LightComp->SetLightIntensity(LightIntensity);
+
+			//Light Direction
 		}
 	}
 
@@ -979,12 +1003,12 @@ namespace Cronos {
 				camera->SetFOV(CameraFieldOfView);
 
 			ImGui::NewLine();
-			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
+			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 0.2f))
 				camera->SetNearPlane(CameraNearPlane);
 
 			ImGui::NewLine();
 			ImGui::SetNextItemWidth(100);
-			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
+			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 0.5f))
 				camera->SetFarPlane(CameraFarPlane);
 
 			//Set to default values ------------------------------------------------------------------------------

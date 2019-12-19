@@ -44,7 +44,7 @@ struct Light
 	float LightIntensity;
 };
 
-uniform Light u_Light = Light(vec3(1), vec3(0), vec3(1), 0.5);
+uniform Light u_Light = Light(vec3(0), vec3(0), vec3(1), 0.5);
 
 //Object's colors and textures
 uniform bool u_TextureEmpty = true;
@@ -70,8 +70,8 @@ void main()
 {
 	//Lighting calculations ------------------------------------
 	vec3 normalVec = normalize(v_Normal);
-	vec3 lightDir = normalize(u_Light.LightPos - v_FragPos);
-	//vec3 lightDir = normalize(u_Light.LightDir);
+	//vec3 lightDir = normalize(u_Light.LightPos - v_FragPos); //For (basic) point lights
+	vec3 lightDir = normalize(u_Light.LightDir); //For directional lights
 
 	//Diffuse light calculation
 	float diffImpact = max(dot(normalVec, lightDir), 0.0);

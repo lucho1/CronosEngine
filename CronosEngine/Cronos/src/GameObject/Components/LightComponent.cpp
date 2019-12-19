@@ -42,11 +42,9 @@ namespace Cronos
 	{
 		glm::vec3 pos;
 		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
-
-		glm::vec3 dir = { 0, 0.3, 0 };
-
+		
 		shader->SetUniformVec3f("u_Light.LightPos", pos);
-		shader->SetUniformVec3f("u_Light.LightDir", dir);
+		shader->SetUniformVec3f("u_Light.LightDir", m_LightDirection);
 		shader->SetUniform1f("u_Light.LightIntensity", m_LightIntensity);
 		shader->SetUniformVec3f("u_Light.LightColor", m_LightColor);
 	}

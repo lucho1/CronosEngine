@@ -17,19 +17,21 @@ namespace Cronos
 		~LightComponent();
 
 		virtual void Update(float dt);
+		static ComponentType GetType() { return ComponentType::LIGHT; };
 
 	public:
 
 		//Setters
 		void SetLightType(LightType type) { m_LightType = type; }
+		void SetLightDirection(const glm::vec3& direction) { m_LightDirection = direction; }
 		void SetLightColor(const glm::vec3& color);
 		void SetLightIntensity(const float& intensity);
 
 		//Getters
-		static ComponentType GetType() { return ComponentType::LIGHT; };
 		inline const LightType GetLightType()	const { return m_LightType; }
 		inline const glm::vec3 GetLightColor()	const { return m_LightColor; }
 		inline const float GetLightIntensity()	const { return m_LightIntensity; }
+		inline const glm::vec3 GetLightDirection() const { return m_LightDirection; }
 
 	public:
 
@@ -39,6 +41,7 @@ namespace Cronos
 
 		LightType m_LightType = LightType::NONE;
 		glm::vec3 m_LightColor = glm::vec3(1.0f);
+		glm::vec3 m_LightDirection = glm::vec3(0.0f);
 		float m_LightIntensity = 0.5f;
 	};
 }
