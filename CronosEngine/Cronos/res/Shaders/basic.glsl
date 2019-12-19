@@ -10,16 +10,25 @@ uniform mat4 u_Proj;
 uniform mat4 u_Model;
 
 out vec2 v_TexCoords;
+out vec3 v_Normal;
+out vec3 v_FragPos;
 
 void main()
 {
 	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 	v_TexCoords = a_TexCoords;
+	v_Normal = a_Normal;
+	v_FragPos = vec3(u_Model * vec4(a_Position, 1.0));
 }
 
 
 #type fragment
 #version 330 core
+
+in vec2 v_TexCoords;
+in vec3 v_Normal;
+in vec3 v_FragPos;
+out vec4 color;
 
 //Light Structure
 struct Light
@@ -28,11 +37,7 @@ struct Light
 	vec3 LightColor;
 };
 
-uniform Light u_Light;
-
-in vec2 v_TexCoords;
-out vec4 color;
-
+uniform Light u_Light = Light(vec3(0), vec3(1));
 
 //Object's colors and textures
 uniform bool u_TextureEmpty = true;
@@ -40,8 +45,6 @@ uniform bool u_TextureEmpty = true;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularTexture;
 //uniform sampler2D u_NormalMap;
-//uniform sampler2D u_HeightMap;
-//uniform sampler2D u_LightMap;
 
 uniform vec4 u_AmbientColor;
 
@@ -58,20 +61,25 @@ float LinearizeZ(float depth)
 //--------------------------------------------------------------------------------
 void main()
 {
-	vec4 ambientColorLighted = vec4(u_Light.LightColor, 1.0);
+	//Lighting calculations ------------------------------------
+	//Diffuse light calculation
+	vec3 normalVec = normalize(v_Normal);
+	vec3 lightDir = normalize(u_Light.LightPos - v_FragPos);
+	float diffImpact = max(dot(normalVec, lightDir), 0.0);
+	vec3 diffuseLight = diffImpact * u_Light.LightColor;
+	//----------------------------------------------------------
+
+	vec4 LightResult = vec4(u_Light.LightColor + diffuseLight, 1.0) * u_AmbientColor;
+	
 	
 	if (!u_TextureEmpty)
-		color = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor * ambientColorLighted;
+		color = (texture(u_DiffuseTexture, v_TexCoords)) * LightResult;
 	else
-		color = u_AmbientColor * ambientColorLighted;
+		color = LightResult;
 
 	if (u_drawZBuffer)
 	{
 		float depth = (LinearizeZ(gl_FragCoord.z) / u_CamPlanes.y);
 		color = vec4(vec3(depth), 1.0);
 	}
-}
-
-
-
-		
+}		

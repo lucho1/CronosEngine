@@ -790,12 +790,14 @@ namespace Cronos {
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr)
 					GUIDrawMeshMenu(CurrentGameObject);
 				
-				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) 
-						GUIDrawMaterialsMenu(CurrentGameObject);
+					GUIDrawMaterialsMenu(CurrentGameObject);
 				
 				if (CurrentGameObject->GetComponent<CameraComponent>() != nullptr)
 					GUIDrawCameraComponentMenu(CurrentGameObject);
+
+				if (CurrentGameObject->GetComponent<LightComponent>() != nullptr)
+					GUIDrawLightComponentMenu(CurrentGameObject);
 
 			}
 			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
@@ -917,6 +919,32 @@ namespace Cronos {
 			ImGui::Checkbox("Draw Central Axis", &CurrentGameObject->GetComponent<MeshComponent>()->SetDrawAxis());
 
 			ImGui::Separator();
+		}
+	}
+
+
+	void ImGuiLayer::GUIDrawLightComponentMenu(GameObject* CurrentGameObject)
+	{
+		if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			//Change light type
+
+			//Change Light Color
+			LightComponent* LightComp = CurrentGameObject->GetComponent<LightComponent>();
+			static glm::vec3 LightColor = LightComp->GetLightColor();
+			
+			static bool toChange;
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("Light Color");
+			ImGui::Text("R"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueR", &LightColor.x, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("G"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueG", &LightColor.y, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("B"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueB", &LightColor.z, 0.001f))toChange = true;
+
+			if (toChange)
+			{
+				LightComp->SetLightColor(LightColor);
+				toChange = false;
+			}
 		}
 	}
 

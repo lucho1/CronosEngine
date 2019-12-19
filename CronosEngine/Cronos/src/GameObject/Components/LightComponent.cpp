@@ -24,18 +24,18 @@ namespace Cronos
 	{
 	}
 
-	void LightComponent::SetLightColor(const glm::vec3 & color)
+	void LightComponent::SetLightColor(const glm::vec3& color)
 	{
 		m_LightColor = color;
 		GetParent()->GetComponent<MaterialComponent>()->SetColor({ glm::vec3(color), 1.0f });
 	}
 
-	void LightComponent::SendUniformsLightData(Shader* shader)
+	void LightComponent::SendUniformsLightData(Shader& shader)
 	{
 		glm::vec3 pos;
 		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
 
-		shader->SetUniformVec3f("u_Light.LightPos", pos);
-		shader->SetUniformVec3f("u_Light.LightColor", m_LightColor);
+		shader.SetUniformVec3f("u_Light.LightPos", pos);
+		shader.SetUniformVec3f("u_Light.LightColor", m_LightColor);
 	}
 }

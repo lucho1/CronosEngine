@@ -81,6 +81,7 @@ namespace Cronos {
 
 		Material* LightMat = new Material();
 		LightMat->SetName("Light Material");
+		LightMat->SetColor(glm::vec4(1.0f));
 
 		return true;
 	}
@@ -155,7 +156,7 @@ namespace Cronos {
 			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
 		for (uint i = 0; i < m_LightsList.size(); ++i)
-			m_LightsList[i]->SendUniformsLightData(m_BasicShader);
+			m_LightsList[i]->SendUniformsLightData(*m_BasicShader);
 
 		m_BasicShader->Unbind();
 
