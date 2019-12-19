@@ -1,5 +1,8 @@
 #include "Providers/cnpch.h"
 #include "LightComponent.h"
+
+#include "Application.h"
+
 #include "GameObject/GameObject.h"
 #include "TransformComponent.h"
 
@@ -9,6 +12,7 @@ namespace Cronos
 		: Component(ComponentType::LIGHT, attachedGO)
 	{
 		m_LightType = LightType::DIRECTIONAL;
+		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*App->renderer3D->GetLightMaterial());
 	}
 
 	LightComponent::~LightComponent()
@@ -18,6 +22,12 @@ namespace Cronos
 
 	void LightComponent::Update(float dt)
 	{
+	}
+
+	void LightComponent::SetLightColor(const glm::vec3 & color)
+	{
+		m_LightColor = color;
+		GetParent()->GetComponent<MaterialComponent>()->SetColor({ glm::vec3(color), 1.0f });
 	}
 
 	void LightComponent::SendUniformsLightData(Shader* shader)

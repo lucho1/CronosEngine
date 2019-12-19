@@ -70,6 +70,7 @@ namespace Cronos {
 		inline const std::vector<Material*> GetMaterialsList()	const { return m_MaterialsList; }
 		inline Material* GetMaterialInMaterialsList(uint index)	const { return m_MaterialsList[index]; }
 		inline Material* GetDefaultMaterial()					const { return *m_MaterialsList.begin(); }
+		inline Material* GetLightMaterial()						const { return m_MaterialsList[1]; }
 		inline const uint GetDefaultMaterialID()				const { return (*m_MaterialsList.begin())->GetMaterialID(); }
 		inline Shader* GetBasicShader()							const { return m_BasicShader; }
 

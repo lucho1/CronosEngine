@@ -3,7 +3,7 @@
 
 #include "Component.h"
 #include "Renderer/Shaders.h"
-
+#include "MaterialComponent.h"
 
 namespace Cronos
 {
@@ -22,7 +22,7 @@ namespace Cronos
 
 		//Setters
 		void SetLightType(LightType type) { m_LightType = type; }
-		void SetLightColor(const glm::vec3& color) { m_LightColor = color; }
+		void SetLightColor(const glm::vec3& color);
 
 		//Getters
 		static ComponentType GetType() { return ComponentType::LIGHT; };

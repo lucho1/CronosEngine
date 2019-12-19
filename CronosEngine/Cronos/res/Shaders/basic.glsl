@@ -61,9 +61,9 @@ void main()
 	vec4 ambientColorLighted = vec4(u_Light.LightColor, 1.0);
 	
 	if (!u_TextureEmpty)
-		color = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor;
+		color = (texture(u_DiffuseTexture, v_TexCoords)) * u_AmbientColor * ambientColorLighted;
 	else
-		color = u_AmbientColor;
+		color = u_AmbientColor * ambientColorLighted;
 
 	if (u_drawZBuffer)
 	{

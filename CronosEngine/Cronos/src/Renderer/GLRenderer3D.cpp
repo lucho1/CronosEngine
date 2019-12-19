@@ -77,7 +77,10 @@ namespace Cronos {
 
 		m_BasicShader = new Shader("res/shaders/basic.glsl");
 		Material* DefaultMat = new Material();
-		DefaultMat->SetName("Default Material");	
+		DefaultMat->SetName("Default Material");
+
+		Material* LightMat = new Material();
+		LightMat->SetName("Light Material");
 
 		return true;
 	}
