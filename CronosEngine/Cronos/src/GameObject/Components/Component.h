@@ -12,7 +12,8 @@ namespace Cronos {
 		MESH,
 		MESH_RENDERER,
 		MATERIAL,
-		CAMERA
+		CAMERA,
+		LIGHT
 	};
 
 	class Component 

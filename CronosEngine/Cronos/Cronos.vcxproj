@@ -112,6 +112,7 @@
     <ClInclude Include="src\Core\Module.h" />
     <ClInclude Include="src\GameObject\Components\CameraComponent.h" />
     <ClInclude Include="src\GameObject\Components\Component.h" />
+    <ClInclude Include="src\GameObject\Components\LightComponent.h" />
     <ClInclude Include="src\GameObject\Components\MaterialComponent.h" />
     <ClInclude Include="src\GameObject\Components\MeshComponent.h" />
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
@@ -527,6 +528,7 @@
     <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Main.cpp" />
     <ClCompile Include="src\GameObject\Components\CameraComponent.cpp" />
+    <ClCompile Include="src\GameObject\Components\LightComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\MeshComponent.cpp" />
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />

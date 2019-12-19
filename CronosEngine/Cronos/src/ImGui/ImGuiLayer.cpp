@@ -1102,9 +1102,22 @@ namespace Cronos {
 					{
 						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Camera", { 0.5f, 0.5f, 0.8f });
 						ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
-						ret->GetComponent<MaterialComponent>()->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
+						//ret->GetComponent<MaterialComponent>()->SetColor({ 0.6f, 0.6f, 0.6f, 1.0f });
 
 						CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+
+						ret->m_Components.push_back(cameraComp);
+						App->scene->m_GameObjects.push_back(ret);
+					}
+
+					//Creating Light
+					if (ImGui::MenuItem("Light"))
+					{
+						PrimitiveGameObject* ret = new PrimitiveGameObject(PrimitiveType::CUBE, "Light", glm::vec3(1.0f));
+						ret->GetComponent<TransformComponent>()->SetPosition({ -0.5f, 5.0f, -0.5f });
+						//ret->GetComponent<MaterialComponent>()->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); //What about creating a primitives material? or kind of an "Icon/Placeholders" materials??
+
+						CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::LIGHT));
 
 						ret->m_Components.push_back(cameraComp);
 						App->scene->m_GameObjects.push_back(ret);
