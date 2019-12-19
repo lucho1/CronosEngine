@@ -1117,10 +1117,11 @@ namespace Cronos {
 						ret->GetComponent<TransformComponent>()->SetPosition({ -0.5f, 5.0f, -0.5f });
 						//ret->GetComponent<MaterialComponent>()->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f }); //What about creating a primitives material? or kind of an "Icon/Placeholders" materials??
 
-						CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::LIGHT));
+						LightComponent* cameraComp = (LightComponent*)(ret->CreateComponent(ComponentType::LIGHT));
 
 						ret->m_Components.push_back(cameraComp);
 						App->scene->m_GameObjects.push_back(ret);
+						App->renderer3D->AddLight(cameraComp);
 					}
 
 					ImGui::EndMenu();

@@ -3,11 +3,12 @@
 
 #include "Module.h"
 #include "Providers/Globals.h"
-#include "Light.h"
+#include "GL_Light.h"
 #include "Helpers/Camera.h"
 
 #include "GameObject/Components/MaterialComponent.h"
 #include "GameObject/Components/TransformComponent.h"
+#include "GameObject/Components/LightComponent.h"
 
 #include "VertexArray.h"
 
@@ -72,6 +73,8 @@ namespace Cronos {
 		inline const uint GetDefaultMaterialID()				const { return (*m_MaterialsList.begin())->GetMaterialID(); }
 		inline Shader* GetBasicShader()							const { return m_BasicShader; }
 
+		void AddLight(LightComponent* lightCompObj) { m_LightsList.push_back(lightCompObj); }
+
 	public:
 
 		//Setters
@@ -124,13 +127,13 @@ namespace Cronos {
 	public:
 
 		//Light lights[MAX_LIGHTS];
-		Light centerLight;
+		GL_Light centerLight;
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
 
-
 	private:
 		
+		std::vector<LightComponent*> m_LightsList;
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
 

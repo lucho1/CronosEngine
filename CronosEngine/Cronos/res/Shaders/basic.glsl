@@ -21,8 +21,18 @@ void main()
 #type fragment
 #version 330 core
 
+//Light Structure
+struct Light
+{
+	vec3 LightPos;
+	vec3 LightColor;
+};
+
+uniform Light u_Light;
+
 in vec2 v_TexCoords;
 out vec4 color;
+
 
 //Object's colors and textures
 uniform bool u_TextureEmpty = true;

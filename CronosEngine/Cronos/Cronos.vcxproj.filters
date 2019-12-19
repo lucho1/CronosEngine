@@ -96,9 +96,6 @@
     <ClInclude Include="src\Helpers\Color.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Helpers\Light.h">
-      <Filter>src\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\Helpers\RNGen.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
@@ -1303,6 +1300,9 @@
     <ClInclude Include="src\Helpers\Camera.h" />
     <ClInclude Include="src\Renderer\Material.h" />
     <ClInclude Include="src\GameObject\Components\LightComponent.h" />
+    <ClInclude Include="src\Helpers\GL_Light.h">
+      <Filter>src\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1330,9 +1330,6 @@
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Color.cpp">
-      <Filter>src\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Helpers\Light.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\RNGen.cpp">
@@ -1426,5 +1423,8 @@
     <ClCompile Include="src\Helpers\Camera.cpp" />
     <ClCompile Include="src\Renderer\Material.cpp" />
     <ClCompile Include="src\GameObject\Components\LightComponent.cpp" />
+    <ClCompile Include="src\Helpers\GL_Light.cpp">
+      <Filter>src\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

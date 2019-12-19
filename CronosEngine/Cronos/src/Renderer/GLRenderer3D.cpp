@@ -150,6 +150,9 @@ namespace Cronos {
 		if (m_DrawZBuffer)
 			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
+		for (uint i = 0; i < m_LightsList.size(); ++i)
+			m_LightsList[i]->SendUniformsLightData(m_BasicShader);
+
 		m_BasicShader->Unbind();
 
 		//Objects Rendering -----------------------------------------------------------------

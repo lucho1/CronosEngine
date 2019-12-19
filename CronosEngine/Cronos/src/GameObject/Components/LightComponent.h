@@ -2,6 +2,8 @@
 #define _LIGHTCOMPONENT_H_
 
 #include "Component.h"
+#include "Renderer/Shaders.h"
+
 
 namespace Cronos
 {
@@ -20,14 +22,21 @@ namespace Cronos
 
 		//Setters
 		void SetLightType(LightType type) { m_LightType = type; }
+		void SetLightColor(const glm::vec3& color) { m_LightColor = color; }
 
 		//Getters
 		static ComponentType GetType() { return ComponentType::LIGHT; };
-		inline const LightType GetLightType() const { return m_LightType; }
+		inline const LightType GetLightType()	const { return m_LightType; }
+		inline const glm::vec3 GetLightColor()	const { return m_LightColor; }
+
+	public:
+
+		void SendUniformsLightData(Shader* shader);
 
 	private:
 
 		LightType m_LightType = LightType::NONE;
+		glm::vec3 m_LightColor = glm::vec3(1.0f);
 	};
 }
 

@@ -1,13 +1,13 @@
-#ifndef _LIGHT_H_
-#define _LIGHT_H_
+#ifndef _OLDER_GL_LIGHT_H_
+#define _OLDER_GL_LIGHT_H_
 
 #include "Color.h"
 
 namespace Cronos {
 
-	struct Light
+	struct GL_Light
 	{
-		Light();
+		GL_Light();
 
 		void Init();
 		void SetPos(float x, float y, float z);
