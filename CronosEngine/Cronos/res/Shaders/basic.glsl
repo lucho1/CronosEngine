@@ -74,29 +74,32 @@ float LinearizeZ(float depth)
 //--------------------------------------------------------------------------------
 void main()
 {
+	//Ambient Light
+	vec3 ambient = u_Light.LightColor * texture(u_DiffuseTexture, v_TexCoords).rgb;
+
 	//Lighting calculations ------------------------------------
 	vec3 normalVec = normalize(v_Normal);
-	//vec3 lightDir = normalize(u_Light.LightPos - v_FragPos); //For (basic) point lights
-	vec3 lightDir = normalize(u_Light.LightDir); //For directional lights
-	float d = length(u_Light.LightPos - v_FragPos);
-	float lightAttenuation = 1.0/ (u_Light.LightAtt_K + u_Light.LightAtt_L * d + u_Light.LightAtt_Q *(d * d));
+	vec3 lightDir = normalize(u_Light.LightPos - v_FragPos); //For (basic) point lights
+	//vec3 lightDir = normalize(u_Light.LightDir); //For directional lights
+	//float d = length(u_Light.LightPos - v_FragPos);
+	//float lightAttenuation = 1.0/ (u_Light.LightAtt_K + u_Light.LightAtt_L * d + u_Light.LightAtt_Q *(d * d));
 
 	//Diffuse light calculation
 	float diffImpact = max(dot(normalVec, lightDir), 0.0);
-	vec3 diffuseLight = diffImpact * u_Light.LightColor * lightAttenuation;
+	vec3 diffuseLight = diffImpact * texture(u_DiffuseTexture, v_TexCoords).rgb; // * lightAttenuation;
 
 	//Specular Light calculation
 	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 	vec3 reflectDirection = reflect(-lightDir, normalVec);
 	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
-	vec3 specularLight = u_Light.LightIntensity * specImpact * u_Light.LightColor * lightAttenuation;
+	vec3 specularLight = u_Light.LightIntensity * specImpact * texture(u_SpecularTexture, v_TexCoords).rgb; // * lightAttenuation;
 	//----------------------------------------------------------
 
-	vec4 LightResult = vec4(u_Light.LightColor * lightAttenuation + diffuseLight + specularLight, 1.0) * u_AmbientColor;
-	
+	//vec4 LightResult = vec4(u_Light.LightColor * lightAttenuation + diffuseLight + specularLight, 1.0) * u_AmbientColor;
+	vec4 LightResult = vec4(ambient + diffuseLight + specularLight, 1.0); //* u_AmbientColor;
 	
 	if (!u_TextureEmpty)
-		color = (texture(u_DiffuseTexture, v_TexCoords)) * LightResult;
+		color = LightResult;
 	else
 		color = LightResult;
 

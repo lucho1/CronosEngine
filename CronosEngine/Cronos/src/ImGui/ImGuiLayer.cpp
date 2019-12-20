@@ -1060,15 +1060,20 @@ namespace Cronos {
 
 			//Mat Diffuse
 			Texture* Diffuse = nullptr;
+			Texture* Specular = nullptr;
 			MaterialComponent* Cn_Material = CurrentGameObject->GetComponent<MaterialComponent>();
 
 			if (Cn_Material != nullptr)
 			{
 				for (auto& tv : Cn_Material->GetTextures())
+				{
 					if (tv.first == TextureType::DIFFUSE)
 						Diffuse = (tv.second);
+					if(tv.first == TextureType::SPECULAR)
+						Specular = (tv.second);
+				}
 			}
-
+			
 			if (Diffuse != nullptr)
 				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 			else
@@ -1093,6 +1098,38 @@ namespace Cronos {
 				ImGui::EndDragDropTarget();
 			}
 
+			//Specular Texture
+			if (Specular != nullptr)
+				ImGui::ImageButton((void*)Specular->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+			else
+				ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+
+		//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); 
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				//ImGui::GetID("Scene");
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Window"))
+				{
+					int payload_n = *(const int*)payload->Data;
+
+					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_TGA
+						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
+					{
+						AssetItems* AssetData = (AssetItems*)payload->Data;
+						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(AssetData->GetTexture(), TextureType::SPECULAR);
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+			
+			//ImGui::AlignTextToFramePadding();
+			ImGui::SameLine();
+			ImGui::Text("\n   Metallic/Specular"); ImGui::SameLine();
+			static float SpecIntensity = 1.0f;
+			static int  test2 = ImGui::GetCursorPosY();
+			ImGui::SetCursorPosY(test2 + 13);
 
 			//Mat Shine
 			static float MatShine = Cn_Material->GetShininess();
@@ -1103,7 +1140,7 @@ namespace Cronos {
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();
-			ImGui::Text("\n   Ambient/Albedo"); ImGui::SameLine();
+			ImGui::Text("\n   Ambient Color"); ImGui::SameLine();
 			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 			ImVec2 FramePadding(100.0f, 3.0f);
 			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
@@ -1121,23 +1158,16 @@ namespace Cronos {
 			//ImGui::PopStyleVar();
 
 
-			ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
-			//ImGui::AlignTextToFramePadding();
-			ImGui::Text("\n   Specular"); ImGui::SameLine();
-			static float SpecIntensity = 1.0f;
-			static int  test2 = ImGui::GetCursorPosY();
-			ImGui::SetCursorPosY(test2 + 13);
-
-			ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
-
+			//ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
+			//
 			//if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
 			//	ImGui::OpenPopup("Context");
 			//}
 			//ImGui::SameLine();
-			//ImGui::Text("\n   Metallic");
+			//ImGui::Text("\n   Metallic/Specular");
 
 			//ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
-			//ImGui::Text("\n   Roughtness");
+			//ImGui::Text("\n   Roughness");
 			//if (ImGui::Button("Hello")) {
 			//	ImGui::OpenPopup("Context");
 			//}

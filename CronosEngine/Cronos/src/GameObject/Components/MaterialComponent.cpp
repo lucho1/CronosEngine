@@ -63,11 +63,11 @@ namespace Cronos
 
 	void MaterialComponent::SetColor(const glm::vec4& col)
 	{
-		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
-		{
-			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
-			return;
-		}
+		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		//{
+		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
+		//	return;
+		//}
 
 		m_Material->SetColor(col);
 	}
@@ -85,11 +85,11 @@ namespace Cronos
 
 	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
 	{
-		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
-		{
-			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetTexture()")
-			return;
-		}
+		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		//{
+		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetTexture()")
+		//	return;
+		//}
 
 		m_Material->SetTexture(texture, type);
 	}
