@@ -60,6 +60,7 @@ namespace Cronos
 		m_MaterialShader->Bind();
 		m_MaterialShader->SetUniformMat4f("u_Model", ModelTransform);
 		m_MaterialShader->SetUniformVec4f("u_AmbientColor", m_MaterialAmbientColor);
+		m_MaterialShader->SetUniform1f("u_Shininess", m_MaterialShininess);
 		
 		if(!bindTextures || m_MaterialTextures.size() <= 0 || App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
 			m_MaterialShader->SetUniform1i("u_TextureEmpty", true);

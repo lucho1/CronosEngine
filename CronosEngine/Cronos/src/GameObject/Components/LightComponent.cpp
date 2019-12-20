@@ -45,7 +45,12 @@ namespace Cronos
 		
 		shader->SetUniformVec3f("u_Light.LightPos", pos);
 		shader->SetUniformVec3f("u_Light.LightDir", m_LightDirection);
-		shader->SetUniform1f("u_Light.LightIntensity", m_LightIntensity);
 		shader->SetUniformVec3f("u_Light.LightColor", m_LightColor);
+		
+		shader->SetUniform1f("u_Light.LightIntensity", m_LightIntensity);
+		
+		shader->SetUniform1f("u_Light.LightAtt_K", m_LightAttK);
+		shader->SetUniform1f("u_Light.LightAtt_L", m_LightAttL);
+		shader->SetUniform1f("u_Light.LightAtt_Q", m_LightAttQ);
 	}
 }

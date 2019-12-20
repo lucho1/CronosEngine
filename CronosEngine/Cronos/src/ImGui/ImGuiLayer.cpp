@@ -962,13 +962,25 @@ namespace Cronos {
 
 			//Light intensity
 			static float LightIntensity = LightComp->GetLightIntensity();
-
 			ImGui::NewLine();
 			ImGui::SetNextItemWidth(100);
-			if (ImGui::SliderFloat("Light Intensity", &LightIntensity, 0.0f, 1.0f, "%.2f", 0.05f))
+			if (ImGui::SliderFloat("Light Intensity", &LightIntensity, 0.0f, 1.0f, "%.2f", 1.0f))
 				LightComp->SetLightIntensity(LightIntensity);
 
-			//Light Direction
+			//Light Attenuation
+			static glm::vec3 LightAtt = LightComp->GetLightAttenuationFactors();
+						
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("Light Attenuation");
+			ImGui::Text("AttK"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueAttK", &LightAtt.x, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("AttL"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueAttL", &LightAtt.y, 0.001f))toChange = true; ImGui::SameLine();
+			ImGui::Text("AttQ"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueAttQ", &LightAtt.z, 0.001f))toChange = true;
+
+			if (toChange)
+			{
+				LightComp->SetAttenuationFactors(LightAtt);
+				toChange = false;
+			}
 		}
 	}
 
@@ -1044,8 +1056,9 @@ namespace Cronos {
 			static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 255.0f / 255.0f);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.392f, 0.369f, 0.376f, 0.10f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));			
 
+			//Mat Diffuse
 			Texture* Diffuse = nullptr;
 			MaterialComponent* Cn_Material = CurrentGameObject->GetComponent<MaterialComponent>();
 
@@ -1080,6 +1093,13 @@ namespace Cronos {
 				ImGui::EndDragDropTarget();
 			}
 
+
+			//Mat Shine
+			static float MatShine = Cn_Material->GetShininess();
+			ImGui::NewLine();
+			ImGui::SetNextItemWidth(100);
+			if (ImGui::SliderFloat("Shininess", &MatShine, 0.03f, 256.0f, "%.2f", 2.0f))
+				Cn_Material->SetShininess(MatShine);
 
 			ImGui::SameLine();
 			ImGui::AlignTextToFramePadding();

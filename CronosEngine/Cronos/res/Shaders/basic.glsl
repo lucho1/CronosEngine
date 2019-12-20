@@ -42,9 +42,17 @@ struct Light
 	vec3 LightColor;
 
 	float LightIntensity;
+
+	float LightAtt_K;
+	float LightAtt_L;
+	float LightAtt_Q;
 };
 
-uniform Light u_Light = Light(vec3(0), vec3(0), vec3(1), 0.5);
+uniform Light u_Light = Light(vec3(0), vec3(0), vec3(1), 0.5, 1.0, 0.09, 0.032);
+
+//Material Stuff
+uniform vec4 u_AmbientColor;
+uniform float u_Shininess = 32.0;
 
 //Object's colors and textures
 uniform bool u_TextureEmpty = true;
@@ -52,8 +60,6 @@ uniform bool u_TextureEmpty = true;
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularTexture;
 //uniform sampler2D u_NormalMap;
-
-uniform vec4 u_AmbientColor;
 
 //ZBuffer rendering
 uniform vec2 u_CamPlanes; //x for near plane, y for far plane
@@ -72,19 +78,21 @@ void main()
 	vec3 normalVec = normalize(v_Normal);
 	//vec3 lightDir = normalize(u_Light.LightPos - v_FragPos); //For (basic) point lights
 	vec3 lightDir = normalize(u_Light.LightDir); //For directional lights
+	float d = length(u_Light.LightPos - v_FragPos);
+	float lightAttenuation = 1.0/ (u_Light.LightAtt_K + u_Light.LightAtt_L * d + u_Light.LightAtt_Q *(d * d));
 
 	//Diffuse light calculation
 	float diffImpact = max(dot(normalVec, lightDir), 0.0);
-	vec3 diffuseLight = diffImpact * u_Light.LightColor;
+	vec3 diffuseLight = diffImpact * u_Light.LightColor * lightAttenuation;
 
 	//Specular Light calculation
 	vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 	vec3 reflectDirection = reflect(-lightDir, normalVec);
-	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), 32);
-	vec3 specularLight = u_Light.LightIntensity * specImpact * u_Light.LightColor;
+	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+	vec3 specularLight = u_Light.LightIntensity * specImpact * u_Light.LightColor * lightAttenuation;
 	//----------------------------------------------------------
 
-	vec4 LightResult = vec4(u_Light.LightColor + diffuseLight + specularLight, 1.0) * u_AmbientColor;
+	vec4 LightResult = vec4(u_Light.LightColor * lightAttenuation + diffuseLight + specularLight, 1.0) * u_AmbientColor;
 	
 	
 	if (!u_TextureEmpty)

@@ -21,12 +21,14 @@ namespace Cronos
 		//Getters
 		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_MaterialTextures; }
 		inline const glm::vec4 GetMaterialColor()							const { return m_MaterialAmbientColor; }
+		inline const float GetMaterialShininess()							const { return m_MaterialShininess; }
 		inline const uint GetMaterialID()									const { return m_ID; }
 
 		//Setters
 		void SetName(const std::string& name)								{ m_MaterialName = name; }
 		void SetShader(Shader& shader)										{ m_MaterialShader = &shader; }
 		void SetColor(const glm::vec4& color)								{ m_MaterialAmbientColor = color; }
+		void SetShininess(const float& shininess)							{ m_MaterialShininess = shininess; }
 		void SetTexture(Texture* texture, TextureType type);
 
 	private:
@@ -34,6 +36,7 @@ namespace Cronos
 		std::string m_MaterialName;
 		uint m_ID = 0;
 
+		float m_MaterialShininess = 1.0f;
 		glm::vec4 m_MaterialAmbientColor = glm::vec4(0.8f, 0.5f, 0.2f, 1.0f);
 		std::unordered_map<TextureType, Texture*> m_MaterialTextures;
 

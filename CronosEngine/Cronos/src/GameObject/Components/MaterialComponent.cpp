@@ -50,7 +50,7 @@ namespace Cronos
 		m_Material = App->renderer3D->GetMaterialInMaterialsList(index);
 	}
 
-	void MaterialComponent::SetShader(Shader & shader)
+	void MaterialComponent::SetShader(Shader& shader)
 	{	
 		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
 		{
@@ -61,7 +61,7 @@ namespace Cronos
 		m_Material->SetShader(shader);
 	}
 
-	void MaterialComponent::SetColor(const glm::vec4 & col)
+	void MaterialComponent::SetColor(const glm::vec4& col)
 	{
 		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
 		{
@@ -72,7 +72,18 @@ namespace Cronos
 		m_Material->SetColor(col);
 	}
 
-	void MaterialComponent::SetTexture(Texture * texture, TextureType type)
+	void MaterialComponent::SetShininess(const float& shininess)
+	{
+		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		//{
+		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
+		//		return;
+		//}
+
+		m_Material->SetShininess(shininess);
+	}
+
+	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
 	{
 		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
 		{

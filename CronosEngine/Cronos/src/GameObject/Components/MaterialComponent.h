@@ -24,12 +24,14 @@ namespace Cronos
 		void SetMaterial(uint index); //This is temporary too, to assign materials with an index from renderer's material list
 		void SetShader(Shader& shader);
 		void SetColor(const glm::vec4& col);
+		void SetShininess(const float& shininess);
 		void SetTexture(Texture* texture, TextureType type);
 
 		//Getters
 		static ComponentType GetType()										{ return ComponentType::MATERIAL; };
 		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_Material->GetTextures(); }
 		inline const glm::vec4 GetColor()									const { return m_Material->GetMaterialColor(); }
+		inline const float GetShininess()									const { return m_Material->GetMaterialShininess(); }
 		inline const Material* GetMaterial()								const { return m_Material; }
 
 
