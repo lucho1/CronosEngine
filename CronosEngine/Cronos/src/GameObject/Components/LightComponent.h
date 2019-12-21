@@ -16,7 +16,6 @@ namespace Cronos
 		LightComponent(GameObject* attachedGO);
 		~LightComponent();
 
-		virtual void Update(float dt);
 		static ComponentType GetType() { return ComponentType::LIGHT; };
 
 	public:

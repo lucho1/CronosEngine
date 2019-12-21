@@ -96,13 +96,26 @@ namespace Cronos {
 			RELEASE(m_MaterialsList[i]);
 			m_MaterialsList.erase(m_MaterialsList.begin() + i);
 		}
+
+		for (uint i = 0; i < m_LightsList.size(); i++)
+		{
+			RELEASE(m_LightsList[i]);
+			m_LightsList.erase(m_LightsList.begin() + i);
+		}
 		
 		RELEASE(m_BasicShader);
 		m_RenderingOctree.CleanUp();
 		m_MaterialsList.clear();
+		m_LightsList.clear();
 
 		SDL_GL_DeleteContext(context);
 		return true;
+	}
+
+	void GLRenderer3D::PopMaterial(Material* material)
+	{
+		RELEASE(material);
+		m_MaterialsList.erase(std::find(m_MaterialsList.begin(), m_MaterialsList.end(), material));
 	}
 
 	// PreUpdate: clear buffer
@@ -228,7 +241,6 @@ namespace Cronos {
 		App->window->ReCalculateAspectRatio(width, height);
 		App->engineCamera->ChangeProjection();
 	}
-
 
 	// -----------------------------------------------------------------------------------
 	void GLRenderer3D::DrawLine(glm::vec3 minP, glm::vec3 maxP, glm::vec3 color, float linewidth, glm::mat4 modelMat)

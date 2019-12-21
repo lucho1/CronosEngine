@@ -66,6 +66,7 @@ namespace Cronos {
 		
 		//Materials things
 		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
+		void PopMaterial(Material* material);
 
 		inline const std::vector<Material*> GetMaterialsList()	const { return m_MaterialsList; }
 		inline Material* GetMaterialInMaterialsList(uint index)	const { return m_MaterialsList[index]; }
@@ -75,6 +76,7 @@ namespace Cronos {
 		inline Shader* GetBasicShader()							const { return m_BasicShader; }
 
 		void AddLight(LightComponent* lightCompObj) { m_LightsList.push_back(lightCompObj); }
+		void PopLight(LightComponent* lightCompObj) { m_LightsList.erase(std::find(m_LightsList.begin(), m_LightsList.end(), lightCompObj)); }
 
 	public:
 

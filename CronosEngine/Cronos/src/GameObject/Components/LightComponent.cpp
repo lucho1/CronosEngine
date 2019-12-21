@@ -17,11 +17,8 @@ namespace Cronos
 
 	LightComponent::~LightComponent()
 	{
+		App->renderer3D->PopLight(this);
 		m_LightType = LightType::NONE;
-	}
-
-	void LightComponent::Update(float dt)
-	{
 	}
 
 	void LightComponent::SetLightColor(const glm::vec3& color)
@@ -40,17 +37,27 @@ namespace Cronos
 
 	void LightComponent::SendUniformsLightData(Shader* shader)
 	{
+		if (!isEnabled())
+			return;
+
+		if (!GetParent()->isActive())
+		{
+			shader->SetUniformVec3f("u_PointLight.LightColor", glm::vec3(0.0f));
+			shader->SetUniform1f("u_PointLight.LightIntensity", 0.0f);
+			return;
+		}
+
 		glm::vec3 pos;
 		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
 		
-		shader->SetUniformVec3f("u_Light.LightPos", pos);
-		shader->SetUniformVec3f("u_Light.LightDir", m_LightDirection);
-		shader->SetUniformVec3f("u_Light.LightColor", m_LightColor);
+		shader->SetUniformVec3f("u_PointLight.LightPos", pos);
+		//shader->SetUniformVec3f("u_DirLight.LightDir", m_LightDirection);
+		shader->SetUniformVec3f("u_PointLight.LightColor", m_LightColor);
 		
-		shader->SetUniform1f("u_Light.LightIntensity", m_LightIntensity);
+		shader->SetUniform1f("u_PointLight.LightIntensity", m_LightIntensity);
 		
-		shader->SetUniform1f("u_Light.LightAtt_K", m_LightAttK);
-		shader->SetUniform1f("u_Light.LightAtt_L", m_LightAttL);
-		shader->SetUniform1f("u_Light.LightAtt_Q", m_LightAttQ);
-	}
+		shader->SetUniform1f("u_PointLight.LightAtt_K", m_LightAttK);
+		shader->SetUniform1f("u_PointLight.LightAtt_L", m_LightAttL);
+		shader->SetUniform1f("u_PointLight.LightAtt_Q", m_LightAttQ);
+	}	
 }

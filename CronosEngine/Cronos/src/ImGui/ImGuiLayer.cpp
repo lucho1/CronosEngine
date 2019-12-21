@@ -405,8 +405,9 @@ namespace Cronos {
 		if (CurrentGameObject != nullptr&&App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) {
 			int cursor = 0;
 			for (auto& go : App->scene->m_GameObjects) {
-				if (go->GetGOID() == CurrentGameObject->GetGOID()) {
-					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
+				if (go->GetGOID() == CurrentGameObject->GetGOID())
+				{
+					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor); //WTF? Really? The game objects, at deletion, are just "getting out" of the list?
 					break;
 				}
 				else {
@@ -777,7 +778,7 @@ namespace Cronos {
 
 			if (CurrentGameObject != nullptr)
 			{
-				ImGui::Checkbox(" ", &CurrentGameObject->SetActive()); ImGui::SameLine();
+				if(ImGui::Checkbox(" ", &CurrentGameObject->SetActive())); ImGui::SameLine();
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
 

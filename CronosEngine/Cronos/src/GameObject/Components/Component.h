@@ -21,8 +21,10 @@ namespace Cronos {
 		friend class GameObject;
 	private:
 
-
 		ComponentType m_Type;
+
+	protected:
+
 		bool m_Active;
 
 	public:
