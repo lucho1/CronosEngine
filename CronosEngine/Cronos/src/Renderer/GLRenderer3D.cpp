@@ -91,16 +91,16 @@ namespace Cronos {
 	{
 		LOG("Destroying 3D Renderer");
 
-		for (uint i = 0; i < m_MaterialsList.size(); i++)
+		while(m_MaterialsList.size() > 0)
 		{
-			RELEASE(m_MaterialsList[i]);
-			m_MaterialsList.erase(m_MaterialsList.begin() + i);
+			RELEASE(m_MaterialsList[0]);
+			m_MaterialsList.erase(m_MaterialsList.begin());
 		}
 
-		for (uint i = 0; i < m_LightsList.size(); i++)
+		while(m_LightsList.size() > 0)
 		{
-			RELEASE(m_LightsList[i]);
-			m_LightsList.erase(m_LightsList.begin() + i);
+			RELEASE(m_LightsList[0]);
+			m_LightsList.erase(m_LightsList.begin());
 		}
 		
 		RELEASE(m_BasicShader);

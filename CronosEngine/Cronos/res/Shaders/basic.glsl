@@ -47,7 +47,7 @@ struct DirLight
 	float LightIntensity;
 };
 
-uniform DirLight u_DirLight = DirLight(vec3(0), vec3(1), 0.5);
+uniform DirLight u_DirLight = DirLight(vec3(0), vec3(1), 0.0);
 
 struct PointLight
 {
@@ -61,7 +61,7 @@ struct PointLight
 	float LightAtt_Q;
 };
 
-uniform PointLight u_PointLight = PointLight(vec3(0), vec3(1), 0.5, 1.0, 0.09, 0.032);
+uniform PointLight u_PointLight = PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032);
 
 //Material Stuff
 uniform vec4 u_AmbientColor;

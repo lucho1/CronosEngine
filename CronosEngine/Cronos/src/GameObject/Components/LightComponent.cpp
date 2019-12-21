@@ -8,6 +8,18 @@
 
 namespace Cronos
 {
+	const std::string GetLightUniform(const LightType LType)
+	{
+		switch (LType)
+		{
+			case LightType::DIRECTIONAL:	return "u_DirLight";
+			case LightType::POINTLIGHT:		return "u_PointLight";
+		}
+
+		CRONOS_WARN(0, "Couldn't convert light type into uniform string!");
+		return "";
+	}
+
 	LightComponent::LightComponent(GameObject * attachedGO)
 		: Component(ComponentType::LIGHT, attachedGO)
 	{
@@ -17,8 +29,14 @@ namespace Cronos
 
 	LightComponent::~LightComponent()
 	{
-		App->renderer3D->PopLight(this);
+		//App->renderer3D->PopLight(this);
 		m_LightType = LightType::NONE;
+	}
+
+	void LightComponent::SetLightType(LightType type)
+	{
+		m_LightType = type;
+		m_ChangeLightType = true;
 	}
 
 	void LightComponent::SetLightColor(const glm::vec3& color)
@@ -42,22 +60,59 @@ namespace Cronos
 
 		if (!GetParent()->isActive())
 		{
-			shader->SetUniformVec3f("u_PointLight.LightColor", glm::vec3(0.0f));
-			shader->SetUniform1f("u_PointLight.LightIntensity", 0.0f);
+			SetLightToZero(shader);
 			return;
 		}
+		if (m_ChangeLightType)
+		{
+			SetLightToZero(shader);
+			m_ChangeLightType = false;
+		}
 
-		glm::vec3 pos;
-		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
-		
-		shader->SetUniformVec3f("u_PointLight.LightPos", pos);
-		//shader->SetUniformVec3f("u_DirLight.LightDir", m_LightDirection);
-		shader->SetUniformVec3f("u_PointLight.LightColor", m_LightColor);
-		
-		shader->SetUniform1f("u_PointLight.LightIntensity", m_LightIntensity);
-		
+		std::string lType = GetLightUniform(m_LightType);
+		shader->SetUniformVec3f(lType + ".LightColor", m_LightColor);
+		shader->SetUniform1f(lType + ".LightIntensity", m_LightIntensity);
+
+		switch (m_LightType)
+		{
+			case LightType::POINTLIGHT:
+			{
+				glm::vec3 pos;
+				glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
+
+				shader->SetUniformVec3f(lType + ".LightPos", pos);
+
+				shader->SetUniform1f(lType + ".LightAtt_K", m_LightAttK);
+				shader->SetUniform1f(lType + ".LightAtt_L", m_LightAttL);
+				shader->SetUniform1f(lType + ".LightAtt_Q", m_LightAttQ);
+				break;
+			}
+			case LightType::DIRECTIONAL:
+			{
+				shader->SetUniformVec3f(lType + ".LightDir", m_LightDirection);
+				break;
+			}
+			default:
+			{
+				SetLightToZero(shader);
+				break;
+			}
+		}
+
+	}
+
+	void Cronos::LightComponent::SetLightToZero(Shader* shader)
+	{
+		shader->SetUniformVec3f("u_DirLight.LightColor", glm::vec3(0.0f));
+		shader->SetUniformVec3f("u_DirLight.LightDir", glm::vec3(0.0f));
+		shader->SetUniform1f("u_DirLight.LightIntensity", 0.0f);
+
+		shader->SetUniformVec3f("u_PointLight.LightColor", glm::vec3(0.0f));
+		shader->SetUniform1f("u_PointLight.LightIntensity", 0.0f);
+
+		shader->SetUniformVec3f("u_PointLight.LightPos", glm::vec3(0.0f));
 		shader->SetUniform1f("u_PointLight.LightAtt_K", m_LightAttK);
 		shader->SetUniform1f("u_PointLight.LightAtt_L", m_LightAttL);
 		shader->SetUniform1f("u_PointLight.LightAtt_Q", m_LightAttQ);
-	}	
+	}
 }
