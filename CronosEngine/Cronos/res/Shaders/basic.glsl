@@ -29,6 +29,8 @@ void main()
 #type fragment
 #version 330 core
 
+#define MAX_POINTLIGHTS 100
+
 //Input variables
 in vec2 v_TexCoords;
 in vec3 v_Normal;
@@ -62,6 +64,8 @@ struct PointLight
 };
 
 uniform PointLight u_PointLight = PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032);
+uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
+uniform int u_CurrentPointLights = 0;
 
 //Material Stuff
 uniform vec4 u_AmbientColor;
@@ -161,7 +165,11 @@ void main()
 		//Color Output
 		vec4 colorOutput = vec4(vec3(0.0), 1.0);
 		colorOutput += CalculateDirectionalLight(u_DirLight, normalVec, viewDirection, !u_TextureEmpty);
-		colorOutput += CalculatePointLight(u_PointLight, normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
+
+		for(int i = 0; i < u_CurrentPointLights; ++i)
+			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
+
+		//colorOutput += CalculatePointLight(u_PointLight, normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 		color = colorOutput;
 	}
 }		

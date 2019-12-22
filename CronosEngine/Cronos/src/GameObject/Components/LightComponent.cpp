@@ -23,8 +23,10 @@ namespace Cronos
 	LightComponent::LightComponent(GameObject * attachedGO)
 		: Component(ComponentType::LIGHT, attachedGO)
 	{
-		m_LightType = LightType::DIRECTIONAL;
+		m_LightType = LightType::POINTLIGHT;
 		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*App->renderer3D->GetLightMaterial());
+		App->renderer3D->m_PointLightsList.push_back(this);
+		App->renderer3D->m_PointLightsQuantity++;
 	}
 
 	LightComponent::~LightComponent()
@@ -35,6 +37,18 @@ namespace Cronos
 
 	void LightComponent::SetLightType(LightType type)
 	{
+		if (m_LightType == LightType::POINTLIGHT)
+		{
+			std::vector<LightComponent*>* PLights = &App->renderer3D->m_PointLightsList;
+			PLights->erase(std::find(PLights->begin(), PLights->end(), this));
+			App->renderer3D->m_PointLightsQuantity--;
+		}
+		if (type == LightType::POINTLIGHT)
+		{
+			App->renderer3D->m_PointLightsList.push_back(this);
+			App->renderer3D->m_PointLightsQuantity++;
+		}
+
 		m_LightType = type;
 		m_ChangeLightType = true;
 	}
@@ -69,6 +83,9 @@ namespace Cronos
 			m_ChangeLightType = false;
 		}
 
+		if (m_LightType == LightType::POINTLIGHT)
+			return;
+
 		std::string lType = GetLightUniform(m_LightType);
 		shader->SetUniformVec3f(lType + ".LightColor", m_LightColor);
 		shader->SetUniform1f(lType + ".LightIntensity", m_LightIntensity);
@@ -99,6 +116,44 @@ namespace Cronos
 			}
 		}
 
+	}
+
+	void LightComponent::SendUniformsLightData(Shader* shader, uint pLight_Index)
+	{
+		if (!isEnabled())
+			return;
+
+		if (!GetParent()->isActive())
+		{
+			SetLightToZero(shader);
+			return;
+		}
+		if (m_ChangeLightType)
+		{
+			SetLightToZero(shader);
+			m_ChangeLightType = false;
+		}
+
+		if (m_LightType != LightType::POINTLIGHT)
+			return;
+
+		char indexedCharsArray[32];
+		sprintf(indexedCharsArray, "u_PointLightsArray[%i]", pLight_Index);
+		std::string indexedStr_LArray = indexedCharsArray;
+
+
+		shader->SetUniformVec3f(indexedStr_LArray + ".LightColor", m_LightColor);
+		shader->SetUniform1f(indexedStr_LArray + ".LightIntensity", m_LightIntensity);
+
+
+		glm::vec3 pos;
+		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
+
+		shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
+
+		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
+		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
+		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
 	}
 
 	void Cronos::LightComponent::SetLightToZero(Shader* shader)

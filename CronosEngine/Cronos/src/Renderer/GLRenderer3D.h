@@ -133,10 +133,15 @@ namespace Cronos {
 		GL_Light centerLight;
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
+		
+		std::vector<LightComponent*> m_PointLightsList;
+		int m_PointLightsQuantity = 0;
 
 	private:
 		
 		std::vector<LightComponent*> m_LightsList;
+
+
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
 

@@ -37,6 +37,7 @@ namespace Cronos
 	public:
 
 		void SendUniformsLightData(Shader* shader);
+		void SendUniformsLightData(Shader* shader, uint pLight_Index);
 
 	private:
 
