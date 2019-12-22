@@ -172,10 +172,10 @@ namespace Cronos {
 		for (uint i = 0; i < m_LightsList.size(); ++i)
 			m_LightsList[i]->SendUniformsLightData(m_BasicShader);
 
+		m_BasicShader->SetUniform1i("u_CurrentPointLights", m_PointLightsList.size());
 		for (uint i = 0; i < m_PointLightsList.size(); ++i)
 			m_PointLightsList[i]->SendUniformsLightData(m_BasicShader, i);
 
-		m_BasicShader->SetUniform1i("u_CurrentPointLights", m_PointLightsQuantity);
 
 		m_BasicShader->Unbind();
 

@@ -26,7 +26,6 @@ namespace Cronos
 		m_LightType = LightType::POINTLIGHT;
 		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*App->renderer3D->GetLightMaterial());
 		App->renderer3D->m_PointLightsList.push_back(this);
-		App->renderer3D->m_PointLightsQuantity++;
 	}
 
 	LightComponent::~LightComponent()
@@ -41,13 +40,9 @@ namespace Cronos
 		{
 			std::vector<LightComponent*>* PLights = &App->renderer3D->m_PointLightsList;
 			PLights->erase(std::find(PLights->begin(), PLights->end(), this));
-			App->renderer3D->m_PointLightsQuantity--;
 		}
 		if (type == LightType::POINTLIGHT)
-		{
 			App->renderer3D->m_PointLightsList.push_back(this);
-			App->renderer3D->m_PointLightsQuantity++;
-		}
 
 		m_LightType = type;
 		m_ChangeLightType = true;

@@ -135,7 +135,6 @@ namespace Cronos {
 		CnOctree m_RenderingOctree;
 		
 		std::vector<LightComponent*> m_PointLightsList;
-		int m_PointLightsQuantity = 0;
 
 	private:
 		
