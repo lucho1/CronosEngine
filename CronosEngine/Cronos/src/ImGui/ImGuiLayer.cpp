@@ -80,7 +80,10 @@ namespace Cronos {
 					if (go->GetGOID() == currentGameObject->GetGOID())
 					{
 						if (go->GetComponent<LightComponent>())
+						{
 							go->GetComponent<LightComponent>()->Disable();
+							go->GetComponent<LightComponent>()->SetLightType(LightType::NONE);
+						}
 
 						App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor);
 						if(!wasActive)
@@ -412,6 +415,13 @@ namespace Cronos {
 				if (go->GetGOID() == CurrentGameObject->GetGOID())
 				{
 					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor); //WTF? Really? The game objects, at deletion, are just "getting out" of the list?
+					
+					if (go->GetComponent<LightComponent>())
+					{
+						go->GetComponent<LightComponent>()->Disable();
+						go->GetComponent<LightComponent>()->SetLightType(LightType::NONE);
+					}
+					
 					break;
 				}
 				else
@@ -443,7 +453,10 @@ namespace Cronos {
 				go->m_Childs.erase(it1);
 
 				if (go->GetComponent<LightComponent>())
+				{
 					go->GetComponent<LightComponent>()->Disable();
+					go->GetComponent<LightComponent>()->SetLightType(LightType::NONE);
+				}
 
 				return;
 			}
@@ -939,9 +952,9 @@ namespace Cronos {
 			LightComponent* LightComp = CurrentGameObject->GetComponent<LightComponent>();
 
 			//Change light type
-			static int directional = 0.0f;
+			static int directional = 1;
 			ImGui::NewLine();
-			ImGui::SameLine(15); ImGui::Text("Light Type: "); sameLine;
+			ImGui::SameLine(15); ImGui::Text("Light Type (0 = dir, 1 = point, 2 = spot): "); sameLine;
 			if (ImGui::SliderInt("##POINTLIGHT", &directional, 0.0f, 1.0f, "%.2f"))
 			{
 				if (directional == 1)

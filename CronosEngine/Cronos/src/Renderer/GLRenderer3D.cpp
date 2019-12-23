@@ -76,6 +76,7 @@ namespace Cronos {
 		ResetTree();
 
 		m_BasicShader = new Shader("res/shaders/basic.glsl");
+		m_BasicSh_RunTime.Start();
 		Material* DefaultMat = new Material();
 		DefaultMat->SetName("Default Material");
 
@@ -156,6 +157,7 @@ namespace Cronos {
 
 		//Shader Generic Stuff & ZBuffer -----------------------------------------------------
 		m_BasicShader->Bind();
+		m_BasicShader->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
 		m_BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
 		m_BasicShader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
 		m_BasicShader->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));

@@ -29,7 +29,22 @@ void main()
 #type fragment
 #version 330 core
 
-#define MAX_POINTLIGHTS 100
+float randomNum(float num) { return fract(sin(dot(vec2(num), vec2(12.9898,78.233))) * 43758.5453); }
+
+uniform float u_ShaderPlaybackTime;
+int m_AssertTimes = 0;
+vec4 AssertColorOutput()
+{
+	//This is basically to set a blinking output color to denote an assertion on shader run time.
+	vec4 blinkColor = vec4(1.0);
+	blinkColor = vec4(randomNum(u_ShaderPlaybackTime), randomNum(u_ShaderPlaybackTime/2), randomNum(u_ShaderPlaybackTime/3), 1.0);
+	return (mod(u_ShaderPlaybackTime, 1.0) > 0.5) ? blinkColor : vec4(1.0);
+}
+
+#define CNSH_ASSERT(condition) while(!condition) { ++m_AssertTimes; break; }
+#define COLOROUTPUT_EXIT() while(m_AssertTimes != 0) { color = AssertColorOutput(); break; }
+
+#define MAX_POINTLIGHTS 2
 
 //Input variables
 in vec2 v_TexCoords;
@@ -39,6 +54,7 @@ in vec3 v_CamPos;
 
 //Output variables
 out vec4 color;
+
 
 //Light Structure
 struct DirLight 
@@ -77,7 +93,7 @@ uniform sampler2D u_SpecularTexture;
 
 uniform bool u_TextureEmpty = true;
 
-//ZBuffer rendering
+//ZBuffer rendering -------------------------------------------------------------------------------------------------
 uniform vec2 u_CamPlanes; //x for near plane, y for far plane
 uniform bool u_drawZBuffer = false;
 
@@ -146,9 +162,9 @@ vec4 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	vec4 LightRes = CalculateLightResult(hasTextures, vec4(pLight.LightColor, 1.0), diffImpact, specImpact);
 	return (LightRes * lightAttenuation * pLight.LightIntensity);
 }
-//------------------------------------------------------------------------------------------------------------------
 
-//--------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
 void main()
 {
 	if (u_drawZBuffer)
@@ -166,10 +182,14 @@ void main()
 		vec4 colorOutput = vec4(vec3(0.0), 1.0);
 		colorOutput += CalculateDirectionalLight(u_DirLight, normalVec, viewDirection, !u_TextureEmpty);
 
+		CNSH_ASSERT((u_CurrentPointLights <= MAX_POINTLIGHTS && u_CurrentPointLights >= 0));
+
 		for(int i = 0; i < u_CurrentPointLights; ++i)
 			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
 		//colorOutput += CalculatePointLight(u_PointLight, normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 		color = colorOutput;
+
+		COLOROUTPUT_EXIT();
 	}
 }		

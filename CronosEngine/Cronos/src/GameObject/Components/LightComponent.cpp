@@ -36,6 +36,9 @@ namespace Cronos
 
 	void LightComponent::SetLightType(LightType type)
 	{
+		if (m_LightType == type)
+			return;
+
 		if (m_LightType == LightType::POINTLIGHT)
 		{
 			std::vector<LightComponent*>* PLights = &App->renderer3D->m_PointLightsList;

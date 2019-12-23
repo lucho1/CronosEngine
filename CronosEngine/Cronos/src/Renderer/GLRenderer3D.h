@@ -143,6 +143,7 @@ namespace Cronos {
 
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
+		Timer m_BasicSh_RunTime;
 
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
