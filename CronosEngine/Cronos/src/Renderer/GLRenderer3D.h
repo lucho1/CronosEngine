@@ -134,7 +134,8 @@ namespace Cronos {
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
 		
-		std::vector<LightComponent*> m_PointLightsList;
+		std::vector<LightComponent*> m_PointLightsVec;
+		std::vector<LightComponent*> m_DirectionalLightsVec;
 
 	private:
 		

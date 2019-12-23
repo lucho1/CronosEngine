@@ -12,8 +12,8 @@ namespace Cronos
 	{
 		switch (LType)
 		{
-			case LightType::DIRECTIONAL:	return "u_DirLight";
-			case LightType::POINTLIGHT:		return "u_PointLight";
+			case LightType::DIRECTIONAL:	return "u_DirLightsArray";
+			case LightType::POINTLIGHT:		return "u_PointLightsArray";
 		}
 
 		CRONOS_WARN(0, "Couldn't convert light type into uniform string!");
@@ -25,12 +25,11 @@ namespace Cronos
 	{
 		m_LightType = LightType::POINTLIGHT;
 		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*App->renderer3D->GetLightMaterial());
-		App->renderer3D->m_PointLightsList.push_back(this);
+		App->renderer3D->m_PointLightsVec.push_back(this);
 	}
 
 	LightComponent::~LightComponent()
 	{
-		//App->renderer3D->PopLight(this);
 		m_LightType = LightType::NONE;
 	}
 
@@ -41,11 +40,19 @@ namespace Cronos
 
 		if (m_LightType == LightType::POINTLIGHT)
 		{
-			std::vector<LightComponent*>* PLights = &App->renderer3D->m_PointLightsList;
+			std::vector<LightComponent*>* PLights = &App->renderer3D->m_PointLightsVec;
 			PLights->erase(std::find(PLights->begin(), PLights->end(), this));
 		}
+		else if (m_LightType == LightType::DIRECTIONAL)
+		{
+			std::vector<LightComponent*>* DLights = &App->renderer3D->m_DirectionalLightsVec;
+			DLights->erase(std::find(DLights->begin(), DLights->end(), this));
+		}
+
 		if (type == LightType::POINTLIGHT)
-			App->renderer3D->m_PointLightsList.push_back(this);
+			App->renderer3D->m_PointLightsVec.push_back(this);
+		else if (type == LightType::DIRECTIONAL)
+			App->renderer3D->m_DirectionalLightsVec.push_back(this);
 
 		m_LightType = type;
 		m_ChangeLightType = true;
@@ -65,28 +72,28 @@ namespace Cronos
 		m_LightIntensity = intensity;
 	}
 
-	void LightComponent::SendUniformsLightData(Shader* shader)
+	void LightComponent::SendUniformsLightData(Shader* shader, uint lightIndex)
 	{
 		if (!isEnabled())
 			return;
 
 		if (!GetParent()->isActive())
 		{
-			SetLightToZero(shader);
+			SetLightToZero(shader, lightIndex);
 			return;
 		}
 		if (m_ChangeLightType)
 		{
-			SetLightToZero(shader);
+			SetLightToZero(shader, lightIndex);
 			m_ChangeLightType = false;
 		}
 
-		if (m_LightType == LightType::POINTLIGHT)
-			return;
+		char indexedCharsArray[10];
+		sprintf(indexedCharsArray, "[%i]", lightIndex);		
+		std::string indexedStr_LArray = GetLightUniform(m_LightType) + indexedCharsArray;		
 
-		std::string lType = GetLightUniform(m_LightType);
-		shader->SetUniformVec3f(lType + ".LightColor", m_LightColor);
-		shader->SetUniform1f(lType + ".LightIntensity", m_LightIntensity);
+		shader->SetUniformVec3f(indexedStr_LArray + ".LightColor", m_LightColor);
+		shader->SetUniform1f(indexedStr_LArray + ".LightIntensity", m_LightIntensity);
 
 		switch (m_LightType)
 		{
@@ -94,78 +101,45 @@ namespace Cronos
 			{
 				glm::vec3 pos;
 				glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
+				shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
 
-				shader->SetUniformVec3f(lType + ".LightPos", pos);
-
-				shader->SetUniform1f(lType + ".LightAtt_K", m_LightAttK);
-				shader->SetUniform1f(lType + ".LightAtt_L", m_LightAttL);
-				shader->SetUniform1f(lType + ".LightAtt_Q", m_LightAttQ);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
 				break;
 			}
 			case LightType::DIRECTIONAL:
 			{
-				shader->SetUniformVec3f(lType + ".LightDir", m_LightDirection);
+				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", m_LightDirection);
 				break;
 			}
 			default:
 			{
-				SetLightToZero(shader);
+				SetLightToZero(shader, lightIndex);
 				break;
 			}
-		}
-
+		}		
 	}
 
-	void LightComponent::SendUniformsLightData(Shader* shader, uint pLight_Index)
+	void Cronos::LightComponent::SetLightToZero(Shader* shader, uint lightIndex)
 	{
-		if (!isEnabled())
-			return;
+		char indexedCharsArray[10];
+		sprintf(indexedCharsArray, "[%i]", lightIndex);
 
-		if (!GetParent()->isActive())
-		{
-			SetLightToZero(shader);
-			return;
-		}
-		if (m_ChangeLightType)
-		{
-			SetLightToZero(shader);
-			m_ChangeLightType = false;
-		}
+		std::string indArrSTR = indexedCharsArray;
+		std::string indexed_DirLStr = "u_DirLight" + indArrSTR;
+		std::string indexed_PLStr = "u_PointLight" + indArrSTR;
 
-		if (m_LightType != LightType::POINTLIGHT)
-			return;
+		shader->SetUniformVec3f(indexed_DirLStr + ".LightColor", glm::vec3(0.0f));
+		shader->SetUniformVec3f(indexed_DirLStr + ".LightDir", glm::vec3(0.0f));
+		shader->SetUniform1f(indexed_DirLStr + ".LightIntensity", 0.0f);
 
-		char indexedCharsArray[32];
-		sprintf(indexedCharsArray, "u_PointLightsArray[%i]", pLight_Index);
-		std::string indexedStr_LArray = indexedCharsArray;
+		shader->SetUniformVec3f(indexed_PLStr + ".LightColor", glm::vec3(0.0f));
+		shader->SetUniform1f(indexed_PLStr + ".LightIntensity", 0.0f);
 
-
-		shader->SetUniformVec3f(indexedStr_LArray + ".LightColor", m_LightColor);
-		shader->SetUniform1f(indexedStr_LArray + ".LightIntensity", m_LightIntensity);
-
-
-		glm::vec3 pos;
-		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
-
-		shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
-
-		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
-		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
-		shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
-	}
-
-	void Cronos::LightComponent::SetLightToZero(Shader* shader)
-	{
-		shader->SetUniformVec3f("u_DirLight.LightColor", glm::vec3(0.0f));
-		shader->SetUniformVec3f("u_DirLight.LightDir", glm::vec3(0.0f));
-		shader->SetUniform1f("u_DirLight.LightIntensity", 0.0f);
-
-		shader->SetUniformVec3f("u_PointLight.LightColor", glm::vec3(0.0f));
-		shader->SetUniform1f("u_PointLight.LightIntensity", 0.0f);
-
-		shader->SetUniformVec3f("u_PointLight.LightPos", glm::vec3(0.0f));
-		shader->SetUniform1f("u_PointLight.LightAtt_K", m_LightAttK);
-		shader->SetUniform1f("u_PointLight.LightAtt_L", m_LightAttL);
-		shader->SetUniform1f("u_PointLight.LightAtt_Q", m_LightAttQ);
+		shader->SetUniformVec3f(indexed_PLStr + ".LightPos", glm::vec3(0.0f));
+		shader->SetUniform1f(indexed_PLStr + ".LightAtt_K", m_LightAttK);
+		shader->SetUniform1f(indexed_PLStr + ".LightAtt_L", m_LightAttL);
+		shader->SetUniform1f(indexed_PLStr + ".LightAtt_Q", m_LightAttQ);
 	}
 }

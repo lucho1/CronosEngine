@@ -44,7 +44,8 @@ vec4 AssertColorOutput()
 #define CNSH_ASSERT(condition) while(!condition) { ++m_AssertTimes; break; }
 #define COLOROUTPUT_EXIT() while(m_AssertTimes != 0) { color = AssertColorOutput(); break; }
 
-#define MAX_POINTLIGHTS 2
+#define MAX_POINTLIGHTS 165
+#define MAX_DIRLIGHTS 8
 
 //Input variables
 in vec2 v_TexCoords;
@@ -65,7 +66,8 @@ struct DirLight
 	float LightIntensity;
 };
 
-uniform DirLight u_DirLight = DirLight(vec3(0), vec3(1), 0.0);
+uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
+uniform int u_CurrentDirLights = 0;
 
 struct PointLight
 {
@@ -79,7 +81,6 @@ struct PointLight
 	float LightAtt_Q;
 };
 
-uniform PointLight u_PointLight = PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032);
 uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
 uniform int u_CurrentPointLights = 0;
 
@@ -174,22 +175,23 @@ void main()
 	}
 	else
 	{
+		CNSH_ASSERT((u_CurrentPointLights <= MAX_POINTLIGHTS && u_CurrentPointLights >= 0));
+		CNSH_ASSERT((u_CurrentDirLights <= MAX_DIRLIGHTS && u_CurrentDirLights >= 0));
+
 		//Generic Light Calculations
 		vec3 normalVec = normalize(v_Normal);
 		vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 
 		//Color Output
 		vec4 colorOutput = vec4(vec3(0.0), 1.0);
-		colorOutput += CalculateDirectionalLight(u_DirLight, normalVec, viewDirection, !u_TextureEmpty);
 
-		CNSH_ASSERT((u_CurrentPointLights <= MAX_POINTLIGHTS && u_CurrentPointLights >= 0));
+		for(int i = 0; i < u_CurrentDirLights; ++i)
+			colorOutput += CalculateDirectionalLight(u_DirLightsArray[i], normalVec, viewDirection, !u_TextureEmpty);		
 
 		for(int i = 0; i < u_CurrentPointLights; ++i)
 			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
-		//colorOutput += CalculatePointLight(u_PointLight, normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 		color = colorOutput;
-
 		COLOROUTPUT_EXIT();
 	}
 }		
