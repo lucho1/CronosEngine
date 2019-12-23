@@ -955,12 +955,14 @@ namespace Cronos {
 			static int directional = 1;
 			ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Light Type (0 = dir, 1 = point, 2 = spot): "); sameLine;
-			if (ImGui::SliderInt("##POINTLIGHT", &directional, 0.0f, 1.0f, "%.2f"))
+			if (ImGui::SliderInt("##POINTLIGHT", &directional, 0.0f, 2.0f, "%.2f"))
 			{
 				if (directional == 1)
 					LightComp->SetLightType(LightType::POINTLIGHT);
 				else if (directional == 0)
 					LightComp->SetLightType(LightType::DIRECTIONAL);
+				else if(directional == 2)
+					LightComp->SetLightType(LightType::SPOTLIGHT);
 			}
 			
 			ImGui::NewLine();
@@ -1014,6 +1016,16 @@ namespace Cronos {
 			if (toChange)
 			{
 				LightComp->SetAttenuationFactors(LightAtt);
+				toChange = false;
+			}
+
+			//Light Cutoff Angle (spotlights)
+			static float InAngle = LightComp->GetSpotlightInnerCutoff();
+			ImGui::Text("InCutoff"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##InCutoff", &InAngle, 0.1f))toChange = true;
+
+			if (toChange)
+			{
+				LightComp->SetSpotlightInnerCutoff(InAngle);
 				toChange = false;
 			}
 		}

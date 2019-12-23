@@ -7,7 +7,7 @@
 
 namespace Cronos
 {
-	enum class LightType { NONE = -1, DIRECTIONAL, POINTLIGHT };
+	enum class LightType { NONE = -1, DIRECTIONAL, POINTLIGHT, SPOTLIGHT };
 
 	class LightComponent : public Component
 	{
@@ -26,13 +26,15 @@ namespace Cronos
 		void SetAttenuationFactors(const glm::vec3& attenuationFactorsKLQ) { m_LightAttK = attenuationFactorsKLQ.x; m_LightAttL = attenuationFactorsKLQ.y, m_LightAttQ = attenuationFactorsKLQ.z; }
 		void SetLightColor(const glm::vec3& color);
 		void SetLightIntensity(const float& intensity);
+		void SetSpotlightInnerCutoff(const float& degreesAngle) { m_LightCutoffAngle = degreesAngle; }
 
 		//Getters
-		inline const LightType GetLightType()	const { return m_LightType; }
-		inline const glm::vec3 GetLightColor()	const { return m_LightColor; }
-		inline const float GetLightIntensity()	const { return m_LightIntensity; }
-		inline const glm::vec3 GetLightDirection() const { return m_LightDirection; }
-		inline const glm::vec3 GetLightAttenuationFactors() const { return { m_LightAttK, m_LightAttL, m_LightAttQ }; }
+		inline const LightType GetLightType()				const { return m_LightType; }
+		inline const glm::vec3 GetLightColor()				const { return m_LightColor; }
+		inline const float GetLightIntensity()				const { return m_LightIntensity; }
+		inline const glm::vec3 GetLightDirection()			const { return m_LightDirection; }
+		inline const glm::vec3 GetLightAttenuationFactors()	const { return { m_LightAttK, m_LightAttL, m_LightAttQ }; }
+		inline const float GetSpotlightInnerCutoff()		const { return m_LightCutoffAngle; }
 
 	public:
 
@@ -50,6 +52,7 @@ namespace Cronos
 		glm::vec3 m_LightDirection = glm::vec3(0.0f);
 		float m_LightIntensity = 0.5f;
 		float m_LightAttK = 1.0f, m_LightAttL = 0.09f, m_LightAttQ = 0.032f;
+		float m_LightCutoffAngle = 12.5f;
 
 		bool m_ChangeLightType = false;
 	};

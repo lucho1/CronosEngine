@@ -12,9 +12,12 @@
 
 #include "VertexArray.h"
 
-namespace Cronos {
+//Make sure this values matches the shader ones
+#define MAX_POINTLIGHTS 20
+#define MAX_SPOTLIGHTS 20
+#define MAX_DIRLIGHTS 8
 
-//#define MAX_LIGHTS 8
+namespace Cronos {
 
 	struct OpenGLSettings
 	{
@@ -136,6 +139,7 @@ namespace Cronos {
 		
 		std::vector<LightComponent*> m_PointLightsVec;
 		std::vector<LightComponent*> m_DirectionalLightsVec;
+		std::vector<LightComponent*> m_SpotLightsVec;
 
 	private:
 		

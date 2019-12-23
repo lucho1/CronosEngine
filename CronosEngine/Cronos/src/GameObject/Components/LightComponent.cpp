@@ -14,6 +14,7 @@ namespace Cronos
 		{
 			case LightType::DIRECTIONAL:	return "u_DirLightsArray";
 			case LightType::POINTLIGHT:		return "u_PointLightsArray";
+			case LightType::SPOTLIGHT:		return "u_SPLightsArray";
 		}
 
 		CRONOS_WARN(0, "Couldn't convert light type into uniform string!");
@@ -48,11 +49,18 @@ namespace Cronos
 			std::vector<LightComponent*>* DLights = &App->renderer3D->m_DirectionalLightsVec;
 			DLights->erase(std::find(DLights->begin(), DLights->end(), this));
 		}
+		else if (m_LightType == LightType::SPOTLIGHT)
+		{
+			std::vector<LightComponent*>* SpLights = &App->renderer3D->m_SpotLightsVec;
+			SpLights->erase(std::find(SpLights->begin(), SpLights->end(), this));
+		}
 
 		if (type == LightType::POINTLIGHT)
 			App->renderer3D->m_PointLightsVec.push_back(this);
 		else if (type == LightType::DIRECTIONAL)
 			App->renderer3D->m_DirectionalLightsVec.push_back(this);
+		else if(type == LightType::SPOTLIGHT)
+			App->renderer3D->m_SpotLightsVec.push_back(this);
 
 		m_LightType = type;
 		m_ChangeLightType = true;
@@ -113,6 +121,23 @@ namespace Cronos
 				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", m_LightDirection);
 				break;
 			}
+			case LightType::SPOTLIGHT:
+			{
+				glm::vec3 pos;
+				glm::quat q;
+				glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), q, pos, glm::vec3(), glm::vec4());
+				shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
+
+
+				glm::vec3 vecOrientation = glm::vec3(2 * (q.x*q.z + q.w*q.y), 2 * (q.y*q.z - q.w*q.x), 1-2 * (q.x*q.x + q.y*q.y));
+				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", -vecOrientation);
+				shader->SetUniform1f(indexedStr_LArray + ".cutoffAngleCos", glm::cos(glm::radians(m_LightCutoffAngle)));
+
+				break;
+			}
 			default:
 			{
 				SetLightToZero(shader, lightIndex);
@@ -129,6 +154,7 @@ namespace Cronos
 		std::string indArrSTR = indexedCharsArray;
 		std::string indexed_DirLStr = "u_DirLight" + indArrSTR;
 		std::string indexed_PLStr = "u_PointLight" + indArrSTR;
+		std::string indexed_SPLStr = "u_SPLightsArray" + indArrSTR;
 
 		shader->SetUniformVec3f(indexed_DirLStr + ".LightColor", glm::vec3(0.0f));
 		shader->SetUniformVec3f(indexed_DirLStr + ".LightDir", glm::vec3(0.0f));
@@ -141,5 +167,14 @@ namespace Cronos
 		shader->SetUniform1f(indexed_PLStr + ".LightAtt_K", m_LightAttK);
 		shader->SetUniform1f(indexed_PLStr + ".LightAtt_L", m_LightAttL);
 		shader->SetUniform1f(indexed_PLStr + ".LightAtt_Q", m_LightAttQ);
+
+		shader->SetUniformVec3f(indexed_SPLStr + ".LightPos", glm::vec3(0.0f));
+		shader->SetUniform1f(indexed_SPLStr + ".LightAtt_K", m_LightAttK);
+		shader->SetUniform1f(indexed_SPLStr + ".LightAtt_L", m_LightAttL);
+		shader->SetUniform1f(indexed_SPLStr + ".LightAtt_Q", m_LightAttQ);
+
+		shader->SetUniformVec3f(indexed_SPLStr + ".LightDir", glm::vec3(0.0f));
+		shader->SetUniform1f(indexed_SPLStr + ".cutoffAngleCos", 0.0f);
+		shader->SetUniform1f(indexed_SPLStr + ".LightIntensity", 0.0f);
 	}
 }

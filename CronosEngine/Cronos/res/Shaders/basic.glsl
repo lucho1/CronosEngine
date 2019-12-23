@@ -44,7 +44,8 @@ vec4 AssertColorOutput()
 #define CNSH_ASSERT(condition) while(!condition) { ++m_AssertTimes; break; }
 #define COLOROUTPUT_EXIT() while(m_AssertTimes != 0) { color = AssertColorOutput(); break; }
 
-#define MAX_POINTLIGHTS 165
+#define MAX_POINTLIGHTS 20
+#define MAX_SPOTLIGHTS 20
 #define MAX_DIRLIGHTS 8
 
 //Input variables
@@ -56,8 +57,7 @@ in vec3 v_CamPos;
 //Output variables
 out vec4 color;
 
-
-//Light Structure
+//Lights Structures
 struct DirLight 
 {
 	vec3 LightDir;
@@ -83,6 +83,25 @@ struct PointLight
 
 uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
 uniform int u_CurrentPointLights = 0;
+
+struct SpotLight
+{
+	vec3 LightPos;
+	vec3 LightColor;
+
+	float LightIntensity;
+
+	float LightAtt_K;
+	float LightAtt_L;
+	float LightAtt_Q;
+
+	vec3 LightDir;
+	float cutoffAngleCos;
+};
+
+
+uniform SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
+uniform int u_CurrentSPLights = 0;
 
 //Material Stuff
 uniform vec4 u_AmbientColor;
@@ -164,6 +183,47 @@ vec4 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	return (LightRes * lightAttenuation * pLight.LightIntensity);
 }
 
+//Spot Light Calculation
+vec4 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
+{
+	vec3 lightDir = normalize(spLight.LightPos - FragPos);
+	float theta = dot(lightDir, normalize(-spLight.LightDir));
+
+	if(theta > spLight.cutoffAngleCos)
+	{
+		//Diffuse Component
+		float diffImpact = max(dot(normal, lightDir), 0.0);
+
+		//Specular Component
+		vec3 reflectDirection = reflect(-lightDir, normal);
+		float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+
+		//Attenuation Calculation
+		float d = length(spLight.LightPos - FragPos);
+		float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
+
+		//Result
+		vec4 ambient = vec4(1.0);
+		if(hasTextures)
+			ambient = vec4(spLight.LightColor, 1.0) * texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor;
+		else
+			ambient = vec4(spLight.LightColor, 1.0) * u_AmbientColor;
+
+		vec4 LightRes = CalculateLightResult(hasTextures, vec4(spLight.LightColor, 1.0), diffImpact, specImpact) - ambient;
+		return ((LightRes * lightAttenuation + ambient));
+	}
+	else
+	{
+		vec4 ambient = vec4(spLight.LightColor, 1.0) * u_AmbientColor;
+		if(hasTextures)
+			ambient *= texture(u_DiffuseTexture, v_TexCoords);
+			
+		return ambient;
+	}
+
+	return vec4(1.0);
+}
+
 //------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------
 void main()
@@ -190,6 +250,9 @@ void main()
 
 		for(int i = 0; i < u_CurrentPointLights; ++i)
 			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
+
+		for(int i = 0; i < u_CurrentSPLights; ++i)
+			colorOutput += CalculateSpotLight(u_SPLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
 		color = colorOutput;
 		COLOROUTPUT_EXIT();

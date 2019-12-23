@@ -171,17 +171,25 @@ namespace Cronos {
 		if (m_DrawZBuffer)
 			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
-		for (uint i = 0; i < m_LightsList.size(); ++i)
-			m_LightsList[i]->SendUniformsLightData(m_BasicShader, i);
+		//Lighting --------------------------------------------------------------------------
+		//for (uint i = 0; i < m_LightsList.size(); ++i)
+		//	m_LightsList[i]->SendUniformsLightData(m_BasicShader, i);
+		CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---")
 
-		m_BasicShader->SetUniform1i("u_CurrentDirLights", m_DirectionalLightsVec.size());
-		for (uint i = 0; i < m_DirectionalLightsVec.size(); ++i)
+		uint currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
+		m_BasicShader->SetUniform1i("u_CurrentDirLights", (int)currentDLights);
+		for (uint i = 0; i < currentDLights; ++i)
 			m_DirectionalLightsVec[i]->SendUniformsLightData(m_BasicShader, i);
 
-		m_BasicShader->SetUniform1i("u_CurrentPointLights", m_PointLightsVec.size());
-		for (uint i = 0; i < m_PointLightsVec.size(); ++i)
+		uint currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
+		m_BasicShader->SetUniform1i("u_CurrentPointLights", (int)currentPLights);
+		for (uint i = 0; i < currentPLights; ++i)
 			m_PointLightsVec[i]->SendUniformsLightData(m_BasicShader, i);
 
+		uint currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
+		m_BasicShader->SetUniform1i("u_CurrentSPLights", (int)currentSPLights);
+		for (uint i = 0; i < currentSPLights; ++i)
+			m_SpotLightsVec[i]->SendUniformsLightData(m_BasicShader, i);
 
 		m_BasicShader->Unbind();
 
