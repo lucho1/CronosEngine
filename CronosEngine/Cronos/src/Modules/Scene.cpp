@@ -38,7 +38,7 @@ namespace Cronos {
 		
 		//Water Textures & Color
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
-		m_WaveSpecText = App->textureManager->CreateTexture("res/models/waterPlane/specwater4.jpg", TextureType::SPECULAR);
+		m_WaveSpecText = App->textureManager->CreateTexture("res/models/waterPlane/specwater.jpg", TextureType::SPECULAR);
 		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
 		m_WaveMaterial->SetTexture(m_WaveSpecText, TextureType::SPECULAR);
 		m_WaveMaterial->SetColor(glm::vec4(1.0f));		
@@ -99,11 +99,13 @@ namespace Cronos {
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
-		float maxT = 15.0f;
+		float maxT = 5.0f;
 		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
 		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
 		m_WaterShader->SetUniform1f("u_Amplitude", 2.0f);
 		m_WaterShader->SetUniform1f("u_WaveLength", 20.0f);
+		m_WaterShader->SetUniform1f("u_Velocity", 2.0f);
+		m_WaterShader->SetUniform1f("u_FOAMVelocity", 0.5f);
 		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.1f); //Fragment Shader
 
 		if (m_WaveTimer.ReadSec() >= maxT)
