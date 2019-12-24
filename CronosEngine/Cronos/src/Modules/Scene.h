@@ -59,6 +59,7 @@ namespace Cronos {
 		GameObject* m_StreetModel;
 
 		GameObject* m_Wave = nullptr;
+		Material* m_WaveMaterial = nullptr;
 		Shader* m_WaterShader = nullptr;
 		Texture* m_WaveTexture = nullptr;
 		Timer m_WaveTimer;

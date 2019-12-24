@@ -26,11 +26,18 @@ namespace Cronos {
 		//Shader & Water Simulation
 		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
-		//m_WaveTimer.Start();
+		m_WaveMaterial = new Material();
+		m_WaveMaterial->SetName("Water Wave Material");
+		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
+		m_WaveMaterial->SetColor(glm::vec4(1.0f));
+		m_WaveMaterial->SetShader(*m_WaterShader);
+		m_WaveTimer.Start();
 
 		//Wave Object
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
+
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
+		(*m_Wave->m_Childs.begin())->GetComponent<MaterialComponent>()->SetMaterial(*m_WaveMaterial);
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
@@ -76,8 +83,7 @@ namespace Cronos {
 	{
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
-
-		/*GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
@@ -102,7 +108,7 @@ namespace Cronos {
 
 		//Binding ----------------------------
 		if (material != nullptr)
-			material->Bind(true);
+			material->Bind();
 		VAO->Bind();
 		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.8f });
 		m_WaveTexture->Bind();
@@ -115,7 +121,7 @@ namespace Cronos {
 			material->Unbind();
 		VAO->UnBind();
 		m_WaveTexture->Unbind();
-		m_WaterShader->Unbind();*/
+		m_WaterShader->Unbind();
 
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
