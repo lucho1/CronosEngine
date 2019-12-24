@@ -62,6 +62,7 @@ namespace Cronos {
 		Material* m_WaveMaterial = nullptr;
 		Shader* m_WaterShader = nullptr;
 		Texture* m_WaveTexture = nullptr;
+		Texture* m_WaveSpecText = nullptr;
 		Timer m_WaveTimer;
 	};
 

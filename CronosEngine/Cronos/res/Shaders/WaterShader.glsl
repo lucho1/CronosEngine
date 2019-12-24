@@ -26,8 +26,6 @@ out vec2 v_TexCoords;
 
 float random(vec2 p)
 {
-   // e^pi (Gelfond's constant)
-   // 2^sqrt(2) (Gelfond–Schneider constant)
      vec2 K1 = vec2(23.14069263277926, 2.665144142690225);
 
    //return fract( cos( mod( 12345678., 256. * dot(p,K1) ) ) ); // ver1
@@ -60,20 +58,15 @@ void main()
 #type fragment
 #version 330 core
 
-//Unused in shader (but here because the material sends the uniform, so for debug I'll let them here to not to redo many stuff)
-uniform sampler2D u_AmbientTexture;
+//Uniforms
 uniform sampler2D u_DiffuseTexture;
 uniform sampler2D u_SpecularTexture;
-uniform sampler2D u_NormalMap;
-uniform sampler2D u_HeightMap;
-uniform sampler2D u_LightMap;
 
 uniform int u_TextureEmpty = 1;
 
 //Uniforms
 uniform vec4 u_AmbientColor = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float u_ColorGradingOffset = 0.0f; //Keep it between 0 and 1
-uniform sampler2D u_WaterTexture;
 
 //Data sent from vertex shader
 in float v_VertHeight;
@@ -93,7 +86,7 @@ void main()
 	if(colorGrading <= 0.0)
 		colorGrading = 0.0;
 
-	color = texture(u_WaterTexture, v_TexCoords) * u_AmbientColor;
+	color = texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor + texture(u_SpecularTexture, v_TexCoords) * 0.2;
 	//color.r *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
 	//color.g *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
 	color.r *= (colorGrading + normalisedHeight);

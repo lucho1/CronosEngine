@@ -23,21 +23,32 @@ namespace Cronos {
 		bool ret = true;
 		App->renderer3D->SetOpenGLSettings();
 
-		//Shader & Water Simulation
-		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
-		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
-		m_WaveMaterial = new Material();
-		m_WaveMaterial->SetName("Water Wave Material");
-		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
-		m_WaveMaterial->SetColor(glm::vec4(1.0f));
-		m_WaveMaterial->SetShader(*m_WaterShader);
-		m_WaveTimer.Start();
-
+		//Water Simulation --------------------------------------------------------------------------------
 		//Wave Object
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
-
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
+
+		//Water Shader & 
+		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
+
+		//Water Material
+		m_WaveMaterial = new Material();
+		m_WaveMaterial->SetName("Water Wave Material");
+		m_WaveMaterial->SetShader(*m_WaterShader);
+		
+		//Water Textures & Color
+		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
+		m_WaveSpecText = App->textureManager->CreateTexture("res/models/waterPlane/specwater4.jpg", TextureType::SPECULAR);
+		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
+		m_WaveMaterial->SetTexture(m_WaveSpecText, TextureType::SPECULAR);
+		m_WaveMaterial->SetColor(glm::vec4(1.0f));		
+		
 		(*m_Wave->m_Childs.begin())->GetComponent<MaterialComponent>()->SetMaterial(*m_WaveMaterial);
+
+		//Water timer for movement calc
+		m_WaveTimer.Start();
+
+		// ------------------------------------------------------------------------------------------------
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
@@ -51,6 +62,7 @@ namespace Cronos {
 	{
 		m_Wave->CleanUp();
 		m_WaveTexture->~Texture();
+		m_WaveSpecText->~Texture();
 
 		LOG("Unloading Intro scene");
 		for (auto element : m_GameObjects)
@@ -101,7 +113,6 @@ namespace Cronos {
 		m_WaterShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
 		m_WaterShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
 		m_WaterShader->SetUniformMat4f("u_Model", WaveMesh->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
-		m_WaterShader->SetUniform1i("u_WaterTexture", m_WaveTexture->GetTextureID());
 
 		MaterialComponent* material = WaveMesh->GetComponent<MaterialComponent>();
 		VertexArray* VAO = WaveMesh->GetComponent<MeshComponent>()->GetVAO();
@@ -111,7 +122,6 @@ namespace Cronos {
 			material->Bind();
 		VAO->Bind();
 		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.8f });
-		m_WaveTexture->Bind();
 
 		//Drawing ----------------------------
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
@@ -120,7 +130,6 @@ namespace Cronos {
 		if (material != nullptr)
 			material->Unbind();
 		VAO->UnBind();
-		m_WaveTexture->Unbind();
 		m_WaterShader->Unbind();
 
 		//------------------------------------------------------------------------------------------------------------------------------------
