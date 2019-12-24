@@ -125,37 +125,37 @@ float LinearizeZ(float depth)
 }
 
 //Light Calculations -----------------------------------------------------------------------------------------------
-vec4 CalculateDiffSpecLightResult(bool hasTextures, vec4 LColor, float diff, float spec)
+vec3 CalculateDiffSpecLightResult(bool hasTextures, vec3 LColor, float diff, float spec)
 {
 	//Result
 	if(hasTextures)
 	{
-		vec4 diffuse = diff * texture(u_DiffuseTexture, v_TexCoords);
-		vec4 specular = spec * texture(u_SpecularTexture, v_TexCoords);
+		vec3 diffuse = LColor * diff * texture(u_DiffuseTexture, v_TexCoords).rgb;
+		vec3 specular = LColor * spec * texture(u_SpecularTexture, v_TexCoords).rgb;
 
 		return (diffuse + specular);
 	}
 	else
 	{
-		vec4 diffuse = LColor * diff;
-		vec4 specular = LColor * spec;
+		vec3 diffuse = LColor * diff;
+		vec3 specular = LColor * spec;
 
 		return (diffuse + specular);
 	}
 }
 
-vec4 CalculateAmbientResult(bool hasTextures, vec4 LColor)
-{
-	if(hasTextures)
-		return LColor * texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor;
-	else
-		return LColor * u_AmbientColor;
-}
+//vec3 CalculateAmbientResult(bool hasTextures, vec3 LColor)
+//{
+//	if(hasTextures)
+//		return LColor;
+//	else
+//		return LColor;
+//}
 
 //Dir Light Calculation
-vec4 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection, bool hasTextures)
+vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(dLight.LightDir);
+	vec3 lightDir = normalize(-dLight.LightDir);
 	
 	//Diffuse Component
 	float diffImpact = max(dot(normal, lightDir), 0.0);
@@ -165,12 +165,11 @@ vec4 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection,
 	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
 
 	//Result
-	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(dLight.LightColor, 1.0), diffImpact, specImpact) * dLight.LightIntensity;
-	return LightRes + CalculateAmbientResult(hasTextures, vec4(dLight.LightColor, 1.0));
+	return CalculateDiffSpecLightResult(hasTextures, dLight.LightColor, diffImpact, specImpact) * dLight.LightIntensity;
 }
 
 //Point Light Calculation
-vec4 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
+vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
 {
 	vec3 lightDir = normalize(pLight.LightPos - FragPos);
 
@@ -186,12 +185,11 @@ vec4 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	float lightAttenuation = 1.0/ (pLight.LightAtt_K + pLight.LightAtt_L * d + pLight.LightAtt_Q *(d * d));
 
 	//Result
-	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(pLight.LightColor, 1.0), diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
-	return LightRes + CalculateAmbientResult(hasTextures, vec4(pLight.LightColor, 1.0));
+	return CalculateDiffSpecLightResult(hasTextures, pLight.LightColor, diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
 }
 
 //Spot Light Calculation
-vec4 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
+vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
 {
 	vec3 lightDir = normalize(spLight.LightPos - FragPos);	
 	
@@ -212,8 +210,7 @@ vec4 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewD
 	float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
 
 	//Result
-	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(spLight.LightColor, 1.0), diffImpact, specImpact) * lightIntensity * lightAttenuation;
-	return LightRes + CalculateAmbientResult(hasTextures, vec4(spLight.LightColor, 1.0));
+	return CalculateDiffSpecLightResult(hasTextures, spLight.LightColor, diffImpact, specImpact) * lightIntensity * lightAttenuation;
 }
 
 //------------------------------------------------------------------------------------------------------------------
@@ -236,7 +233,7 @@ void main()
 		vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 
 		//Color Output
-		vec4 colorOutput = vec4(vec3(0.0), 1.0);		
+		vec3 colorOutput = vec3(0.0);
 
 		for(int i = 0; i < u_CurrentDirLights; ++i)
 			colorOutput += CalculateDirectionalLight(u_DirLightsArray[i], normalVec, viewDirection, !u_TextureEmpty);
@@ -247,7 +244,11 @@ void main()
 		for(int i = 0; i < u_CurrentSPLights; ++i)
 			colorOutput += CalculateSpotLight(u_SPLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
-		color = colorOutput;
+		if(!u_TextureEmpty)
+			color = vec4(colorOutput + u_AmbientColor.rgb * texture(u_DiffuseTexture, v_TexCoords).rgb, 1.0);
+		else
+			color = vec4(colorOutput + u_AmbientColor.rgb, 1.0);
+
 		COLOROUTPUT_EXIT();
 	}
 }		
