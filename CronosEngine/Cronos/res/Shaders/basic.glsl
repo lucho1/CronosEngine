@@ -229,16 +229,17 @@ void main()
 	{
 		CNSH_ASSERT((u_CurrentPointLights <= MAX_POINTLIGHTS && u_CurrentPointLights >= 0));
 		CNSH_ASSERT((u_CurrentDirLights <= MAX_DIRLIGHTS && u_CurrentDirLights >= 0));
+		CNSH_ASSERT((u_CurrentSPLights <= MAX_SPOTLIGHTS && u_CurrentSPLights >= 0));
 
 		//Generic Light Calculations
 		vec3 normalVec = normalize(v_Normal);
 		vec3 viewDirection = normalize(v_CamPos - v_FragPos);
 
 		//Color Output
-		vec4 colorOutput = vec4(vec3(0.0), 1.0);
+		vec4 colorOutput = vec4(vec3(0.0), 1.0);		
 
 		for(int i = 0; i < u_CurrentDirLights; ++i)
-			colorOutput += CalculateDirectionalLight(u_DirLightsArray[i], normalVec, viewDirection, !u_TextureEmpty);		
+			colorOutput += CalculateDirectionalLight(u_DirLightsArray[i], normalVec, viewDirection, !u_TextureEmpty);
 
 		for(int i = 0; i < u_CurrentPointLights; ++i)
 			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
