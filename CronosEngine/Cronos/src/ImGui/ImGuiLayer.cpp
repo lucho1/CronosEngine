@@ -1028,6 +1028,15 @@ namespace Cronos {
 				LightComp->SetSpotlightInnerCutoff(InAngle);
 				toChange = false;
 			}
+
+			static float OutAngle = LightComp->GetSpotlightOuterCutoff();
+			ImGui::Text("OutCutoff"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##OutCutoff", &OutAngle, 0.1f))toChange = true;
+
+			if (toChange)
+			{
+				LightComp->SetSpotlightOuterCutoff(OutAngle);
+				toChange = false;
+			}
 		}
 	}
 

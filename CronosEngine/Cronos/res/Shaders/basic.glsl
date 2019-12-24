@@ -97,6 +97,7 @@ struct SpotLight
 
 	vec3 LightDir;
 	float cutoffAngleCos;
+	float outerCutoffAngleCos;
 };
 
 
@@ -124,25 +125,31 @@ float LinearizeZ(float depth)
 }
 
 //Light Calculations -----------------------------------------------------------------------------------------------
-vec4 CalculateLightResult(bool hasTextures, vec4 LColor, float diff, float spec)
+vec4 CalculateDiffSpecLightResult(bool hasTextures, vec4 LColor, float diff, float spec)
 {
 	//Result
 	if(hasTextures)
 	{
-		vec4 ambient = LColor * texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor;
 		vec4 diffuse = diff * texture(u_DiffuseTexture, v_TexCoords);
 		vec4 specular = spec * texture(u_SpecularTexture, v_TexCoords);
 
-		return (ambient + diffuse + specular);
+		return (diffuse + specular);
 	}
 	else
 	{
-		vec4 ambient = LColor * u_AmbientColor;
 		vec4 diffuse = LColor * diff;
 		vec4 specular = LColor * spec;
 
-		return (ambient + diffuse + specular);
+		return (diffuse + specular);
 	}
+}
+
+vec4 CalculateAmbientResult(bool hasTextures, vec4 LColor)
+{
+	if(hasTextures)
+		return LColor * texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor;
+	else
+		return LColor * u_AmbientColor;
 }
 
 //Dir Light Calculation
@@ -158,8 +165,8 @@ vec4 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection,
 	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
 
 	//Result
-	vec4 LightRes = CalculateLightResult(hasTextures, vec4(dLight.LightColor, 1.0), diffImpact, specImpact);
-	return (LightRes * dLight.LightIntensity);
+	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(dLight.LightColor, 1.0), diffImpact, specImpact) * dLight.LightIntensity;
+	return LightRes + CalculateAmbientResult(hasTextures, vec4(dLight.LightColor, 1.0));
 }
 
 //Point Light Calculation
@@ -179,49 +186,34 @@ vec4 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	float lightAttenuation = 1.0/ (pLight.LightAtt_K + pLight.LightAtt_L * d + pLight.LightAtt_Q *(d * d));
 
 	//Result
-	vec4 LightRes = CalculateLightResult(hasTextures, vec4(pLight.LightColor, 1.0), diffImpact, specImpact);
-	return (LightRes * lightAttenuation * pLight.LightIntensity);
+	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(pLight.LightColor, 1.0), diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
+	return LightRes + CalculateAmbientResult(hasTextures, vec4(pLight.LightColor, 1.0));
 }
 
 //Spot Light Calculation
 vec4 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(spLight.LightPos - FragPos);
+	vec3 lightDir = normalize(spLight.LightPos - FragPos);	
+	
+	//Diffuse Component
+	float diffImpact = max(dot(normal, lightDir), 0.0);
+
+	//Specular Component
+	vec3 reflectDirection = reflect(-lightDir, normal);
+	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+
+	//Spotlight Calcs for Soft Edges
 	float theta = dot(lightDir, normalize(-spLight.LightDir));
+	float epsilon = spLight.cutoffAngleCos - spLight.outerCutoffAngleCos;
+	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
 
-	if(theta > spLight.cutoffAngleCos)
-	{
-		//Diffuse Component
-		float diffImpact = max(dot(normal, lightDir), 0.0);
+	//Attenuation Calculation
+	float d = length(spLight.LightPos - FragPos);
+	float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
 
-		//Specular Component
-		vec3 reflectDirection = reflect(-lightDir, normal);
-		float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
-
-		//Attenuation Calculation
-		float d = length(spLight.LightPos - FragPos);
-		float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
-
-		//Result
-		vec4 ambient = vec4(1.0);
-		if(hasTextures)
-			ambient = vec4(spLight.LightColor, 1.0) * texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor;
-		else
-			ambient = vec4(spLight.LightColor, 1.0) * u_AmbientColor;
-
-		vec4 LightRes = CalculateLightResult(hasTextures, vec4(spLight.LightColor, 1.0), diffImpact, specImpact) - ambient;
-		return ((LightRes * lightAttenuation + ambient));
-	}
-	else
-	{
-		vec4 ambient = vec4(spLight.LightColor, 1.0) * u_AmbientColor;
-		if(hasTextures)
-			ambient *= texture(u_DiffuseTexture, v_TexCoords);
-			
-		return ambient;
-	}
-
-	return vec4(1.0);
+	//Result
+	vec4 LightRes = CalculateDiffSpecLightResult(hasTextures, vec4(spLight.LightColor, 1.0), diffImpact, specImpact) * lightIntensity * lightAttenuation;
+	return LightRes + CalculateAmbientResult(hasTextures, vec4(spLight.LightColor, 1.0));
 }
 
 //------------------------------------------------------------------------------------------------------------------

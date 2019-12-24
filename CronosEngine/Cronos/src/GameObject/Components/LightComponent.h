@@ -27,6 +27,7 @@ namespace Cronos
 		void SetLightColor(const glm::vec3& color);
 		void SetLightIntensity(const float& intensity);
 		void SetSpotlightInnerCutoff(const float& degreesAngle) { m_LightCutoffAngle = degreesAngle; }
+		void SetSpotlightOuterCutoff(const float& degreesAngle) { m_LightOuterCutoffAngle = degreesAngle; }
 
 		//Getters
 		inline const LightType GetLightType()				const { return m_LightType; }
@@ -35,6 +36,7 @@ namespace Cronos
 		inline const glm::vec3 GetLightDirection()			const { return m_LightDirection; }
 		inline const glm::vec3 GetLightAttenuationFactors()	const { return { m_LightAttK, m_LightAttL, m_LightAttQ }; }
 		inline const float GetSpotlightInnerCutoff()		const { return m_LightCutoffAngle; }
+		inline const float GetSpotlightOuterCutoff()		const { return m_LightOuterCutoffAngle; }
 
 	public:
 
@@ -52,7 +54,7 @@ namespace Cronos
 		glm::vec3 m_LightDirection = glm::vec3(0.0f);
 		float m_LightIntensity = 0.5f;
 		float m_LightAttK = 1.0f, m_LightAttL = 0.09f, m_LightAttQ = 0.032f;
-		float m_LightCutoffAngle = 12.5f;
+		float m_LightCutoffAngle = 12.5f, m_LightOuterCutoffAngle = 17.5f;
 
 		bool m_ChangeLightType = false;
 	};

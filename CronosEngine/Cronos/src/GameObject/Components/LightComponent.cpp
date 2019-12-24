@@ -135,6 +135,7 @@ namespace Cronos
 				glm::vec3 vecOrientation = glm::vec3(2 * (q.x*q.z + q.w*q.y), 2 * (q.y*q.z - q.w*q.x), 1-2 * (q.x*q.x + q.y*q.y));
 				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", -vecOrientation);
 				shader->SetUniform1f(indexedStr_LArray + ".cutoffAngleCos", glm::cos(glm::radians(m_LightCutoffAngle)));
+				shader->SetUniform1f(indexedStr_LArray + ".outerCutoffAngleCos", glm::cos(glm::radians(m_LightOuterCutoffAngle)));
 
 				break;
 			}
