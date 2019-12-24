@@ -24,14 +24,17 @@ namespace Cronos
 	LightComponent::LightComponent(GameObject * attachedGO)
 		: Component(ComponentType::LIGHT, attachedGO)
 	{
+		m_LightMaterial = new Material(*App->renderer3D->GetLightMaterial());
+		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*m_LightMaterial);
+
 		m_LightType = LightType::POINTLIGHT;
-		GetParent()->GetComponent<MaterialComponent>()->SetMaterial(*App->renderer3D->GetLightMaterial());
 		App->renderer3D->m_PointLightsVec.push_back(this);
 	}
 
 	LightComponent::~LightComponent()
 	{
 		m_LightType = LightType::NONE;
+		RELEASE(m_LightMaterial);
 	}
 
 	void LightComponent::SetLightType(LightType type)

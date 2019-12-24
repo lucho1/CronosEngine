@@ -953,14 +953,15 @@ namespace Cronos {
 
 			//Change light type
 			static int directional = 1;
+			directional = (int)LightComp->GetLightType();
 			ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Light Type (0 = dir, 1 = point, 2 = spot): "); sameLine;
 			if (ImGui::SliderInt("##POINTLIGHT", &directional, 0.0f, 2.0f, "%.2f"))
 			{
-				if (directional == 1)
-					LightComp->SetLightType(LightType::POINTLIGHT);
-				else if (directional == 0)
+				if (directional == 0)
 					LightComp->SetLightType(LightType::DIRECTIONAL);
+				else if (directional == 1)
+					LightComp->SetLightType(LightType::POINTLIGHT);
 				else if(directional == 2)
 					LightComp->SetLightType(LightType::SPOTLIGHT);
 			}
@@ -968,7 +969,8 @@ namespace Cronos {
 			ImGui::NewLine();
 
 			//Change Light Color
-			static glm::vec3 LightColor = LightComp->GetLightColor();
+			static glm::vec3 LightColor;
+			LightColor = LightComp->GetLightColor();
 			
 			static bool toChange;
 			ImGui::AlignTextToFramePadding();
@@ -984,7 +986,9 @@ namespace Cronos {
 			}
 
 			//Change Light Direction
-			static glm::vec3 LightDir = LightComp->GetLightDirection();
+			static glm::vec3 LightDir;
+			LightDir = LightComp->GetLightDirection();
+
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Light Direction");
 			ImGui::Text("dX"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valuedX", &LightDir.x, 0.001f))toChange = true; ImGui::SameLine();
@@ -998,14 +1002,16 @@ namespace Cronos {
 			}
 
 			//Light intensity
-			static float LightIntensity = LightComp->GetLightIntensity();
+			static float LightIntensity;
+			LightIntensity = LightComp->GetLightIntensity();
 			ImGui::NewLine();
 			ImGui::SetNextItemWidth(100);
 			if (ImGui::SliderFloat("Light Intensity", &LightIntensity, 0.0f, 1.0f, "%.2f", 1.0f))
 				LightComp->SetLightIntensity(LightIntensity);
 
 			//Light Attenuation
-			static glm::vec3 LightAtt = LightComp->GetLightAttenuationFactors();
+			static glm::vec3 LightAtt;
+			LightAtt = LightComp->GetLightAttenuationFactors();
 						
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Light Attenuation");
@@ -1020,7 +1026,8 @@ namespace Cronos {
 			}
 
 			//Light Cutoff Angle (spotlights)
-			static float InAngle = LightComp->GetSpotlightInnerCutoff();
+			static float InAngle;
+			InAngle = LightComp->GetSpotlightInnerCutoff();
 			ImGui::Text("InCutoff"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##InCutoff", &InAngle, 0.1f))toChange = true;
 
 			if (toChange)
@@ -1029,7 +1036,8 @@ namespace Cronos {
 				toChange = false;
 			}
 
-			static float OutAngle = LightComp->GetSpotlightOuterCutoff();
+			static float OutAngle;
+			OutAngle = LightComp->GetSpotlightOuterCutoff();
 			ImGui::Text("OutCutoff"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##OutCutoff", &OutAngle, 0.1f))toChange = true;
 
 			if (toChange)
@@ -1046,11 +1054,16 @@ namespace Cronos {
 		{
 			CameraComponent* camera = CurrentGameObject->GetComponent<CameraComponent>();
 
-			static float CameraMoveSpeed = camera->GetCameraMoveSpeed();
-			static float CameraScrollSpeed = camera->GetCameraScrollSpeed();
-			static float CameraFieldOfView = camera->GetFOV();
-			static float CameraNearPlane = camera->GetNearPlane();
-			static float CameraFarPlane = camera->GetFarPlane();
+			static float CameraMoveSpeed;
+			CameraMoveSpeed = camera->GetCameraMoveSpeed();
+			static float CameraScrollSpeed;
+			CameraScrollSpeed = camera->GetCameraScrollSpeed();
+			static float CameraFieldOfView;
+			CameraFieldOfView = camera->GetFOV();
+			static float CameraNearPlane;
+			CameraNearPlane = camera->GetNearPlane();
+			static float CameraFarPlane;
+			CameraFarPlane = camera->GetFarPlane();
 
 			//ImGui::Text("Camera Options");
 

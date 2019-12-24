@@ -50,6 +50,8 @@ namespace Cronos
 
 		LightType m_LightType = LightType::NONE;
 
+		Material* m_LightMaterial = nullptr;
+
 		glm::vec3 m_LightColor = glm::vec3(1.0f);
 		glm::vec3 m_LightDirection = glm::vec3(0.0f);
 		float m_LightIntensity = 0.5f;
