@@ -44,7 +44,7 @@ namespace Cronos
 
 	private:
 
-		void SetLightToZero(Shader* shader, uint lightIndex);
+		void SetLightToZero(Shader* shader, uint lightIndex, LightType lType);
 
 	private:
 
