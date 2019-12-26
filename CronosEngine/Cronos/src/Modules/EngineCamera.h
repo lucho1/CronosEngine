@@ -42,8 +42,8 @@ namespace Cronos
 		//Returns a ray (vec3) that goes from camera pos in forward direction and has length of far plane distance
 		const glm::vec3 RaycastForward();
 		GameObject* OnClickSelection();
-		std::vector<GameObject*> GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting);
-		void QuickSortByCamDistance(std::vector<GameObject*>&vec, glm::vec3 camPos, uint left, uint right);
+		std::vector<std::pair<GameObject*, float>> GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting);
+		void QuickSortByCamDistance(std::vector<std::pair<GameObject*, float>>&vec, glm::vec3 camPos, uint left, uint right);
 
 	private:
 
