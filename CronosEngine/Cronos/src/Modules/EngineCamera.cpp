@@ -253,7 +253,7 @@ namespace Cronos
 			}
 		}
 
-		if (parent->GetComponent<MeshComponent>() && parent->isActive() && parent->GetAABB().Intersects(*GetFrustum()))
+		if (parent->GetComponent<MeshComponent>() && parent->isActive() && parent->GetAABB().Intersects(*GetFrustum()) && parent->GetAABB().Intersects(rayIntersecting))
 			retVec.push_back(parent);
 
 		return retVec;
