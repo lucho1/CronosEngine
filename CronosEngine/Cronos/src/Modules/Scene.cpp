@@ -132,8 +132,8 @@ namespace Cronos {
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		//m_GameObjects.push_back(m_StreetModel);
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		m_GameObjects.push_back(m_StreetModel);
 
 		////App->filesystem->Load(m_HouseModel->GetMetaPath());
 		//m_GameObjects.push_back(testing);
@@ -179,7 +179,7 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
-		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+	/*	GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
@@ -221,6 +221,7 @@ namespace Cronos {
 
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
+		*/
 
 		//Game Objects update
 		for (auto element : m_GameObjects)

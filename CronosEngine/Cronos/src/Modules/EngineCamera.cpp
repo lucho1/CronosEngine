@@ -8,8 +8,9 @@
 
 #include "mmgr/mmgr.h"
 
-namespace Cronos {
-
+namespace Cronos
+{
+	//Engine Camera stuff ----------------------------------------------
 	EngineCamera::EngineCamera(Application* app, bool start_enabled) : Module(app, "Module Camera 3D", start_enabled)
 	{
 	}
@@ -208,53 +209,75 @@ namespace Cronos {
 	GameObject* EngineCamera::OnClickSelection()
 	{
 		glm::vec3 spawn = RaycastForward();
-		//vecToDraw = GetPosition();
-		//vecOrigin = spawn;
-		
+		math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
+		std::vector<GameObject*> GameObjectSelection;
+
 		//TODO: Once Rendering octree is fixed, do this with objects in visible nodes
 		for (auto& GO : App->scene->m_GameObjects)
 		{
-			if (!GO->GetAABB().Intersects(*GetFrustum()))
-				continue;
-
-			GameObject* SelectedGobj = nullptr;
-			math::LineSegment ray = math::LineSegment(float3(GetPosition().x, GetPosition().y, GetPosition().z), float3(spawn.x, spawn.y, spawn.z));
 			if (GO->GetAABB().Intersects(ray))
-				SelectedGobj = GetObjectFromSelection(GO, ray);
+			{
+				std::vector<GameObject*> tmpVec;
+				tmpVec = GetObjectFromSelection(GO, ray);
 
-			if (SelectedGobj)
-				return SelectedGobj;
+				if(tmpVec.size() > 0)
+					GameObjectSelection.insert(GameObjectSelection.begin(), tmpVec.begin(), tmpVec.end());
+			}
+		}
+		
+		if (GameObjectSelection.size() > 0)
+		{
+			QuickSortByCamDistance(GameObjectSelection, GetPosition(), 0, GameObjectSelection.size() - 1);
+			return GameObjectSelection[0];
 		}
 
 		return nullptr;
 	}
 
-	GameObject* EngineCamera::GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting)
+	std::vector<GameObject*> EngineCamera::GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting)
 	{
+		std::vector<GameObject*> retVec;
 		if (parent->m_Childs.size() > 0)
 		{
 			for (auto& child : parent->m_Childs)
 			{
-				if (!child->GetAABB().Intersects(*GetFrustum()))
-					continue;
-
-				GameObject* SelectedGobj = nullptr;
 				if (child->GetAABB().Intersects(rayIntersecting))
-					SelectedGobj = GetObjectFromSelection(child, rayIntersecting);
+				{
+					std::vector<GameObject*> childsVec = GetObjectFromSelection(child, rayIntersecting);					
+					if (childsVec.size() > 0)
+						retVec.insert(retVec.begin(), childsVec.begin(), childsVec.end());
+				}
 
-				if (SelectedGobj && SelectedGobj->GetComponent<MeshComponent>())
-					return SelectedGobj;
+				if (child->isActive() && child->GetComponent<MeshComponent>() && child->GetAABB().Intersects(*GetFrustum()) && child->GetAABB().Intersects(rayIntersecting))
+					retVec.push_back(child);
 			}
-
-			if (!parent->GetComponent<MeshComponent>() || !parent->GetAABB().Intersects(*GetFrustum()))
-				return nullptr;
-
-			return parent;
 		}
-		else if(!parent->GetComponent<MeshComponent>())
-			return nullptr;
-		else
-			return parent;
+
+		if (parent->GetComponent<MeshComponent>() && parent->isActive() && parent->GetAABB().Intersects(*GetFrustum()))
+			retVec.push_back(parent);
+
+		return retVec;
+	}
+
+	//Objects sorter for mouse picking
+	void EngineCamera::QuickSortByCamDistance(std::vector<GameObject*>&vec, glm::vec3 camPos, uint left, uint right)
+	{
+		if (left >= right || right >= vec.size()) return; //Length <= 1 or invalid
+		float pivotD = glm::length(vec[right]->GetComponent<TransformComponent>()->GetGlobalTranslation() - camPos);
+		uint cnt = left;
+
+		for (uint i = left; i <= right; i++)
+		{
+			float currentObjD = glm::length(vec[i]->GetComponent<TransformComponent>()->GetGlobalTranslation() - camPos);
+			if (currentObjD <= pivotD)
+			{
+				std::swap(vec[cnt], vec[i]);
+				++cnt;
+			}
+		}
+
+		QuickSortByCamDistance(vec, camPos, left, cnt - 2); //We just need to sort the left part of the vector
+		//QuickSortByCamDistance(vec, camPos, cnt, right);
 	}
 
 	const glm::vec3 EngineCamera::RaycastForward()

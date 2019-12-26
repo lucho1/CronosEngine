@@ -182,6 +182,9 @@ namespace Cronos {
 
 	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
 	{
+		if (!gameObject->isActive())
+			return;
+
 		if (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling && !m_ObjectsInOctreeNode.empty())
 		{
 			//You can also do:

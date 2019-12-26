@@ -5,8 +5,8 @@
 #include "Providers/Globals.h"
 #include "Helpers/Camera.h"
 
-namespace Cronos {
-
+namespace Cronos
+{
 	class EngineCamera : public Module, public Camera
 	{
 	public:
@@ -42,7 +42,8 @@ namespace Cronos {
 		//Returns a ray (vec3) that goes from camera pos in forward direction and has length of far plane distance
 		const glm::vec3 RaycastForward();
 		GameObject* OnClickSelection();
-		GameObject* GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting);
+		std::vector<GameObject*> GetObjectFromSelection(GameObject* parent, math::LineSegment rayIntersecting);
+		void QuickSortByCamDistance(std::vector<GameObject*>&vec, glm::vec3 camPos, uint left, uint right);
 
 	private:
 
