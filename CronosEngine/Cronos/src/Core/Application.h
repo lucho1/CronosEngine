@@ -8,41 +8,39 @@
 #include "Providers/Globals.h" //TODO: DEL
 #include "Helpers/RNGen.h"
 
-#include "Modules/SDLWindow.h"
-#include "Modules/Input.h"
-#include "Modules/Audio.h"
-#include "Modules/Scene.h"
-#include "Modules/EngineCamera.h"
-#include "Modules/Filesystem.h"
-#include "Modules/TextureManager.h"
-#include "Modules/ResourceManager.h"
-
-#include "Renderer/GLRenderer3D.h"
-#include "ImGui/ImGuiLayer.h"
-
 #include "Timers/Timer.h"
 #include "Timers/GameTimer.h"
 
 #include "json/json.hpp"
 using json = nlohmann::json;
 
-
 namespace Cronos {
+
+	class SDLWindow;
+	class Input;
+	class Audio;
+	class Scene;
+	class GLRenderer3D;
+	class EngineCamera;
+	class ImGuiLayer;
+	class Filesystem;
+	class TextureManager;
+	class ResourceManager;
 
 	class Application {
 
 	public: //Modules
 
-		SDLWindow* window = nullptr;
-		Input* input = nullptr;
-		Audio* audio = nullptr;
-		Scene* scene = nullptr;
-		GLRenderer3D* renderer3D = nullptr;
-		EngineCamera* engineCamera = nullptr;
-		ImGuiLayer* EditorGUI = nullptr;
-		Filesystem* filesystem = nullptr;
-		TextureManager* textureManager = nullptr;
-		ResourceManager* resourceManager = nullptr;
+		SDLWindow* window;
+		Input* input;
+		Audio* audio;
+		Scene* scene;
+		GLRenderer3D* renderer3D;
+		EngineCamera* engineCamera;
+		ImGuiLayer* EditorGUI;
+		Filesystem* filesystem;
+		TextureManager* textureManager;
+		ResourceManager* resourceManager;
 
 
 		RNGen m_RandomNumGenerator; //Random number generator

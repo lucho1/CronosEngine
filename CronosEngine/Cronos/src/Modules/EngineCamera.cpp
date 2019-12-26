@@ -3,6 +3,12 @@
 #include "Application.h"
 #include "EngineCamera.h"
 
+#include "Input.h"
+#include "SDLWindow.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Scene.h"
+#include "Renderer/GLRenderer3D.h"
+
 #include <glm/gtx/rotate_vector.hpp>
 //#include <glm/gtx/euler_angles.hpp>
 

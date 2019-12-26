@@ -3,6 +3,7 @@
 #include "Providers/Globals.h"
 #include "Application.h"
 #include "SDLWindow.h"
+#include "EngineCamera.h"
 
 #include "mmgr/mmgr.h"
 

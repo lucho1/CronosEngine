@@ -3,6 +3,11 @@
 
 #include "Application.h"
 
+#include "Modules/Scene.h"
+#include "Modules/Filesystem.h"
+
+#include "GameObject/Components/TransformComponent.h"
+
 #include "par_shapes/par_shapes.h"
 
 namespace Cronos {

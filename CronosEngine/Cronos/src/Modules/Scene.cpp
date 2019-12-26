@@ -3,6 +3,13 @@
 
 #include "Application.h"
 
+#include "Filesystem.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Renderer/GLRenderer3D.h"
+#include "EngineCamera.h"
+#include "Input.h"
+#include "TextureManager.h"
+
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
 

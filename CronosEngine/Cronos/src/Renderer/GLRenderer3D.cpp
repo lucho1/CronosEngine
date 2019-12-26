@@ -4,6 +4,11 @@
 #include "Application.h"
 #include "GLRenderer3D.h"
 
+#include "Modules/SDLWindow.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Modules/Scene.h"
+#include "Modules/EngineCamera.h"
+
 #include <glad/glad.h>
 
 namespace Cronos {

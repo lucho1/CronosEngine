@@ -1,6 +1,8 @@
 #include"Providers/cnpch.h"
 #include "TransformComponent.h"
+
 #include "GameObject/GameObject.h"
+#include "Renderer/GLRenderer3D.h"
 
 #include "Application.h"
 

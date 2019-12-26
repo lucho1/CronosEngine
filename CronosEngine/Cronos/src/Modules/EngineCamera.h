@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Providers/Globals.h"
 #include "Helpers/Camera.h"
+#include "GameObject/GameObject.h"
 
 namespace Cronos
 {
