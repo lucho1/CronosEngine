@@ -119,13 +119,17 @@ namespace Cronos {
 	}
 
 
-	void SDLWindow::OnResize(uint width, uint height)
+	void SDLWindow::OnResize(uint width, uint height, bool comingFromSceneFBO)
 	{
  		glViewport(0, 0, width, height);
 		ReCalculateAspectRatio(width, height);
 		App->engineCamera->ChangeProjection();
-		m_Data.Width = width;
-		m_Data.Height = height;
+
+		if (!comingFromSceneFBO)
+		{
+			m_Data.Width = width;
+			m_Data.Height = height;
+		}
 		//SetWindowFullscreen(false);
 		//SetWindowDesktopFullscreen(false);
 	}

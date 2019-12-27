@@ -21,7 +21,7 @@ namespace Cronos {
 		virtual bool OnCleanUp() override;
 
 		void ReCalculateAspectRatio(uint width, uint height);
-		void OnResize(uint width, uint height);
+		void OnResize(uint width, uint height, bool comingFromSceneFBO);
 
 		//Save/Load
 		virtual void SaveModuleData(json& JSONFile) const override;

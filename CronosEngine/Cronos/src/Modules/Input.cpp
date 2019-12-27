@@ -152,7 +152,7 @@ namespace Cronos {
 			case SDL_WINDOWEVENT:
 			{
 				if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-					App->window->OnResize(e.window.data1, e.window.data2);
+					App->window->OnResize(e.window.data1, e.window.data2, false);
 			}
 			}
 		}

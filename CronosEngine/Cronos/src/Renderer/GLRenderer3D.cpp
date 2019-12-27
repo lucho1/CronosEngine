@@ -66,7 +66,7 @@ namespace Cronos {
 		}
 		
 		// Projection matrix for
-		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight());
+		App->window->OnResize(App->window->GetWidth(), App->window->GetHeight(), false);
 		return ret;
 	}
 
@@ -263,6 +263,7 @@ namespace Cronos {
 	{
 		glViewport(0, 0, width, height);
 		App->window->ReCalculateAspectRatio(width, height);
+		App->engineCamera->SetAspectRatio(glm::vec2(width, height));
 		App->engineCamera->ChangeProjection();
 	}
 
