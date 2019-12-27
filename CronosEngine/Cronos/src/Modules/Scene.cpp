@@ -99,14 +99,16 @@ namespace Cronos {
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
-		float maxT = 5.0f;
+		float maxT = 180.0f;
 		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
 		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
-		m_WaterShader->SetUniform1f("u_Amplitude", 2.0f);
-		m_WaterShader->SetUniform1f("u_WaveLength", 20.0f);
-		m_WaterShader->SetUniform1f("u_Velocity", 2.0f);
-		m_WaterShader->SetUniform1f("u_FOAMVelocity", 0.5f);
+		m_WaterShader->SetUniform1f("u_Amplitude", 5.0f);
+		m_WaterShader->SetUniform1f("u_WaveLength", 35.0f);
+		m_WaterShader->SetUniform1f("u_Velocity", 15.0f);
+		m_WaterShader->SetUniform1f("u_FOAMVelocity", 5.0f);
 		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.1f); //Fragment Shader
+		m_WaterShader->SetUniformVec2f("u_FOAMDirection", glm::vec2(1.0f, 1.0f));
+		m_WaterShader->SetUniform1f("u_WaveMovementMultiplicator", 2.0f);
 
 		if (m_WaveTimer.ReadSec() >= maxT)
 			m_WaveTimer.Start();

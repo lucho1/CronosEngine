@@ -17,6 +17,8 @@ uniform float u_Amplitude = 5.0;
 uniform float u_WaveLength = 1.0;
 uniform float u_Velocity = 10.0;
 uniform float u_FOAMVelocity = 0.5;
+uniform vec2 u_FOAMDirection = vec2(0, 0);
+uniform float u_WaveMovementMultiplicator = 2.0;
 
 //Variables
 const float pi = 3.14159;
@@ -42,20 +44,24 @@ float random2(vec2 co)
 void main()
 {
 	float height = u_Amplitude*sin(2.0*pi*((u_Time/u_MaxTime)*u_Velocity - (a_Position.x/u_WaveLength)));
+	float dX = sin(2.0*a_Position.x + u_Time);
+	float dZ = sin(2.0*a_Position.y + u_Time);
 	//float Xf = a_Position.x/u_WaveLength - 0.5;
 	//float Yf = a_Position.y/u_Amplitude - 0.5;
 	//
 	//vec2 vec = vec2(Xf, Yf);
 	//float height = random2(vec) * 2.0*pi*(u_Time/u_MaxTime);
+	vec2 tCoordsDir = clamp(normalize(u_FOAMDirection), 0.0, 1.0);
+
 	vec2 tCoords = a_TexCoords;
-	tCoords.x -= u_FOAMVelocity * u_Time/u_MaxTime;
-	tCoords.y -= u_FOAMVelocity * u_Time/u_MaxTime;
+	tCoords.x -= u_FOAMVelocity * u_Time/u_MaxTime * tCoordsDir.x;
+	tCoords.y -= u_FOAMVelocity * u_Time/u_MaxTime * tCoordsDir.y;
 
 	v_VertHeight = height;
 	v_MaxHeight = u_Amplitude;	
 	v_TexCoords = tCoords;
 
-	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
+	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position.x, a_Position.y, a_Position.z + dX*dZ*u_WaveMovementMultiplicator, 1.0);
 	gl_Position.y += height;
 }
 
