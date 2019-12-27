@@ -50,7 +50,7 @@ Cronos Engine is developed by **LuchoSuaya** ([@lucho1](https://github.com/lucho
 
 ![](res/fotiyo.jpg?style=centerme)
 
-Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
+Take a look to our [Github Repository](https://www.github.com/lucho1/CronosEngine)
 
 ### Individual Work
 * **Lucho Suaya**: In charge of Engine's main systems (core functionality, game objects & components, camera, octrees optimization...) & Rendering workflow (lighting and material system, shaders sub-system...).
