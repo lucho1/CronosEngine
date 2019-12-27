@@ -172,9 +172,14 @@ namespace Cronos {
 			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
 
 		//Lighting --------------------------------------------------------------------------
-		//for (uint i = 0; i < m_LightsList.size(); ++i)
-		//	m_LightsList[i]->SendUniformsLightData(m_BasicShader, i);
-		CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---")
+		CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---");
+
+		if (m_ChangeLightSystem) //To light with phong or blinn-phong
+		{
+			m_ChangeLightSystem = false;
+			m_BlinnPhongLighting = !m_BlinnPhongLighting;
+			m_BasicShader->SetUniform1i("u_UseBlinnPhong", m_BlinnPhongLighting);
+		}
 
 		uint currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
 		m_BasicShader->SetUniform1i("u_CurrentDirLights", (int)currentDLights);

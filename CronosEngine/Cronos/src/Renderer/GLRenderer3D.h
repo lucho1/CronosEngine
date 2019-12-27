@@ -123,6 +123,10 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return m_ChangeZBufferDrawing; }
 		void SetZBuffer() { m_ChangeZBufferDrawing = !m_ChangeZBufferDrawing; }
 
+		//Change Lighting System
+		bool& SetLightSystem() { return m_ChangeLightSystem; }
+		void SetLightingSystem() { m_ChangeLightSystem = !m_ChangeLightSystem; }
+
 		//Chose camera to render from
 		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
@@ -144,7 +148,8 @@ namespace Cronos {
 	private:
 		
 		std::vector<LightComponent*> m_LightsList;
-
+		bool m_BlinnPhongLighting = true;
+		bool m_ChangeLightSystem = false;
 
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;

@@ -571,6 +571,7 @@ namespace Cronos {
 
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		static bool ZB_RenderingActive = false;
+		static bool BlinnPhongActive = true;
 		ImGui::Begin("Scene",nullptr,GameWindow_flags);
 		{
 			if (ImGui::BeginMenuBar())
@@ -587,6 +588,12 @@ namespace Cronos {
 					if (ImGui::MenuItem("Render Z-Buffer", "", &ZB_RenderingActive))
 					{
 						App->renderer3D->SetZBuffer();
+					}
+
+					ImGui::Separator();
+					if (ImGui::MenuItem("Use Blinn-Phong", "", &BlinnPhongActive))
+					{
+						App->renderer3D->SetLightingSystem();
 					}
 
 					ImGui::EndMenu();
@@ -1204,7 +1211,7 @@ namespace Cronos {
 			static float MatShine = Cn_Material->GetShininess();
 			ImGui::NewLine();
 			ImGui::SetNextItemWidth(100);
-			if (ImGui::SliderFloat("Shininess", &MatShine, 0.03f, 256.0f, "%.2f", 2.0f))
+			if (ImGui::SliderFloat("Shininess", &MatShine, 0.5f, 256.0f, "%.2f", 2.0f))
 				Cn_Material->SetShininess(MatShine);
 
 			ImGui::SameLine();

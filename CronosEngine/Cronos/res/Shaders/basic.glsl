@@ -113,6 +113,7 @@ uniform sampler2D u_SpecularTexture;
 //uniform sampler2D u_NormalMap;
 
 uniform bool u_TextureEmpty = true;
+uniform bool u_UseBlinnPhong = true;
 
 //ZBuffer rendering -------------------------------------------------------------------------------------------------
 uniform vec2 u_CamPlanes; //x for near plane, y for far plane
@@ -144,25 +145,17 @@ vec3 CalculateDiffSpecLightResult(bool hasTextures, vec3 LColor, float diff, flo
 	}
 }
 
-//vec3 CalculateAmbientResult(bool hasTextures, vec3 LColor)
-//{
-//	if(hasTextures)
-//		return LColor;
-//	else
-//		return LColor;
-//}
-
 //Dir Light Calculation
 vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(-dLight.LightDir);
+	vec3 lightDir = normalize(dLight.LightDir);
 	
 	//Diffuse Component
 	float diffImpact = max(dot(normal, lightDir), 0.0);
 	
 	//Specular component
-	vec3 reflectDirection = reflect(-lightDir, normal);
-	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDirection);
+	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
 
 	//Result
 	return CalculateDiffSpecLightResult(hasTextures, dLight.LightColor, diffImpact, specImpact) * dLight.LightIntensity;
@@ -177,8 +170,17 @@ vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	float diffImpact = max(dot(normal, lightDir), 0.0);
 
 	//Specular Component
-	vec3 reflectDirection = reflect(-lightDir, normal);
-	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+	float specImpact = 1.0;
+	if(u_UseBlinnPhong)
+	{
+		vec3 halfwayDir = normalize(lightDir + viewDirection);
+		specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
+	}
+	else
+	{
+		vec3 reflectDirection = reflect(-lightDir, normal);
+		specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+	}
 
 	//Attenuation Calculation
 	float d = length(pLight.LightPos - FragPos);
@@ -197,8 +199,8 @@ vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewD
 	float diffImpact = max(dot(normal, lightDir), 0.0);
 
 	//Specular Component
-	vec3 reflectDirection = reflect(-lightDir, normal);
-	float specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
+	vec3 halfwayDir = normalize(lightDir + viewDirection);
+	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
 
 	//Spotlight Calcs for Soft Edges
 	float theta = dot(lightDir, normalize(-spLight.LightDir));
