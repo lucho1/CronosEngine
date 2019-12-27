@@ -5,10 +5,13 @@
 
 ![](res/Cronos_Engine_Logo.png?style=centerme)
 
+**[TODO]** Add trailer??
+
 We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/projects/SDL_mixer/), STL, [OpenGL4](https://www.opengl.org/) with [GLAD](https://glad.dav1d.de/), [ImGui](https://github.com/ocornut/imgui), [Premake](https://premake.github.io/), [GLM](https://glm.g-truc.net/0.9.9/index.html) and [MathGeoLib](https://github.com/juj/MathGeoLib) (for some purposes), [GPUDetect](https://github.com/GameTechDev/gpudetect), [MMGR](https://www.flipcode.com/archives/Presenting_A_Memory_Manager.shtml), [ParShapes](https://prideout.net/shapes), [Assimp](http://www.assimp.org/), [Devil](http://openil.sourceforge.net/) and [JSON for Modern C++](https://nlohmann.github.io/json/).
 
-## Screenshots
-![](res/Cronos_Engine_Logo.png?style=centerme)
+## Screenshots & Video
+**[TODO]** Add 1min video
+**[TODO]** Add screenshots
 
 ## Innovating Features
 * Lighting algorithm improved, better than Phong (Blinn-Phong) - Test the difference with Spotlights!
@@ -26,12 +29,24 @@ We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/proje
 * Usage of Precompiled Header to imporve build performance
 * Engine's Project built with a Premake file and Project.bat generator to automatize build process
 
+## Cronos Sub-Systems
+**[TODO]**
+
+### Shaders Sub-System
+**[TODO]** Add 2 gifs
+
 ## Credits
 Cronos Engine is developed by **LuchoSuaya** ([@lucho1](https://github.com/lucho1)) and **Roger Leon** ([@rleonborras](https://github.com/rleonborras)) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by **Marc Garrigo Garcia** ([@markitus18](https://github.com/markitus18)).
 
 ![](res/fotiyo.jpg?style=centerme)
 
 Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
+
+### Individual Work
+* Lucho Suaya: In charge of Engine's main systems (core functionality, game objects & components, camera, octrees optimization...) & Rendering workflow (lighting and material system, shaders sub-system...).
+* Roger Leon: In charge of the whole UI, entire engine's filesystem and resource manager & serialization and engine's aspect as well as handeling several game objects' functionality as well as hierarchies (parenting), UX functionality like copy/paste, delete...
+
+Both have been involved in the system to load geometry and textures in the engine and primitives' creation.
 
 ## License
 **Copyright (c) 2019 Lucho Suaya Leiro and Roger Leon Borras**
