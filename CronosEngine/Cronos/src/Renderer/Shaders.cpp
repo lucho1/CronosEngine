@@ -20,6 +20,7 @@ namespace Cronos {
 	Shader::Shader(const std::string& filepath)
 	{
 		std::string ShaderSourceCode = ReadFile(filepath);
+		ShaderText = ShaderTextModifiable= ShaderSourceCode;
 		Compile(PreProcess(ShaderSourceCode));
 		m_Path = filepath;
 	}

@@ -645,7 +645,6 @@ namespace Cronos {
 			{				
 				ImGui::SetWindowFontScale(3);
 				ImGui::Text(" x%.2f", App->engineCamera->GetSpeedMultiplicator());
-
 			}
 			ImGui::End();
 		}
@@ -848,10 +847,13 @@ namespace Cronos {
 		if (CurrentAssetSelected != nullptr)
 		{
 			//ImGui::Checkbox(" ", &CurrentAssetSelected->SetActive()); ImGui::SameLine();
+			ImGui::Image((void*)(CurrentAssetSelected->GetIconTexture() - 1), ImVec2(35, 35), ImVec2(0, 1), ImVec2(1, 0));
+			sameLine;
 			static char buf1[64];
 			strcpy(buf1, CurrentAssetSelected->m_AssetNameNoExtension.c_str());
-			if (ImGui::InputText("###", buf1, 64))
-				App->filesystem->RenameFile(CurrentAssetSelected, buf1);
+			
+			ImGui::Text(buf1);
+				//App->filesystem->RenameFile(CurrentAssetSelected, buf1);
 
 			ImGui::Separator();
 			//GUIDrawTransformPMenu(CurrentGameObject);
@@ -862,11 +864,40 @@ namespace Cronos {
 			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
 				GUIDrawAssetLabelInspector();
 			}
+			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_SHADER) {
+				GUIDrawScriptingEditor(CurrentAssetSelected);
+			}
 		}
-		
-
 		ImGui::End();
 
+	}
+	void ImGuiLayer::GUIDrawScriptingEditor(AssetItems* CurrentAssetSelected) 
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput|ImGuiInputTextFlags_CtrlEnterForNewLine;
+		static bool Modify = false;
+		static char buf1[1024*16];
+		static char name[50];
+		strcpy(name, CurrentAssetSelected->GetAssetPath().c_str());
+		strcpy(buf1, CurrentAssetSelected->m_Shader->GetShaderTextFormat());
+		ImGui::Text(name);
+		ImGui::Separator();
+		if (ImGui::Button("Modify")) {
+			Modify = !Modify;
+		}
+		if (!Modify) {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
+			flags |= ImGuiInputTextFlags_ReadOnly;
+		}
+		else {
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+			flags &= ~ImGuiInputTextFlags_ReadOnly;
+		}
+		ImGui::InputTextMultiline("##source", buf1, IM_ARRAYSIZE(buf1), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 50), flags);
+		ImGui::TextColored(ImVec4(0.00f, 1.00f, 1.00f, 1.00f), "hello");
+		ImGui::Button("Compile");
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 	}
 
 	void ImGuiLayer::GUIDrawTransformPMenu(GameObject* CurrentGameObject)

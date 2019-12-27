@@ -24,15 +24,21 @@ namespace Cronos
 		void SetUniform1f(const std::string& name, float value);
 		void SetUniformBool(const std::string& name, bool value);
 
+		const char* GetShaderTextFormat() const					 { return ShaderTextModifiable.c_str(); }
+
 	private:
 
 		std::string ReadFile(const std::string& filepath);
+	
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& SourceShaderCode);
 		void Compile(const std::unordered_map<GLenum, std::string>& ShadersUMap);
 
 		int GetUniformLocation(const std::string& name);
 
 	private:
+
+		std::string ShaderTextModifiable;
+		std::string ShaderText;
 
 		uint m_ID;
 		std::string m_Path;

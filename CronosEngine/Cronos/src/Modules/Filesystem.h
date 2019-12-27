@@ -34,8 +34,9 @@ namespace Cronos {
 
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE);
+		friend class ImGuiLayer;
 
+		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE);
 		ItemType type = ItemType::ITEM_NONE;
 
 		std::string m_AssetShortName;
@@ -81,7 +82,7 @@ namespace Cronos {
 		int m_AssetID;
 		GLuint m_IconTex;
 		ImVec2 m_Resolution;
-
+		Shader* m_Shader;
 		Texture* m_AssetTexture = nullptr;
 		
 	};

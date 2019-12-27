@@ -84,6 +84,7 @@ namespace Cronos {
 		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected); // To Get the MAterial Asset;
 		void GUIDrawCameraComponentMenu(GameObject* CurrentGameObject);
+		void GUIDrawScriptingEditor(AssetItems* CurrentAssetselected);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
