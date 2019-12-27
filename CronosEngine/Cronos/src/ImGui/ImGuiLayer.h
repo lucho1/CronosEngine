@@ -65,6 +65,10 @@ namespace Cronos {
 		void AddLog(std::string log);
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
+		float CurrentSpeedScrollLabel = 0.35;
+		float MaxScrollSpeedLabel = 0.35f;
+		bool StartScrolllabel = false;
+
 	private:
 
 		void setDocking();
@@ -111,8 +115,9 @@ namespace Cronos {
 
 	private:
 
-		GameObject* Draging;
+	
 
+		GameObject* Draging;
 		FrameBuffer* m_SceneWindow = nullptr;
 
 		float m_Time = 0.0f;

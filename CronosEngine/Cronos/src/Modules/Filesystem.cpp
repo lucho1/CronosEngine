@@ -725,6 +725,10 @@ namespace Cronos {
 				m_GameObjecID = loadAsset(path.c_str());
 			}
 		}
+		else if (m_Extension == ".glsl") {
+			type = ItemType::ITEM_SHADER;
+			m_IconTex = App->filesystem->GetIcon(type);
+		}
 		else if (m_Extension == ".cpp" || m_Extension == ".h") {
 			type = ItemType::ITEM_SCRIPT;
 			m_IconTex = App->filesystem->GetIcon(type);

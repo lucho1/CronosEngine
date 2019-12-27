@@ -186,6 +186,7 @@ namespace Cronos {
 			m_SpeedMultiplicator = 15.0f;
 		if (m_SpeedMultiplicator < 0.3f)
 			m_SpeedMultiplicator = 0.3f;
+
 	}
 
 	glm::vec3 EngineCamera::MouseRotation(const glm::vec3 & pos, const glm::vec3 & ref)

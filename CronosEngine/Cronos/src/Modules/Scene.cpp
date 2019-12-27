@@ -138,6 +138,17 @@ namespace Cronos {
 			}
 		}
 
+		//Axis Gizmo modification
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && App->input->GetMouseButton(1) != KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::TRANSLATE;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::ROTATE;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::SCALE;
+		}
+
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
 
@@ -275,6 +286,15 @@ namespace Cronos {
 		if (ImGuizmo::IsUsing() && delta != identity)
 		{
 			glm::transpose(model);
+			glm::vec3 Position;
+			glm::vec3 Scale;
+			glm::vec3 Rotation;
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), glm::value_ptr(Position), glm::value_ptr(Rotation), glm::value_ptr(Scale));
+
+			bool a = true;
+			go->GetComponent<TransformComponent>()->SetPosition(Position);
+			go->GetComponent<TransformComponent>()->SetScale(Scale);			
+			go->GetComponent<TransformComponent>()->SetOrientation(Rotation);
 
 		}
 

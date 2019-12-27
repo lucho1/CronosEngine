@@ -167,6 +167,8 @@ namespace Cronos {
 		const char* LogString2 = m_CurrentDir->m_LabelDirectories.c_str();
 		LOG("	Asset Dir: %s \n	Current Dir: %s", LogString1, LogString2);
 
+		CurrentSpeedScrollLabel = 0.0f;
+		MaxScrollSpeedLabel = 0.75f;
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
 		CurrentGameObject = nullptr;
@@ -629,9 +631,25 @@ namespace Cronos {
 
 		m_SceneWindow->PostUpdate();
 
-		//TODO: Make this nicer xddd
-		if (App->engineCamera->m_ScrollingSpeedChange)
-			ImGui::Text("Camera Speed Multiplicator: x%.2f", App->engineCamera->GetSpeedMultiplicator());
+		if (App->engineCamera->m_ScrollingSpeedChange) {
+			CurrentSpeedScrollLabel = MaxScrollSpeedLabel;
+			App->engineCamera->m_ScrollingSpeedChange = false;
+		}
+		if (CurrentSpeedScrollLabel > 0) {
+			ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
+			bool open = true;
+			ImVec2 CursorPos(App->window->cursorPositionX+(SizeGame.x/2), App->window->cursorPositionY+(SizeGame.y/2));
+			ImGui::SetNextWindowPos(CursorPos);
+			CurrentSpeedScrollLabel -= 0.015f;
+			if (ImGui::Begin("Example: Simple overlay", &open , ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+			{				
+				ImGui::SetWindowFontScale(3);
+				ImGui::Text(" x%.2f", App->engineCamera->GetSpeedMultiplicator());
+
+			}
+			ImGui::End();
+		}
+
 
 		ImGui::End();
 	}
