@@ -19,8 +19,13 @@ namespace Cronos {
 		void AddResource(Resource* res);
 		bool isMeshLoaded(uint resID);
 		bool isMeshSaved(uint resID);
+		bool isMaterialLoaded(uint resID);
+		bool isMaterialSaved(uint resID);
+
+		bool saveResources();
 
 		ResourceMesh* getMeshResource(uint resID);
+		ResourceMaterial* getMaterialResource(uint resID);
 
 	private:
 

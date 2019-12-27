@@ -136,6 +136,42 @@ namespace Cronos {
 
 	}
 
+	bool Filesystem::SaveMaterial(Material* material,const char* path)
+	{
+		bool ret = true;
+		//std::string Data = m_HiddenMaterialLibPath + std::to_string(material->GetMaterialID()) + ".material";
+		std::string Data = path;
+		Data+="/" + material->GetMatName()+".material";
+		const char* filePath = Data.c_str();
+		if (filePath == nullptr) {
+			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
+			ret = false;
+		}
+
+		json aux_JSONFile;
+
+		aux_JSONFile["Name"] = material->GetMatName().c_str();
+		aux_JSONFile["ID"] = material->GetMaterialID();
+		aux_JSONFile["AlbedoColor"][0] = material->GetMaterialColor().r;
+		aux_JSONFile["AlbedoColor"][1] = material->GetMaterialColor().g;
+		aux_JSONFile["AlbedoColor"][2] = material->GetMaterialColor().b;
+		aux_JSONFile["AlbedoColor"][3] = material->GetMaterialColor().a;
+		if (material->GetTextureType(TextureType::DIFFUSE) != nullptr) {
+			aux_JSONFile["DiffuseTexturePath"] = material->GetTextureType(TextureType::DIFFUSE)->GetTexturePath();
+			aux_JSONFile["DiffuseTextureID"] = material->GetTextureType(TextureType::DIFFUSE)->GetTextureID();
+		}
+		if (material->GetTextureType(TextureType::SPECULAR) != nullptr) {
+
+			aux_JSONFile["SpecularTexturePath"] = material->GetTextureType(TextureType::SPECULAR)->GetTexturePath();
+			aux_JSONFile["SpecularTextureID"] = material->GetTextureType(TextureType::SPECULAR)->GetTextureID();
+		}
+
+		std::ofstream OutputFile_Stream{ filePath,std::ofstream::out };
+		OutputFile_Stream << std::setw(2) << aux_JSONFile;
+		OutputFile_Stream.close();
+		return ret;
+	}
+
 	bool Save(GameObject* ToConvert)
 	{
 		//Open file (or return if couuldn't)
@@ -189,7 +225,7 @@ namespace Cronos {
 		//Game Object's Material
 		if (ToConvert->GetComponent<MaterialComponent>())
 		{
-			aux_JSONFile["ComponentMaterial"]["MaterialIndex"] = ToConvert->GetComponent<MaterialComponent>()->m_MaterialIndex;
+			aux_JSONFile["ComponentMaterial"]["MaterialID"] = ToConvert->GetComponent<MaterialComponent>()->GetMaterial()->GetMaterialID();
 
 			//Color
 			//aux_JSONFile["ComponentMaterial"]["Color"]["R"] = ToConvert->GetComponent<MaterialComponent>()->GetColor().r;
@@ -247,6 +283,8 @@ namespace Cronos {
 		return true;
 	}
 
+	//bool 
+
 	bool Filesystem::SaveOwnFormat(GameObject* RootGameObject)
 	{
 		Save(RootGameObject);
@@ -255,7 +293,6 @@ namespace Cronos {
 
 		return true;
 	}
-
 
 	bool Filesystem::LoadMesh(const char* filepath, MeshComponent& mesh,uint ResID) {
 
@@ -354,6 +391,64 @@ namespace Cronos {
 
 		SDL_free(Data);
 		return ret;
+	}
+
+	ResourceMaterial* Filesystem::LoadMaterial(const char* filepath) {
+
+		Material* ret = new Material();
+		//std::string filename = m_LibraryPath + m_HiddenMaterialLibPath + std::to_string(MatID) + ".material";
+		bool exists = std::filesystem::exists(filepath);
+		if (!exists) {
+			CRONOS_WARN(!exists, ("Filepath %s doesn't exist", filepath));
+			return false;
+		}
+
+		std::ifstream file{ filepath };
+		if (file.is_open())
+		{
+			//Once file is opened, operate in it
+			json configFile = json::parse(file);
+			ret->SetName(configFile["Name"].get < std::string>());
+			ret->SetID(configFile["ID"].get<uint>());
+			glm::vec4 color;
+			color.r = configFile["AlbedoColor"][0].get<float>();
+			color.g = configFile["AlbedoColor"][1].get<float>();
+			color.b = configFile["AlbedoColor"][2].get<float>();
+			color.a = configFile["AlbedoColor"][3].get<float>();
+			if (configFile.contains("DiffuseTexturePath")) {
+				std::string TextName = configFile["DiffuseTexturePath"].get <std::string>();
+				std::list<Texture*>::iterator it = App->scene->m_TexturesLoaded.begin();
+				for (; it != App->scene->m_TexturesLoaded.end() && (*it) != nullptr; it++)
+					if (std::strcmp((*it)->GetTexturePath().data(), TextName.c_str()) == 0)
+						ret->SetTexture((*it), TextureType::DIFFUSE);
+					else
+					{
+						Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::DIFFUSE);
+						ret->SetTexture(tex, TextureType::DIFFUSE);
+					}
+			}
+			if (configFile.contains("SpecularTexturePath")) {
+				std::string TextName = configFile["SpecularTexturePath"].get <std::string>();
+				std::list<Texture*>::iterator it = App->scene->m_TexturesLoaded.begin();
+				for (; it != App->scene->m_TexturesLoaded.end() && (*it) != nullptr; it++)
+					if (std::strcmp((*it)->GetTexturePath().data(), TextName.c_str()) == 0)
+						ret->SetTexture((*it), TextureType::SPECULAR);
+					else
+					{
+						Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::SPECULAR);
+						ret->SetTexture(tex, TextureType::SPECULAR);
+					}
+			}
+			if (!App->resourceManager->isMaterialLoaded(ret->GetMaterialID())) {
+				ResourceMaterial* res = new ResourceMaterial(ret->GetMaterialID(), ret);
+				App->resourceManager->AddResource(res);
+				return res;
+			}
+			else
+				return App->resourceManager->getMaterialResource(ret->GetMaterialID());
+
+		}
+		return nullptr;
 	}
 
 	GameObject* Filesystem::Load(int GOID)
@@ -460,13 +555,14 @@ namespace Cronos {
 					//Create the component from the file's data
 					json CompMat = configFile["ComponentMaterial"];
 					MaterialComponent* MatComp = ((MaterialComponent*)(ret->CreateComponent(ComponentType::MATERIAL)));
-
-					uint matIndex = configFile["ComponentMaterial"]["MaterialIndex"].get<uint>();
-					if (matIndex < 0 || matIndex >= App->renderer3D->GetMaterialsList().size())
-						matIndex = 0;
-
-					MatComp->m_MaterialIndex = matIndex;
-					MatComp->SetMaterial(matIndex);
+					ResourceMaterial* Remat = App->resourceManager->getMaterialResource(configFile["ComponentMaterial"]["MaterialID"].get<uint>());
+					
+					//uint matIndex = configFile["ComponentMaterial"]["MaterialIndex"].get<uint>();
+					//if (matIndex < 0 || matIndex >= App->renderer3D->GetMaterialsList().size())
+					//	matIndex = 0;
+					//
+					//MatComp->m_MaterialIndex = matIndex;
+					MatComp->SetMaterial(*Remat->m_Material);
 									
 
 					//Set the color
@@ -562,7 +658,7 @@ namespace Cronos {
 	}
 
 	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
-
+		
 		m_path.make_preferred();
 		m_Path = m_path.parent_path().generic_string();
 		m_AbsolutePath = m_path.generic_string();
@@ -660,7 +756,7 @@ namespace Cronos {
 			m_Details += " ";
 			m_Details += m_AssetFullName;
 		}
-		else if (m_Extension == ".jpeg") {
+		else if (m_Extension == ".jpeg"||m_Extension==".jpg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
 			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
 
@@ -684,6 +780,11 @@ namespace Cronos {
 			m_Details += " ";
 			m_Details += m_AssetFullName;
 
+		}
+		else if (m_Extension == ".material") {
+			type = ItemType::ITEM_MATERIAL;
+			m_resMaterial = App->filesystem->LoadMaterial(m_Path.c_str());
+			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		if (type == ItemType::ITEM_FOLDER) {
 			m_IconTex = App->filesystem->GetIcon(type);
@@ -719,7 +820,11 @@ namespace Cronos {
 		else
 			refresh_time = 0.0f;
 		if (ImGui::IsItemClicked()) {
-			App->EditorGUI->m_CurrentAssetSelected = this;
+			App->EditorGUI->m_CurrentAssetClicked = this;
+			if (ImGui::IsMouseDoubleClicked(0)) {
+				App->EditorGUI->m_CurrentAssetSelected = this;
+				App->EditorGUI->CancelGameObject();
+			}
 		}
 
 		if (ImGui::IsItemClicked(1)) {
@@ -769,16 +874,40 @@ namespace Cronos {
 
 
 
-	Directories::Directories(std::filesystem::path m_Path) : m_Directories(m_Path)
+	Directories::Directories(std::filesystem::path m_Path)
 	{
+		m_Path.make_preferred();
+		m_Directories = m_Path.generic_string();
 		m_LabelDirectories = m_Directories.string();
 	}
-	void Directories::Clear() {
 
+	void Directories::Clear() 
+	{
 		m_Container;
 	}
 
-	void Filesystem::RenameFile(AssetItems* Asset, const char* newName) {
+	void Filesystem::AddAssetFile(const char* filepath,const char* name,ItemType type) 
+	{
+		Directories* TempDir = GetDirectories(filepath);
+		for (auto&currDir : TempDir->m_Container) {
+			if (currDir->GetAssetPath() == name)
+				return;
+		}
+		AssetItems* newAsset = new AssetItems(App->filesystem->GetRootPath()+"/"+name, TempDir);
+		TempDir->m_Container.push_front(newAsset);
+	}
+
+	Directories* Filesystem::GetDirectories(const char* dirPath) 
+	{
+		for (auto&dir : DirectoriesArray) {
+			if (dir->m_LabelDirectories.find(dirPath)!=std::string::npos)
+				return dir;
+		}
+		return nullptr;
+	}
+
+	void Filesystem::RenameFile(AssetItems* Asset, const char* newName) 
+	{
 
 		std::string tempDirName = Asset->GetAssetPath();
 		tempDirName.erase(tempDirName.find(Asset->m_AssetFullName));
@@ -835,6 +964,7 @@ namespace Cronos {
 			}
 		}
 	}
+	
 	void Filesystem::DeleteDirectory(const char* path) {
 
 		std::filesystem::remove(path);
@@ -860,6 +990,7 @@ namespace Cronos {
 
 			for (auto&path : p) {
 				if (path.is_directory()) {
+					
 					ID++;
 					Directories* newPath = new Directories(path.path());
 					newPath->m_ID = ID;

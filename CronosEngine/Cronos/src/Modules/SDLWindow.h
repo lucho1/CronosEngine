@@ -40,7 +40,8 @@ namespace Cronos {
 		const inline uint GetHeight()			const { return m_Data.Height;		}
 		const inline uint GetScreenSize()		const { return m_Data.ScreenSize;	}
 		const inline float GetAspectRatio()		const { return m_Data.AspectRatio;	}
-
+		uint cursorPositionX=0;
+		uint cursorPositionY=0;
 		//Setters
 		void SetTitle(const char* title);
 		//void SetAspectRatio(float AR) { m_Data.AspectRatio = AR;}

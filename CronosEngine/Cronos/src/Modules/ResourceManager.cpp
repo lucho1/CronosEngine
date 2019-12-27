@@ -40,6 +40,37 @@ namespace Cronos {
 		return false;
 	}
 
+	bool ResourceManager::isMaterialLoaded(uint resID)
+	{
+		for (int i = 0; i < m_ResourcesIDList.size(); i++) {
+			if (m_ResourcesIDList[i] == resID)
+				return true;
+		}
+
+		return false;
+	}
+
+	bool ResourceManager::isMaterialSaved(uint resID)
+	{
+		std::string filepath = App->filesystem->GetMatLib();
+		filepath += std::to_string(resID) + ".material";
+
+		if (std::filesystem::exists(filepath))
+			return true;
+
+		return false;
+	}
+
+	bool ResourceManager::saveResources()
+	{
+		for (auto& res : m_ResourceList)
+		{
+			if (res->type == ResourceType::MATERIAL)
+				App->filesystem->SaveMaterial((((ResourceMaterial*)(res))->m_Material), res->GetPath().c_str());
+		}
+		return false;
+	}
+
 	ResourceMesh* ResourceManager::getMeshResource(uint resID)
 	{
 		for (auto& res : m_ResourceList)
@@ -48,6 +79,15 @@ namespace Cronos {
 				return (ResourceMesh*)res;
 		}
 
+		return nullptr;
+	}
+	ResourceMaterial *ResourceManager::getMaterialResource(uint resID)
+	{
+		for (auto& res : m_ResourceList)
+		{
+			if (res->GetResID() == resID)
+				return (ResourceMaterial*)res;
+		}
 		return nullptr;
 	}
 }

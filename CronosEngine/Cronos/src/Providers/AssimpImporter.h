@@ -4,6 +4,7 @@
 #include "GameObject/GameObject.h"
 #include "Renderer/Textures.h"
 #include "Resources/ResourceMesh.h"
+#include "Resources/ResourceMaterial.h"
 
 #include <Assimp/include/cimport.h>
 #include <Assimp/include/cfileio.h>

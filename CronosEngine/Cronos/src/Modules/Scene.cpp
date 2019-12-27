@@ -74,6 +74,7 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
+
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
@@ -249,5 +250,57 @@ namespace Cronos {
 
 		LOG("Couldn't Found any Scene with that path! Scene not loaded", Path.c_str());
 		return false;
+	}
+
+	void Scene::DrawGuizmo(Camera * camera, GameObject * go)
+	{
+
+		glm::mat4 ViewMatrix = camera->GetViewMatrix();
+		glm::mat4 ProjMatrix = camera->GetProjectionMatrix();
+
+		ImGuizmo::BeginFrame();
+		ImGuizmo::Enable(true);
+
+		glm::mat4 model = go->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
+		glm::transpose(model);
+
+		glm::mat4 delta;
+
+		ImGuizmo::SetRect(0, 0, (float)App->window->GetWidth(), (float)App->window->GetHeight());
+		ImGuizmo::SetDrawlist();
+		ImGuizmo::Manipulate((const float*)&ViewMatrix, (const float*)&ProjMatrix, guizmo_operation, guizmo_mode, (float*)&model, (float*)&delta);
+		
+		glm::mat4 identity(1.0f);
+
+		if (ImGuizmo::IsUsing() && delta != identity)
+		{
+			glm::transpose(model);
+
+		}
+
+		//Rick Code
+
+		//if (ImGuizmo::IsUsing() && !delta.IsIdentity())
+		//{
+		//	model.Transpose();
+		//	if (go->GetParent() == nullptr)
+		//	{
+		//		go->SetLocalTransform(model);
+		//	}
+		//	else
+		//	{
+		//		float4x4 parent = go->GetParent()->GetGlobalTransformation();
+		//		parent.InverseOrthonormal();
+		//		go->SetLocalTransform(parent*model);
+		//	}
+		//}
+
+		//float3 points[8];
+		//go->global_bbox.GetCornerPoints(points);
+		//std::swap(points[2], points[5]);
+		//std::swap(points[3], points[4]);
+		//std::swap(points[4], points[5]);
+		//std::swap(points[6], points[7]);
+		//dd::box(points, dd::colors::Yellow);
 	}
 }

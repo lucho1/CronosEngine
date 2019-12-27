@@ -50,6 +50,7 @@ namespace Cronos {
 
 		Directories* m_CurrentDir = nullptr;
 		AssetItems* m_CurrentAssetSelected = nullptr;
+		AssetItems* m_CurrentAssetClicked = nullptr;
 
 
 		std::stringstream TestLog;
@@ -71,10 +72,13 @@ namespace Cronos {
 
 		void GUIDrawMainBar();
 		void GUIDrawInspectorMenu(GameObject* CurrentGameObject);
+		void GUIDrawInspectorMenu(AssetItems* CurrentAssetSelected); //To Get the Asset Inspector
+
 		void GUIDrawAssetLabelInspector();
 		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
 		void GUIDrawMeshMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
+		void GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected); // To Get the MAterial Asset;
 		void GUIDrawCameraComponentMenu(GameObject* CurrentGameObject);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();

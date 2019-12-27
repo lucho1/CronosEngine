@@ -7,6 +7,7 @@ namespace Cronos {
 	enum ResourceType {
 		NONE = -1,
 		MESH,
+		MATERIAL,
 		TEXTURE
 	};
 
@@ -20,6 +21,10 @@ namespace Cronos {
 		virtual bool Exists()=0;
 		virtual inline uint GetResID() const { return m_ResID; };
 		
+		
+		void SetPath(const std::string& filepath)							{ m_Path = filepath; }
+		inline const std::string GetPath()								    const { return m_Path; }
+		ResourceType type;
 		//template <typename T>
 		//T* GetResource()
 		//{
@@ -34,9 +39,9 @@ namespace Cronos {
 		//std::vector<Resource>m_Resources;
 
 	private:
-
-		uint m_ResID;
 		
+		std::string m_Path;
+		uint m_ResID;		
 	};
 
 }

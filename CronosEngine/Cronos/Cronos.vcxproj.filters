@@ -72,6 +72,9 @@
     <ClInclude Include="src\Core\Module.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObject\Components\CameraComponent.h">
+      <Filter>src\GameObject\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\GameObject\Components\Component.h">
       <Filter>src\GameObject\Components</Filter>
     </ClInclude>
@@ -91,6 +94,9 @@
       <Filter>src\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\CNOctree.h">
+      <Filter>src\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Helpers\Camera.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\Helpers\Color.h">
@@ -166,6 +172,9 @@
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\GLRenderer3D.h">
+      <Filter>src\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer\Material.h">
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer\Shaders.h">
@@ -1299,9 +1308,7 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObject\Components\CameraComponent.h" />
-    <ClInclude Include="src\Helpers\Camera.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
+    <ClInclude Include="src\Resources\ResourceMaterial.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1309,6 +1316,9 @@
     </ClCompile>
     <ClCompile Include="src\Core\Main.cpp">
       <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Components\CameraComponent.cpp">
+      <Filter>src\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp">
       <Filter>src\GameObject\Components</Filter>
@@ -1326,6 +1336,9 @@
       <Filter>src\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\CNOctree.cpp">
+      <Filter>src\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Helpers\Camera.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\Helpers\Color.cpp">
@@ -1400,6 +1413,9 @@
     <ClCompile Include="src\Renderer\GLRenderer3D.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Renderer\Material.cpp">
+      <Filter>src\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Renderer\Shaders.cpp">
       <Filter>src\Renderer</Filter>
     </ClCompile>
@@ -1421,8 +1437,6 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObject\Components\CameraComponent.cpp" />
-    <ClCompile Include="src\Helpers\Camera.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
+    <ClCompile Include="src\Resources\ResourceMaterial.cpp" />
   </ItemGroup>
 </Project>

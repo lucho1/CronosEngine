@@ -278,7 +278,14 @@ namespace Cronos {
 			//Material Textures
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
 				CnMat->SetTexture(LoadTextures(AssMat, TextureType(i), path), TextureType(i));
-			
+
+			App->filesystem->SaveMaterial(CnMat,path.c_str());
+			ResourceMaterial* res = new ResourceMaterial(CnMat->GetMaterialID(), CnMat);
+			App->resourceManager->AddResource(res);		
+			std::string Data = path;
+			Data += "/" + res->m_Material->GetMatName() + ".material";
+			res->SetPath(Data);
+			App->filesystem->AddAssetFile(path.c_str(), res->GetPath().c_str(), ItemType::ITEM_MATERIAL);
 			m_SceneCronosMaterials.push_back(CnMat);
 		}
 	}

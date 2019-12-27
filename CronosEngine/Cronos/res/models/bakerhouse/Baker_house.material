@@ -1,0 +1,12 @@
+{
+  "AlbedoColor": [
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "DiffuseTextureID": 48,
+  "DiffuseTexturePath": "res/models/bakerhouse/Baker_house.png",
+  "ID": 80281511,
+  "Name": "Baker_house"
+}
