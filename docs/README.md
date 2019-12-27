@@ -13,15 +13,25 @@ We used [SDL](https://www.libsdl.org/), [SDL_Mixer](https://www.libsdl.org/proje
 **[TODO]** Add 1min video
 **[TODO]** Add screenshots
 
-## Innovating Features
+## Innovating Features & Functionalities
+* Shader System
 * Lighting algorithm improved, better than Phong (Blinn-Phong) - Test the difference with Spotlights!
-* Engine's camera speed control with mouse middle button
 * Material System with shader rendering
 * ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
-* GameObjects Copy/Paste with CTRL+C/CTRL+V
-* Resource Manager: All data (not scene) saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication.
-* All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
-* Extensive Filesystem with good UI/UX Functionalities
+
+* Timing: Play/Pause/Stop & x2/x0.5 speed!
+* Engine's camera speed control with mouse middle button (Unity-like!)
+
+* GameObjects:
+   * Copy/Paste with CTRL+C/CTRL+V & Deletion
+   * Hierarchy system
+   * Tranformations & AA/OO BBs
+   
+* Mesh & Textures importing
+* Resource Manager: All data saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication. All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
+* Extensive Filesystem with good UI/UX Functionalities (asset finder, good navigation system, drag & drop...)
+* Scene Serialization
+
 * Many different types of primitives creation (check it out!)
 * OpenGL Automatic Error Handler and logger (check out Errors.h!) and with possibility of calling GLCall() for every OGL Function to get possible errors with OGL functions/methods (through glGetError()) with extensive information
 * Extensive System Info Read (on GPU, CPU, Memory and Software!)
@@ -44,6 +54,7 @@ Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
 
 ### Individual Work
 * Lucho Suaya: In charge of Engine's main systems (core functionality, game objects & components, camera, octrees optimization...) & Rendering workflow (lighting and material system, shaders sub-system...).
+
 * Roger Leon: In charge of the whole UI, entire engine's filesystem and resource manager & serialization and engine's aspect as well as handeling several game objects' functionality as well as hierarchies (parenting), UX functionality like copy/paste, delete...
 
 Both have been involved in the system to load geometry and textures in the engine and primitives' creation.
