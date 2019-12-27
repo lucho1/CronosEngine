@@ -53,9 +53,9 @@ Cronos Engine is developed by **LuchoSuaya** ([@lucho1](https://github.com/lucho
 Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
 
 ### Individual Work
-* Lucho Suaya: In charge of Engine's main systems (core functionality, game objects & components, camera, octrees optimization...) & Rendering workflow (lighting and material system, shaders sub-system...).
+* **Lucho Suaya**: In charge of Engine's main systems (core functionality, game objects & components, camera, octrees optimization...) & Rendering workflow (lighting and material system, shaders sub-system...).
 
-* Roger Leon: In charge of the whole UI, entire engine's filesystem and resource manager & serialization and engine's aspect as well as handeling several game objects' functionality as well as hierarchies (parenting), UX functionality like copy/paste, delete...
+* **Roger Leon**: In charge of the whole UI, entire engine's filesystem and resource manager & serialization and engine's aspect as well as handeling several game objects' functionality as well as hierarchies (parenting), UX functionality like copy/paste, delete...
 
 Both have been involved in the system to load geometry and textures in the engine and primitives' creation.
 
