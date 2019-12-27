@@ -35,6 +35,6 @@ Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
 
 ## License
 **Copyright (c) 2019 Lucho Suaya Leiro and Roger Leon Borras**
-Licensed under the **[Apache License](LICENSE.txt)**
+Licensed under the **[Apache License](https://github.com/lucho1/CronosEngine/blob/master/docs/LICENSE)**.
 
 Cronos Engine is Licensed under Apache License (http://www.apache.org/licenses/), you'll find the details in the License file in Github repository or in Engine's folder.
