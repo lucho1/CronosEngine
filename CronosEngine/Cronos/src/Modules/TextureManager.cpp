@@ -2,6 +2,7 @@
 
 #include "TextureManager.h"
 #include "Application.h"
+#include "Scene.h"
 
 #include "DevIL/include/ilut.h"
 

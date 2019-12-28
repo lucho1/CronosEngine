@@ -1,7 +1,11 @@
 #include "Providers/cnpch.h"
 #include "GameObject.h"
 #include "Application.h"
+
 #include "Modules/Filesystem.h"
+#include "Renderer/GLRenderer3D.h"
+#include "ImGui/ImGuiLayer.h"
+
 #include "Components/TransformComponent.h"
 #include "Components/MaterialComponent.h"
 #include "Components/CameraComponent.h"

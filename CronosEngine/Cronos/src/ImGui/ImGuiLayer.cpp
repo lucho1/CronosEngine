@@ -9,8 +9,16 @@
 #include "imnodes.h"
 
 #include "Core/Application.h"
+
+#include "Modules/Scene.h"
+#include "Modules/TextureManager.h"
 #include "Modules/SDLWindow.h"
+#include "Modules/Input.h"
+#include "Modules/EngineCamera.h"
+
+#include "Renderer/GLRenderer3D.h"
 #include "Renderer/Buffers.h"
+
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"

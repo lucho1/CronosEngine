@@ -3,6 +3,13 @@
 
 #include "Application.h"
 
+#include "Filesystem.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Renderer/GLRenderer3D.h"
+#include "EngineCamera.h"
+#include "Input.h"
+#include "TextureManager.h"
+
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
 
@@ -28,21 +35,21 @@ namespace Cronos {
 		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
 
-		//Water Shader & 
+		//Water Shader &
 		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
 
 		//Water Material
 		m_WaveMaterial = new Material();
 		m_WaveMaterial->SetName("Water Wave Material");
 		m_WaveMaterial->SetShader(*m_WaterShader);
-		
+
 		//Water Textures & Color
 		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
 		m_WaveSpecText = App->textureManager->CreateTexture("res/models/waterPlane/specwater.jpg", TextureType::SPECULAR);
 		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
 		m_WaveMaterial->SetTexture(m_WaveSpecText, TextureType::SPECULAR);
-		m_WaveMaterial->SetColor(glm::vec4(1.0f));		
-		
+		m_WaveMaterial->SetColor(glm::vec4(1.0f));
+
 		(*m_Wave->m_Childs.begin())->GetComponent<MaterialComponent>()->SetMaterial(*m_WaveMaterial);
 
 		//Water timer for movement calc
@@ -52,7 +59,7 @@ namespace Cronos {
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
-		
+
 		ToCopy = nullptr;
 		return ret;
 	}
@@ -95,7 +102,8 @@ namespace Cronos {
 	{
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
-		GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+
+	/*	GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
@@ -138,6 +146,7 @@ namespace Cronos {
 
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
+		*/
 
 		//Game Objects update
 		for (auto element : m_GameObjects)

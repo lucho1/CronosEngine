@@ -5,6 +5,7 @@
 #include "Providers/Globals.h"
 #include "GL_Light.h"
 #include "Helpers/Camera.h"
+#include "Helpers/CNOctree.h"
 
 #include "GameObject/Components/MaterialComponent.h"
 #include "GameObject/Components/TransformComponent.h"

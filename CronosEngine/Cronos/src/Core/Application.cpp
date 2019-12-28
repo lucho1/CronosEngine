@@ -2,6 +2,18 @@
 
 #include "Application.h"
 
+#include "Modules/SDLWindow.h"
+#include "Modules/Input.h"
+#include "Modules/Audio.h"
+#include "Modules/Scene.h"
+#include "Modules/EngineCamera.h"
+#include "Modules/Filesystem.h"
+#include "Modules/TextureManager.h"
+#include "Modules/ResourceManager.h"
+
+#include "Renderer/GLRenderer3D.h"
+#include "ImGui/ImGuiLayer.h"
+
 #include "mmgr/mmgr.h"
 
 namespace Cronos {
