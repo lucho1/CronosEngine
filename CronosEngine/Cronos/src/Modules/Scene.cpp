@@ -292,9 +292,8 @@ namespace Cronos {
 		return false;
 	}
 
-	void Scene::DrawGuizmo(Camera * camera, GameObject * go)
+	void Scene::DrawGuizmo(Camera* camera, GameObject* go)
 	{
-
 		glm::mat4 ViewMatrix = camera->GetViewMatrix();
 		glm::mat4 ProjMatrix = camera->GetProjectionMatrix();
 
@@ -302,11 +301,12 @@ namespace Cronos {
 		ImGuizmo::Enable(true);
 
 		glm::mat4 model = go->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
-		glm::transpose(model);
-
 		glm::mat4 delta;
 
-		ImGuizmo::SetRect(0, 0, (float)App->window->GetWidth(), (float)App->window->GetHeight());
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuizmo::SetRect(-200, -200, (float)App->window->GetWidth(), (float)App->window->GetHeight());
+
+
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::Manipulate((const float*)&ViewMatrix, (const float*)&ProjMatrix, guizmo_operation, guizmo_mode, (float*)&model, (float*)&delta);
 
@@ -314,16 +314,19 @@ namespace Cronos {
 
 		if (ImGuizmo::IsUsing() && delta != identity)
 		{
-			glm::transpose(model);
-			glm::vec3 Position;
-			glm::vec3 Scale;
-			glm::vec3 Rotation;
-			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), glm::value_ptr(Position), glm::value_ptr(Rotation), glm::value_ptr(Scale));
+			float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), matrixTranslation, matrixRotation, matrixScale);
 
-			bool a = true;
-			go->GetComponent<TransformComponent>()->SetPosition(Position);
-			go->GetComponent<TransformComponent>()->SetScale(Scale);
-			go->GetComponent<TransformComponent>()->SetOrientation(Rotation);
+			/*float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+			ImGuizmo::DecomposeMatrixToComponents(gizmoMatrix.m16, matrixTranslation, matrixRotation, matrixScale);
+			ImGui::InputFloat3("Tr", matrixTranslation, 3);
+			ImGui::InputFloat3("Rt", matrixRotation, 3);
+			ImGui::InputFloat3("Sc", matrixScale, 3);*/
+
+			glm::vec3 Rotation = glm::vec3(matrixRotation[0], matrixRotation[1], matrixRotation[2]);
+			go->GetComponent<TransformComponent>()->SetPosition(glm::vec3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
+			go->GetComponent<TransformComponent>()->SetScale(glm::vec3(matrixScale[0], matrixScale[1], matrixScale[2]));
+			go->GetComponent<TransformComponent>()->Rotate(glm::vec3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
 
 		}
 
