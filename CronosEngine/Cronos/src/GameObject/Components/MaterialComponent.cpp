@@ -2,8 +2,11 @@
 
 #include "Application.h"
 #include "Modules/EngineCamera.h"
+#include "ImGui/ImGuiLayer.h"
 #include "MaterialComponent.h"
 #include "TransformComponent.h"
+
+#include "Modules/Scene.h"
 
 namespace Cronos
 {

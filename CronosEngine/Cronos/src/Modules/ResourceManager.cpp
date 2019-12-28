@@ -2,6 +2,8 @@
 
 #include "Core/Application.h"
 
+#include "Filesystem.h"
+
 #include "ResourceManager.h"
 #include "Resources/Resource.h"
 #include "Resources/ResourceMesh.h"

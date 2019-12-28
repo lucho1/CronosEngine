@@ -7,8 +7,8 @@
 #include "GameObject/Components/TransformComponent.h"
 #include "Resources/ResourceMesh.h"
 #include "Modules/ResourceManager.h"
-
-
+#include "Modules/Scene.h"
+#include "ImGui/ImGuiLayer.h"
 
 #include <fstream>
 

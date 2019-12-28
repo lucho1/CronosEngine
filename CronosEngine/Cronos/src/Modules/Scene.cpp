@@ -3,6 +3,15 @@
 
 #include "Application.h"
 
+#include "Filesystem.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Renderer/GLRenderer3D.h"
+#include "EngineCamera.h"
+#include "Input.h"
+#include "TextureManager.h"
+
+#include "SDLWindow.h"
+
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
 
@@ -34,7 +43,7 @@ namespace Cronos {
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		//m_GameObjects.push_back(m_StreetModel);
-		
+
 		ToCopy = nullptr;
 		return ret;
 	}
@@ -78,7 +87,7 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
-		/*GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+	/*	GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
 		m_WaterShader->Bind();
 
 		// Wave Calculations ----------------
@@ -280,7 +289,7 @@ namespace Cronos {
 		ImGuizmo::SetRect(0, 0, (float)App->window->GetWidth(), (float)App->window->GetHeight());
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::Manipulate((const float*)&ViewMatrix, (const float*)&ProjMatrix, guizmo_operation, guizmo_mode, (float*)&model, (float*)&delta);
-		
+
 		glm::mat4 identity(1.0f);
 
 		if (ImGuizmo::IsUsing() && delta != identity)
@@ -293,7 +302,7 @@ namespace Cronos {
 
 			bool a = true;
 			go->GetComponent<TransformComponent>()->SetPosition(Position);
-			go->GetComponent<TransformComponent>()->SetScale(Scale);			
+			go->GetComponent<TransformComponent>()->SetScale(Scale);
 			go->GetComponent<TransformComponent>()->SetOrientation(Rotation);
 
 		}

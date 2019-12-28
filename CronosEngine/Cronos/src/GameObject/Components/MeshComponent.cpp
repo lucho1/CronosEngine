@@ -1,6 +1,7 @@
 #include "Providers/cnpch.h"
 #include "MeshComponent.h"
 #include "TransformComponent.h"
+#include "Renderer/GLRenderer3D.h"
 
 #include "Application.h"
 
