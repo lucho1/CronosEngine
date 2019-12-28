@@ -1497,12 +1497,11 @@ namespace Cronos {
 			//ImGui::AlignTextToFramePadding();
 			ImGui::SameLine();
 			ImGui::Text("\n   Metallic/Specular"); ImGui::SameLine();
-			static float SpecIntensity = 1.0f;
 			static int  test2 = ImGui::GetCursorPosY();
 			ImGui::SetCursorPosY(test2 + 13);
 
 			//Mat Shine
-			static float MatShine = Cn_Material->GetShininess();
+			float MatShine = Cn_Material->GetShininess();
 			ImGui::NewLine();
 			ImGui::SetNextItemWidth(100);
 			if (ImGui::SliderFloat("Shininess", &MatShine, 0.5f, 256.0f, "%.2f", 2.0f))

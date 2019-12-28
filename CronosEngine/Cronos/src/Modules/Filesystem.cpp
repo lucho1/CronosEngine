@@ -158,10 +158,14 @@ namespace Cronos {
 
 		aux_JSONFile["Name"] = material->GetMatName().c_str();
 		aux_JSONFile["ID"] = material->GetMaterialID();
+		
+		aux_JSONFile["Shininess"] = material->GetMaterialShininess();
+		
 		aux_JSONFile["AlbedoColor"][0] = material->GetMaterialColor().r;
 		aux_JSONFile["AlbedoColor"][1] = material->GetMaterialColor().g;
 		aux_JSONFile["AlbedoColor"][2] = material->GetMaterialColor().b;
 		aux_JSONFile["AlbedoColor"][3] = material->GetMaterialColor().a;
+
 		if (material->GetTextureType(TextureType::DIFFUSE) != nullptr) {
 			aux_JSONFile["DiffuseTexturePath"] = material->GetTextureType(TextureType::DIFFUSE)->GetTexturePath();
 			aux_JSONFile["DiffuseTextureID"] = material->GetTextureType(TextureType::DIFFUSE)->GetTextureID();
@@ -416,11 +420,16 @@ namespace Cronos {
 			json configFile = json::parse(file);
 			ret->SetName(configFile["Name"].get < std::string>());
 			ret->SetID(configFile["ID"].get<uint>());
+			
 			glm::vec4 color;
 			color.r = configFile["AlbedoColor"][0].get<float>();
 			color.g = configFile["AlbedoColor"][1].get<float>();
 			color.b = configFile["AlbedoColor"][2].get<float>();
 			color.a = configFile["AlbedoColor"][3].get<float>();
+			float shininess = configFile["Shininess"].get<float>();
+
+			ret->SetColor(color);
+			ret->SetShininess(shininess);
 
 			if (configFile.contains("DiffuseTexturePath"))
 			{

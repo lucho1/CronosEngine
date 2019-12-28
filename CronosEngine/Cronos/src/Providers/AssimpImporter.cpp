@@ -274,13 +274,17 @@ namespace Cronos {
 			//Material Color
 			aiColor3D matColor = aiColor3D(0, 0, 0);
 			float alphaValue = 1.0f;
+			float ShininessValue = 1.0f;
 			AssMat->Get(AI_MATKEY_COLOR_AMBIENT, matColor);
 			AssMat->Get(AI_MATKEY_OPACITY, alphaValue);
+			AssMat->Get(AI_MATKEY_SHININESS, ShininessValue);
 
 			if (matColor.r >= 0.01f || matColor.g >= 0.01f || matColor.b >= 0.01f)
 				CnMat->SetColor({ matColor.r, matColor.g, matColor.b, alphaValue });
 			else
 				CnMat->SetColor(glm::vec4(glm::vec3(1.0f), alphaValue));
+			
+			CnMat->SetShininess(ShininessValue);
 			
 			//Material Textures
 			for (uint i = 1; i < (uint)TextureType::MAX_TEXTURES; i++)
