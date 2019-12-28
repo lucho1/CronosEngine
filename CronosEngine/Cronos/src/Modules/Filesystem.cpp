@@ -4,10 +4,16 @@
 #include "Application.h"
 #include "TextureManager.h"
 #include "PhysFS/include/physfs.h"
+
 #include "GameObject/Components/TransformComponent.h"
+
 #include "Resources/ResourceMesh.h"
+
 #include "Modules/ResourceManager.h"
 #include "Modules/Scene.h"
+
+#include "Renderer/GLRenderer3D.h"
+
 #include "ImGui/ImGuiLayer.h"
 
 #include <fstream>

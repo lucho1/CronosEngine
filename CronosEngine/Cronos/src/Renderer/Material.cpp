@@ -3,6 +3,8 @@
 
 #include "Application.h"
 #include "GLRenderer3D.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Modules/Scene.h"
 
 #include "GameObject/Components/TransformComponent.h"
 

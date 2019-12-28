@@ -4,6 +4,7 @@
 #include "Application.h"
 
 #include "GameObject/GameObject.h"
+#include "Renderer/GLRenderer3D.h"
 #include "TransformComponent.h"
 
 namespace Cronos

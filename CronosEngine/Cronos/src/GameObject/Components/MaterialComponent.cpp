@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "Modules/EngineCamera.h"
+#include "Renderer/GLRenderer3D.h"
 #include "ImGui/ImGuiLayer.h"
 #include "MaterialComponent.h"
 #include "TransformComponent.h"
