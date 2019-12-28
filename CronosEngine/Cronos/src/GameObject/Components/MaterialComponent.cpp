@@ -6,6 +6,8 @@
 #include "MaterialComponent.h"
 #include "TransformComponent.h"
 
+#include "Renderer/GLRenderer3D.h"
+
 #include "Modules/Scene.h"
 
 namespace Cronos

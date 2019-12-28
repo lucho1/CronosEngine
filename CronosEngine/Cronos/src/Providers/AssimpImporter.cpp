@@ -6,6 +6,8 @@
 #include "Modules/Filesystem.h"
 #include "Modules/Scene.h"
 #include "Modules/TextureManager.h"
+#include "Modules/ResourceManager.h"
+#include "Renderer/GLRenderer3D.h"
 
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/MeshComponent.h"
