@@ -415,31 +415,55 @@ namespace Cronos {
 			color.g = configFile["AlbedoColor"][1].get<float>();
 			color.b = configFile["AlbedoColor"][2].get<float>();
 			color.a = configFile["AlbedoColor"][3].get<float>();
-			if (configFile.contains("DiffuseTexturePath")) {
+
+			if (configFile.contains("DiffuseTexturePath"))
+			{
 				std::string TextName = configFile["DiffuseTexturePath"].get <std::string>();
 				std::list<Texture*>::iterator it = App->scene->m_TexturesLoaded.begin();
+				
+				bool textureLoaded = false;
 				for (; it != App->scene->m_TexturesLoaded.end() && (*it) != nullptr; it++)
+				{
 					if (std::strcmp((*it)->GetTexturePath().data(), TextName.c_str()) == 0)
-						ret->SetTexture((*it), TextureType::DIFFUSE);
-					else
 					{
-						Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::DIFFUSE);
-						ret->SetTexture(tex, TextureType::DIFFUSE);
-					}
+						textureLoaded = true;
+						ret->SetTexture((*it), TextureType::DIFFUSE);
+						break;
+					}					
+				}
+
+				if (!textureLoaded)
+				{
+					Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::DIFFUSE);
+					ret->SetTexture(tex, TextureType::DIFFUSE);
+				}
+
 			}
-			if (configFile.contains("SpecularTexturePath")) {
+			if (configFile.contains("SpecularTexturePath"))
+			{
 				std::string TextName = configFile["SpecularTexturePath"].get <std::string>();
 				std::list<Texture*>::iterator it = App->scene->m_TexturesLoaded.begin();
+				
+				bool textureLoaded = false;
 				for (; it != App->scene->m_TexturesLoaded.end() && (*it) != nullptr; it++)
+				{
 					if (std::strcmp((*it)->GetTexturePath().data(), TextName.c_str()) == 0)
-						ret->SetTexture((*it), TextureType::SPECULAR);
-					else
 					{
-						Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::SPECULAR);
-						ret->SetTexture(tex, TextureType::SPECULAR);
+						textureLoaded = true;
+						ret->SetTexture((*it), TextureType::SPECULAR);
+						break;
 					}
+				}
+
+				if (!textureLoaded)
+				{
+					Texture* tex = App->textureManager->CreateTexture(TextName.c_str(), TextureType::SPECULAR);
+					ret->SetTexture(tex, TextureType::SPECULAR);
+				}
 			}
-			if (!App->resourceManager->isMaterialLoaded(ret->GetMaterialID())) {
+
+			if (!App->resourceManager->isMaterialLoaded(ret->GetMaterialID()))
+			{
 				ResourceMaterial* res = new ResourceMaterial(ret->GetMaterialID(), ret);
 				App->resourceManager->AddResource(res);
 				return res;
