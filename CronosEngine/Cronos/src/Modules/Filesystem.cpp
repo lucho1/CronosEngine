@@ -657,7 +657,7 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
+	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype, bool beloadedLater): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
 		
 		m_path.make_preferred();
 		m_Path = m_path.parent_path().generic_string();
@@ -673,6 +673,8 @@ namespace Cronos {
 
 		m_AssetID = App->m_RandomNumGenerator.GetIntRN();
 
+
+
 		if (m_AssetFullName.length() > 10) {
 			m_AssetShortName.erase(10);
 			m_AssetShortName += "...";
@@ -681,6 +683,12 @@ namespace Cronos {
 			m_Extension = m_path.extension().string();
 			m_AssetNameNoExtension.erase(m_AssetNameNoExtension.find(m_Extension));
 		}
+
+		if (beloadedLater) {
+			type = mtype;
+			return;
+		}
+
 		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
 			m_IconTex = App->filesystem->GetIcon(type);
@@ -794,7 +802,6 @@ namespace Cronos {
 		if (type == ItemType::ITEM_FOLDER) {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
-
 	};
 	void AssetItems::Clear() {
 		//delete folderDirectory;

@@ -36,7 +36,7 @@ namespace Cronos {
 	public:
 		friend class ImGuiLayer;
 
-		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE);
+		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE,bool beloadedLater = false);
 		ItemType type = ItemType::ITEM_NONE;
 
 		std::string m_AssetShortName;
