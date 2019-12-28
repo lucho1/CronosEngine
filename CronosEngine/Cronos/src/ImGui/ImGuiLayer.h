@@ -5,6 +5,7 @@
 #include "Modules/Filesystem.h"
 #include "GameObject/GameObject.h"
 #include "Providers/SystemInfo.h"
+#include "ImGui/TextEditor.h"
 
 struct ImGuiTextBuffer;
 
@@ -68,6 +69,7 @@ namespace Cronos {
 		float CurrentSpeedScrollLabel = 0.35;
 		float MaxScrollSpeedLabel = 0.35f;
 		bool StartScrolllabel = false;
+		bool modifingShader = false;
 
 	private:
 
@@ -116,8 +118,9 @@ namespace Cronos {
 
 	private:
 
-	
-
+		TextEditor editor;
+		bool ChangePalette;
+		bool ModifyScript = false;
 		GameObject* Draging;
 		FrameBuffer* m_SceneWindow = nullptr;
 

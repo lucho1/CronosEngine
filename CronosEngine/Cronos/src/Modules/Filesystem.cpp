@@ -956,15 +956,38 @@ namespace Cronos {
 
 		}
 	}
+	//bool RecursiveSerchForExistingDir(Directories* currentDir,const char* newName) {
+
+	//	for (auto& container : currentDir->m_Container) {
+	//		RecursiveSerchForExistingDir(container,)
+	//	}
+	//}
 
 	void Filesystem::CreateNewDirectory(Directories* currentDir,const char* newName) {
 
 		std::string tempDirName = currentDir->m_LabelDirectories +"/"+ newName;
+		//if (RecursiveSerchForExistingDir(currentDir, newName)) {
+
+		//}
+		for (auto& container : currentDir->m_Container) {
+
+			if (container->GetAssetPath()==newName) {
+				std::string temp = newName;
+				if (temp.find_last_of("0123456789") != std::string::npos) {
+					int a = temp.at(1);
+				}
+				else
+					tempDirName += std::to_string(1);
+			}
+		}
 		std::filesystem::create_directory(tempDirName);
 		Directories* TempDir = new Directories(tempDirName);
 		for (auto& a : DirectoriesArray) {
 			if (a==currentDir) {
-				a->childs.push_back(TempDir);
+				AssetItems* t = new AssetItems(TempDir->m_Directories, TempDir, ItemType::ITEM_FOLDER);
+				currentDir->m_Container.push_front(t);
+				a->childs.push_back(TempDir);				
+				TempDir->SetParentDirectory(a);
 				break;
 			}
 		}

@@ -7,6 +7,7 @@
 #include "OpenGL/imgui_impl_opengl3.h"
 
 #include "imnodes.h"
+#include <shellapi.h>
 
 #include "Core/Application.h"
 #include "Modules/SDLWindow.h"
@@ -14,6 +15,7 @@
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
+
 
 #include <glad/glad.h>
 
@@ -52,7 +54,55 @@ namespace Cronos {
 			ImGui::EndTooltip();
 		}
 	}
+	void RightOptions() {
+		if (ImGui::BeginMenu("Create")) {
+			if (ImGui::BeginMenu ("Folder")) {
+				static char buf1[30];
+				sprintf_s(buf1, "%s", "");
+				if (ImGui::InputText("###", buf1,30)) {
+					if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+						App->filesystem->CreateNewDirectory(App->EditorGUI->m_CurrentDir, buf1);
+						ImGui::EndMenu();
+						ImGui::EndMenu();
+						ImGui::CloseCurrentPopup();
+						return;								
+					}
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Shader"))
+			{
 
+			}
+			if (ImGui::MenuItem("Material"))
+			{
+
+			}
+
+			ImGui::EndMenu();
+			
+		}		
+		if (ImGui::MenuItem("Show in Explorer")) {
+			ShellExecuteA(NULL,"open",App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(),NULL,NULL,SW_SHOWDEFAULT);		
+		}
+		ImGui::Separator();
+		if (ImGui::MenuItem("Copy Path")) {
+			OpenClipboard(0);
+			EmptyClipboard();
+			
+			HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, App->EditorGUI->m_CurrentDir->m_LabelDirectories.size());
+			if (!hg) {
+				CloseClipboard();
+				return;
+			}
+			memcpy(GlobalLock(hg), App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(), App->EditorGUI->m_CurrentDir->m_LabelDirectories.size());
+			GlobalUnlock(hg);
+			SetClipboardData(CF_TEXT, hg);
+			CloseClipboard();
+			GlobalFree(hg);
+		}
+
+	}
 	void RightOptions(GameObject* currentGameObject) {
 
 		std::string ID = std::to_string(currentGameObject->GetGOID());
@@ -175,6 +225,12 @@ namespace Cronos {
 		m_CurrentAssetSelected = nullptr;
 		m_CurrentAssetClicked = nullptr;
 		Draging = nullptr;
+		editor.SetPalette(TextEditor::GetDarkPalette());
+		auto lang = TextEditor::LanguageDefinition::CPlusPlus();
+		editor.SetLanguageDefinition(lang);
+		modifingShader = false;
+		ChangePalette = true;
+		ModifyScript = false;
 		return true;
 	}
 
@@ -867,36 +923,67 @@ namespace Cronos {
 			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_SHADER) {
 				GUIDrawScriptingEditor(CurrentAssetSelected);
 			}
+			else {
+				ModifyScript = false;
+				if (ChangePalette == true) {
+					editor.SetPalette(TextEditor::GetDeactivatedPalette());
+					ChangePalette = false;
+				}
+			}
 		}
 		ImGui::End();
 
 	}
 	void ImGuiLayer::GUIDrawScriptingEditor(AssetItems* CurrentAssetSelected) 
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 20));
+
 		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput|ImGuiInputTextFlags_CtrlEnterForNewLine;
-		static bool Modify = false;
-		static char buf1[1024*16];
+		
 		static char name[50];
+		if (!modifingShader) {
+			//static char* buferShader = new char[CurrentAssetSelected->m_Shader->GetShaderTextFormat().length() + 1];
+			//strcpy(buferShader, CurrentAssetSelected->m_Shader->GetShaderTextFormat().c_str());
+			editor.SetText(CurrentAssetSelected->m_Shader->GetShaderTextFormat());
+			modifingShader = true;
+		}
+
 		strcpy(name, CurrentAssetSelected->GetAssetPath().c_str());
-		strcpy(buf1, CurrentAssetSelected->m_Shader->GetShaderTextFormat());
+		
 		ImGui::Text(name);
 		ImGui::Separator();
 		if (ImGui::Button("Modify")) {
-			Modify = !Modify;
+			ModifyScript = !ModifyScript;
+			ChangePalette = true;
 		}
-		if (!Modify) {
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
-			flags |= ImGuiInputTextFlags_ReadOnly;
-		}
-		else {
-			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
-			flags &= ~ImGuiInputTextFlags_ReadOnly;
-		}
-		ImGui::InputTextMultiline("##source", buf1, IM_ARRAYSIZE(buf1), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 50), flags);
-		ImGui::TextColored(ImVec4(0.00f, 1.00f, 1.00f, 1.00f), "hello");
+		ImGui::SameLine(ImGui::GetWindowWidth() - 100);
 		ImGui::Button("Compile");
-		ImGui::PopStyleColor();
+
+		if (!ModifyScript) {
+			//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
+			if (ChangePalette == true) {
+				editor.SetPalette(TextEditor::GetDeactivatedPalette());
+				ChangePalette = false;
+			}
+		}
+		else
+			if (ChangePalette == true) {
+				editor.SetPalette(TextEditor::GetDarkPalette());
+				ChangePalette = false;
+			}
+		//else {
+		//	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+		//	flags &= ~ImGuiInputTextFlags_ReadOnly;
+		//}
+		ImGui::SetNextWindowContentWidth(10.0f);
+		editor.SetReadOnly(!ModifyScript);
+		editor.SetHandleMouseInputs(ModifyScript);
+		editor.Render("TextEditor");
+		//ImGui::InputTextMultiline("##source", buf1, IM_ARRAYSIZE(buf1), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 50), flags);
+		//ImGui::TextColored(ImVec4(0.00f, 1.00f, 1.00f, 1.00f), "hello");
+		
+		//ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 	}
 
@@ -1405,7 +1492,7 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawAssetPanel()
 	{
 		ImGui::Begin("Project", &ShowAssetMenu, ImGuiWindowFlags_MenuBar );
-		{
+		{			
 			if (ImGui::BeginMenuBar())
 			{
 				if (ImGui::BeginMenu("Create"))
@@ -1440,10 +1527,10 @@ namespace Cronos {
 
 			// right
 			ImGui::BeginGroup();
-
+		
 			int testa = ImGui::GetWindowWidth();
 			ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-
+		
 			std::string LabelFolder= m_CurrentDir->m_Directories.filename().string();
 			ImGui::Text("%s", LabelFolder.c_str());
 
@@ -1512,11 +1599,21 @@ namespace Cronos {
 				//ImGui::Button(a.m_Elements.c_str());
 			}
 
-
+		
 
 			ImGui::PopStyleColor();
 
 			ImGui::EndChild();
+
+			if (ImGui::IsItemClicked(1)) {
+				ImGui::OpenPopup("Options");
+			}
+			if (ImGui::BeginPopup("Options")) {
+
+				RightOptions();
+				ImGui::EndPopup();
+			}
+
 			ImGui::EndGroup();
 
 		}

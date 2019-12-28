@@ -24,7 +24,7 @@ namespace Cronos
 		void SetUniform1f(const std::string& name, float value);
 		void SetUniformBool(const std::string& name, bool value);
 
-		const char* GetShaderTextFormat() const					 { return ShaderTextModifiable.c_str(); }
+		std::string GetShaderTextFormat() const					 { return ShaderTextModifiable.c_str(); }
 
 	private:
 

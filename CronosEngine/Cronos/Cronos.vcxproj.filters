@@ -1309,6 +1309,7 @@
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
     <ClInclude Include="src\Resources\ResourceMaterial.h" />
+    <ClInclude Include="src\ImGui\TextEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1438,5 +1439,6 @@
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
     <ClCompile Include="src\Resources\ResourceMaterial.cpp" />
+    <ClCompile Include="src\ImGui\TextEditor.cpp" />
   </ItemGroup>
 </Project>
