@@ -27,11 +27,11 @@ namespace Cronos {
 			math::AABB aabb;
 			aabb.SetNegativeInfinity(); //What if I comment this??
 
-			for (auto child : GetParent()->m_Childs)
-				aabb.Enclose(child->GetAABB());
-
 			if (GetParent()->GetComponent<MeshComponent>())
-				aabb.Enclose(GetParent()->GetAABB());
+				aabb.Enclose(GetParent()->GetOOBB());
+
+			for (auto child : GetParent()->m_Childs)
+				aabb.Enclose(child->GetAABB());		
 
 			GetParent()->SetAABB(aabb);
 		}
