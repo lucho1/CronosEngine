@@ -6,8 +6,10 @@
 #include "GameObject/GameObject.h"
 #include "GameObject/PrimitiveGameObject.h"
 #include "Renderer/Shaders.h"
-
+#include "ImGui/ImGuizmo.h"
 #include "Providers/AssimpImporter.h"
+#include "GameObject/Components/CameraComponent.h"
+#include "GameObject/Components/TransformComponent.h"
 
 #include "Helpers/CNOctree.h"
 
@@ -52,6 +54,10 @@ namespace Cronos {
 		std::list<Texture*> m_TexturesLoaded;
 
 		std::string m_SceneName;
+
+		ImGuizmo::OPERATION guizmo_operation = ImGuizmo::TRANSLATE;
+		ImGuizmo::MODE      guizmo_mode = ImGuizmo::WORLD;
+		void DrawGuizmo(Camera* camera, GameObject* go);
 
 	private:
 

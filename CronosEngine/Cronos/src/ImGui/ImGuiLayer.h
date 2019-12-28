@@ -5,6 +5,7 @@
 #include "Modules/Filesystem.h"
 #include "GameObject/GameObject.h"
 #include "Providers/SystemInfo.h"
+#include "ImGui/TextEditor.h"
 
 struct ImGuiTextBuffer;
 
@@ -50,6 +51,7 @@ namespace Cronos {
 
 		Directories* m_CurrentDir = nullptr;
 		AssetItems* m_CurrentAssetSelected = nullptr;
+		AssetItems* m_CurrentAssetClicked = nullptr;
 
 
 		std::stringstream TestLog;
@@ -64,6 +66,11 @@ namespace Cronos {
 		void AddLog(std::string log);
 		inline bool isHoveringWinGame() const { return HoverGameWin; }
 
+		float CurrentSpeedScrollLabel = 0.35;
+		float MaxScrollSpeedLabel = 0.35f;
+		bool StartScrolllabel = false;
+		bool modifingShader = false;
+
 	private:
 
 		void setDocking();
@@ -71,16 +78,20 @@ namespace Cronos {
 
 		void GUIDrawMainBar();
 		void GUIDrawInspectorMenu(GameObject* CurrentGameObject);
+		void GUIDrawInspectorMenu(AssetItems* CurrentAssetSelected); //To Get the Asset Inspector
+
 		void GUIDrawAssetLabelInspector();
 
 		//Components UI Draw ------------------------------------------
 		void GUIDrawTransformPMenu(GameObject* CurrentGameObject);
 		void GUIDrawMeshMenu(GameObject* CurrentGameObject);
 		void GUIDrawMaterialsMenu(GameObject* CurrentGameObject);
+		void GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected); // To Get the MAterial Asset;
 		void GUIDrawCameraComponentMenu(GameObject* CurrentGameObject);
 		void GUIDrawLightComponentMenu(GameObject* CurrentGameObject);
 		//-------------------------------------------------------------
 
+		void GUIDrawScriptingEditor(AssetItems* CurrentAssetselected);
 		void GUIDrawHierarchyPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
@@ -113,8 +124,10 @@ namespace Cronos {
 
 	private:
 
+		TextEditor editor;
+		bool ChangePalette;
+		bool ModifyScript = false;
 		GameObject* Draging;
-
 		FrameBuffer* m_SceneWindow = nullptr;
 
 		float m_Time = 0.0f;
@@ -180,7 +193,7 @@ namespace Cronos {
 		};
 
 		int current_id_;
-		
+
 		std::unordered_map<int, float> float_nodes_;
 		std::unordered_map<int, Color3> color_nodes_;
 		std::unordered_map<int, Link> links_;

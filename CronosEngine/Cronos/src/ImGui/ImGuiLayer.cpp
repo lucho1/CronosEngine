@@ -7,6 +7,7 @@
 #include "OpenGL/imgui_impl_opengl3.h"
 
 #include "imnodes.h"
+#include <shellapi.h>
 
 #include "Core/Application.h"
 
@@ -22,6 +23,7 @@
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
+
 
 #include <glad/glad.h>
 
@@ -60,7 +62,55 @@ namespace Cronos {
 			ImGui::EndTooltip();
 		}
 	}
+	void RightOptions() {
+		if (ImGui::BeginMenu("Create")) {
+			if (ImGui::BeginMenu ("Folder")) {
+				static char buf1[30];
+				sprintf_s(buf1, "%s", "");
+				if (ImGui::InputText("###", buf1,30)) {
+					if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
+						App->filesystem->CreateNewDirectory(App->EditorGUI->m_CurrentDir, buf1);
+						ImGui::EndMenu();
+						ImGui::EndMenu();
+						ImGui::CloseCurrentPopup();
+						return;
+					}
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Shader"))
+			{
 
+			}
+			if (ImGui::MenuItem("Material"))
+			{
+
+			}
+
+			ImGui::EndMenu();
+
+		}
+		if (ImGui::MenuItem("Show in Explorer")) {
+			ShellExecuteA(NULL,"open",App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(),NULL,NULL,SW_SHOWDEFAULT);
+		}
+		ImGui::Separator();
+		if (ImGui::MenuItem("Copy Path")) {
+			OpenClipboard(0);
+			EmptyClipboard();
+
+			HGLOBAL hg = GlobalAlloc(GMEM_MOVEABLE, App->EditorGUI->m_CurrentDir->m_LabelDirectories.size());
+			if (!hg) {
+				CloseClipboard();
+				return;
+			}
+			memcpy(GlobalLock(hg), App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(), App->EditorGUI->m_CurrentDir->m_LabelDirectories.size());
+			GlobalUnlock(hg);
+			SetClipboardData(CF_TEXT, hg);
+			CloseClipboard();
+			GlobalFree(hg);
+		}
+
+	}
 	void RightOptions(GameObject* currentGameObject) {
 
 		std::string ID = std::to_string(currentGameObject->GetGOID());
@@ -182,10 +232,20 @@ namespace Cronos {
 		const char* LogString2 = m_CurrentDir->m_LabelDirectories.c_str();
 		LOG("	Asset Dir: %s \n	Current Dir: %s", LogString1, LogString2);
 
+		CurrentSpeedScrollLabel = 0.0f;
+		MaxScrollSpeedLabel = 0.75f;
 		HardwareInfo = SystemInfo(true);
 		SoftwareInfo = SystemInfo(false);
 		CurrentGameObject = nullptr;
+		m_CurrentAssetSelected = nullptr;
+		m_CurrentAssetClicked = nullptr;
 		Draging = nullptr;
+		editor.SetPalette(TextEditor::GetDarkPalette());
+		auto lang = TextEditor::LanguageDefinition::CPlusPlus();
+		editor.SetLanguageDefinition(lang);
+		modifingShader = false;
+		ChangePalette = true;
+		ModifyScript = false;
 		return true;
 	}
 
@@ -236,6 +296,7 @@ namespace Cronos {
 					setParentGameObject(go);
 				}
 				if (ImGui::IsItemClicked()) {
+					m_CurrentAssetSelected = nullptr;
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
 				}
@@ -259,6 +320,7 @@ namespace Cronos {
 				}
 
 				if (ImGui::IsItemClicked()) {
+					m_CurrentAssetSelected = nullptr;
 					CurrentGameObject = go;
 					nodeHirearchySelected = go->GetGOID();
 				}
@@ -403,7 +465,13 @@ namespace Cronos {
 
 		GUIDrawMainBar();
 		GUIDrawWidgetMenu();
-		if (ShowInspectorPanel)			GUIDrawInspectorMenu(CurrentGameObject);
+
+		if (m_CurrentAssetSelected != nullptr) {
+			if (ShowInspectorPanel)			GUIDrawInspectorMenu(m_CurrentAssetSelected);
+		}
+		else
+			if (ShowInspectorPanel)			GUIDrawInspectorMenu(CurrentGameObject);
+
 		if (ShowHierarchyMenu)			GUIDrawHierarchyPanel();
 		if (ShowNodeEditorPanel)		GUIDrawNodeEditorPanel();
 		if (ShowConsolePanel)			GUIDrawConsolePanel();
@@ -423,18 +491,18 @@ namespace Cronos {
 				if (go->GetGOID() == CurrentGameObject->GetGOID())
 				{
 					App->scene->m_GameObjects.erase(App->scene->m_GameObjects.begin() + cursor); //WTF? Really? The game objects, at deletion, are just "getting out" of the list?
-					
+
 					if (go->GetComponent<LightComponent>())
 					{
 						go->GetComponent<LightComponent>()->Disable();
 						go->GetComponent<LightComponent>()->SetLightType(LightType::NONE);
 					}
-					
+
 					break;
 				}
 				else
 					DeleteGameObject(go);
-				
+
 				cursor++;
 			}
 		}
@@ -609,6 +677,9 @@ namespace Cronos {
 
 				ImGui::EndMenuBar();
 			}
+			App->window->cursorPositionX = ImGui::GetCursorScreenPos().x;
+			App->window->cursorPositionY = ImGui::GetCursorScreenPos().y;
+
 			SizeGame = ImVec2(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y-55);
 			if (LastSize.x != SizeGame.x || LastSize.y != SizeGame.y)
 			{
@@ -622,6 +693,9 @@ namespace Cronos {
 
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr)
+				App->scene->DrawGuizmo(App->engineCamera->GetCamera(), App->EditorGUI->GetCurrentGameObject());
+
 			if (ImGui::BeginDragDropTarget())
 			{
 				//ImGui::GetID("Scene");
@@ -629,7 +703,7 @@ namespace Cronos {
 				{
 					int payload_n = *(const int*)payload->Data;
 
-					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_OBJ) {
+					if (m_CurrentAssetClicked->GetType() == ItemType::ITEM_FBX|| m_CurrentAssetClicked->GetType() == ItemType::ITEM_OBJ) {
 						AssetItems* a = (AssetItems*)payload->Data;
 						GameObject* ret = App->filesystem->Load(a->GetGameObjectID());
 
@@ -650,9 +724,24 @@ namespace Cronos {
 
 		m_SceneWindow->PostUpdate();
 
-		//TODO: Make this nicer xddd
-		if (App->engineCamera->m_ScrollingSpeedChange)
-			ImGui::Text("Camera Speed Multiplicator: x%.2f", App->engineCamera->GetSpeedMultiplicator());
+		if (App->engineCamera->m_ScrollingSpeedChange) {
+			CurrentSpeedScrollLabel = MaxScrollSpeedLabel;
+			App->engineCamera->m_ScrollingSpeedChange = false;
+		}
+		if (CurrentSpeedScrollLabel > 0) {
+			ImGui::SetNextWindowBgAlpha(CurrentSpeedScrollLabel);
+			bool open = true;
+			ImVec2 CursorPos(App->window->cursorPositionX+(SizeGame.x/2), App->window->cursorPositionY+(SizeGame.y/2));
+			ImGui::SetNextWindowPos(CursorPos);
+			CurrentSpeedScrollLabel -= 0.015f;
+			if (ImGui::Begin("Example: Simple overlay", &open , ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+			{
+				ImGui::SetWindowFontScale(3);
+				ImGui::Text(" x%.2f", App->engineCamera->GetSpeedMultiplicator());
+			}
+			ImGui::End();
+		}
+
 
 		ImGui::End();
 	}
@@ -818,18 +907,19 @@ namespace Cronos {
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
 
-				if (ImGui::InputText("###", buf1, 64)) 
+				if (ImGui::InputText("###", buf1, 64))
 					CurrentGameObject->SetName(buf1);
-				
+
 				ImGui::Separator();
 				GUIDrawTransformPMenu(CurrentGameObject);
 
 				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr)
 					GUIDrawMeshMenu(CurrentGameObject);
-				
-				if (CurrentGameObject->GetComponent<MeshComponent>() != nullptr) 
-					GUIDrawMaterialsMenu(CurrentGameObject);
-				
+
+				//	if (CurrentGameObject->GetComponent<MeshComponent>()->GetTexturesVector().size() > 0)
+				if (CurrentGameObject->GetComponent<MaterialComponent>() != nullptr)
+						GUIDrawMaterialsMenu(CurrentGameObject);
+
 				if (CurrentGameObject->GetComponent<CameraComponent>() != nullptr)
 					GUIDrawCameraComponentMenu(CurrentGameObject);
 
@@ -837,12 +927,104 @@ namespace Cronos {
 					GUIDrawLightComponentMenu(CurrentGameObject);
 
 			}
-			if (m_CurrentAssetSelected != nullptr&&m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
-				GUIDrawAssetLabelInspector();
-			}
+			//if (m_CurrentAssetClicked != nullptr&&m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_PNG) {
+			//	GUIDrawAssetLabelInspector();
+			//}
 
 		ImGui::End();
 
+	}
+
+	void ImGuiLayer::GUIDrawInspectorMenu(AssetItems* CurrentAssetSelected)
+	{
+		//ImGui::SetNextWindowSize(ImVec2(500, 400));
+		ImGui::Begin("Inspector", &ShowInspectorPanel);
+
+		if (CurrentAssetSelected != nullptr)
+		{
+			//ImGui::Checkbox(" ", &CurrentAssetSelected->SetActive()); ImGui::SameLine();
+			ImGui::Image((void*)(CurrentAssetSelected->GetIconTexture() - 1), ImVec2(35, 35), ImVec2(0, 1), ImVec2(1, 0));
+			sameLine;
+			static char buf1[64];
+			strcpy(buf1, CurrentAssetSelected->m_AssetNameNoExtension.c_str());
+
+			ImGui::Text(buf1);
+				//App->filesystem->RenameFile(CurrentAssetSelected, buf1);
+
+			ImGui::Separator();
+			//GUIDrawTransformPMenu(CurrentGameObject);
+			if (CurrentAssetSelected->GetType() == ItemType::ITEM_MATERIAL) {
+				GUIDrawMaterialsMenu(CurrentAssetSelected);
+			}
+
+			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG) {
+				GUIDrawAssetLabelInspector();
+			}
+			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_SHADER) {
+				GUIDrawScriptingEditor(CurrentAssetSelected);
+			}
+			else {
+				ModifyScript = false;
+				if (ChangePalette == true) {
+					editor.SetPalette(TextEditor::GetDeactivatedPalette());
+					ChangePalette = false;
+				}
+			}
+		}
+		ImGui::End();
+
+	}
+	void ImGuiLayer::GUIDrawScriptingEditor(AssetItems* CurrentAssetSelected)
+	{
+
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 20));
+
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput|ImGuiInputTextFlags_CtrlEnterForNewLine;
+
+		static char name[50];
+		if (!modifingShader) {
+			//static char* buferShader = new char[CurrentAssetSelected->m_Shader->GetShaderTextFormat().length() + 1];
+			//strcpy(buferShader, CurrentAssetSelected->m_Shader->GetShaderTextFormat().c_str());
+			editor.SetText(CurrentAssetSelected->m_Shader->GetShaderTextFormat());
+			modifingShader = true;
+		}
+
+		strcpy(name, CurrentAssetSelected->GetAssetPath().c_str());
+
+		ImGui::Text(name);
+		ImGui::Separator();
+		if (ImGui::Button("Modify")) {
+			ModifyScript = !ModifyScript;
+			ChangePalette = true;
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 100);
+		ImGui::Button("Compile");
+
+		if (!ModifyScript) {
+			//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
+			if (ChangePalette == true) {
+				editor.SetPalette(TextEditor::GetDeactivatedPalette());
+				ChangePalette = false;
+			}
+		}
+		else
+			if (ChangePalette == true) {
+				editor.SetPalette(TextEditor::GetDarkPalette());
+				ChangePalette = false;
+			}
+		//else {
+		//	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
+		//	flags &= ~ImGuiInputTextFlags_ReadOnly;
+		//}
+		ImGui::SetNextWindowContentWidth(10.0f);
+		editor.SetReadOnly(!ModifyScript);
+		editor.SetHandleMouseInputs(ModifyScript);
+		editor.Render("TextEditor");
+		//ImGui::InputTextMultiline("##source", buf1, IM_ARRAYSIZE(buf1), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 50), flags);
+		//ImGui::TextColored(ImVec4(0.00f, 1.00f, 1.00f, 1.00f), "hello");
+
+		//ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 	}
 
 	void ImGuiLayer::GUIDrawTransformPMenu(GameObject* CurrentGameObject)
@@ -860,7 +1042,7 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueX", &ObjectPos.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueY", &ObjectPos.y, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if(ImGui::DragFloat("##valueZ", &ObjectPos.z, 0.1f))toChange=true;
-			
+
 			if (toChange)
 			{
 				test->SetPosition(ObjectPos);
@@ -871,7 +1053,7 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value1", &ObjectRot.x, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value2", &ObjectRot.y, 0.1f))toChange = true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##value3", &ObjectRot.z, 0.1f))toChange = true;
-			
+
 			if (toChange)
 			{
 				test->SetOrientation(ObjectRot);
@@ -882,7 +1064,7 @@ namespace Cronos {
 			ImGui::Text("X"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value4", &ObjectScale.x, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Y"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value5", &ObjectScale.y, 0.1f))toChange=true; ImGui::SameLine();
 			ImGui::Text("Z"); ImGui::SameLine(); ImGui::SetNextItemWidth(50);  if (ImGui::DragFloat("##value6", &ObjectScale.z, 0.1f))toChange=true;
-			
+
 			if (toChange)
 			{
 				test->SetScale(ObjectScale);
@@ -903,8 +1085,14 @@ namespace Cronos {
 		static bool DragWindow = false;
 
 		ImGui::SetCursorPosY(WinPosition);
+		AssetItems* Show = nullptr;
 
-		bool open = ImGui::CollapsingHeader(m_CurrentAssetSelected->GetDetails().c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+		if (m_CurrentAssetSelected == nullptr)
+			Show = m_CurrentAssetClicked;
+		else
+			Show = m_CurrentAssetSelected;
+
+		bool open = ImGui::CollapsingHeader(Show->GetDetails().c_str(), ImGuiTreeNodeFlags_DefaultOpen);
 
 		if (ImGui::IsItemClicked()) {
 			DragWindow = true;
@@ -924,19 +1112,19 @@ namespace Cronos {
 			int AvSizeX = ImGui::GetWindowWidth();
 			int AvSizeY = ImGui::GetWindowHeight();
 
-			if (AvSizeX >= m_CurrentAssetSelected->GetResolution().x)
-				AvSizeX = m_CurrentAssetSelected->GetResolution().x;
+			if (AvSizeX >= Show->GetResolution().x)
+				AvSizeX = Show->GetResolution().x;
 			else if (AvSizeX > AvSizeY)
 				AvSizeX = AvSizeY;
 
 
-			static float aspectRatio = m_CurrentAssetSelected->GetResolution().x / m_CurrentAssetSelected->GetResolution().y;
+			static float aspectRatio = Show->GetResolution().x / Show->GetResolution().y;
 			ImGui::SameLine(ImGui::GetWindowWidth() / 2 - AvSizeX / 2);
 
 			int CenterY = AvSizeY - (ImGui::GetWindowHeight() / 2 + AvSizeX / 2);
 			ImGui::SetCursorPosY(CenterY);
 
-			ImGui::Image(TOTEX (m_CurrentAssetSelected->GetIconTexture()-1), ImVec2(AvSizeX, AvSizeX*aspectRatio),ImVec2(0,1),ImVec2(1,0));
+			ImGui::Image(TOTEX (Show->GetIconTexture()-1), ImVec2(AvSizeX, AvSizeX*aspectRatio),ImVec2(0,1),ImVec2(1,0));
 
 			ImGui::EndChild();
 		}
@@ -980,13 +1168,13 @@ namespace Cronos {
 				else if(directional == 2)
 					LightComp->SetLightType(LightType::SPOTLIGHT);
 			}
-			
+
 			ImGui::NewLine();
 
 			//Change Light Color
 			static glm::vec3 LightColor;
 			LightColor = LightComp->GetLightColor();
-			
+
 			static bool toChange;
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Light Color");
@@ -1027,7 +1215,7 @@ namespace Cronos {
 			//Light Attenuation
 			static glm::vec3 LightAtt;
 			LightAtt = LightComp->GetLightAttenuationFactors();
-						
+
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Light Attenuation");
 			ImGui::Text("AttK"); ImGui::SameLine(); ImGui::SetNextItemWidth(50); if (ImGui::DragFloat("##valueAttK", &LightAtt.x, 0.001f))toChange = true; ImGui::SameLine();
@@ -1124,6 +1312,104 @@ namespace Cronos {
 			}
 		}
 	}
+	//Material Inspector for Assets
+	void ImGuiLayer::GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected) {
+		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			static bool alpha_preview = true;
+			static bool alpha_half_preview = false;
+			static bool drag_and_drop = true;
+			static bool options_menu = true;
+			static bool hdr = false;
+			static int FramePaddingMaterials = 2;
+			static ImVec4 ref_color_v(1.0f, 0.0f, 1.0f, 0.5f);
+
+			static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 255.0f / 255.0f);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.392f, 0.369f, 0.376f, 0.10f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));
+
+			Texture* Diffuse = nullptr;
+			//MaterialComponent* Cn_Material = CurrentGameObject->GetComponent<MaterialComponent>();
+			Material* mat = CurrentAssetSelected->m_resMaterial->m_Material;
+			if (mat != nullptr)
+			{
+				for (auto& tv : mat->GetTextures())
+					if (tv.first == TextureType::DIFFUSE)
+						Diffuse = (tv.second);
+			}
+
+			if (mat->GetTextureType(TextureType::DIFFUSE) != nullptr)
+				ImGui::ImageButton((void*)mat->GetTextureType(TextureType::DIFFUSE)->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+			else
+				ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
+
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				//ImGui::GetID("Scene");
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Window"))
+				{
+					int payload_n = *(const int*)payload->Data;
+
+					if (m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_TGA
+						|| m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_PNG)
+					{
+						AssetItems* AssetData = (AssetItems*)payload->Data;
+						mat->SetTexture(AssetData->GetTexture(), TextureType::DIFFUSE);
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
+
+			ImGui::SameLine();
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("\n   Ambient/Albedo"); ImGui::SameLine();
+			ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+			ImVec2 FramePadding(100.0f, 3.0f);
+			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
+			static int  test = ImGui::GetCursorPosY();
+
+			ImGui::SetCursorPosY(test + 15);
+
+			glm::vec4 col = mat->GetMaterialColor();
+			color = ImVec4(col.r, col.g, col.b, col.a);
+
+			if (ImGui::ColorEdit4(" \n MyColor##3", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags))
+			{
+				mat->SetColor(glm::vec4(color.x, color.y, color.z, color.w));
+			}
+			//ImGui::PopStyleVar();
+
+
+			ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
+			//ImGui::AlignTextToFramePadding();
+			ImGui::Text("\n   Specular"); ImGui::SameLine();
+			static float SpecIntensity = 1.0f;
+			static int  test2 = ImGui::GetCursorPosY();
+			ImGui::SetCursorPosY(test2 + 13);
+
+			ImGui::PushItemWidth(70); ImGui::SliderFloat("##", &SpecIntensity, 0.0f, 1.0f);
+
+			//if (ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials)) {
+			//	ImGui::OpenPopup("Context");
+			//}
+			//ImGui::SameLine();
+			//ImGui::Text("\n   Metallic");
+
+			//ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); ImGui::SameLine();
+			//ImGui::Text("\n   Roughtness");
+			//if (ImGui::Button("Hello")) {
+			//	ImGui::OpenPopup("Context");
+			//}
+
+			ImGui::PopStyleColor();
+			ImGui::PopStyleColor();
+			ImGui::Separator();
+		}
+	}
 
 	void ImGuiLayer::GUIDrawMaterialsMenu(GameObject* CurrentGameObject)
 	{
@@ -1140,7 +1426,7 @@ namespace Cronos {
 			static ImVec4 color = ImVec4(114.0f / 255.0f, 144.0f / 255.0f, 154.0f / 255.0f, 255.0f / 255.0f);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.392f, 0.369f, 0.376f, 0.10f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));			
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.128f, 0.128f, 0.128f, 0.55f));
 
 			//Mat Diffuse
 			Texture* Diffuse = nullptr;
@@ -1157,7 +1443,7 @@ namespace Cronos {
 						Specular = (tv.second);
 				}
 			}
-			
+
 			if (Diffuse != nullptr)
 				ImGui::ImageButton((void*)Diffuse->GetTextureID(), ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 			else
@@ -1171,8 +1457,8 @@ namespace Cronos {
 				{
 					int payload_n = *(const int*)payload->Data;
 
-					if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_TGA
-						|| m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetSelected->GetType() == ItemType::ITEM_TEXTURE_PNG)
+					if (m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_DDS || m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_TGA
+						|| m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_JPEG || m_CurrentAssetClicked->GetType() == ItemType::ITEM_TEXTURE_PNG)
 					{
 						AssetItems* AssetData = (AssetItems*)payload->Data;
 						CurrentGameObject->GetComponent<MaterialComponent>()->SetTexture(AssetData->GetTexture(), TextureType::DIFFUSE);
@@ -1188,7 +1474,7 @@ namespace Cronos {
 			else
 				ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 
-		//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials); 
+		//	ImGui::ImageButton(NULL, ImVec2(60, 60), ImVec2(0, 0), ImVec2(1, 1), FramePaddingMaterials);
 
 			if (ImGui::BeginDragDropTarget())
 			{
@@ -1207,7 +1493,7 @@ namespace Cronos {
 
 				ImGui::EndDragDropTarget();
 			}
-			
+
 			//ImGui::AlignTextToFramePadding();
 			ImGui::SameLine();
 			ImGui::Text("\n   Metallic/Specular"); ImGui::SameLine();
@@ -1343,6 +1629,7 @@ namespace Cronos {
 						setParentGameObject(go);
 					}
 					if (ImGui::IsItemClicked()) {
+						m_CurrentAssetSelected = nullptr;
 						CurrentGameObject = go;
 						nodeHirearchySelected = go->GetGOID();
 					}
@@ -1518,6 +1805,16 @@ namespace Cronos {
 			ImGui::PopStyleColor();
 
 			ImGui::EndChild();
+
+			if (ImGui::IsItemClicked(1)) {
+				ImGui::OpenPopup("Options");
+			}
+			if (ImGui::BeginPopup("Options")) {
+
+				RightOptions();
+				ImGui::EndPopup();
+			}
+
 			ImGui::EndGroup();
 
 		}

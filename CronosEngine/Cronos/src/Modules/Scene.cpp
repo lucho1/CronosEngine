@@ -10,6 +10,8 @@
 #include "Input.h"
 #include "TextureManager.h"
 
+#include "SDLWindow.h"
+
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
 
@@ -100,6 +102,7 @@ namespace Cronos {
 	// Update: draw background
 	update_status Scene::OnUpdate(float dt)
 	{
+
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
@@ -147,7 +150,6 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
 		*/
-
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);
@@ -163,6 +165,17 @@ namespace Cronos {
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr) {
 				ToCopy = App->EditorGUI->GetCurrentGameObject();
 			}
+		}
+
+		//Axis Gizmo modification
+		if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT && App->input->GetMouseButton(1) != KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::TRANSLATE;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_E) == KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::ROTATE;
+		}
+		if (App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) {
+			guizmo_operation = ImGuizmo::SCALE;
 		}
 
 		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
@@ -277,5 +290,66 @@ namespace Cronos {
 
 		LOG("Couldn't Found any Scene with that path! Scene not loaded", Path.c_str());
 		return false;
+	}
+
+	void Scene::DrawGuizmo(Camera * camera, GameObject * go)
+	{
+
+		glm::mat4 ViewMatrix = camera->GetViewMatrix();
+		glm::mat4 ProjMatrix = camera->GetProjectionMatrix();
+
+		ImGuizmo::BeginFrame();
+		ImGuizmo::Enable(true);
+
+		glm::mat4 model = go->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
+		glm::transpose(model);
+
+		glm::mat4 delta;
+
+		ImGuizmo::SetRect(0, 0, (float)App->window->GetWidth(), (float)App->window->GetHeight());
+		ImGuizmo::SetDrawlist();
+		ImGuizmo::Manipulate((const float*)&ViewMatrix, (const float*)&ProjMatrix, guizmo_operation, guizmo_mode, (float*)&model, (float*)&delta);
+
+		glm::mat4 identity(1.0f);
+
+		if (ImGuizmo::IsUsing() && delta != identity)
+		{
+			glm::transpose(model);
+			glm::vec3 Position;
+			glm::vec3 Scale;
+			glm::vec3 Rotation;
+			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), glm::value_ptr(Position), glm::value_ptr(Rotation), glm::value_ptr(Scale));
+
+			bool a = true;
+			go->GetComponent<TransformComponent>()->SetPosition(Position);
+			go->GetComponent<TransformComponent>()->SetScale(Scale);
+			go->GetComponent<TransformComponent>()->SetOrientation(Rotation);
+
+		}
+
+		//Rick Code
+
+		//if (ImGuizmo::IsUsing() && !delta.IsIdentity())
+		//{
+		//	model.Transpose();
+		//	if (go->GetParent() == nullptr)
+		//	{
+		//		go->SetLocalTransform(model);
+		//	}
+		//	else
+		//	{
+		//		float4x4 parent = go->GetParent()->GetGlobalTransformation();
+		//		parent.InverseOrthonormal();
+		//		go->SetLocalTransform(parent*model);
+		//	}
+		//}
+
+		//float3 points[8];
+		//go->global_bbox.GetCornerPoints(points);
+		//std::swap(points[2], points[5]);
+		//std::swap(points[3], points[4]);
+		//std::swap(points[4], points[5]);
+		//std::swap(points[6], points[7]);
+		//dd::box(points, dd::colors::Yellow);
 	}
 }

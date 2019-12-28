@@ -6,12 +6,14 @@
 #include "imgui.h"
 #include "Renderer/Textures.h"
 #include "Providers/AssimpImporter.h"
+#include "Resources/ResourceMaterial.h"
 
 namespace Cronos {
 
 	class Directories;
 	class GameObject;
 	struct CronosVertex;
+	class Material;
 
 
 	enum class ItemType
@@ -32,8 +34,9 @@ namespace Cronos {
 
 	class AssetItems {
 	public:
-		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE);
+		friend class ImGuiLayer;
 
+		AssetItems(std::filesystem::path m_path, Directories* parentfolder,ItemType mtype=ItemType::ITEM_NONE,bool beloadedLater = false);
 		ItemType type = ItemType::ITEM_NONE;
 
 		std::string m_AssetShortName;
@@ -62,6 +65,7 @@ namespace Cronos {
 		bool HasMeta() const;
 
 		Directories* folderDirectory = nullptr;
+		ResourceMaterial* m_resMaterial = nullptr;
 
 	private:
 		
@@ -78,8 +82,9 @@ namespace Cronos {
 		int m_AssetID;
 		GLuint m_IconTex;
 		ImVec2 m_Resolution;
-
+		Shader* m_Shader;
 		Texture* m_AssetTexture = nullptr;
+		
 	};
 
 	class Directories {
@@ -126,13 +131,16 @@ namespace Cronos {
 		void CreateNewDirectory(Directories* currentDir, const char* newName);
 		void DeleteDirectory(const char* path);
 		void RenameFile(AssetItems* Asset, const char* newName);
+		void AddAssetFile(const char* filepath, const char* name, ItemType type);
 		void SearchFile(Directories* tempDir,const char* name);
+		Directories* GetDirectories(const char* dirPath);
 
 		bool SaveOwnFormat(GameObject* RootGameObject);
+		bool SaveMaterial(Material* materal,const char* path);
+		ResourceMaterial* LoadMaterial(const char* filepath);
 		//GameObject* Load(std::string MetaPath);
 		GameObject* Filesystem::Load(int GOID);
 		bool LoadMesh(const char* filepath,MeshComponent& mesh, uint ResID);
-
 		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
 		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
 		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }

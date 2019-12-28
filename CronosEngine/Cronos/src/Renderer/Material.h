@@ -23,17 +23,23 @@ namespace Cronos
 		inline const glm::vec4 GetMaterialColor()							const { return m_MaterialAmbientColor; }
 		inline const float GetMaterialShininess()							const { return m_MaterialShininess; }
 		inline const uint GetMaterialID()									const { return m_ID; }
-
+		inline const std::string GetMatName()								const { return m_MaterialName; }
+		inline const std::string GetMatPath()								const { return m_Path; }
+		Texture* GetTextureType(TextureType type);
+		
 		//Setters
 		void SetName(const std::string& name)								{ m_MaterialName = name; }
 		void SetShader(Shader& shader)										{ m_MaterialShader = &shader; }
 		void SetColor(const glm::vec4& color)								{ m_MaterialAmbientColor = color; }
 		void SetShininess(const float& shininess)							{ m_MaterialShininess = shininess; }
 		void SetTexture(Texture* texture, TextureType type);
-
+		void SetID(uint ID)													{ m_ID = ID; }
+		
+	
 	private:
 		
 		std::string m_MaterialName;
+		std::string m_Path;
 		uint m_ID = 0;
 
 		float m_MaterialShininess = 32.0f;

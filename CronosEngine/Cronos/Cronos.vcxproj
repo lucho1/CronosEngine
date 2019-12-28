@@ -118,8 +118,8 @@
     <ClInclude Include="src\GameObject\Components\TransformComponent.h" />
     <ClInclude Include="src\GameObject\GameObject.h" />
     <ClInclude Include="src\GameObject\PrimitiveGameObject.h" />
-    <ClInclude Include="src\Helpers\Camera.h" />
     <ClInclude Include="src\Helpers\CNOctree.h" />
+    <ClInclude Include="src\Helpers\Camera.h" />
     <ClInclude Include="src\Helpers\Color.h" />
     <ClInclude Include="src\Helpers\GL_Light.h" />
     <ClInclude Include="src\Helpers\RNGen.h" />
@@ -130,6 +130,7 @@
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_opengl3.h" />
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h" />
     <ClInclude Include="src\ImGui\imnodes.h" />
+    <ClInclude Include="src\ImGui\TextEditor.h" />
     <ClInclude Include="src\Modules\Audio.h" />
     <ClInclude Include="src\Modules\EngineCamera.h" />
     <ClInclude Include="src\Modules\Filesystem.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="src\Renderer\Textures.h" />
     <ClInclude Include="src\Renderer\VertexArray.h" />
     <ClInclude Include="src\Resources\Resource.h" />
+    <ClInclude Include="src\Resources\ResourceMaterial.h" />
     <ClInclude Include="src\Resources\ResourceMesh.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -534,8 +536,8 @@
     <ClCompile Include="src\GameObject\Components\TransformComponent.cpp" />
     <ClCompile Include="src\GameObject\GameObject.cpp" />
     <ClCompile Include="src\GameObject\PrimitiveGameObject.cpp" />
-    <ClCompile Include="src\Helpers\Camera.cpp" />
     <ClCompile Include="src\Helpers\CNOctree.cpp" />
+    <ClCompile Include="src\Helpers\Camera.cpp" />
     <ClCompile Include="src\Helpers\Color.cpp" />
     <ClCompile Include="src\Helpers\GL_Light.cpp" />
     <ClCompile Include="src\Helpers\RNGen.cpp" />
@@ -546,6 +548,7 @@
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_opengl3.cpp" />
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp" />
     <ClCompile Include="src\ImGui\imnodes.cpp" />
+    <ClCompile Include="src\ImGui\TextEditor.cpp" />
     <ClCompile Include="src\Modules\Audio.cpp" />
     <ClCompile Include="src\Modules\EngineCamera.cpp" />
     <ClCompile Include="src\Modules\Filesystem.cpp" />
@@ -567,6 +570,7 @@
     <ClCompile Include="src\Renderer\Textures.cpp" />
     <ClCompile Include="src\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Resources\Resource.cpp" />
+    <ClCompile Include="src\Resources\ResourceMaterial.cpp" />
     <ClCompile Include="src\Resources\ResourceMesh.cpp" />
     <ClCompile Include="vendor\gpudetect\DeviceId.cpp" />
     <ClCompile Include="vendor\mmgr\mmgr.cpp" />

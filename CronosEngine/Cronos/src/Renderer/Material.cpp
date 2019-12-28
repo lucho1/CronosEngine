@@ -6,6 +6,9 @@
 #include "ImGui/ImGuiLayer.h"
 #include "Modules/Scene.h"
 
+#include "ImGui/ImGuiLayer.h"
+#include "Modules/Scene.h"
+
 #include "GameObject/Components/TransformComponent.h"
 
 namespace Cronos
@@ -91,6 +94,19 @@ namespace Cronos
 	}
 
 	
+	Texture * Material::GetTextureType(TextureType type)
+	{
+		std::unordered_map<TextureType, Texture*>::const_iterator iterator = m_MaterialTextures.find(type);
+
+		if (iterator == m_MaterialTextures.end()) {
+			return nullptr;
+		}
+		else
+			return iterator->second;
+
+		return nullptr;
+	}
+
 	void Material::SetTexture(Texture * texture, TextureType type)
 	{
 		CRONOS_ASSERT((type != TextureType::MAX_TEXTURES || type != TextureType::NONE), "Invalid Texture Type passed!");
