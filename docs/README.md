@@ -7,7 +7,13 @@
 
 ## Screenshots & Video
 **[TODO]** Add 1min video
-**[TODO]** Add screenshots
+
+![](res/images/Captura.PNG?style=centerme)
+![](res/images/Captura2.PNG?style=centerme)
+![](res/images/Captura3.PNG?style=centerme)
+![](res/images/Captura4.PNG?style=centerme)
+![](res/images/Captura5.PNG?style=centerme)
+![](res/images/Captura6.PNG?style=centerme)
 
 Download it now [here](https://github.com/lucho1/CronosEngine/releases/download/CronosEngine_v0.3/CronosEngine_v0_3.zip)! You can also check the [latest release](https://github.com/lucho1/CronosEngine/releases/tag/CronosEngine_v0.3) or [other releases](https://github.com/lucho1/CronosEngine/releases)
 
