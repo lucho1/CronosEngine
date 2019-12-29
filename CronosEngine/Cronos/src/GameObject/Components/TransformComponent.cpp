@@ -27,11 +27,11 @@ namespace Cronos {
 			math::AABB aabb;
 			aabb.SetNegativeInfinity(); //What if I comment this??
 
-			for (auto child : GetParent()->m_Childs)
-				aabb.Enclose(child->GetAABB());
-
 			if (GetParent()->GetComponent<MeshComponent>())
-				aabb.Enclose(GetParent()->GetAABB());
+				aabb.Enclose(GetParent()->GetOOBB());
+
+			for (auto child : GetParent()->m_Childs)
+				aabb.Enclose(child->GetAABB());		
 
 			GetParent()->SetAABB(aabb);
 		}
@@ -53,9 +53,6 @@ namespace Cronos {
 	//Set the orientation of the object (pass Euler Angles in degrees!!)
 	void TransformComponent::SetOrientation(glm::vec3 euler_angles)
 	{	
-		if (euler_angles.x > 0.0f || euler_angles.y > 0.0f || euler_angles.z > 0.0f)
-			int a = 0;
-
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat rot = glm::quat(EA_Rad - m_EulerAngles);
 		
@@ -70,8 +67,9 @@ namespace Cronos {
 		glm::vec3 EA_Rad = glm::radians(euler_angles);
 		glm::quat newOrientation = glm::quat(EA_Rad);
 
-		m_Orientation = m_Orientation * newOrientation;
+		m_Orientation = newOrientation;
 		m_EulerAngles = EA_Rad;
+		UpdateTransform();
 	}
 
 	void TransformComponent::Move(glm::vec3 translation)

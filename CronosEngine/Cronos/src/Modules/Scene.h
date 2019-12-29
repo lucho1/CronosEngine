@@ -56,7 +56,7 @@ namespace Cronos {
 		std::string m_SceneName;
 
 		ImGuizmo::OPERATION guizmo_operation = ImGuizmo::TRANSLATE;
-		ImGuizmo::MODE      guizmo_mode = ImGuizmo::WORLD;
+		ImGuizmo::MODE      guizmo_mode = ImGuizmo::LOCAL;
 		void DrawGuizmo(Camera* camera, GameObject* go);
 
 	private:

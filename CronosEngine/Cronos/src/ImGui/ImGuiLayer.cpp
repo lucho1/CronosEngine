@@ -923,7 +923,7 @@ namespace Cronos {
 		ImGui::BeginGroup();
 			if (CurrentGameObject != nullptr)
 			{
-			
+
 				if(ImGui::Checkbox(" ", &CurrentGameObject->SetActive())); ImGui::SameLine();
 				static char buf1[64];
 				strcpy(buf1, CurrentGameObject->GetName().c_str());
@@ -938,7 +938,7 @@ namespace Cronos {
 
 					GUIDrawMeshMenu(CurrentGameObject);
 				}
-			
+
 				if (CurrentGameObject->GetComponent<MaterialComponent>() != nullptr)
 						GUIDrawMaterialsMenu(CurrentGameObject);
 
@@ -954,8 +954,8 @@ namespace Cronos {
 			ImGui::SetCursorPos(CursorPos);
 			ImVec2 Scale(ImGui::GetWindowSize().x*0.8, ImGui::GetWindowSize().y*0.97);
 			ImGui::InvisibleButton("Hello", Scale);
-			
-			
+
+
 			ImGui::EndGroup();
 
 				if (ImGui::BeginDragDropTarget()&& CurrentGameObject->GetComponent<MeshComponent>() != nullptr)
@@ -975,7 +975,7 @@ namespace Cronos {
 
 					ImGui::EndDragDropTarget();
 				}
-			
+
 		ImGui::End();
 
 	}
@@ -1008,26 +1008,38 @@ namespace Cronos {
 			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_SHADER) {
 				GUIDrawScriptingEditor(CurrentAssetSelected);
 			}
-			else {
+			else
+			{
 				ModifyScript = false;
-				if (ChangePalette == true) {
+				if (ChangePalette == true)
+				{
 					editor.SetPalette(TextEditor::GetDeactivatedPalette());
 					ChangePalette = false;
 				}
 			}
 		}
-		ImGui::End();
 
+		ImGui::End();
 	}
+
+
 	void ImGuiLayer::GUIDrawScriptingEditor(AssetItems* CurrentAssetSelected)
 	{
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 20));
+		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput|ImGuiInputTextFlags_CtrlEnterForNewLine;
+		static AssetItems* lastAsset = CurrentAssetSelected;
 
-		static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_CtrlEnterForNewLine;
+		if (lastAsset != CurrentAssetSelected)
+		{
+			ChangePalette = true;
+			modifingShader = false;
+			ModifyScript = false;
+		}
 
 		static char name[50];
-		if (!modifingShader) {
+		if (!modifingShader && lastAsset == CurrentAssetSelected)
+		{
 			//static char* buferShader = new char[CurrentAssetSelected->m_Shader->GetShaderTextFormat().length() + 1];
 			//strcpy(buferShader, CurrentAssetSelected->m_Shader->GetShaderTextFormat().c_str());
 			editor.SetText(CurrentAssetSelected->m_Shader->GetShaderTextFormat());
@@ -1038,26 +1050,47 @@ namespace Cronos {
 
 		ImGui::Text(name);
 		ImGui::Separator();
-		if (ImGui::Button("Modify")) {
+		if (ImGui::Button("Modify"))
+		{
 			ModifyScript = !ModifyScript;
 			ChangePalette = true;
+			modifingShader = false;
 		}
-		ImGui::SameLine(ImGui::GetWindowWidth() - 100);
-	
-		ImGui::Button("Compile");
 
-		if (!ModifyScript) {
+		ImGui::SameLine(ImGui::GetWindowWidth() - 100);
+		if (ImGui::Button("Compile"))
+		{
+			if (CurrentAssetSelected->m_Shader->UserCompile(editor.GetText()))
+			{
+				std::ofstream OutputFile_Stream{ CurrentAssetSelected->GetAssetPath().c_str(), std::ofstream::out };
+				OutputFile_Stream << std::setw(2) << CurrentAssetSelected->m_Shader->GetShaderTextFormat().c_str();
+				OutputFile_Stream.close();
+				modifingShader = false;
+
+				LOG("Shader %s Compiled Succesfully from path: %s", CurrentAssetSelected->m_AssetFullName.c_str(), CurrentAssetSelected->GetAbsolutePath().c_str());
+			}
+			else
+				LOG("Couldn't Compile %s Shader from path: %s", CurrentAssetSelected->m_AssetFullName.c_str(), CurrentAssetSelected->GetAbsolutePath().c_str());
+		}
+
+		if (!ModifyScript)
+		{
 			//ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.50f, 0.50f, 1.00f));
-			if (ChangePalette == true) {
+			if (ChangePalette == true)
+			{
 				editor.SetPalette(TextEditor::GetDeactivatedPalette());
 				ChangePalette = false;
 			}
 		}
 		else
-			if (ChangePalette == true) {
+		{
+			if (ChangePalette == true)
+			{
 				editor.SetPalette(TextEditor::GetDarkPalette());
 				ChangePalette = false;
 			}
+		}
+
 		//else {
 		//	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 1.00f, 1.00f, 1.00f));
 		//	flags &= ~ImGuiInputTextFlags_ReadOnly;
@@ -1071,6 +1104,8 @@ namespace Cronos {
 
 		//ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
+
+		lastAsset = CurrentAssetSelected;
 	}
 
 	void ImGuiLayer::GUIDrawTransformPMenu(GameObject* CurrentGameObject)
@@ -1701,7 +1736,7 @@ namespace Cronos {
 					}
 					if (ImGui::IsItemClicked()) {
 						m_CurrentAssetSelected = nullptr;
-						CurrentGameObject = go;					
+						CurrentGameObject = go;
 						nodeHirearchySelected = go->GetGOID();
 					}
 					if (ImGui::IsItemClicked(1))
@@ -2063,7 +2098,7 @@ namespace Cronos {
 			else
 				App->renderer3D->SetRenderingCamera(*App->renderer3D->m_CameraList[item_current-1]->GetComponent<CameraComponent>()->GetCamera());
 		}
-		
+
 
 		ImGui::Separator();
 		ImGui::Text("Debug Options");

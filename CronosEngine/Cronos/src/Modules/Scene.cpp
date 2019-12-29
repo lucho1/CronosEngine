@@ -286,64 +286,33 @@ namespace Cronos {
 		return false;
 	}
 
-	void Scene::DrawGuizmo(Camera * camera, GameObject * go)
+	void Scene::DrawGuizmo(Camera* camera, GameObject* go)
 	{
-
-		glm::mat4 ViewMatrix = camera->GetViewMatrix();
-		glm::mat4 ProjMatrix = camera->GetProjectionMatrix();
+		TransformComponent* transform = go->GetComponent<TransformComponent>();
+		glm::mat4 model = transform->GetLocalTranformationMatrix();		
 
 		ImGuizmo::BeginFrame();
 		ImGuizmo::Enable(true);
+		static float x = 10.0f, y = -255.0f;
+		ImGuizmo::SetRect(x, y, (float)App->window->GetWidth(), (float)App->window->GetHeight());
 
-		glm::mat4 model = go->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix();
-		glm::transpose(model);
-
-		glm::mat4 delta;
-
-		ImGuizmo::SetRect(0, 0, (float)App->window->GetWidth(), (float)App->window->GetHeight());
 		ImGuizmo::SetDrawlist();
-		ImGuizmo::Manipulate((const float*)&ViewMatrix, (const float*)&ProjMatrix, guizmo_operation, guizmo_mode, (float*)&model, (float*)&delta);
+		ImGuizmo::Manipulate(glm::value_ptr(camera->GetViewMatrix()), glm::value_ptr(camera->GetProjectionMatrix()), guizmo_operation, guizmo_mode, glm::value_ptr(model));
 
-		glm::mat4 identity(1.0f);
-
-		if (ImGuizmo::IsUsing() && delta != identity)
+		if (ImGuizmo::IsUsing())
 		{
-			glm::transpose(model);
-			glm::vec3 Position;
-			glm::vec3 Scale;
-			glm::vec3 Rotation;
-			ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(model), glm::value_ptr(Position), glm::value_ptr(Rotation), glm::value_ptr(Scale));
 
-			bool a = true;
-			go->GetComponent<TransformComponent>()->SetPosition(Position);
-			go->GetComponent<TransformComponent>()->SetScale(Scale);
-			go->GetComponent<TransformComponent>()->SetOrientation(Rotation);
+			glm::vec3 scale, translation, rot;
+			glm::quat q;
+			glm::decompose(model, scale, q, translation, glm::vec3(), glm::vec4());
+			rot = glm::degrees(glm::eulerAngles(q));			
 
+			if (glm::abs(glm::length(rot)) < 0.0001f)
+				rot = transform->GetOrientation();
+
+			transform->SetPosition(translation);
+			transform->Rotate(rot);
+			transform->SetScale(scale);
 		}
-
-		//Rick Code
-
-		//if (ImGuizmo::IsUsing() && !delta.IsIdentity())
-		//{
-		//	model.Transpose();
-		//	if (go->GetParent() == nullptr)
-		//	{
-		//		go->SetLocalTransform(model);
-		//	}
-		//	else
-		//	{
-		//		float4x4 parent = go->GetParent()->GetGlobalTransformation();
-		//		parent.InverseOrthonormal();
-		//		go->SetLocalTransform(parent*model);
-		//	}
-		//}
-
-		//float3 points[8];
-		//go->global_bbox.GetCornerPoints(points);
-		//std::swap(points[2], points[5]);
-		//std::swap(points[3], points[4]);
-		//std::swap(points[4], points[5]);
-		//std::swap(points[6], points[7]);
-		//dd::box(points, dd::colors::Yellow);
 	}
 }

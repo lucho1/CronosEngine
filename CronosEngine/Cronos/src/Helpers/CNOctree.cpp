@@ -57,7 +57,7 @@ namespace Cronos {
 		std::vector<GameObject*> objectsInside;
 		if (!m_CubicSpace.Intersects(cubicSpace) && !m_CubicSpace.Contains(cubicSpace))
 		{
-			LOG("No Objects intersecting this cube! Return value empty");
+			//LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
 		}
 
@@ -88,7 +88,7 @@ namespace Cronos {
 		std::vector<GameObject*> objectsInside;
 		if (!m_CubicSpace.Intersects(cameraFrustum) && !m_CubicSpace.Contains(cameraFrustum))
 		{
-			LOG("No Objects intersecting this cube! Return value empty");
+			//LOG("No Objects intersecting this cube! Return value empty");
 			return objectsInside;
 		}
 

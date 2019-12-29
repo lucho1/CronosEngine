@@ -11,8 +11,10 @@ namespace Cronos {
 			return GL_VERTEX_SHADER;
 		if (typeString == "fragment" || typeString == "pixel")
 			return GL_FRAGMENT_SHADER;
+		if(typeString == "geometry")
+			return GL_GEOMETRY_SHADER;
 
-		CRONOS_ASSERT(false, "Invalid string Shader Type passed")
+		CRONOS_WARN(false, "Invalid string Shader Type passed");
 		return 0;
 	}
 
@@ -20,7 +22,7 @@ namespace Cronos {
 	Shader::Shader(const std::string& filepath)
 	{
 		std::string ShaderSourceCode = ReadFile(filepath);
-		ShaderText = ShaderTextModifiable= ShaderSourceCode;
+		ShaderText = ShaderSourceCode;
 		Compile(PreProcess(ShaderSourceCode));
 		m_Path = filepath;
 	}
@@ -99,12 +101,12 @@ namespace Cronos {
 		glUniform1f(GetUniformLocation(name), value);
 	}
 	
-	//Shader Read & Creation (.glsl version)
-	std::string Shader::ReadFile(const std::string & filepath)
+	//Shader Read & Creation (.glsl version) ----------------------------------------------------------------------------------------
+	std::string Shader::ReadFile(const std::string& filepath)
 	{
 		std::string ret;
-
 		std::ifstream in(filepath, std::ios::in, std::ios::binary);
+
 		if (in)
 		{
 			//We seek for the end of file so we can set the returning string size
@@ -124,7 +126,7 @@ namespace Cronos {
 		return ret;
 	}
 
-	std::unordered_map<GLenum, std::string> Shader::PreProcess(const std::string & SourceShaderCode)
+	std::unordered_map<GLenum, std::string> Shader::PreProcess(const std::string& SourceShaderCode)
 	{
 		std::unordered_map<GLenum, std::string> ret;
 
@@ -214,5 +216,127 @@ namespace Cronos {
 			glDetachShader(program, element);
 			glDeleteShader(element);
 		}
+	}
+
+	//Shader Read & Creation from user perspective (.glsl version) --------------------------------------------------------------
+	bool Shader::UserCompile(const std::string& ShaderSourceString)
+	{
+		bool ret = true;
+		std::unordered_map<GLenum, std::string> ShaderUMap;
+
+		if (!UserPreProcess(ShaderSourceString, ShaderUMap))
+		{
+			CRONOS_WARN(false, "SHADER COMPILATION FAILED");
+			ret = false;
+		}
+		else
+		{
+			std::vector<GLenum> shaderIDs_vec(ShaderUMap.size());
+			GLuint program = glCreateProgram();
+
+			for (auto element : ShaderUMap)
+			{
+				if (!ret)
+					break;
+
+				GLenum shaderType = element.first;
+				const std::string& shaderString = element.second;
+
+				GLuint id = glCreateShader(shaderType);
+
+				const GLchar* shaderSourceString = shaderString.c_str();
+				glShaderSource(id, 1, &shaderSourceString, 0);
+				glCompileShader(id);
+
+				GLint result = 0;
+				glGetShaderiv(id, GL_COMPILE_STATUS, &result);
+				if (result == GL_FALSE)
+				{
+					GLint length = 0;
+					glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+
+					std::vector<GLchar> message(length);
+					glGetShaderInfoLog(id, length, &length, &message[0]);
+					glDeleteShader(id);
+
+					LOG("Error in Shader compilation: %s", message.data());
+					ret = false;
+					break;
+				}
+
+				glAttachShader(program, id);
+				shaderIDs_vec.push_back(id);
+			}
+
+			if (ret)
+			{
+				m_ID = program;
+				glLinkProgram(program);
+				glValidateProgram(program);
+
+				GLint result = 0;
+				glGetProgramiv(program, GL_LINK_STATUS, (int*)&result);
+				if (result == GL_FALSE)
+				{
+					GLint length;
+					glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+
+					std::vector<GLchar> message(length);
+					glGetProgramInfoLog(program, length, &length, &message[0]);
+
+					glDeleteProgram(program);
+					for (auto element : shaderIDs_vec)
+						glDeleteShader(element);
+
+					LOG("Error in Shader Program Linking: %s", message.data());
+					return false;
+				}
+			}
+
+			for (auto element : shaderIDs_vec)
+			{
+				glDetachShader(program, element);
+				glDeleteShader(element);
+			}
+		}
+
+		if (ret)
+			ShaderText = ShaderSourceString;
+
+		return ret;
+	}
+
+	bool Shader::UserPreProcess(const std::string& SourceShaderCode, std::unordered_map<GLenum, std::string>& uMap)
+	{
+		std::unordered_map<GLenum, std::string> ret;
+		const char* typeToken = "#type";
+		size_t typeTokenLength = strlen(typeToken);
+		size_t pos = SourceShaderCode.find(typeToken, 0);
+
+		while (pos != std::string::npos)
+		{
+			size_t end_of_line = SourceShaderCode.find_first_of("\r\n", pos);
+			if (end_of_line == std::string::npos)
+			{
+				CRONOS_WARN(false, "SHADER COMPILATION FAILED: Shader Syntax Error");
+				return false;
+			}
+
+			size_t begin_pos = pos + typeTokenLength + 1;
+			std::string shaderType = SourceShaderCode.substr(begin_pos, end_of_line - begin_pos);
+			if (StringToShaderType(shaderType) == 0)
+			{
+				CRONOS_WARN(false, "SHADER COMPILATION FAILED: Invalid Shader Type");
+				return false;
+			}
+
+			size_t next_line_pos = SourceShaderCode.find_first_not_of("\r\n", end_of_line);
+			pos = SourceShaderCode.find(typeToken, next_line_pos);
+			ret[StringToShaderType(shaderType)] = SourceShaderCode.substr(next_line_pos,
+				pos - (next_line_pos == std::string::npos ? SourceShaderCode.size() - 1 : next_line_pos));
+		}
+
+		uMap = ret;
+		return true;
 	}
 }
