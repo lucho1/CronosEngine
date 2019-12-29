@@ -91,6 +91,8 @@ namespace Cronos {
 		bool isShaderLoaded(uint shaderID) const;
 		Shader* GetShaderFromList(uint shaderID)const;
 		Shader* GetShaderFromList(int pos)						const { return m_ShaderList[pos]; }
+		int getPositionShader(uint shaderID);
+		std::vector<Shader*>GetShaderList()						const { return m_ShaderList; }
 
 	public:
 

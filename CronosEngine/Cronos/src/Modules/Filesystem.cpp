@@ -13,7 +13,7 @@
 #include "Modules/Scene.h"
 
 #include "Renderer/GLRenderer3D.h"
-
+#include "Modules/Input.h"
 #include "ImGui/ImGuiLayer.h"
 
 #include <fstream>
@@ -96,7 +96,7 @@ namespace Cronos {
 
 		uint range[4] = {rMesh->m_BufferSize[0],rMesh->m_BufferSize[1],rMesh->m_BufferSize[2],rMesh->m_BufferSize[3]};
 
-		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(float) * 3 * range[1]) + (sizeof(float) * 2 * range[2]) + (sizeof(uint) * range[3]*3);
+		totalSize = sizeof(range) + (sizeof(float) * 3 * range[0]) + (sizeof(uint) * range[3] * 3) + (sizeof(float) * 3 * range[1]) + (sizeof(float) * 2 * range[2]);
 
 		char*Data = new char[totalSize];
 		char*cursor = Data;
@@ -111,6 +111,13 @@ namespace Cronos {
 		memcpy(cursor, rMesh->Position, bytes);
 		cursor += bytes;
 
+		//Store Index
+		if (range[3] > 0) {
+			bytes = sizeof(uint) * range[3] * 3;
+			memcpy(cursor, rMesh->Index, bytes);
+			cursor += bytes;
+		}
+
 		//Store Normal
 		if (range[1] > 0) {
 			bytes = sizeof(float) * 3 * range[1];
@@ -124,12 +131,7 @@ namespace Cronos {
 			memcpy(cursor, rMesh->TextureV, bytes);
 			cursor += bytes;
 		}
-		//Store Index
-		if (range[3] > 0) {
-			bytes = sizeof(uint) * range[3] * 3;
-			memcpy(cursor, rMesh->Index, bytes);
-			cursor += bytes;
-		}
+
 
 		std::ofstream MeshData{filePath, std::ios::binary };
 		MeshData.write(Data, totalSize);
@@ -170,6 +172,8 @@ namespace Cronos {
 		aux_JSONFile["AlbedoColor"][1] = material->GetMaterialColor().g;
 		aux_JSONFile["AlbedoColor"][2] = material->GetMaterialColor().b;
 		aux_JSONFile["AlbedoColor"][3] = material->GetMaterialColor().a;
+
+		aux_JSONFile["ShaderPath"] = material->GetShader()->GetShaderPath();
 
 		if (material->GetTextureType(TextureType::DIFFUSE) != nullptr) {
 			aux_JSONFile["DiffuseTexturePath"] = material->GetTextureType(TextureType::DIFFUSE)->GetTexturePath();
@@ -335,41 +339,43 @@ namespace Cronos {
 			cursor = (char*)Data;
 
 			//Load Total of Vertices and Indices
-			uint range[4];
+			uint range[4] = { 1,1,1,1 };
 			uint bytes = sizeof(range);
-			memcpy(rMesh->m_BufferSize, cursor, bytes);
-			//rMesh->m_BufferSize[0] = range[0];
-			//rMesh->m_BufferSize[1] = range[1];
 
-			//Load Vector Position
+			memcpy(rMesh->m_BufferSize, cursor, bytes);
+			
 			cursor += bytes;
 			bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
 			rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 			memcpy(rMesh->Position, cursor, bytes);
 			cursor+=bytes;
 
-			//Load Normals
-			if (range[1] > 0) {
-				bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
-				rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
-				memcpy(rMesh->Normal, cursor, bytes);
-				cursor += bytes;
-			}
-
-			//Load TextureCoordinates
-			if (range[2] > 0) {
-				bytes = sizeof(float) * 2 * rMesh->m_BufferSize[0];
-				rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
-				memcpy(rMesh->TextureV, cursor, bytes);
-				cursor += bytes;
-			}
-			//Load Indices
-			if (range[3] > 0) {
-				bytes = sizeof(uint) * rMesh->m_BufferSize[1] * 3;
+			if (rMesh->m_BufferSize[3] > 0) {
+				bytes = sizeof(uint) * rMesh->m_BufferSize[3] * 3;
 				rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
 				memcpy(rMesh->Index, cursor, bytes);
 				cursor += bytes;
 			}
+			//onlyTest
+
+			//Load Normals
+
+			if (rMesh->m_BufferSize[1] > 0) {
+				bytes = sizeof(float) * 3 * rMesh->m_BufferSize[1];
+				rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
+				memcpy(rMesh->Normal, cursor, bytes);
+				cursor += bytes;
+			}
+			//}
+
+			//Load TextureCoordinates
+			if (rMesh->m_BufferSize[2] > 0) {
+				bytes = sizeof(float) * 2 * rMesh->m_BufferSize[2];
+				rMesh->TextureV = new float[rMesh->m_BufferSize[0] * 2];
+				memcpy(rMesh->TextureV, cursor, bytes);
+				cursor += bytes;
+			}
+
 			rMesh->toCronosVertexVector();
 
 			//Set the GO AABB and finally push it to the mother's child list
@@ -435,6 +441,14 @@ namespace Cronos {
 
 			ret->SetColor(color);
 			ret->SetShininess(shininess);
+			//aux_JSONFile["ShaderPath"] = material->GetShader()->GetShaderPath();
+			std::string shaderPath = configFile["ShaderPath"].get<std::string>();
+
+			for (auto&shader : App->renderer3D->GetShaderList()) {
+				if (shader->GetShaderPath() == shaderPath) {
+					ret->SetShader(*shader);
+				}
+			}
 
 			if (configFile.contains("DiffuseTexturePath"))
 			{
@@ -779,7 +793,7 @@ namespace Cronos {
 					LOG("Failed To Load %s ", m_Path.c_str());
 			}
 			else
-			{
+			{			
 				m_GameObjecID = loadAsset(path.c_str());
 			}
 		}
@@ -990,7 +1004,8 @@ namespace Cronos {
 				sprintf_s(buf1, "%s", m_AssetNameNoExtension.c_str());
 				ImGui::SetNextItemWidth(ImGui::CalcTextSize(buf1).x+25);
 				if (ImGui::InputText("###", buf1, 64, ImGuiInputTextFlags_CharsNoBlank)) {
-					App->filesystem->RenameFile(this,buf1);
+					if(App->input->GetKey(SDL_SCANCODE_RETURN)==KEY_DOWN)
+						App->filesystem->RenameFile(this,buf1);
 				}
 
 				ImGui::EndMenu();
@@ -1091,9 +1106,13 @@ namespace Cronos {
 		std::filesystem::rename(Asset->GetAssetPath(),tempDirName);
 		Asset->m_AssetFullName = newName+Asset->GetExtension();
 		Asset->m_AssetShortName = Asset->m_AssetFullName;
+
 		if (Asset->m_AssetFullName.length() > 10) {
 			Asset->m_AssetShortName.erase(10);
 			Asset->m_AssetShortName += "...";
+		}
+		if (Asset->type == ItemType::ITEM_SHADER) {
+			Asset->setShadernewName(newName);
 		}
 		Asset->SetAssetPath(tempDirName);
 	}

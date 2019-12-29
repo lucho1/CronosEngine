@@ -1035,15 +1035,7 @@ namespace Cronos {
 			else if (m_CurrentAssetSelected->GetType() == ItemType::ITEM_SHADER) {
 				GUIDrawScriptingEditor(CurrentAssetSelected);
 			}
-			else
-			{
-				ModifyScript = false;
-				if (ChangePalette == true)
-				{
-					editor.SetPalette(TextEditor::GetDeactivatedPalette());
-					ChangePalette = false;
-				}
-			}
+
 		}
 
 		ImGui::End();
@@ -1079,9 +1071,11 @@ namespace Cronos {
 		ImGui::Separator();
 		if (ImGui::Button("Modify"))
 		{
-			ModifyScript = !ModifyScript;
-			ChangePalette = true;
-			modifingShader = false;
+			if (CurrentAssetSelected->m_Shader->GetShaderName() != "basic.glsl"&&CurrentAssetSelected->m_Shader->GetShaderName() != "WaterShader.glsl") {
+				ModifyScript = !ModifyScript;
+				ChangePalette = true;
+				modifingShader = false;
+			}
 		}
 
 		ImGui::SameLine(ImGui::GetWindowWidth() - 100);
@@ -1126,6 +1120,21 @@ namespace Cronos {
 		editor.SetReadOnly(!ModifyScript);
 		editor.SetHandleMouseInputs(ModifyScript);
 		editor.Render("TextEditor");
+
+		if(CurrentAssetSelected->m_Shader->GetShaderName() == "basic.glsl"||CurrentAssetSelected->m_Shader->GetShaderName() == "WaterShader.glsl")
+		{
+			ImGui::SetNextWindowBgAlpha(0.8);
+			bool open = true;
+			ImVec2 CursorPos(ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2),ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2));
+			ImGui::SetNextWindowPos(CursorPos);
+
+			if (ImGui::Begin("Example: Simple overlay", &open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) //(corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+			{
+				ImGui::SetWindowFontScale(1.2);
+				ImGui::Text(" Unable to Modify this Shader");
+			}
+			ImGui::End();
+		}
 		//ImGui::InputTextMultiline("##source", buf1, IM_ARRAYSIZE(buf1), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 50), flags);
 		//ImGui::TextColored(ImVec4(0.00f, 1.00f, 1.00f, 1.00f), "hello");
 
@@ -1424,13 +1433,17 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected) {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+
+			ImGui::Text(CurrentGameObject->GetComponent<MaterialComponent>()->GetMaterial()->GetMatName().c_str());
+			ImGui::Separator();
 			static int item_current = 0;
+			item_current = App->renderer3D->getPositionShader(CurrentAssetSelected->m_resMaterial->m_Material->GetShader()->GetID());
 			ImGui::InvisibleButton("none", ImVec2(120, 1)); sameLine;
 			ImGui::SetNextItemWidth(200);
 
 			if (ImGui::Combo("###ShaderPicker", &item_current, App->renderer3D->GetShaderListNames().c_str())) {
 
-				CurrentGameObject->GetComponent<MaterialComponent>()->SetShader(*App->renderer3D->GetShaderFromList(item_current));
+				CurrentAssetSelected->m_resMaterial->m_Material->SetShader(*App->renderer3D->GetShaderFromList(item_current));
 				//App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());		
 			}
 
@@ -1536,8 +1549,13 @@ namespace Cronos {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			static int item_current = 0;
+			ImGui::Text(CurrentGameObject->GetComponent<MaterialComponent>()->GetMaterial()->GetMatName().c_str());
+			ImGui::Separator();
+			item_current = App->renderer3D->getPositionShader(CurrentGameObject->GetComponent<MaterialComponent>()->GetMaterial()->GetShader()->GetID());
+
 			ImGui::InvisibleButton("none", ImVec2(120, 1)); sameLine;
 			ImGui::SetNextItemWidth(200);
+
 			
 			if (ImGui::Combo("###ShaderPicker", &item_current, App->renderer3D->GetShaderListNames().c_str())) {
 

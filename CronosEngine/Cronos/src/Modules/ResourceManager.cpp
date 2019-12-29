@@ -90,6 +90,6 @@ namespace Cronos {
 			if (res->GetResID() == resID)
 				return (ResourceMaterial*)res;
 		}
-		return nullptr;
+		return (ResourceMaterial*)m_ResourceList[0];//SetDefaultShader if shader not found;
 	}
 }

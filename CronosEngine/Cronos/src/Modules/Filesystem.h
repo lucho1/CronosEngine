@@ -14,6 +14,7 @@ namespace Cronos {
 	class GameObject;
 	struct CronosVertex;
 	class Material;
+	class Shader;
 
 
 	enum class ItemType
@@ -65,6 +66,7 @@ namespace Cronos {
 		void SetupAssetLater();
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		bool HasMeta() const;
+		void setShadernewName(std::string name) { m_Shader->setName(name); }
 
 		Directories* folderDirectory = nullptr;
 		ResourceMaterial* m_resMaterial = nullptr;

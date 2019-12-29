@@ -26,7 +26,7 @@ namespace Cronos
 		inline const std::string GetMatName()								const { return m_MaterialName; }
 		inline const std::string GetMatPath()								const { return m_Path; }
 		Texture* GetTextureType(TextureType type);
-		
+		Shader* GetShader()													const { return m_MaterialShader; }
 		//Setters
 		void SetName(const std::string& name)								{ m_MaterialName = name; }
 		void SetShader(Shader& shader)										{ m_MaterialShader = &shader; }

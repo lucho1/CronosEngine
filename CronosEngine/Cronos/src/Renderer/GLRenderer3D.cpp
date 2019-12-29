@@ -9,7 +9,9 @@
 #include "Modules/Scene.h"
 #include "Modules/EngineCamera.h"
 #include "GameObject/GameObject.h"
-
+#include "Resources/Resource.h"
+#include "Resources/ResourceMaterial.h"
+#include "Modules/ResourceManager.h"
 #include <glad/glad.h>
 
 namespace Cronos {
@@ -85,8 +87,12 @@ namespace Cronos {
 		m_ShaderList.push_back(m_BasicShader);
 		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
 		m_BasicSh_RunTime.Start();
+
 		Material* DefaultMat = new Material();
 		DefaultMat->SetName("Default Material");
+		DefaultMat->SetShader(*m_DefaultShader);
+		ResourceMaterial* ResDefaultMat = new ResourceMaterial(DefaultMat->GetMaterialID(), DefaultMat);
+		App->resourceManager->AddResource(ResDefaultMat);
 
 		Material* LightMat = new Material();
 		LightMat->SetName("Light Material");
@@ -569,6 +575,17 @@ namespace Cronos {
 			}
 		}
 		return nullptr;
+	}
+
+	int GLRenderer3D::getPositionShader(uint shaderID)
+	{
+		
+		for (int i = 0; i < m_ShaderList.size(); i++) {
+			if (m_ShaderList[i]->GetID() == shaderID)
+				return i;
+		}
+
+		return 0;
 	}
 
 	// -----------------------------------------------------------------------------------
