@@ -26,7 +26,7 @@ namespace Cronos {
 			glm::mat4_cast(GetOrientation());
 
 		m_ViewMatrix = glm::inverse(camTransform);
-		m_ViewMatrix = glm::lookAt(GetPosition(), GetTarget(), GetUpVector());
+		//m_ViewMatrix = glm::lookAt(GetPosition(), GetTarget(), GetUpVector());
 
 		if (GetFOV() < MIN_FOV)
 			SetFOV(MIN_FOV);
