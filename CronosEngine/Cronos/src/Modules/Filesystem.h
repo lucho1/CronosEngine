@@ -48,23 +48,22 @@ namespace Cronos {
 		virtual void DrawIcons();
 
 		int GetElementSize();
-		ItemType GetType() const { return type; }
-		uint GetIconTexture() const { return m_IconTex; }
-		ImVec2 GetResolution() const { return m_Resolution; }
-		Texture* GetTexture() const { return m_AssetTexture; }
+		ItemType GetType()								const { return type; }
+		uint GetIconTexture()							const { return m_IconTex; }
+		ImVec2 GetResolution()							const { return m_Resolution; }
+		Texture* GetTexture()							const { return m_AssetTexture; }
+	
 
-		void SetupAssetLater();
-
-
-		void SetAssetPath(std::string newPath) { m_Path = newPath; }
-		std::string GetAssetPath() const { return m_Path; }
-		std::string GetAbsolutePath() const { return m_AbsolutePath; }
-
-		std::string GetExtension() const { return m_Extension; }
-		std::string GetDetails() const { return m_Details; }
-		inline int GetAssetID() const { return m_AssetID; }
-		inline uint GetGameObjectID() const{ return m_GameObjecID; }
+		std::string GetAssetPath()						const { return m_Path; }
+		std::string GetAbsolutePath()					const { return m_AbsolutePath; }
+		std::string GetExtension()						const { return m_Extension; }
+		std::string GetDetails()						const { return m_Details; }
+		inline int GetAssetID()							const { return m_AssetID; }
+		inline uint GetGameObjectID()					const { return m_GameObjecID; }
 		
+		
+		void SetupAssetLater();
+		void SetAssetPath(std::string newPath) { m_Path = newPath; }
 		bool HasMeta() const;
 
 		Directories* folderDirectory = nullptr;
@@ -109,7 +108,7 @@ namespace Cronos {
 		std::list<AssetItems*> m_Container;
 		std::list<Directories*>childs;
 
-		inline Directories* GetParentDirectory() const { return parentDirectory; }
+		inline Directories* GetParentDirectory()				const { return parentDirectory; }
 
 	private:
 
@@ -143,19 +142,19 @@ namespace Cronos {
 
 		bool SaveOwnFormat(GameObject* RootGameObject);
 		bool SaveMaterial(Material* materal,const char* path);
+		bool SaveShader(Shader* shader, const char* filepath);
 		ResourceMaterial* LoadMaterial(const char* filepath);
 		//GameObject* Load(std::string MetaPath);
 		GameObject* Filesystem::Load(int GOID);
 		bool LoadMesh(const char* filepath,MeshComponent& mesh, uint ResID);
-		inline Directories* GetAssetDirectories() const { return m_AssetRoot; };
-		inline std::string GetLabelAssetRoot() const { return m_LabelRootDirectory; }
-		inline std::string GetRootPath() const { return m_RootDirectory.generic_string(); }
-		inline const char* GetMetaPath() const { return m_LibraryPath.c_str(); }
-		inline const char* GetMeshLib() const { return m_HiddenMeshLibPath.c_str(); }
-		inline const char* GetMatLib() const { return m_HiddenMaterialLibPath.c_str(); }
-		inline const char* GetScenePath() const { return m_ScenePath.c_str(); }
-
-		inline GLuint GetIcon(ItemType type) const { return ArrayIconTextures[(int)type]->GetTextureID(); }
+		inline Directories* GetAssetDirectories()					const { return m_AssetRoot; };
+		inline std::string GetLabelAssetRoot()						const { return m_LabelRootDirectory; }
+		inline std::string GetRootPath()							const { return m_RootDirectory.generic_string(); }
+		inline const char* GetMetaPath()							const { return m_LibraryPath.c_str(); }
+		inline const char* GetMeshLib()								const { return m_HiddenMeshLibPath.c_str(); }
+		inline const char* GetMatLib()								const { return m_HiddenMaterialLibPath.c_str(); }
+		inline const char* GetScenePath()							const { return m_ScenePath.c_str(); }
+		inline GLuint GetIcon(ItemType type)						const { return ArrayIconTextures[(int)type]->GetTextureID(); }
 		
 	private:
 

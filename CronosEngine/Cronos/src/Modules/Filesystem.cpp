@@ -140,12 +140,17 @@ namespace Cronos {
 
 	}
 
+
 	bool Filesystem::SaveMaterial(Material* material,const char* path)
 	{
 		bool ret = true;
 		//std::string Data = m_HiddenMaterialLibPath + std::to_string(material->GetMaterialID()) + ".material";
 		std::string Data = path;
-		Data+="/" + material->GetMatName()+".material";
+		if (Data.size()>0)
+			Data += "/";
+
+		Data+= material->GetMatName()+".material";
+
 		if (material->GetMatPath().size() <= 0)
 			material->SetPath(Data);
 		const char* filePath = Data.c_str();
@@ -781,6 +786,14 @@ namespace Cronos {
 		else if (m_Extension == ".glsl") {
 			type = ItemType::ITEM_SHADER;
 			m_Shader = new Shader(m_Path.c_str());
+			if (App->renderer3D->isShaderLoaded(m_Shader->GetID())) {
+				m_Shader = App->renderer3D->GetShaderFromList(m_Shader->GetID());
+			}
+			else {
+				if (m_AssetNameNoExtension != "DefaultShader")
+				App->renderer3D->AddShader(m_Shader);
+			}
+
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
 		else if (m_Extension == ".cpp" || m_Extension == ".h") {
@@ -939,7 +952,7 @@ namespace Cronos {
 		hovered = ImGui::IsItemHovered(); //ASK MARC WHY IS NOT HOVERING ALL TIME
 		static double refresh_time = 0.0;
 		if (hovered) {
-
+			App->EditorGUI->onTopOfAsset = true;
 			if (refresh_time == 0.0)
 				refresh_time = ImGui::GetTime();
 			//static float Time = ImGui::GetTime();
@@ -951,8 +964,10 @@ namespace Cronos {
 				ImGui::EndTooltip();
 			}
 		}
-		else
+		else {
 			refresh_time = 0.0f;
+
+		}
 		if (ImGui::IsItemClicked())
 		{
 			App->EditorGUI->modifingShader = false;
@@ -1034,6 +1049,15 @@ namespace Cronos {
 		//m_Path = temp;
 		return temp;
 		//return std::string();
+	}
+
+	bool Filesystem::SaveShader(Shader* shader, const char* filepath) {
+
+		std::ofstream OutputFile_Stream{ filepath,std::ofstream::out };
+		OutputFile_Stream << std::setw(2) << shader->GetShaderTextFormat();
+		OutputFile_Stream.close();
+
+		return true;
 	}
 
 	void Filesystem::AddAssetFile(const char* filepath,const char* name,ItemType type) 

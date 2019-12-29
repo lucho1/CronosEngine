@@ -25,7 +25,14 @@ namespace Cronos
 		void SetUniform1f(const std::string& name, float value);
 		void SetUniformBool(const std::string& name, bool value);
 
-		std::string GetShaderTextFormat() const { return ShaderText; }
+		void setPath(std::string path) { m_Path = path; }
+		void setName(std::string name) { m_name = name + ".glsl"; }
+
+
+		std::string GetShaderTextFormat()	const { return ShaderText; }
+		std::string GetShaderPath()			const { return m_Path; }
+		std::string GetShaderName()			const { return m_name; }
+		inline uint GetID()					const { return m_ID; }
 
 	private:
 
@@ -41,6 +48,7 @@ namespace Cronos
 	private:
 
 		std::string ShaderText;
+		std::string m_name;
 
 		uint m_ID;
 		std::string m_Path;

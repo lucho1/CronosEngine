@@ -68,6 +68,7 @@ namespace Cronos {
 
 		float CurrentSpeedScrollLabel = 0.35;
 		float MaxScrollSpeedLabel = 0.35f;
+		bool onTopOfAsset = false;
 		bool SeeDrawBoundingBoxes = false;
 		bool StartScrolllabel = false;
 		bool modifingShader = false;

@@ -24,6 +24,14 @@ namespace Cronos {
 		std::string ShaderSourceCode = ReadFile(filepath);
 		ShaderText = ShaderSourceCode;
 		Compile(PreProcess(ShaderSourceCode));
+		std::string TempName = filepath;
+		if (TempName.find("/")) {
+			TempName.erase(0, TempName.find_last_of("/") + 1);
+			m_name = TempName;
+		}
+		else
+			m_name = filepath;
+
 		m_Path = filepath;
 	}
 

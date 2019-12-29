@@ -81,7 +81,18 @@ namespace Cronos {
 			}
 			if (ImGui::MenuItem("Shader"))
 			{
+				Shader* newShader = new Shader(*App->renderer3D->GetDefaultShader());
+				newShader->setName("DefaultShader" + std::to_string(App->m_RandomNumGenerator.GetIntRNInRange(0, 1000)));
+				if (App->EditorGUI->m_CurrentDir->GetShortLabelDirectorie().size() > 0) {
+					newShader->setPath(App->EditorGUI->m_CurrentDir->GetShortLabelDirectorie() + "/" + newShader->GetShaderName());
 
+				}
+				else
+					newShader->setPath(App->EditorGUI->m_CurrentDir->GetShortLabelDirectorie() + newShader->GetShaderName());
+
+				bool a = true;
+				App->filesystem->SaveShader(newShader, newShader->GetShaderPath().c_str());
+				App->filesystem->AddAssetFile(App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(), newShader->GetShaderPath().c_str(),ItemType::ITEM_SHADER);
 			}
 			if (ImGui::MenuItem("Material"))
 			{
@@ -1413,6 +1424,16 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected) {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			static int item_current = 0;
+			ImGui::InvisibleButton("none", ImVec2(120, 1)); sameLine;
+			ImGui::SetNextItemWidth(200);
+
+			if (ImGui::Combo("###ShaderPicker", &item_current, App->renderer3D->GetShaderListNames().c_str())) {
+
+				CurrentGameObject->GetComponent<MaterialComponent>()->SetShader(*App->renderer3D->GetShaderFromList(item_current));
+				//App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());		
+			}
+
 			static bool alpha_preview = true;
 			static bool alpha_half_preview = false;
 			static bool drag_and_drop = true;
@@ -1514,6 +1535,16 @@ namespace Cronos {
 	{
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			static int item_current = 0;
+			ImGui::InvisibleButton("none", ImVec2(120, 1)); sameLine;
+			ImGui::SetNextItemWidth(200);
+			
+			if (ImGui::Combo("###ShaderPicker", &item_current, App->renderer3D->GetShaderListNames().c_str())) {
+
+				CurrentGameObject->GetComponent<MaterialComponent>()->SetShader(*App->renderer3D->GetShaderFromList(item_current));
+					//App->renderer3D->SetRenderingCamera(*App->engineCamera->GetCamera());		
+			}
+
 			static bool alpha_preview = true;
 			static bool alpha_half_preview = false;
 			static bool drag_and_drop = true;
@@ -1910,7 +1941,7 @@ namespace Cronos {
 
 			ImGui::EndChild();
 
-			if (ImGui::IsItemClicked(1)) {
+			if (ImGui::IsItemClicked(1)&&onTopOfAsset==false) {
 				ImGui::OpenPopup("Options");
 			}
 			if (ImGui::BeginPopup("Options")) {
@@ -1924,7 +1955,7 @@ namespace Cronos {
 		}
 
 
-
+		onTopOfAsset = false;
 		ImGui::End();
 	}
 

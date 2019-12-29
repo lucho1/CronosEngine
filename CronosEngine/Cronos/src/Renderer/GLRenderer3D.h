@@ -81,10 +81,16 @@ namespace Cronos {
 		inline Material* GetLightMaterial()						const { return m_MaterialsList[1]; }
 		inline const uint GetDefaultMaterialID()				const { return (*m_MaterialsList.begin())->GetMaterialID(); }
 		inline Shader* GetBasicShader()							const { return m_BasicShader; }
-
+		inline Shader* GetDefaultShader()						const { return m_DefaultShader; }
 		//Lights
 		void AddLight(LightComponent* lightCompObj) { m_LightsList.push_back(lightCompObj); }
 		void PopLight(LightComponent* lightCompObj) { m_LightsList.erase(std::find(m_LightsList.begin(), m_LightsList.end(), lightCompObj)); }
+		
+		//Shader
+		void AddShader(Shader* shader) { m_ShaderList.push_back(shader); }
+		bool isShaderLoaded(uint shaderID) const;
+		Shader* GetShaderFromList(uint shaderID)const;
+		Shader* GetShaderFromList(int pos)						const { return m_ShaderList[pos]; }
 
 	public:
 
@@ -137,7 +143,8 @@ namespace Cronos {
 		bool& SetLightSystem() { return m_ChangeLightSystem; }
 		void SetLightingSystem() { m_ChangeLightSystem = !m_ChangeLightSystem; }
 		std::string GetCameraListNames() const						{ return CameraNameList; }
-		
+		std::string GetShaderListNames() const						{ return ShaderNameList; }
+
 		//Chose camera to render from
 		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
@@ -160,14 +167,17 @@ namespace Cronos {
 	private:
 		
 		std::vector<LightComponent*> m_LightsList;
+		std::vector<Shader*>m_ShaderList;
 		bool m_BlinnPhongLighting = true;
 		bool m_ChangeLightSystem = false;
 
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
+		Shader* m_DefaultShader = nullptr;
 		Timer m_BasicSh_RunTime;
 
 		std::string CameraNameList;
+		std::string ShaderNameList;
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
 		std::list<GameObject*> m_RenderingList;
