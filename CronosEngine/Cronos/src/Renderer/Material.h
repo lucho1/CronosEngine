@@ -34,6 +34,7 @@ namespace Cronos
 		void SetShininess(const float& shininess)							{ m_MaterialShininess = shininess; }
 		void SetTexture(Texture* texture, TextureType type);
 		void SetID(uint ID)													{ m_ID = ID; }
+		void SetPath(const std::string path)								{ m_Path = path; }
 		
 	
 	private:

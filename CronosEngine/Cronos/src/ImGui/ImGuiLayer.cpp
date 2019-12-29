@@ -23,6 +23,7 @@
 #include "GameObject/Components/Component.h"
 #include "GameObject/Components/TransformComponent.h"
 #include "GameObject/Components/CameraComponent.h"
+#include "Modules/ResourceManager.h"
 
 
 #include <glad/glad.h>
@@ -84,6 +85,21 @@ namespace Cronos {
 			}
 			if (ImGui::MenuItem("Material"))
 			{
+				Material* TempDefaultMat = App->renderer3D->GetDefaultMaterial();
+				Material* NewMaterial = new Material();
+
+				NewMaterial->SetName("DefaultMaterial" + std::to_string(App->m_RandomNumGenerator.GetIntRNInRange(0, 1000)));
+				//NewMaterial->SetPath(App->EditorGUI->m_CurrentDir->m_LabelDirectories);
+				NewMaterial->SetColor(TempDefaultMat->GetMaterialColor());
+				NewMaterial->SetShininess(TempDefaultMat->GetMaterialShininess());
+
+				App->filesystem->SaveMaterial(NewMaterial, App->EditorGUI->m_CurrentDir->GetShortLabelDirectorie().c_str());
+
+				ResourceMaterial* res = new ResourceMaterial(NewMaterial->GetMaterialID(), NewMaterial);
+				App->resourceManager->AddResource(res);
+
+				res->SetPath(NewMaterial->GetMatPath());
+				App->filesystem->AddAssetFile(App->EditorGUI->m_CurrentDir->m_LabelDirectories.c_str(), res->GetPath().c_str(), ItemType::ITEM_MATERIAL);
 
 			}
 

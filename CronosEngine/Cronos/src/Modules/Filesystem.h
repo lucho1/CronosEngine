@@ -104,6 +104,7 @@ namespace Cronos {
 
 		std::filesystem::path m_Directories;
 		std::string m_LabelDirectories;
+		std::string GetShortLabelDirectorie();
 
 		std::list<AssetItems*> m_Container;
 		std::list<Directories*>childs;

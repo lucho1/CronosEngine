@@ -146,6 +146,8 @@ namespace Cronos {
 		//std::string Data = m_HiddenMaterialLibPath + std::to_string(material->GetMaterialID()) + ".material";
 		std::string Data = path;
 		Data+="/" + material->GetMatName()+".material";
+		if (material->GetMatPath().size() <= 0)
+			material->SetPath(Data);
 		const char* filePath = Data.c_str();
 		if (filePath == nullptr) {
 			CRONOS_WARN(filePath != nullptr, ("Unable to find Path to save: " + std::string(filePath)));
@@ -874,47 +876,11 @@ namespace Cronos {
 
 		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
-			//m_IconTex = App->filesystem->GetIcon(type);
-			//std::string path = m_Path;
-			//path.erase(path.find(m_Extension));
-			//path += ".asset";
-			//if (!HasMeta())
-			//{
-			//	GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
-			//	if (temp != nullptr) {
-			//		SaveAsset(temp, path.c_str());
-			//		m_GameObjecID = temp->GetGOID();
-			//		temp->CleanUp();
-			//	}
-			//	else
-			//		LOG("Failed To Load %s ", m_Path.c_str());
-			//}
-			//else
-			//{
-			//	m_GameObjecID = loadAsset(path.c_str());
-			//}
+
 		}
 		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
 			type = ItemType::ITEM_FBX;
-			//m_IconTex = App->filesystem->GetIcon(type);
-			//std::string path = m_Path;
-			//path.erase(path.find(m_Extension));
-			//path += ".asset";
-			//if(!HasMeta())
-			//{
-			//	GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
-			//	if (temp != nullptr) {
-			//		SaveAsset(temp, path.c_str());
-			//		m_GameObjecID = temp->GetGOID();
-			//		temp->CleanUp();
-			//	}
-			//	else
-			//		LOG("Failed To Load %s ", m_Path.c_str());
-			//}
-			//else
-			//{
-			//	m_GameObjecID = loadAsset(path.c_str());
-			//}
+
 		}
 		else if (m_Extension == ".glsl") {
 			type = ItemType::ITEM_SHADER;
@@ -928,59 +894,23 @@ namespace Cronos {
 		else if (m_Extension == ".png" ) {
 
 			type = ItemType::ITEM_TEXTURE_PNG;
-			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			//
-			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
-			//m_IconTex = m_AssetTexture->GetTextureID();
-			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
-			//m_Details += "x";
-			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
-			//m_Details += " ";
-			//m_Details += m_AssetFullName;
+
 
 		}
 		else if (m_Extension == ".dds") {
 			type = ItemType::ITEM_TEXTURE_DDS;
-			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			//
-			//
-			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
-			//m_IconTex = m_AssetTexture->GetTextureID();
-			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
-			//m_Details += "x";
-			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
-			//m_Details += " ";
-			//m_Details += m_AssetFullName;
+
 		}
 		else if (m_Extension == ".jpeg"||m_Extension==".jpg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
-			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			//
-			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
-			//m_IconTex = m_AssetTexture->GetTextureID();
-			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
-			//m_Details += "x";
-			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
-			//m_Details += " ";
-			//m_Details += m_AssetFullName;
 		}
 		else if (m_Extension == ".tga") {
 			type = ItemType::ITEM_TEXTURE_TGA;
-			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
-			//
-			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
-			//m_IconTex = m_AssetTexture->GetTextureID();
-			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
-			//m_Details += "x";
-			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
-			//m_Details += " ";
-			//m_Details += m_AssetFullName;
 
 		}
 		else if (m_Extension == ".material") {
 			type = ItemType::ITEM_MATERIAL;
-			//m_resMaterial = App->filesystem->LoadMaterial(m_Path.c_str());
-			//m_IconTex = App->filesystem->GetIcon(type);
+
 		}
 
 		if (beloadedLater) {
@@ -1093,14 +1023,28 @@ namespace Cronos {
 		m_Container;
 	}
 
+	std::string Directories::GetShortLabelDirectorie()
+	{
+		
+		//m_path.make_preferred();
+		//m_Path = m_path.parent_path().generic_string();
+		//std::string temp = m_path.generic_string();
+		std::string temp = m_LabelDirectories;
+		temp.erase(0, App->filesystem->GetRootPath().size() + 1);
+		//m_Path = temp;
+		return temp;
+		//return std::string();
+	}
+
 	void Filesystem::AddAssetFile(const char* filepath,const char* name,ItemType type) 
 	{
 		Directories* TempDir = GetDirectories(filepath);
-		for (auto&currDir : TempDir->m_Container) {
-			if (currDir->GetAssetPath() == name)
-				return;
-		}
+		//for (auto&currDir : TempDir->m_Container) {
+		//	if (currDir->GetAssetPath() == name)
+		//		return;
+		//}
 		AssetItems* newAsset = new AssetItems(App->filesystem->GetRootPath()+"/"+name, TempDir);
+		newAsset->SetupAssetLater();
 		TempDir->m_Container.push_front(newAsset);
 	}
 
