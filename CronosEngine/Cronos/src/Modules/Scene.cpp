@@ -301,7 +301,6 @@ namespace Cronos {
 
 		if (ImGuizmo::IsUsing())
 		{
-
 			glm::vec3 scale, translation, rot;
 			glm::quat q;
 			glm::decompose(model, scale, q, translation, glm::vec3(), glm::vec4());

@@ -4,6 +4,10 @@
 #include "TransformComponent.h"
 #include "GameObject/GameObject.h"
 
+#include "Application.h"
+#include "Renderer/GLRenderer3D.h"
+#include "Modules/EngineCamera.h"
+
 namespace Cronos {
 
 	CameraComponent::CameraComponent(GameObject* attachedGO)
@@ -14,7 +18,9 @@ namespace Cronos {
 	void CameraComponent::Update(float dt)
 	{
 		Recalculate();
-		DrawFrustum();
+
+		if (App->renderer3D->GetCurrentCamera() == App->engineCamera->GetCamera())
+			DrawFrustum();
 	}
 
 	// -----------------------------------------------------------------

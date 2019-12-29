@@ -68,6 +68,9 @@ namespace Cronos {
 		void RemoveFromTree(GameObject* gameObject)	{ m_RenderingOctree.TakeOut(gameObject); }
 		void ResetTree()							{ AABB OT_AABB = math::AABB(math::float3(-100.0f), math::float3(100.0f)); m_RenderingOctree = CnOctree(OT_AABB, 2); }
 		
+		//Camera
+		const inline Camera* GetCurrentCamera() const { return m_CurrentCamera; }
+
 		//Materials things
 		void AddMaterialToList(Material* material)	{ m_MaterialsList.push_back(material); }
 		void PopMaterial(Material* material);
@@ -79,6 +82,7 @@ namespace Cronos {
 		inline const uint GetDefaultMaterialID()				const { return (*m_MaterialsList.begin())->GetMaterialID(); }
 		inline Shader* GetBasicShader()							const { return m_BasicShader; }
 
+		//Lights
 		void AddLight(LightComponent* lightCompObj) { m_LightsList.push_back(lightCompObj); }
 		void PopLight(LightComponent* lightCompObj) { m_LightsList.erase(std::find(m_LightsList.begin(), m_LightsList.end(), lightCompObj)); }
 
@@ -135,9 +139,7 @@ namespace Cronos {
 		std::string GetCameraListNames() const						{ return CameraNameList; }
 		
 		//Chose camera to render from
-		void SetRenderingCamera(Camera& camera) { 
-			m_CurrentCamera = &camera; 
-		}
+		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
 
 	private:
 

@@ -694,8 +694,8 @@ namespace Cronos {
 			}
 
 			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
-
-			if (App->EditorGUI->GetCurrentGameObject() != nullptr)
+			
+			if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->renderer3D->GetCurrentCamera() == App->engineCamera->GetCamera())
 				App->scene->DrawGuizmo(App->engineCamera->GetCamera(), App->EditorGUI->GetCurrentGameObject());
 
 			if (ImGui::BeginDragDropTarget())

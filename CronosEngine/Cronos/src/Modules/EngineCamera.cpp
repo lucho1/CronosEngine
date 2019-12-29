@@ -45,7 +45,8 @@ namespace Cronos
 
 	update_status EngineCamera::OnUpdate(float dt)
 	{
-		//DrawFrustum();
+		if (App->renderer3D->GetCurrentCamera() != this)
+			return UPDATE_CONTINUE;
 
 		if (App->EditorGUI->isHoveringWinGame())
 		{

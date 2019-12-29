@@ -160,8 +160,10 @@ namespace Cronos {
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
-		DrawFloorPlane(true);
-		if(m_SeeOctree)
+		if(m_CurrentCamera == App->engineCamera->GetCamera())
+			DrawFloorPlane(true);
+
+		if(m_SeeOctree && m_CurrentCamera == App->engineCamera->GetCamera())
 			m_RenderingOctree.Draw();
 
 		//Wireframe Mode (or not) ------------------------------------------------------------
