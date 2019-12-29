@@ -60,8 +60,8 @@ namespace Cronos {
 		WaveColor = { 1.0f, 1.0f, 1.0f, 0.8f };
 		// ------------------------------------------------------------------------------------------------
 
-		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		//m_GameObjects.push_back(m_StreetModel);
+		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		m_GameObjects.push_back(m_StreetModel);
 
 		ToCopy = nullptr;
 		return ret;
