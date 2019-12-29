@@ -105,6 +105,8 @@ namespace Cronos {
 
 
 		//OpenGL Settings
+		const inline OpenGLSettings GetOGLSettings() const { return m_CurrentSettings; }
+
 		void SetOpenGLSettings();
 
 		void SetBlending(bool setStatus);

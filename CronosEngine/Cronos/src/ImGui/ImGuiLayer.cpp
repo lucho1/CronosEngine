@@ -1400,16 +1400,15 @@ namespace Cronos {
 
 			ImGui::NewLine();
 			ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
-			if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+			if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.02f", 1.0f))
 				camera->SetFOV(CameraFieldOfView);
 
 			ImGui::NewLine();
-			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 0.2f))
+			if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.01, 500, "%.000000000002f", 2.0f))
 				camera->SetNearPlane(CameraNearPlane);
 
 			ImGui::NewLine();
-			ImGui::SetNextItemWidth(100);
-			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 0.5f))
+			if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 10, 1000, "%.0002f", 1.0f))
 				camera->SetFarPlane(CameraFarPlane);
 
 			//Set to default values ------------------------------------------------------------------------------
@@ -2150,7 +2149,7 @@ namespace Cronos {
 
 		//ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
 		ImGui::Begin("Render Settings", &ShowInspectorPanel);
-		ImGui::Text("##Render Settings");
+		ImGui::Text("Render Settings");
 		ImGui::Separator();
 		static int item_current = 0;
 		//const char* item = new char[App->renderer3D->m_CameraList.size()];
@@ -2186,7 +2185,7 @@ namespace Cronos {
 			App->renderer3D->SetBlending(ActivateBlend);
 		}ImGui::SameLine();
 
-		if (ImGui::Checkbox("Faceculling", &ActivateFaceCull)) {
+		if (ImGui::Checkbox("FaceCull", &ActivateFaceCull)) {
 			App->renderer3D->SetFaceCulling(ActivateFaceCull);
 		}
 		if (ImGui::Checkbox("Depth Test", &ActivateDepthTest)) {
@@ -2552,17 +2551,17 @@ namespace Cronos {
 
 		//Setters -----------------------------------------------------------------------------------------
 		ImGui::SameLine(15); ImGui::Text("Camera Move Speed: "); sameLine;
-		if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("##cameraMoveSpeed", &CameraMoveSpeed, 1.0f, 100.0f, "%.0002f", 1.0f))
 			App->engineCamera->SetMoveSpeed(CameraMoveSpeed);
 
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Camera Scroll Speed: "); sameLine;
-		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("##cameraScrollSpeed", &CameraScrollSpeed, 1.0f, 100.0f, "%.0002f", 1.0f))
 			App->engineCamera->SetScrollSpeed(CameraScrollSpeed);
 
 		ImGui::NewLine();
 		ImGui::SameLine(15); ImGui::Text("Field of View : "); sameLine;
-		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("##cameraFOV", &CameraFieldOfView, MIN_FOV, MAX_FOV, "%.02f", 1.0f))
 			App->engineCamera->SetFOV(CameraFieldOfView);
 
 		ImGui::NewLine();
@@ -2572,13 +2571,13 @@ namespace Cronos {
 		ImGui::SameLine(30);
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.1, 500, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("NearPlane ", &CameraNearPlane, 0.01, 500, "%.000000000002f", 2.0f))
 			App->engineCamera->SetNearPlane(CameraNearPlane);
 
 		sameLine;
 		ImGui::SetNextItemWidth(100);
 
-		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 0.1, 1000, "%.2f", 1.0f))
+		if (ImGui::SliderFloat("FarPlane ", &CameraFarPlane, 10, 1000, "%.0002f", 1.0f))
 			App->engineCamera->SetFarPlane(CameraFarPlane);
 
 		//Set to default values ------------------------------------------------------------------------------
