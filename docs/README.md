@@ -7,7 +7,7 @@
 
 <p align="center">
 If embedded video cannot be seen, or is seen with low quality
-<a href="LINKVIDEOYTBE">open it at Youtube</a> (it will be in a higher quality).<br><br>
+<a href="https://youtu.be/DegJ9yJnPts">open it at Youtube</a> (it will be in a higher quality).<br><br>
 </p>
 
 ![](res/images/Captura.PNG?style=centerme)
