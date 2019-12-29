@@ -37,6 +37,8 @@ Note that the basic shader has an assertion system which is very useful!
 We were required, along with the shaders implementation, to test them with a Simple Water simulation. If you open the window tab, you will be able to activate it. At the beginning you will see that the movement seems a bit strange, but is made on purpose, because you will see that a pannel will also be opened with many different values. You can modify them all to make the water as you want. You will also be able to change the color.
 Our council first, when you find this water, is to lower a bit the multiplicator value at the bottom part of the pannel and try to lower velocities and amplitudes/lengths. From there, the water is your sandbox!!
 
+<img src="https://media.giphy.com/media/QaYLDeKEzADU6qUDad/giphy.gif" width="720" height="405" />
+
 We have also prepared something else: If you go to the engine's folder, inside, at res/models/waterPlane folder, you will see a textures folder. As you may the deduce, the water simulation uses "water_tex_used.png" texture, but we let you there 5 more textures so you can change them and see which one fits the best! (You can also change the specular one, there are 2 of it, but it won't be a huge change).
 
 You can read the Water Shader to check how the simulation is done.
