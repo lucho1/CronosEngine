@@ -4,6 +4,20 @@ Cronos Engine is a 3D Game Engine based on OpenGL and made by 2 students (Lucho 
 We used SDL, SDL_Mixer, STL, OpenGL4 with GLAD, ImGui, Premake, GLM, GPUDetect, MMRG, ParShapes, Assimp, Devil, a couple of headers of COCO for AABBs and JSON for Modern C++.
 
 ## Innovating Features
+* Improved Illumination System: Blinn-Phong is used, an improvement of the Phong algorithm. The difference can be tested with spotlights, by activating it in the Rendering Mode tab (in the Scene window)
+* Performance Measurements on different ways of rendering objects with materials
+* Support for Geometry Shader - Test it by yourself by adding a Geometry Shader in a new shader.
+* Filesystem improved - New features such as creating folders, shaders, copying paths...
+* Quicksort algorithm to order assets to load them in the order we want
+
+* Shaders System (as assets!) - Create new shaders and modify/compile them from the Engine! 
+* Engine's camera moves similar to Unity! (Check controls)
+* Guizmo implementation (accessed from the Transform Component Pannel or with keys)
+* Water simulation calculated from shaders - Modifiable from the Water Simulation pannel
+* Materials System - Modify them from the Engine in Inspector pannel or in the Object's components pannel
+* Choose from which camera to render from the Rendering pannel
+
+### Innovating Features for v0.2
 * ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
 * GameObjects Copy/Paste with CTRL+C/CTRL+V
 * Modifiable ambient color of the materials.
@@ -58,7 +72,7 @@ Just download a release and run the executable! Inside 'res' folder you'll find 
 * Mouse Wheel:			        Zoom in/out.
 * F:					              Focus camera at object (or center if not selected)
 
-* Space to test the octree split and M to re-calculate it.
+* W, E, R while selecting an object (and not moving the camera) to change gizmo mode
 * CTRL+C/CTRL+V to Copy/Paste selected objects
 
 For timing: Play/Pause/Stop button work as spected. Faster/Slower/Next-Frame won't be seen very well on the time shown but will on delta time of the scene. For the Faster/Slower be careful, because because they keep active, I mean, if you play and press one of those buttons, the time will go faster/slower, and you have to press again to "unactive" this. Of course, with the stop button they are put to unactive too. 
@@ -66,6 +80,26 @@ For timing: Play/Pause/Stop button work as spected. Faster/Slower/Next-Frame won
 Also, ImGui handles its own controls to navigate through UI. You can also Save/Load scene in menu bar and do plenty of stuff through menus (check changelog).
 
 ## Changelog
+v0.3
+* Shaders System Improved (modifications from Engine, supporting multiple shaders...)
+* Materials System (as assets and references) improved
+* Lighting System with Blinn-Phong
+* Lighting System with Phong
+
+* AA/OO BBs Fix - They are now well implemented
+* Renderer Pannel for multiple purposes (set rendering camera, debug draws...)
+* Transformations with a Gizmo
+
+* Engine's camera controls improved
+* Cameras Implementation
+* Frustum Culling & Octrees Rendering Optimization
+* Mouse Picking Implementation
+* Window/Scene resizing fix
+* UI Exhaustively updated
+
+* Resource Manager & Scene serialization diverse fixes
+* Filesystem improved - New features such as creating folders, shaders, copying paths...
+
 v0.2
 * Rework on Materials: Textures are now inside materials and many can be handled (in code level, not yet on a user level) as they are stored individually in an unordered map storing the texture and its type with a pointer to a main shader.
 * Rework on Camera: Completely changed. Now is based on glm library and its movement has changed.
@@ -119,11 +153,9 @@ v0.1
 * Other external libraries implementation
 
 ## Credits
-Cronos Engine is developed by **LuchoSuaya**(@lucho1) and **Roger Leon** (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by **Marc Garrigo Garcia** [@markitus18].
+Cronos Engine is developed by LuchoSuaya (@lucho1) and Roger Leon (@rleonborras) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by Marc Garrigo Garcia (@markitus18).
 
-**[TODO]** Put devs fotos. And what each did.
-
-Take a look to our web: **[TODO]** Put the web here
+Take a look to our web: https://lucho1.github.io/CronosEngine/
 Take a look to our Github Repository: https://www.github.com/lucho1/CronosEngine
 
 ## Contributing
@@ -138,6 +170,6 @@ Warning! If you wanna work with bullet, first, integrate it, then, go to MathBui
 
 ## License
 **Copyright (c) 2019 Lucho Suaya Leiro and Roger Leon Borras**
-Licensed under the **[Apache License](LICENSE.txt)**
+Licensed under the Apache License.
 
 Cronos Engine is Licensed under Apache License (http://www.apache.org/licenses/), you'll find the details in the License file in Github repository or in Engine's folder.

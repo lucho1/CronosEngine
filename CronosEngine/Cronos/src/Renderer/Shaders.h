@@ -15,6 +15,7 @@ namespace Cronos
 
 		void Bind() const;
 		void Unbind() const;
+		bool UserCompile(const std::string& filepath);
 
 		void SetUniformVec2f(const std::string& name, glm::vec2& vector2f);
 		void SetUniformVec3f(const std::string& name, glm::vec3& vector3f);
@@ -24,20 +25,21 @@ namespace Cronos
 		void SetUniform1f(const std::string& name, float value);
 		void SetUniformBool(const std::string& name, bool value);
 
-		std::string GetShaderTextFormat() const					 { return ShaderTextModifiable.c_str(); }
+		std::string GetShaderTextFormat() const { return ShaderText; }
 
 	private:
 
 		std::string ReadFile(const std::string& filepath);
 	
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& SourceShaderCode);
+		bool UserPreProcess(const std::string& SourceShaderCode, std::unordered_map<GLenum, std::string>& uMap);
+
 		void Compile(const std::unordered_map<GLenum, std::string>& ShadersUMap);
 
 		int GetUniformLocation(const std::string& name);
 
 	private:
 
-		std::string ShaderTextModifiable;
 		std::string ShaderText;
 
 		uint m_ID;

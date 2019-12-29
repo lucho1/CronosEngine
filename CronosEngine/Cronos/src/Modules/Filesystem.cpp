@@ -20,8 +20,6 @@
 
 namespace Cronos {
 
-
-
 	Filesystem::Filesystem(Application* app, bool start_enabled) : Module(app, "Module Filesystem", start_enabled)
 	{
 		for (uint i = 0; i < (uint)ItemType::MAX_ITEMS; i++)
@@ -870,9 +868,12 @@ namespace Cronos {
 		}
 		else
 			refresh_time = 0.0f;
-		if (ImGui::IsItemClicked()) {
+		if (ImGui::IsItemClicked())
+		{
+			App->EditorGUI->modifingShader = false;
 			App->EditorGUI->m_CurrentAssetClicked = this;
-			if (ImGui::IsMouseDoubleClicked(0)) {
+			if (ImGui::IsMouseDoubleClicked(0))
+			{
 				App->EditorGUI->m_CurrentAssetSelected = this;
 				App->EditorGUI->CancelGameObject();
 			}
