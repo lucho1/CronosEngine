@@ -18,14 +18,14 @@
     "FOV": 60.0,
     "FarPlane": 1000.0,
     "InitialLookAt": [
-      -68.67681121826172,
-      83.9781494140625,
-      125.09832000732422
+      -56.240455627441406,
+      72.3097152709961,
+      95.18711853027344
     ],
     "InitialPosition": [
-      -68.68002319335938,
-      83.97977447509766,
-      125.10179138183594
+      -56.24394607543945,
+      72.31143951416016,
+      95.19025421142578
     ],
     "NearPlane": 1.0
   },
@@ -35,7 +35,7 @@
     "ClipDistance": true,
     "ColorDither": true,
     "DepthTest": true,
-    "FaceCulling": true,
+    "FaceCulling": false,
     "GL_ColorMaterial": true,
     "GL_Lighting": true,
     "Multisampling": false,

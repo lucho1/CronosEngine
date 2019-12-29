@@ -44,6 +44,7 @@ namespace Cronos {
 
 		sprintf_s(tmp_string2, 4096, "\n%s", tmp_string);
 		App->EditorGUI->AddLog(tmp_string2);
+		App->EditorGUI->ScrollToBottom = true;
 	}
 
 

@@ -111,6 +111,11 @@ namespace Cronos {
 		void SetGLLighting(bool setStatus);
 		void SetGLColorMaterial(bool setStatus);
 
+		bool &SetFrustrum() { return m_FrustumCulling; }
+		bool &SetOctreeOptimization() { return m_OctreeAcceleratedFrustumCulling; }
+		bool &SetOctreeDraw() { return m_SeeOctree; }
+
+
 	public:
 
 		//Debug stuff
@@ -127,9 +132,12 @@ namespace Cronos {
 		//Change Lighting System
 		bool& SetLightSystem() { return m_ChangeLightSystem; }
 		void SetLightingSystem() { m_ChangeLightSystem = !m_ChangeLightSystem; }
-
+		std::string GetCameraListNames() const						{ return CameraNameList; }
+		
 		//Chose camera to render from
-		void SetRenderingCamera(Camera& camera) { m_CurrentCamera = &camera; }
+		void SetRenderingCamera(Camera& camera) { 
+			m_CurrentCamera = &camera; 
+		}
 
 	private:
 
@@ -141,7 +149,8 @@ namespace Cronos {
 		GL_Light centerLight;
 		SDL_GLContext context;
 		CnOctree m_RenderingOctree;
-		
+		std::vector<GameObject*>m_CameraList;
+
 		std::vector<LightComponent*> m_PointLightsVec;
 		std::vector<LightComponent*> m_DirectionalLightsVec;
 		std::vector<LightComponent*> m_SpotLightsVec;
@@ -156,11 +165,13 @@ namespace Cronos {
 		Shader* m_BasicShader = nullptr;
 		Timer m_BasicSh_RunTime;
 
+		std::string CameraNameList;
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
 		std::list<GameObject*> m_RenderingList;
 		bool m_FrustumCulling = true;
 		bool m_OctreeAcceleratedFrustumCulling = false;
+		bool m_SeeOctree = false;
 
 		//ZBuffer rendering
 		bool m_DrawZBuffer = false;

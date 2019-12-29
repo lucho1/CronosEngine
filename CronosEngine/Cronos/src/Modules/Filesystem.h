@@ -19,16 +19,17 @@ namespace Cronos {
 	enum class ItemType
 	{
 		ITEM_NONE = -1,
-		ITEM_FBX,
-		ITEM_OBJ,
-		ITEM_MATERIAL,
-		ITEM_SHADER,
-		ITEM_SCRIPT,
-		ITEM_FOLDER,
 		ITEM_TEXTURE_PNG,
 		ITEM_TEXTURE_TGA,
 		ITEM_TEXTURE_JPEG,
 		ITEM_TEXTURE_DDS,
+		ITEM_SHADER,
+		ITEM_MATERIAL,
+		ITEM_FBX,
+		ITEM_OBJ,
+		ITEM_SCRIPT,
+		ITEM_FOLDER,
+
 		MAX_ITEMS
 	};
 
@@ -51,6 +52,8 @@ namespace Cronos {
 		uint GetIconTexture() const { return m_IconTex; }
 		ImVec2 GetResolution() const { return m_Resolution; }
 		Texture* GetTexture() const { return m_AssetTexture; }
+
+		void SetupAssetLater();
 
 
 		void SetAssetPath(std::string newPath) { m_Path = newPath; }
@@ -135,6 +138,8 @@ namespace Cronos {
 		void SearchFile(Directories* tempDir,const char* name);
 		Directories* GetDirectories(const char* dirPath);
 
+		void SetSortedAssets();
+
 		bool SaveOwnFormat(GameObject* RootGameObject);
 		bool SaveMaterial(Material* materal,const char* path);
 		ResourceMaterial* LoadMaterial(const char* filepath);
@@ -153,6 +158,7 @@ namespace Cronos {
 		
 	private:
 
+		std::vector <AssetItems*> AssetListToLoad;
 		std::vector <AssetItems*> AssetArray;
 		std::vector <Directories*> DirectoriesArray;
 		std::filesystem::path m_RootDirectory; //Temporary

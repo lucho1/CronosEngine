@@ -66,7 +66,7 @@ namespace Cronos {
 		strcpy(base_path, GetRootPath().c_str());
 		PHYSFS_init(base_path);
 		SDL_free(base_path);
-
+		SetSortedAssets();
 		return true;
 	}
 
@@ -696,38 +696,44 @@ namespace Cronos {
 		return true;
 	}
 
-	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype, bool beloadedLater): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
-		
-		m_path.make_preferred();
-		m_Path = m_path.parent_path().generic_string();
-		m_AbsolutePath = m_path.generic_string();
-		std::string temp = m_path.generic_string();
-		temp.erase(0, App->filesystem->GetRootPath().size()+1);
-		m_Path = temp;
-		//temp-=App->filesystem->GetLabelAssetRoot();
+	void QuickSort(std::vector<AssetItems*>&vec, uint left, uint right)
+	{
 
-		m_AssetFullName = m_path.filename().string();
-		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
-		m_AssetNameNoExtension = m_AssetShortName = m_AssetFullName;
+		//if (left >= right || right >= vec.size()) return; //Length <= 1 or invalid
+		//float pivotD = vec[right].second;
+		if (left >= right || right>=vec.size()) return;
+		int pivot = (int)vec[right]->GetType();
+		uint cnt = left;
 
-		m_AssetID = App->m_RandomNumGenerator.GetIntRN();
-
-
-
-		if (m_AssetFullName.length() > 10) {
-			m_AssetShortName.erase(10);
-			m_AssetShortName += "...";
-		}
-		if (m_path.has_extension()) {
-			m_Extension = m_path.extension().string();
-			m_AssetNameNoExtension.erase(m_AssetNameNoExtension.find(m_Extension));
+		for (uint i = left; i <= right; i++)
+		{
+			//float currentObjD = vec[i].second;
+			if ((int)vec[i]->GetType() <= pivot)
+			{
+				std::swap(vec[cnt], vec[i]);
+				++cnt;
+			}
 		}
 
-		if (beloadedLater) {
-			type = mtype;
-			return;
+		QuickSort(vec, left, cnt - 2); //We just need to sort the left part of the vector
+		QuickSort(vec, cnt, right);
+	}
+
+
+	void Filesystem::SetSortedAssets() {
+
+		AssetListToLoad;
+		QuickSort(AssetListToLoad, 0, AssetListToLoad.size() - 1);
+
+		for (auto&toLoad : AssetListToLoad) 
+		{
+			toLoad->SetupAssetLater();
 		}
 
+	}
+
+	void AssetItems::SetupAssetLater()
+	{
 		if (m_Extension == ".obj") {
 			type = ItemType::ITEM_OBJ;
 			m_IconTex = App->filesystem->GetIcon(type);
@@ -750,13 +756,13 @@ namespace Cronos {
 				m_GameObjecID = loadAsset(path.c_str());
 			}
 		}
-		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
+		else if (m_Extension == ".fbx" || m_Extension == ".FBX") {
 			type = ItemType::ITEM_FBX;
 			m_IconTex = App->filesystem->GetIcon(type);
 			std::string path = m_Path;
 			path.erase(path.find(m_Extension));
 			path += ".asset";
-			if(!HasMeta())
+			if (!HasMeta())
 			{
 				GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
 				if (temp != nullptr) {
@@ -781,7 +787,7 @@ namespace Cronos {
 			type = ItemType::ITEM_SCRIPT;
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
-		else if (m_Extension == ".png" ) {
+		else if (m_Extension == ".png") {
 
 			type = ItemType::ITEM_TEXTURE_PNG;
 			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
@@ -808,7 +814,7 @@ namespace Cronos {
 			m_Details += " ";
 			m_Details += m_AssetFullName;
 		}
-		else if (m_Extension == ".jpeg"||m_Extension==".jpg") {
+		else if (m_Extension == ".jpeg" || m_Extension == ".jpg") {
 			type = ItemType::ITEM_TEXTURE_JPEG;
 			m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
 
@@ -838,9 +844,158 @@ namespace Cronos {
 			m_resMaterial = App->filesystem->LoadMaterial(m_Path.c_str());
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
+	}
+
+
+	AssetItems::AssetItems(std::filesystem::path m_path,Directories* parentfolder,ItemType mtype, bool beloadedLater): folderDirectory(parentfolder),type(mtype),m_Path(m_path.root_path().string()) {
+		
+		m_path.make_preferred();
+		m_Path = m_path.parent_path().generic_string();
+		m_AbsolutePath = m_path.generic_string();
+		std::string temp = m_path.generic_string();
+		temp.erase(0, App->filesystem->GetRootPath().size()+1);
+		m_Path = temp;
+		//temp-=App->filesystem->GetLabelAssetRoot();
+
+		m_AssetFullName = m_path.filename().string();
+		sprintf_s(labelID,"%s", m_AssetFullName.c_str());
+		m_AssetNameNoExtension = m_AssetShortName = m_AssetFullName;
+
+		m_AssetID = App->m_RandomNumGenerator.GetIntRN();
+
+
+
+		if (m_AssetFullName.length() > 10) {
+			m_AssetShortName.erase(10);
+			m_AssetShortName += "...";
+		}
+		if (m_path.has_extension()) {
+			m_Extension = m_path.extension().string();
+			m_AssetNameNoExtension.erase(m_AssetNameNoExtension.find(m_Extension));
+		}
+
+		if (m_Extension == ".obj") {
+			type = ItemType::ITEM_OBJ;
+			//m_IconTex = App->filesystem->GetIcon(type);
+			//std::string path = m_Path;
+			//path.erase(path.find(m_Extension));
+			//path += ".asset";
+			//if (!HasMeta())
+			//{
+			//	GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
+			//	if (temp != nullptr) {
+			//		SaveAsset(temp, path.c_str());
+			//		m_GameObjecID = temp->GetGOID();
+			//		temp->CleanUp();
+			//	}
+			//	else
+			//		LOG("Failed To Load %s ", m_Path.c_str());
+			//}
+			//else
+			//{
+			//	m_GameObjecID = loadAsset(path.c_str());
+			//}
+		}
+		else if (m_Extension == ".fbx"||m_Extension == ".FBX") {
+			type = ItemType::ITEM_FBX;
+			//m_IconTex = App->filesystem->GetIcon(type);
+			//std::string path = m_Path;
+			//path.erase(path.find(m_Extension));
+			//path += ".asset";
+			//if(!HasMeta())
+			//{
+			//	GameObject*temp = App->filesystem->m_CNAssimp_Importer.LoadModel(m_Path);
+			//	if (temp != nullptr) {
+			//		SaveAsset(temp, path.c_str());
+			//		m_GameObjecID = temp->GetGOID();
+			//		temp->CleanUp();
+			//	}
+			//	else
+			//		LOG("Failed To Load %s ", m_Path.c_str());
+			//}
+			//else
+			//{
+			//	m_GameObjecID = loadAsset(path.c_str());
+			//}
+		}
+		else if (m_Extension == ".glsl") {
+			type = ItemType::ITEM_SHADER;
+			//m_Shader = new Shader(m_Path.c_str());
+			//m_IconTex = App->filesystem->GetIcon(type);
+		}
+		else if (m_Extension == ".cpp" || m_Extension == ".h") {
+			type = ItemType::ITEM_SCRIPT;
+			//m_IconTex = App->filesystem->GetIcon(type);
+		}
+		else if (m_Extension == ".png" ) {
+
+			type = ItemType::ITEM_TEXTURE_PNG;
+			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			//
+			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			//m_IconTex = m_AssetTexture->GetTextureID();
+			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			//m_Details += "x";
+			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			//m_Details += " ";
+			//m_Details += m_AssetFullName;
+
+		}
+		else if (m_Extension == ".dds") {
+			type = ItemType::ITEM_TEXTURE_DDS;
+			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			//
+			//
+			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			//m_IconTex = m_AssetTexture->GetTextureID();
+			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			//m_Details += "x";
+			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			//m_Details += " ";
+			//m_Details += m_AssetFullName;
+		}
+		else if (m_Extension == ".jpeg"||m_Extension==".jpg") {
+			type = ItemType::ITEM_TEXTURE_JPEG;
+			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			//
+			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			//m_IconTex = m_AssetTexture->GetTextureID();
+			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			//m_Details += "x";
+			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			//m_Details += " ";
+			//m_Details += m_AssetFullName;
+		}
+		else if (m_Extension == ".tga") {
+			type = ItemType::ITEM_TEXTURE_TGA;
+			//m_AssetTexture = App->textureManager->CreateTexture(m_Path.c_str(), TextureType::ICON);
+			//
+			//m_Resolution = ImVec2(m_AssetTexture->GetWidth(), m_AssetTexture->GetHeight());
+			//m_IconTex = m_AssetTexture->GetTextureID();
+			//m_Details += std::to_string((int)m_AssetTexture->GetWidth());
+			//m_Details += "x";
+			//m_Details += std::to_string((int)m_AssetTexture->GetHeight());
+			//m_Details += " ";
+			//m_Details += m_AssetFullName;
+
+		}
+		else if (m_Extension == ".material") {
+			type = ItemType::ITEM_MATERIAL;
+			//m_resMaterial = App->filesystem->LoadMaterial(m_Path.c_str());
+			//m_IconTex = App->filesystem->GetIcon(type);
+		}
+
+		if (beloadedLater) {
+			if(type!=ItemType::ITEM_NONE)
+				App->filesystem->AssetListToLoad.push_back(this);
+
+			return;
+		}
+
 		if (type == ItemType::ITEM_FOLDER) {
 			m_IconTex = App->filesystem->GetIcon(type);
 		}
+
 	};
 	void AssetItems::Clear() {
 		//delete folderDirectory;
@@ -1110,7 +1265,7 @@ namespace Cronos {
 
 				}
 				else {
-					AssetItems* t = new AssetItems(path.path().string().c_str(),currentDir);
+					AssetItems* t = new AssetItems(path.path().string().c_str(),currentDir,ItemType::ITEM_NONE,true);
 					currentDir->m_Container.push_back(t);
 					AssetArray.push_back(t);
 				}

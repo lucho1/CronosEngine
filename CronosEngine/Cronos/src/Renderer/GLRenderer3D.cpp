@@ -8,6 +8,7 @@
 #include "ImGui/ImGuiLayer.h"
 #include "Modules/Scene.h"
 #include "Modules/EngineCamera.h"
+#include "GameObject/GameObject.h"
 
 #include <glad/glad.h>
 
@@ -88,7 +89,7 @@ namespace Cronos {
 		Material* LightMat = new Material();
 		LightMat->SetName("Light Material");
 		LightMat->SetColor(glm::vec4(1.0f));
-
+		SetFaceCulling(false);
 		return true;
 	}
 
@@ -137,7 +138,19 @@ namespace Cronos {
 		centerLight.Render();
 
 		m_ObjectsInOctreeNode = m_RenderingOctree.GetObjectsContained(*m_CurrentCamera->GetFrustum());
+		
+		//const char* test = &m_CameraList[0]->GetName().c_str();
+	
+		CameraNameList ="Camera ViewPort";
+		CameraNameList += '\0';
+		
+		for (auto&camName : m_CameraList) {
+			CameraNameList += camName->GetName();
+			CameraNameList += '\0';
+		}
 
+		
+		
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
 
@@ -148,7 +161,8 @@ namespace Cronos {
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
 		DrawFloorPlane(true);
-		//m_RenderingOctree.Draw();
+		if(m_SeeOctree)
+			m_RenderingOctree.Draw();
 
 		//Wireframe Mode (or not) ------------------------------------------------------------
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
@@ -227,6 +241,8 @@ namespace Cronos {
 		m_RenderingList.clear();
 		return UPDATE_CONTINUE;
 	}
+
+
 
 	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
 	{

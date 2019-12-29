@@ -78,6 +78,9 @@
     <ClInclude Include="src\GameObject\Components\Component.h">
       <Filter>src\GameObject\Components</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObject\Components\LightComponent.h">
+      <Filter>src\GameObject\Components</Filter>
+    </ClInclude>
     <ClInclude Include="src\GameObject\Components\MaterialComponent.h">
       <Filter>src\GameObject\Components</Filter>
     </ClInclude>
@@ -102,6 +105,9 @@
     <ClInclude Include="src\Helpers\Color.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="src\Helpers\GL_Light.h">
+      <Filter>src\Helpers</Filter>
+    </ClInclude>
     <ClInclude Include="src\Helpers\RNGen.h">
       <Filter>src\Helpers</Filter>
     </ClInclude>
@@ -122,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="src\ImGui\OpenGL\imgui_impl_sdl.h">
       <Filter>src\ImGui\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImGui\TextEditor.h">
+      <Filter>src\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\imnodes.h">
       <Filter>src\ImGui</Filter>
@@ -184,6 +193,9 @@
       <Filter>src\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Resources\Resource.h">
+      <Filter>src\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\ResourceMaterial.h">
       <Filter>src\Resources</Filter>
     </ClInclude>
     <ClInclude Include="src\Resources\ResourceMesh.h">
@@ -1305,15 +1317,6 @@
     <ClInclude Include="vendor\mmgr\nommgr.h">
       <Filter>vendor\mmgr</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObject\Components\CameraComponent.h" />
-    <ClInclude Include="src\Helpers\Camera.h" />
-    <ClInclude Include="src\Renderer\Material.h" />
-    <ClInclude Include="src\GameObject\Components\LightComponent.h" />
-    <ClInclude Include="src\Helpers\GL_Light.h">
-      <Filter>src\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Resources\ResourceMaterial.h" />
-    <ClInclude Include="src\ImGui\TextEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
@@ -1323,6 +1326,9 @@
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\CameraComponent.cpp">
+      <Filter>src\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject\Components\LightComponent.cpp">
       <Filter>src\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject\Components\MaterialComponent.cpp">
@@ -1349,6 +1355,9 @@
     <ClCompile Include="src\Helpers\Color.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Helpers\GL_Light.cpp">
+      <Filter>src\Helpers</Filter>
+    </ClCompile>
     <ClCompile Include="src\Helpers\RNGen.cpp">
       <Filter>src\Helpers</Filter>
     </ClCompile>
@@ -1369,6 +1378,9 @@
     </ClCompile>
     <ClCompile Include="src\ImGui\OpenGL\imgui_impl_sdl.cpp">
       <Filter>src\ImGui\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImGui\TextEditor.cpp">
+      <Filter>src\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\ImGui\imnodes.cpp">
       <Filter>src\ImGui</Filter>
@@ -1430,6 +1442,9 @@
     <ClCompile Include="src\Resources\Resource.cpp">
       <Filter>src\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\Resources\ResourceMaterial.cpp">
+      <Filter>src\Resources</Filter>
+    </ClCompile>
     <ClCompile Include="src\Resources\ResourceMesh.cpp">
       <Filter>src\Resources</Filter>
     </ClCompile>
@@ -1439,14 +1454,5 @@
     <ClCompile Include="vendor\mmgr\mmgr.cpp">
       <Filter>vendor\mmgr</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObject\Components\CameraComponent.cpp" />
-    <ClCompile Include="src\Helpers\Camera.cpp" />
-    <ClCompile Include="src\Renderer\Material.cpp" />
-    <ClCompile Include="src\GameObject\Components\LightComponent.cpp" />
-    <ClCompile Include="src\Helpers\GL_Light.cpp">
-      <Filter>src\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Resources\ResourceMaterial.cpp" />
-    <ClCompile Include="src\ImGui\TextEditor.cpp" />
   </ItemGroup>
 </Project>

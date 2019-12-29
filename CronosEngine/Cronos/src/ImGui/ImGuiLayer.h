@@ -68,8 +68,11 @@ namespace Cronos {
 
 		float CurrentSpeedScrollLabel = 0.35;
 		float MaxScrollSpeedLabel = 0.35f;
+		bool SeeDrawBoundingBoxes = false;
 		bool StartScrolllabel = false;
 		bool modifingShader = false;
+		bool ScrollToBottom = false;
+		bool AutoScroll = true;
 
 	private:
 
@@ -93,6 +96,7 @@ namespace Cronos {
 
 		void GUIDrawScriptingEditor(AssetItems* CurrentAssetselected);
 		void GUIDrawHierarchyPanel();
+		void GUIDrawRendererPanel();
 		void GUIDrawAssetPanel();
 		void GUIDrawNodeEditorPanel();
 		void GUIDrawConsolePanel();
@@ -133,6 +137,7 @@ namespace Cronos {
 		float m_Time = 0.0f;
 		bool ShowMainMenu = true;
 		bool ShowDrawGameWindow = true;
+		bool ShowPanelRenderer = true;
 		bool ShowInspectorPanel = true;
 		bool ShowHierarchyMenu = true;
 		bool ShowAssetMenu = true;
