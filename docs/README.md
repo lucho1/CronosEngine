@@ -5,6 +5,8 @@
 
 <video src="res/LINKVIDEOGH.mp4" poster="res/Cronos_Engine_Logo.png" align="center" width="1080" height="720" controls preload></video>
 
+<video src="res/LINKVIDEOGH.mp4" poster="res/Cronos_Engine_Logo.png" align="center" width="1980" height="720" controls preload></video>
+
 <p align="center">
 If embedded video cannot be seen, or is seen with low quality
 <a href="LINKVIDEOYTBE">open it at Youtube</a> (it will be in a higher quality).<br><br>
