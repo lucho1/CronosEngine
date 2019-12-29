@@ -188,23 +188,33 @@ namespace Cronos {
 			glLineWidth(m_DefaultLinewidth);
 			SetWireframeDrawMode(true);
 		}
-		for (auto&shader : m_ShaderList) {
+
+		for (uint i = 0; i < m_ShaderList.size(); ++i)
+		{
+
+		//}
+
+		//std::vector<Shader*>::iterator ShIt = m_ShaderList.begin();
+		//for (; *ShIt != nullptr && ShIt != m_ShaderList.end(); ShIt = next(ShIt)) {
+
+			//if ((*ShIt)->GetShaderName() == "WaterShader.glsl")
+			//	continue;
 
 			//Shader Generic Stuff & ZBuffer -----------------------------------------------------
-			shader->Bind();
-			shader->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
-			shader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
-			shader->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
-			shader->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
+			m_ShaderList[i]->Bind();
+			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
+			m_ShaderList[i]->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+			m_ShaderList[i]->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+			m_ShaderList[i]->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
 
 			if (m_ChangeZBufferDrawing)
 			{
 				m_ChangeZBufferDrawing = false;
 				m_DrawZBuffer = !m_DrawZBuffer;
-				shader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
+				m_ShaderList[i]->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
 			}
 			if (m_DrawZBuffer)
-				shader->SetUniformVec2f("u_CamPlanes", glm::vec2(m_CurrentCamera->GetNearPlane(), m_CurrentCamera->GetFarPlane()));
+				m_ShaderList[i]->SetUniformVec2f("u_CamPlanes", glm::vec2(m_CurrentCamera->GetNearPlane(), m_CurrentCamera->GetFarPlane()));
 
 			//Lighting --------------------------------------------------------------------------
 			CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---");
@@ -213,25 +223,25 @@ namespace Cronos {
 			{
 				m_ChangeLightSystem = false;
 				m_BlinnPhongLighting = !m_BlinnPhongLighting;
-				shader->SetUniform1i("u_UseBlinnPhong", m_BlinnPhongLighting);
+				m_ShaderList[i]->SetUniform1i("u_UseBlinnPhong", m_BlinnPhongLighting);
 			}
 
 			uint currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
-			shader->SetUniform1i("u_CurrentDirLights", (int)currentDLights);
+			m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", (int)currentDLights);
 			for (uint i = 0; i < currentDLights; ++i)
-				m_DirectionalLightsVec[i]->SendUniformsLightData(shader, i);
+				m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
 			uint currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
-			shader->SetUniform1i("u_CurrentPointLights", (int)currentPLights);
+			m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", (int)currentPLights);
 			for (uint i = 0; i < currentPLights; ++i)
-				m_PointLightsVec[i]->SendUniformsLightData(shader, i);
+				m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
 			uint currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
-			shader->SetUniform1i("u_CurrentSPLights", (int)currentSPLights);
+			m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", (int)currentSPLights);
 			for (uint i = 0; i < currentSPLights; ++i)
-				m_SpotLightsVec[i]->SendUniformsLightData(shader, i);
+				m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
-			shader->Unbind();
+			m_ShaderList[i]->Unbind();
 
 		}
 		//Objects Rendering -----------------------------------------------------------------

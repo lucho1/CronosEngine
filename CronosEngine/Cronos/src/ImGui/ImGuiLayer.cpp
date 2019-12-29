@@ -1432,8 +1432,7 @@ namespace Cronos {
 	void ImGuiLayer::GUIDrawMaterialsMenu(AssetItems* CurrentAssetSelected) {
 		if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-
-			ImGui::Text(CurrentGameObject->GetComponent<MaterialComponent>()->GetMaterial()->GetMatName().c_str());
+			ImGui::Text(CurrentAssetSelected->m_resMaterial->m_Material->GetMatName().c_str());
 			ImGui::Separator();
 			static int item_current = 0;
 			item_current = App->renderer3D->getPositionShader(CurrentAssetSelected->m_resMaterial->m_Material->GetShader()->GetID());

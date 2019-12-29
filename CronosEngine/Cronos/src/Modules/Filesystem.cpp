@@ -360,7 +360,8 @@ namespace Cronos {
 
 			//Load Normals
 
-			if (rMesh->m_BufferSize[1] > 0) {
+			if (rMesh->m_BufferSize[1] > 0)
+			{
 				bytes = sizeof(float) * 3 * rMesh->m_BufferSize[1];
 				rMesh->Normal = new float[rMesh->m_BufferSize[0] * 3];
 				memcpy(rMesh->Normal, cursor, bytes);
