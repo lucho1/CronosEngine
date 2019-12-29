@@ -3,4 +3,3 @@ show_downloads: true
 github:
   zip_url: https://github.com/lucho1/CronosEngine/releases/download/CronosEngine_v0.3/CronosEngine_v0_3.zip
   tar_url: https://github.com/lucho1/CronosEngine/archive/CronosEngine_v0.3.tar.gz
-  git_url: https://github.com/lucho1/CronosEngine
