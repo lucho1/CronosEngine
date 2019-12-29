@@ -1,5 +1,8 @@
 {
   "Name": "NewScene",
+  "ParentGOID": [
+    1071255224
+  ],
   "Path": "res/Scenes/NewScene.scene",
-  "TotalofRootGO": 0
+  "TotalofRootGO": 1
 }

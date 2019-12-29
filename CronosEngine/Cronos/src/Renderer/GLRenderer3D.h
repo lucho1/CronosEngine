@@ -85,8 +85,9 @@ namespace Cronos {
 		//Lights
 		void AddLight(LightComponent* lightCompObj) { m_LightsList.push_back(lightCompObj); }
 		void PopLight(LightComponent* lightCompObj) { m_LightsList.erase(std::find(m_LightsList.begin(), m_LightsList.end(), lightCompObj)); }
-		
+		void ClearLightList() { m_LightsList.clear(); m_PointLightsVec.clear(); m_DirectionalLightsVec.clear(); m_SpotLightsVec.clear(); }
 		//Shader
+
 		void AddShader(Shader* shader) { m_ShaderList.push_back(shader); }
 		bool isShaderLoaded(uint shaderID) const;
 		Shader* GetShaderFromList(uint shaderID)const;

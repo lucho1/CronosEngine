@@ -237,9 +237,11 @@ namespace Cronos
 		
 		if (GameObjectSelection.size() > 0)
 		{
-			QuickSortByCamDistance(GameObjectSelection, GetPosition(), 0, GameObjectSelection.size() - 1);
-			App->EditorGUI->m_CurrentAssetSelected = nullptr;
-			return GameObjectSelection[0].first;
+			if (!ImGuizmo::IsOver()) {
+				QuickSortByCamDistance(GameObjectSelection, GetPosition(), 0, GameObjectSelection.size() - 1);
+				App->EditorGUI->m_CurrentAssetSelected = nullptr;
+				return GameObjectSelection[0].first;
+			}
 		}
 
 		return nullptr;

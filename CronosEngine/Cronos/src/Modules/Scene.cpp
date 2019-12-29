@@ -60,8 +60,8 @@ namespace Cronos {
 		WaveColor = { 1.0f, 1.0f, 1.0f, 0.8f };
 		// ------------------------------------------------------------------------------------------------
 
-		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
-		m_GameObjects.push_back(m_StreetModel);
+		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
+		//m_GameObjects.push_back(m_StreetModel);
 
 		ToCopy = nullptr;
 		return ret;
@@ -70,11 +70,18 @@ namespace Cronos {
 	// CleanUp
 	bool Scene::OnCleanUp()
 	{
-		m_Wave->CleanUp();
-		m_WaveTexture->~Texture();
-		m_WaveSpecText->~Texture();
+		//m_Wave->CleanUp();
+		//m_WaveTexture->~Texture();
+		//m_WaveSpecText->~Texture();
 
 		LOG("Unloading Intro scene");
+
+
+		App->renderer3D->m_CameraList.clear();
+
+		App->renderer3D->ClearLightList();
+
+
 		for (auto element : m_GameObjects)
 		{
 			element->CleanUp();
@@ -83,14 +90,16 @@ namespace Cronos {
 
 		m_GameObjects.clear();
 
-		std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
-		while (it != m_TexturesLoaded.end() && *it)
-		{
-			RELEASE(*it);
-			it = m_TexturesLoaded.erase(it);
-		}
 
-		m_TexturesLoaded.clear();
+		//std::list<Texture*>::iterator it = m_TexturesLoaded.begin();
+		//while (it != m_TexturesLoaded.end() && *it)
+		//{
+		//	RELEASE(*it);
+		//	it = m_TexturesLoaded.erase(it);
+		//}
+
+		//m_TexturesLoaded.clear();
+
 		return true;
 	}
 
@@ -174,25 +183,23 @@ namespace Cronos {
 			guizmo_operation = ImGuizmo::SCALE;
 		}
 
-		if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
-			if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
+		//if (App->input->GetKey(SDL_SCANCODE_LCTRL) == KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN) {
+		//	if (App->EditorGUI->GetCurrentGameObject() != nullptr && ToCopy != nullptr) {
 
-				GameObject* NewGO = App->filesystem->Load(ToCopy->GetGOID());
-
-
-				NewGO->SetNewID();
-				if (App->EditorGUI->GetCurrentGameObject()->GetParentGameObject() == nullptr) {
-					NewGO->SetParent(App->EditorGUI->GetCurrentGameObject());
-					App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
-				}
-				else {
-					NewGO->SetParent(App->EditorGUI->GetCurrentGameObject()->GetParentGameObject());
-					App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
-				}
-				App->filesystem->SaveOwnFormat(App->EditorGUI->GetCurrentGameObject());
-				//ToCopy = nullptr;
-			}
-		}
+		//		GameObject* NewGO = new GameObject(*App->EditorGUI->GetCurrentGameObject());
+		//		//NewGO->SetNewID();
+		//		if (App->EditorGUI->GetCurrentGameObject()->GetParentGameObject() == nullptr) {
+		//			NewGO->SetParent(App->EditorGUI->GetCurrentGameObject());
+		//			App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
+		//		}
+		//		else {
+		//			NewGO->SetParent(App->EditorGUI->GetCurrentGameObject()->GetParentGameObject());
+		//			App->EditorGUI->GetCurrentGameObject()->m_Childs.push_back(NewGO);
+		//		}
+		//		App->filesystem->SaveOwnFormat(App->EditorGUI->GetCurrentGameObject());
+		//		//ToCopy = nullptr;
+		//	}
+		//}
 
 		return UPDATE_CONTINUE;
 	}

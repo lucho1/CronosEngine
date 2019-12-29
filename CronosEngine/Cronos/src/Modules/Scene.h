@@ -60,15 +60,15 @@ namespace Cronos {
 		void DrawGuizmo(Camera* camera, GameObject* go);
 
 		//WaveModifiers
-		float WaveMaxTime=180.0f;
-		float WaveAmplitude = 5.0f;
-		float WaveLenght = 35.0f;
-		float WaveVelocity = 15.0f;
-		float FoamVelocity = 5.0f;
-		float WaveColorGrading = 0.1f;
-		float FoamDirectionX = 1.0f;
-		float FoamDirectionY = 1.0f;
-		float WaveMovementMultuplier = 2.0f;
+		float WaveMaxTime = 149.5f;
+		float WaveAmplitude = 3.4f;
+		float WaveLenght = 45.7f;
+		float WaveVelocity = 25.5f;
+		float FoamVelocity = 15.2f;
+		float WaveColorGrading = 0.037f;
+		float FoamDirectionX = 0.540f;
+		float FoamDirectionY = 0.037f;
+		float WaveMovementMultuplier = 0.60f;
 		glm::vec4 WaveColor;
 
 		//m_WaterShader->SetUniform1f("u_MaxTime", maxT);

@@ -258,6 +258,35 @@ namespace Cronos {
 			//	aux_JSONFile["ComponentMaterial"]["Albedo"] = m_TexturesContainer[TextureType::DIFFUSE]->GetTexturePath();
 			//if(m_TexturesContainer[TextureType::SPECULAR]!=nullptr)
 			//	aux_JSONFile["ComponentMaterial"]["Specular"] = m_TexturesContainer[TextureType::SPECULAR]->GetTexturePath();
+		}
+
+		if (ToConvert->GetComponent<LightComponent>()) {
+
+			LightComponent* light = ToConvert->GetComponent<LightComponent>();
+			aux_JSONFile["ComponentLight"]["LightColor"][0] = light->GetLightColor().r;
+			aux_JSONFile["ComponentLight"]["LightColor"][1] = light->GetLightColor().g;
+			aux_JSONFile["ComponentLight"]["LightColor"][2] = light->GetLightColor().b;
+
+			aux_JSONFile["ComponentLight"]["LightType"] = (int)light->GetType();
+			aux_JSONFile["ComponentLight"]["LightIntensity"] = light->GetLightIntensity();
+
+			aux_JSONFile["ComponentLight"]["AtenuationFactor"][0] = light->GetLightAttenuationFactors().x;
+			aux_JSONFile["ComponentLight"]["AtenuationFactor"][1] = light->GetLightAttenuationFactors().y;
+			aux_JSONFile["ComponentLight"]["AtenuationFactor"][2] = light->GetLightAttenuationFactors().z;
+
+			aux_JSONFile["ComponentLight"]["SpotlightInnerCutoff"] = light->GetSpotlightInnerCutoff();
+			aux_JSONFile["ComponentLight"]["SpotlightOuterCutoff"] = light->GetSpotlightOuterCutoff();
+
+		}
+		if (ToConvert->GetComponent<CameraComponent>()) {
+
+			CameraComponent* camera = ToConvert->GetComponent<CameraComponent>();
+
+			aux_JSONFile["ComponentCamera"]["FOV"] = camera->GetFOV();
+			aux_JSONFile["ComponentCamera"]["NearPlane"] = camera->GetNearPlane();
+			aux_JSONFile["ComponentCamera"]["FarPlane"] = camera->GetFarPlane();
+			aux_JSONFile["ComponentCamera"]["AspectRatio"][0] =camera->GetAspectRatio().x;
+			aux_JSONFile["ComponentCamera"]["AspectRatio"][1] = camera->GetAspectRatio().y;
 
 		}
 
@@ -343,8 +372,8 @@ namespace Cronos {
 			uint bytes = sizeof(range);
 
 			memcpy(rMesh->m_BufferSize, cursor, bytes);
-			
 			cursor += bytes;
+
 			bytes = sizeof(float) * 3 * rMesh->m_BufferSize[0];
 			rMesh->Position = new float[rMesh->m_BufferSize[0] * 3];
 			memcpy(rMesh->Position, cursor, bytes);
@@ -352,7 +381,7 @@ namespace Cronos {
 
 			if (rMesh->m_BufferSize[3] > 0) {
 				bytes = sizeof(uint) * rMesh->m_BufferSize[3] * 3;
-				rMesh->Index = new uint[rMesh->m_BufferSize[1] * 3];
+				rMesh->Index = new uint[rMesh->m_BufferSize[3] * 3];
 				memcpy(rMesh->Index, cursor, bytes);
 				cursor += bytes;
 			}
@@ -615,34 +644,40 @@ namespace Cronos {
 					json CompMat = configFile["ComponentMaterial"];
 					MaterialComponent* MatComp = ((MaterialComponent*)(ret->CreateComponent(ComponentType::MATERIAL)));
 					ResourceMaterial* Remat = App->resourceManager->getMaterialResource(configFile["ComponentMaterial"]["MaterialID"].get<uint>());
-					
-					//uint matIndex = configFile["ComponentMaterial"]["MaterialIndex"].get<uint>();
-					//if (matIndex < 0 || matIndex >= App->renderer3D->GetMaterialsList().size())
-					//	matIndex = 0;
-					//
-					//MatComp->m_MaterialIndex = matIndex;
+
 					MatComp->SetMaterial(*Remat->m_Material);
 									
 
-					//Set the color
-					//glm::vec4 color;
-					//color.r = configFile["ComponentMaterial"]["Color"]["R"].get<float>();
-					//color.g = configFile["ComponentMaterial"]["Color"]["G"].get<float>();
-					//color.b = configFile["ComponentMaterial"]["Color"]["B"].get<float>();
-					//color.a = configFile["ComponentMaterial"]["Color"]["A"].get<float>();
-					//MatComp->SetColor(color);
-					//
-					////Set the Albedo texture (if any)
-					//if (CompMat.contains("Albedo"))
-					//{
-					//	std::string AlbedoPath = configFile["ComponentMaterial"]["Albedo"].get<std::string>();
-					//	Texture* textTemp = App->textureManager->CreateTexture(AlbedoPath.c_str(), TextureType::DIFFUSE);
-					//	MatComp->SetTexture(textTemp, textTemp->GetTextureType());
-					//}
-
-					//Put the Material Component into the Game Object
 					ret->m_Components.push_back(MatComp);
 				}
+			}
+			if (configFile.contains("ComponentCamera")) {
+
+				CameraComponent* cameraComp = (CameraComponent*)(ret->CreateComponent(ComponentType::CAMERA));
+				//ret->GetComponent<TransformComponent>()->SetPosition({ 0, 3, 5 });
+
+				cameraComp->SetAspectRatio(glm::vec2(configFile["ComponentCamera"]["AspectRatio"][0].get<float>(), configFile["ComponentCamera"]["AspectRatio"][1].get<float>()));
+				cameraComp->SetFarPlane(configFile["ComponentCamera"]["FarPlane"].get<float>());
+				cameraComp->SetNearPlane(configFile["ComponentCamera"]["NearPlane"].get<float>());
+				cameraComp->SetFOV(configFile["ComponentCamera"]["FOV"].get<float>());
+
+				App->renderer3D->m_CameraList.push_back(ret);
+				ret->m_Components.push_back(cameraComp);
+			}
+			if (configFile.contains("ComponentLight")) {
+				
+				LightComponent* LightComp = (LightComponent*)(ret->CreateComponent(ComponentType::LIGHT));
+				//ret->GetComponent<TransformComponent>()->SetPosition({ -0.5f, 5.0f, -0.5f });
+
+				LightComp->SetAttenuationFactors(glm::vec3(configFile["ComponentLight"]["AtenuationFactor"][0].get<float>(), configFile["ComponentLight"]["AtenuationFactor"][1].get<float>(), configFile["ComponentLight"]["AtenuationFactor"][2].get<float>()));
+				LightComp->SetLightColor(glm::vec3(configFile["ComponentLight"]["LightColor"][0].get<float>(), configFile["ComponentLight"]["LightColor"][1].get<float>(), configFile["ComponentLight"]["LightColor"][2].get<float>()));
+				LightComp->SetLightType((LightType)configFile["ComponentLight"]["LightType"].get<int>());
+				LightComp->SetLightIntensity(configFile["ComponentLight"]["LightIntensity"].get<float>());
+				LightComp->SetSpotlightInnerCutoff(configFile["ComponentLight"]["SpotlightInnerCutoff"].get<float>());
+				LightComp->SetSpotlightOuterCutoff(configFile["ComponentLight"]["SpotlightOuterCutoff"].get<float>());
+
+				App->renderer3D->AddLight(LightComp);
+				ret->m_Components.push_back(LightComp);
 			}
 
 			//If any child, load it and set it as child
