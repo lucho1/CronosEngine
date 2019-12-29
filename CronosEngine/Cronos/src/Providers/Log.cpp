@@ -24,7 +24,12 @@ namespace Cronos {
 		va_end(ap);
 		sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 
-		//std::cout << tmp_string2 << std::endl;
+		if (App != nullptr && App->EditorGUI != nullptr)
+		{
+			App->EditorGUI->AddLog(tmp_string2);
+			App->EditorGUI->ScrollToBottom = true;
+		}		
+		std::cout << tmp_string2 << std::endl;
 		OutputDebugStringA(tmp_string2);
 	}
 
@@ -41,10 +46,15 @@ namespace Cronos {
 		va_start(ap, format);
 		vsprintf_s(tmp_string, 4096, format, ap);
 		va_end(ap);
-
 		sprintf_s(tmp_string2, 4096, "\n%s", tmp_string);
-		App->EditorGUI->AddLog(tmp_string2);
-		App->EditorGUI->ScrollToBottom = true;
+
+		if (App != nullptr && App->EditorGUI != nullptr)
+		{
+			App->EditorGUI->AddLog(tmp_string2);
+			App->EditorGUI->ScrollToBottom = true;
+		}
+		std::cout << tmp_string2 << std::endl;
+		OutputDebugStringA(tmp_string2);
 	}
 
 
