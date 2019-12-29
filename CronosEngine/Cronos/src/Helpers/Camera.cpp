@@ -188,20 +188,20 @@ namespace Cronos {
 			glmCorners[i] = min;
 			glmCorners[i + 1] = max;
 
-			App->renderer3D->DrawLine(max, min, blueColor, 2.0f);
+			App->renderer3D->DrawLine(max, min, blueColor, 1.0f);
 		}
 
 		//near plane
-		App->renderer3D->DrawLine(glmCorners[2], glmCorners[0], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[6], glmCorners[2], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[0], glmCorners[4], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[4], glmCorners[6], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[2], glmCorners[0], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[6], glmCorners[2], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[0], glmCorners[4], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[4], glmCorners[6], blueColor, 1.0f);
 
 		//Far plane
-		App->renderer3D->DrawLine(glmCorners[1], glmCorners[3], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[3], glmCorners[7], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[5], glmCorners[1], blueColor, 2.0f);
-		App->renderer3D->DrawLine(glmCorners[7], glmCorners[5], blueColor, 2.0f);
+		App->renderer3D->DrawLine(glmCorners[1], glmCorners[3], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[3], glmCorners[7], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[5], glmCorners[1], blueColor, 1.0f);
+		App->renderer3D->DrawLine(glmCorners[7], glmCorners[5], blueColor, 1.0f);
 	}
 
 	// -----------------------------------------------------------------
