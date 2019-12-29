@@ -1,1 +1,5 @@
 theme: jekyll-theme-tactile
+show_downloads: true
+github:
+  zip_url: https://github.com/lucho1/CronosEngine/releases/download/CronosEngine_v0.2/CronosEngine_v0_2.zip
+  tar_url: https://github.com/lucho1/CronosEngine/archive/CronosEngine_v0.2.tar.gz
