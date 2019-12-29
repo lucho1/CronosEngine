@@ -3,9 +3,6 @@
   <b>Cronos Engine</b> is a 3D Game Engine based on OpenGL and made by 2 students <a href="https://github.com/lucho1">Lucho Suaya</a> and <a href="https://github.com/rleonborras">Roger Leon</a> of the Degree in Videogames Design and Development of Universitat Politecnica de Catalunya for the Videogames Engines subject of 3rd course.
 </p>
 
-![](res/Cronos_Engine_Logo.png?style=centerme)
-
-## Screenshots & Video
 <video src="res/LINKVIDEOGH.mp4" poster="res/Cronos_Engine_Logo.png" align="center" width="1080" height="720" controls preload></video>
 
 <p align="center">
