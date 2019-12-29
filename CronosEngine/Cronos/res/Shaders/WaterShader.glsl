@@ -98,13 +98,6 @@ void main()
 		colorGrading = 0.0;
 
 	color = texture(u_DiffuseTexture, v_TexCoords) * u_AmbientColor + texture(u_SpecularTexture, v_TexCoords) * 0.2;
-	//color.r *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
-	//color.g *= 1.0 - (1.0 - (colorGrading + normalisedHeight));
 	color.r *= (colorGrading + normalisedHeight);
 	color.g *= (colorGrading + normalisedHeight);
-
-	//if(color.r <= 0.0)
-	//	color.r = 0.2;
-	//if(color.g <= 0.0)
-	//	color.g = 0.2;
 }

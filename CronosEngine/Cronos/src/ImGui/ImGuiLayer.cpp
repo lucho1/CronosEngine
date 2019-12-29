@@ -2260,27 +2260,27 @@ namespace Cronos {
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 
 		ImGui::Text("Wave Amplitude");
-		ImGui::DragFloat("###amplitude", &App->scene->WaveAmplitude, 0.1f, 1.0f, 40.0f);
+		ImGui::DragFloat("###amplitude", &App->scene->WaveAmplitude, 0.1f, 0.1f, 40.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Wave Max Time");
-		ImGui::DragFloat("###MaxTime", &App->scene->WaveMaxTime, 0.1f, 5.0f, 360.0f);
+		ImGui::DragFloat("###MaxTime", &App->scene->WaveMaxTime, 0.1f, 0.5f, 360.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Wave Lenght");
-		ImGui::DragFloat("###Lengh", &App->scene->WaveLenght, 0.1f, 5.0f, 50.0f);
+		ImGui::DragFloat("###Lengh", &App->scene->WaveLenght, 0.1f, 0.2f, 1000.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Wave Velocity");
-		ImGui::DragFloat("###WaveVale", &App->scene->WaveVelocity, 0.1f, 0.5f, 100.0f);
+		ImGui::DragFloat("###WaveVale", &App->scene->WaveVelocity, 0.1f, 0.2f, 1000.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Foam Velocity");
-		ImGui::DragFloat("###FoamVale", &App->scene->FoamVelocity, 0.1f, 0.5f, 100.0f);
+		ImGui::DragFloat("###FoamVale", &App->scene->FoamVelocity, 0.1f, 0.2f, 1000.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Wave Color Grading");
-		ImGui::DragFloat("###Color", &App->scene->WaveColorGrading, 0.1f, 0.01f, 100.0f);
+		ImGui::DragFloat("###Color", &App->scene->WaveColorGrading, 0.001f, 0.01f, 1.0f);
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("Foam Direction");
@@ -2291,7 +2291,7 @@ namespace Cronos {
 
 		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
 		ImGui::Text("WaveMultiplier");
-		ImGui::DragFloat("###waveMultipler", &App->scene->WaveMovementMultuplier, 0.1f, 0.5f, 100.0f);
+		ImGui::DragFloat("###waveMultipler", &App->scene->WaveMovementMultuplier, 0.1f, -10.0f, 1000.0f);
 
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();

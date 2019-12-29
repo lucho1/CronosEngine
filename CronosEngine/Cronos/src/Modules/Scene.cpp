@@ -34,8 +34,9 @@ namespace Cronos {
 
 		//Water Simulation --------------------------------------------------------------------------------
 		//Wave Object
-		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/waterPlaneOBJ.obj");
+		m_Wave = m_CNAssimp_Importer.LoadModel("res/models/waterPlane/FinalWaterPlane.FBX");
 		m_Wave->GetComponent<TransformComponent>()->SetPosition({ 0.0f, 2.0f, 0.0f });
+		m_Wave->GetComponent<TransformComponent>()->SetOrientation(glm::vec3(-90.f, 0.0f, 0.0f));
 
 		//Water Shader &
 		m_WaterShader = new Shader("res/shaders/WaterShader.glsl");
@@ -46,7 +47,7 @@ namespace Cronos {
 		m_WaveMaterial->SetShader(*m_WaterShader);
 
 		//Water Textures & Color
-		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/water1.jpg", TextureType::DIFFUSE);
+		m_WaveTexture = App->textureManager->CreateTexture("res/models/waterPlane/textures/water_tex_used.png", TextureType::DIFFUSE);
 		m_WaveSpecText = App->textureManager->CreateTexture("res/models/waterPlane/specwater.jpg", TextureType::SPECULAR);
 		m_WaveMaterial->SetTexture(m_WaveTexture, TextureType::DIFFUSE);
 		m_WaveMaterial->SetTexture(m_WaveSpecText, TextureType::SPECULAR);
