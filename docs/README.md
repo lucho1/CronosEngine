@@ -56,7 +56,7 @@ Concretely, you will see the direction from which light if you have a directiona
 
 Of course, you can also change the light color from there.
 
-**Warning:** Be careful. Cronos Engine won't support more than 20 spotlights, more than 20 pointlight or more than 8 directional lights at a time. If you try to create more, the shaders will active their assertion system and lights will blink in different colors on purpose. Delete the excess of lights to fix it. This will improve in the future, when my head learn about SSBOs to pass as many uniforms as I want :D
+**Warning:** Be careful. Cronos Engine won't support more than 20 spotlights, more than 20 pointlight or more than 8 directional lights at a time. If you try to create more, the shaders will active their assertion system and lights will blink in different colors on purpose. Delete the excess of lights to fix it. This will improve in the future.
 
 ### Filesystem
 We have also implemented a whole Filesystem in Cronos. It features, among others, asset browser, folder and files creation and modification (name, path...), open files in explorer, carefully designed icons, asset viewer, drag & drop, shaders edition (with a text editor) and support for .jpg, .jpeg, .png, .dds & .tga textures.
