@@ -102,7 +102,7 @@ One of the things we were proposed to do, as a little innovation, is to measure 
 * Engine's Project built with a Premake file and Project.bat generator to automatize build process
 
 ## Installation
-Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...). If you need any other information, you can check out the README.md file in the Engine's folder.
+Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...). If you need any other information, or to read about controls, you can check out the README.md file in the Engine's folder.
 
 **Note:** Be careful when modifying things on config file, it will probably modify engine's configuration. And please, don't delete the dll files, they are needed for the engine to work. Also, be careful when scaling objects, the Bounding Boxes transformations are not very well performed and they can be badly deformed (but kinda work).
 
