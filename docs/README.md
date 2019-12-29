@@ -6,7 +6,12 @@
 ![](res/Cronos_Engine_Logo.png?style=centerme)
 
 ## Screenshots & Video
-**[TODO]** Add 1min video
+<video src="res/.mp4" poster="res/" align="center" width="1080" height="720" controls preload></video>
+
+<p align="center">
+If embedded video cannot be seen, or is seen with low quality
+<a href="LINK">open it at Youtube</a> (it will be in a higher quality).<br><br>
+</p>
 
 ![](res/images/Captura.PNG?style=centerme)
 ![](res/images/Captura2.PNG?style=centerme)
