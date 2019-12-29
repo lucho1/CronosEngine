@@ -50,7 +50,7 @@ namespace Cronos
 		if (App->renderer3D->GetMaterialInMaterialsList(index) == nullptr)
 		{
 			CRONOS_WARN(0, "Couldn't Assign Material, the one passed is NULL -- Function: SetMaterial()")
-				return;
+			return;
 		}
 
 		m_Material = App->renderer3D->GetMaterialInMaterialsList(index);
@@ -69,33 +69,33 @@ namespace Cronos
 
 	void MaterialComponent::SetColor(const glm::vec4& col)
 	{
-		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
-		//{
-		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
-		//	return;
-		//}
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
+			return;
+		}
 
 		m_Material->SetColor(col);
 	}
 
 	void MaterialComponent::SetShininess(const float& shininess)
 	{
-		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
-		//{
-		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
-		//		return;
-		//}
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetColor()")
+				return;
+		}
 
 		m_Material->SetShininess(shininess);
 	}
 
 	void MaterialComponent::SetTexture(Texture* texture, TextureType type)
 	{
-		//if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
-		//{
-		//	CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetTexture()")
-		//	return;
-		//}
+		if (m_Material == nullptr || m_Material->GetMaterialID() == App->renderer3D->GetDefaultMaterialID())
+		{
+			CRONOS_WARN(0, "Operation Failed, current Material is NULL or is default (unmodifiable) -- Function: SetTexture()")
+			return;
+		}
 
 		m_Material->SetTexture(texture, type);
 	}

@@ -190,7 +190,7 @@ namespace Cronos {
 			m_BasicShader->SetUniform1i("u_drawZBuffer", m_DrawZBuffer);
 		}
 		if (m_DrawZBuffer)
-			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(App->engineCamera->GetNearPlane(), App->engineCamera->GetFarPlane()));
+			m_BasicShader->SetUniformVec2f("u_CamPlanes", glm::vec2(m_CurrentCamera->GetNearPlane(), m_CurrentCamera->GetFarPlane()));
 
 		//Lighting --------------------------------------------------------------------------
 		CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---");

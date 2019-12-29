@@ -43,7 +43,7 @@ namespace Cronos
 		uint m_ID = 0;
 
 		float m_MaterialShininess = 32.0f;
-		glm::vec4 m_MaterialAmbientColor = glm::vec4(0.8f, 0.5f, 0.2f, 1.0f);
+		glm::vec4 m_MaterialAmbientColor = glm::vec4(glm::vec3(0.85f), 1.0f);
 		std::unordered_map<TextureType, Texture*> m_MaterialTextures;
 
 		Shader* m_MaterialShader = nullptr;
