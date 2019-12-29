@@ -21,13 +21,13 @@ Download it now [here](https://github.com/lucho1/CronosEngine/releases/download/
 For this version, you can modify and use shaders. There are 4 shaders at the beginning (a water one, a default one, a basic one which Cronos Engine uses to render all and a modifiable one). All of them but the modifiable one, are not modifiable, you can test modifications in the modifiable shader and compile it, but the others won't allow any modification.
 However, you can create new shaders, they will be a copy of the default one, which provides the minimal implementation for the shader to compile. From there, is all yours! Enjoy it! You'll see a "Modify" button, which will allow you to modify/stop modifying the shader file. To modify the modifiable or a created shader, just pick on it twice in the asset editor and open the inspector, at the right side of the UI (by the way: you can create a new one with right click --> new shader, the same for materials).
 
-<img src="https://media.giphy.com/media/ViCtQz0ml6ARP80CGL/giphy.gif" width="1280" height="720" />
+<img src="https://media.giphy.com/media/ViCtQz0ml6ARP80CGL/giphy.gif" width="720" height="405" />
 
 You will see the GLSL structure thanks to the TextEditor implemented (which features colored text!), and is very intuitive and straightforward: Each shader in Cronos will be composed on a part which is the Vertex shader part, and on another part which is the Fragment or Pixel. Both have their characteristics and main functions. In addition, you can add a Geometry shader if you want, it will be supported.
 
 Once you finished with the shader, press Compile and check the console for feedback, it will log any error that there could be. If it's all OK, the shader will be successfully compiled and saved. You can use it at any material you want, they all have a dropdown to chose the shader to use. Of course, materials can be dropped in the objects inspector to set them.
 
-<img src="https://media.giphy.com/media/SUERLRjiUlHLjRPeJo/giphy.gif" width="1280" height="720" />
+<img src="https://media.giphy.com/media/SUERLRjiUlHLjRPeJo/giphy.gif" width="720" height="405" />
 
 And talking about materials, remember that you can modify them! You can change their diffuse and specular textures, as well as its color and shininess (by now, we're looking forward on further expansions on materials).
 
@@ -42,7 +42,7 @@ We have also prepared something else: If you go to the engine's folder, inside, 
 You can read the Water Shader to check how the simulation is done.
 
 ### Light System
-<img src="https://media.giphy.com/media/dY1JaUqpg93nfS6hGb/giphy.gif" width="1280" height="720" />
+<img src="https://media.giphy.com/media/dY1JaUqpg93nfS6hGb/giphy.gif" width="720" height="405" />
 
 And talking about shaders and materials, is also important to mention the implemented lighting system, based on Blinn-Phong algorithm. You can create lights from the hierarchy editor (where all objects are created) and use them as you want.
 
