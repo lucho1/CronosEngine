@@ -47,6 +47,9 @@ Of course, you can also change the light color from there.
 ### Filesystem
 We have also implemented a whole Filesystem in Cronos. It features, among others, asset browser, folder and files creation and modification (name, path...), open files in explorer, carefully designed icons, asset viewer, drag & drop, shaders edition (with a text editor) and support for .jpg, .jpeg, .png, .dds & .tga textures.
 
+### Rendering Optimization Measure
+One of the things we were proposed to do, as a little innovation, is to measure different ways to render in Cronos Engine. This, originally, came from the doubt of which of some determined manners were faster. We won't bother you much with this, but, summarizing, we made a little investigation on it and we have measured the mentioned rendering ways, and the results can be seen in a pdf file inside the Engine's folder.
+
 ## Innovating Features
 * Improved Illumination System: Blinn-Phong is used, an improvement of the requested Phong algorithm. The difference can be tested with spotlights, by activating it in the Rendering Mode tab (in the Scene window, where the Wireframe mode is)
 * Performance Measurements on different ways of rendering objects with materials
@@ -99,7 +102,7 @@ We have also implemented a whole Filesystem in Cronos. It features, among others
 * Engine's Project built with a Premake file and Project.bat generator to automatize build process
 
 ## Installation
-Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...). If you need any other information, you can check out the README.md file in the download folder.
+Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...). If you need any other information, you can check out the README.md file in the Engine's folder.
 
 **Note:** Be careful when modifying things on config file, it will probably modify engine's configuration. And please, don't delete the dll files, they are needed for the engine to work. Also, be careful when scaling objects, the Bounding Boxes transformations are not very well performed and they can be badly deformed (but kinda work).
 
