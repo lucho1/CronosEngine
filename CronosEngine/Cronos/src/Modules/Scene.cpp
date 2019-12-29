@@ -56,7 +56,7 @@ namespace Cronos {
 
 		//Water timer for movement calc
 		m_WaveTimer.Start();
-
+		WaveColor = { 1.0f, 1.0f, 1.0f, 0.8f };
 		// ------------------------------------------------------------------------------------------------
 
 		//m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
@@ -106,50 +106,51 @@ namespace Cronos {
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//---------------------------------- WAVE UPDATE -------------------------------------------------------------------------------------
 
-	/*	GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
-		m_WaterShader->Bind();
+		if (App->EditorGUI->ShowWaterPannel) {
+			GameObject* WaveMesh = (*m_Wave->m_Childs.begin());
+			m_WaterShader->Bind();
 
-		// Wave Calculations ----------------
-		float maxT = 180.0f;
-		m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
-		m_WaterShader->SetUniform1f("u_MaxTime", maxT);
-		m_WaterShader->SetUniform1f("u_Amplitude", 5.0f);
-		m_WaterShader->SetUniform1f("u_WaveLength", 35.0f);
-		m_WaterShader->SetUniform1f("u_Velocity", 15.0f);
-		m_WaterShader->SetUniform1f("u_FOAMVelocity", 5.0f);
-		m_WaterShader->SetUniform1f("u_ColorGradingOffset", 0.1f); //Fragment Shader
-		m_WaterShader->SetUniformVec2f("u_FOAMDirection", glm::vec2(1.0f, 1.0f));
-		m_WaterShader->SetUniform1f("u_WaveMovementMultiplicator", 2.0f);
+			// Wave Calculations ----------------
+			float maxT = 180.0f;
+			m_WaterShader->SetUniform1f("u_Time", m_WaveTimer.ReadSec());
+			m_WaterShader->SetUniform1f("u_MaxTime", WaveMaxTime);
+			m_WaterShader->SetUniform1f("u_Amplitude", WaveAmplitude);
+			m_WaterShader->SetUniform1f("u_WaveLength", WaveLenght);
+			m_WaterShader->SetUniform1f("u_Velocity", WaveVelocity);
+			m_WaterShader->SetUniform1f("u_FOAMVelocity", FoamVelocity);
+			m_WaterShader->SetUniform1f("u_ColorGradingOffset", WaveColorGrading); //Fragment Shader
+			m_WaterShader->SetUniformVec2f("u_FOAMDirection", glm::vec2(FoamDirectionX,FoamDirectionY));
+			m_WaterShader->SetUniform1f("u_WaveMovementMultiplicator", WaveMovementMultuplier);
 
-		if (m_WaveTimer.ReadSec() >= maxT)
-			m_WaveTimer.Start();
+			if (m_WaveTimer.ReadSec() >= maxT)
+				m_WaveTimer.Start();
 
-		// Shader Stuff ---------------------
-		m_WaterShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
-		m_WaterShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
-		m_WaterShader->SetUniformMat4f("u_Model", WaveMesh->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+			// Shader Stuff ---------------------
+			m_WaterShader->SetUniformMat4f("u_View", App->engineCamera->GetViewMatrix());
+			m_WaterShader->SetUniformMat4f("u_Proj", App->engineCamera->GetProjectionMatrix());
+			m_WaterShader->SetUniformMat4f("u_Model", WaveMesh->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
 
-		MaterialComponent* material = WaveMesh->GetComponent<MaterialComponent>();
-		VertexArray* VAO = WaveMesh->GetComponent<MeshComponent>()->GetVAO();
+			MaterialComponent* material = WaveMesh->GetComponent<MaterialComponent>();
+			VertexArray* VAO = WaveMesh->GetComponent<MeshComponent>()->GetVAO();
 
-		//Binding ----------------------------
-		if (material != nullptr)
-			material->Bind();
-		VAO->Bind();
-		material->SetColor({ 1.0f, 1.0f, 1.0f, 0.8f });
+			//Binding ----------------------------
+			if (material != nullptr)
+				material->Bind();
+			VAO->Bind();
+			material->SetColor(WaveColor);
 
-		//Drawing ----------------------------
-		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+			//Drawing ----------------------------
+			glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		//Unbinding --------------------------
-		if (material != nullptr)
-			material->Unbind();
-		VAO->UnBind();
-		m_WaterShader->Unbind();
-
+			//Unbinding --------------------------
+			if (material != nullptr)
+				material->Unbind();
+			VAO->UnBind();
+			m_WaterShader->Unbind();
+		}
 		//------------------------------------------------------------------------------------------------------------------------------------
 		//------------------------------------------------------------------------------------------------------------------------------------
-		*/
+		
 		//Game Objects update
 		for (auto element : m_GameObjects)
 			element->Update(dt);

@@ -75,6 +75,8 @@ namespace Cronos {
 		bool ScrollToBottom = false;
 		bool AutoScroll = true;
 
+		bool ShowWaterPannel = false;
+
 	private:
 
 		void setDocking();
@@ -107,6 +109,7 @@ namespace Cronos {
 		void GUIDrawAboutPanel();
 		void GUIDrawSceneWindow();
 		void GUIDrawWidgetMenu();
+		void GUIDrawWaterPanel();
 
 		//Config Menus
 		void GUIDrawConfigApplicationMenu();
@@ -150,6 +153,7 @@ namespace Cronos {
 		bool ShowConfigurationPanel = false;
 		bool ShowExitOpitonsPopUp = false;
 		bool AssetLabelInspector = false;
+	
 		int nodeHirearchySelected = -1;
 
 		bool HoverGameWin = false;

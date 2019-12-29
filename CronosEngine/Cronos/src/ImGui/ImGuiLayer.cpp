@@ -510,6 +510,7 @@ namespace Cronos {
 		if (ShowPerformancePanel)		GUIDrawPerformancePanel();
 		if (ShowAboutPanel)				GUIDrawAboutPanel();
 		if (ShowDrawGameWindow)		    GUIDrawSceneWindow();
+		if (ShowWaterPannel)			GUIDrawWaterPanel();
 
 		if (App->input->getCurrentWinStatus())	GUIDrawSupportExitOptions();
 		ImGui::End();
@@ -875,6 +876,9 @@ namespace Cronos {
 				if (ImGui::MenuItem("Console")) {
 					ShowConsolePanel = !ShowConsolePanel;
 				}
+				if (ImGui::MenuItem("Water Panel")) {
+					ShowWaterPannel = !ShowWaterPannel;
+				}
 
 				ImGui::EndMenu();
 			}
@@ -1071,7 +1075,7 @@ namespace Cronos {
 		ImGui::Separator();
 		if (ImGui::Button("Modify"))
 		{
-			if (CurrentAssetSelected->m_Shader->GetShaderName() != "basic.glsl"&&CurrentAssetSelected->m_Shader->GetShaderName() != "WaterShader.glsl") {
+			if (CurrentAssetSelected->m_Shader->GetShaderName() != "basic.glsl"&&CurrentAssetSelected->m_Shader->GetShaderName() != "WaterShader.glsl"&&CurrentAssetSelected->m_Shader->GetShaderName() != "DefaultShader.glsl") {
 				ModifyScript = !ModifyScript;
 				ChangePalette = true;
 				modifingShader = false;
@@ -1121,7 +1125,7 @@ namespace Cronos {
 		editor.SetHandleMouseInputs(ModifyScript);
 		editor.Render("TextEditor");
 
-		if(CurrentAssetSelected->m_Shader->GetShaderName() == "basic.glsl"||CurrentAssetSelected->m_Shader->GetShaderName() == "WaterShader.glsl")
+		if(CurrentAssetSelected->m_Shader->GetShaderName() == "basic.glsl"||CurrentAssetSelected->m_Shader->GetShaderName() == "WaterShader.glsl" || CurrentAssetSelected->m_Shader->GetShaderName() == "DefaultShader.glsl")
 		{
 			ImGui::SetNextWindowBgAlpha(0.8);
 			bool open = true;
@@ -2147,7 +2151,7 @@ namespace Cronos {
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(7, 15));
 
 		//ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Render Settings", &ShowInspectorPanel);
+		ImGui::Begin("Render Settings", &ShowPanelRenderer);
 		ImGui::Text("Render Settings");
 		ImGui::Separator();
 		static int item_current = 0;
@@ -2224,6 +2228,76 @@ namespace Cronos {
 		ImGui::End();
 
 	}
+
+	void ImGuiLayer::GUIDrawWaterPanel() 
+	{
+
+		static bool alpha_preview = true;
+		static bool alpha_half_preview = false;
+		static bool drag_and_drop = true;
+		static bool options_menu = true;
+		static bool hdr = false;
+
+		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		ImGui::PushStyleColor(ImGuiCol_TitleBg | ImGuiCol_TitleBgActive, ImVec4(0.392f, 0.369f, 0.376f, 1.00f));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 15));
+
+		ImGui::Begin("Configuration", &ShowWaterPannel, ImGuiWindowFlags_NoDocking);
+
+		ImGuiColorEditFlags misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
+		//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 30));
+		static int  test = ImGui::GetCursorPosY();
+
+		glm::vec4 col = App->scene->WaveColor;
+		ImVec4 color = ImVec4(col.r, col.g, col.b, col.a);
+
+		if (ImGui::ColorEdit4("WaveColor", (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | misc_flags))
+		{
+			App->scene->WaveColor = glm::vec4(color.x, color.y, color.x, color.w);
+		
+		}
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+
+		ImGui::Text("Wave Amplitude");
+		ImGui::DragFloat("###amplitude", &App->scene->WaveAmplitude, 0.1f, 1.0f, 40.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Wave Max Time");
+		ImGui::DragFloat("###MaxTime", &App->scene->WaveMaxTime, 0.1f, 5.0f, 360.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Wave Lenght");
+		ImGui::DragFloat("###Lengh", &App->scene->WaveLenght, 0.1f, 5.0f, 50.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Wave Velocity");
+		ImGui::DragFloat("###WaveVale", &App->scene->WaveVelocity, 0.1f, 0.5f, 100.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Foam Velocity");
+		ImGui::DragFloat("###FoamVale", &App->scene->FoamVelocity, 0.1f, 0.5f, 100.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Wave Color Grading");
+		ImGui::DragFloat("###Color", &App->scene->WaveColorGrading, 0.1f, 0.01f, 100.0f);
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("Foam Direction");
+		ImGui::SetNextItemWidth(100);
+		ImGui::DragFloat("###FoamDirX", &App->scene->FoamDirectionX, 0.01f, -1.0f, 1.0f); sameLine;
+		ImGui::SetNextItemWidth(100);
+		ImGui::DragFloat("###FoamDirY", &App->scene->FoamDirectionY, 0.01f, -1.0f, 1.0f); 
+
+		ImGui::InvisibleButton("###", ImVec2(ImGui::GetWindowSize().x / 2.5, 15)); sameLine;
+		ImGui::Text("WaveMultiplier");
+		ImGui::DragFloat("###waveMultipler", &App->scene->WaveMovementMultuplier, 0.1f, 0.5f, 100.0f);
+
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
+		ImGui::End();
+	}
+
 	void ImGuiLayer::GUIDrawConfigurationPanel() {
 
 		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
