@@ -11,9 +11,11 @@
 
 ## Innovating Features & Functionalities
 * Shader System
-* Lighting algorithm improved, better than Phong (Blinn-Phong) - Test the difference with Spotlights!
-* Material System with shader rendering
+* Lighting algorithm, better than Phong (Blinn-Phong) - Test the difference with Spotlights! (by selecting the option in rendering modes tab at scene window)
+* Material System with shader rendering pipeline
+* Shaders & Materials creation and modification from the Engine
 * ZBuffer Real-Time Renderer (Check the Shaded dropdown in the editor, above scene window)
+* Rendering Optimization Comparative. Check out the pdf in the repository (or in the downloadable release) to see a comparative of different rendering ways involving objects' ordering per materials, uniforms send order & place... It includes a link to an excel with the entire data!
 
 * Timing: Play/Pause/Stop & x2/x0.5 speed!
 * Engine's camera speed control with mouse middle button (Unity-like!)
@@ -23,9 +25,9 @@
    * Hierarchy system
    * Tranformations & AA/OO BBs
    
-* Mesh & Textures importing
+* Mesh & Textures importing (supportted formats: .tga, .dds, .png, .jpg, .jpeg)
 * Resource Manager: All data saved/loaded in binary own format and loaded into a Resource Manager to optimize resources loading and avoiding files duplication. All assets in the filesystem are loaded and saved to own file format from the beginning, and, if loaded, loaded from the own file format.
-* Extensive Filesystem with good UI/UX Functionalities (asset finder, good navigation system, drag & drop...)
+* Extensive Filesystem with good UI/UX Functionalities (asset finder, explorer opener, good navigation system, files & folders creation from Asset Inspector, renaming, drag & drop...)
 * Scene Serialization
 
 * Many different types of primitives creation (check it out!)
