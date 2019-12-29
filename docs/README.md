@@ -98,6 +98,15 @@ We have also implemented a whole Filesystem in Cronos. It features, among others
 * Usage of Precompiled Header to imporve build performance
 * Engine's Project built with a Premake file and Project.bat generator to automatize build process
 
+## Installation
+Just download a release and run the executable! Inside 'res' folder you'll find all the resources used by the engine (textures, models loaded, configuration,...). If you need any other information, you can check out the README.md file in the download folder.
+
+**Note:** Be careful when modifying things on config file, it will probably modify engine's configuration. And please, don't delete the dll files, they are needed for the engine to work. Also, be careful when scaling objects, the Bounding Boxes transformations are not very well performed and they can be badly deformed (but kinda work).
+
+**Note 2:** Warning! If you wanna work with bullet, first, integrate it, then, go to MathBuildConfig.h, look for the definition of MATH_BULLET_INTEROP, and uncomment it. Should work :)
+
+**Note 3:** Sorry for the inconveniance, but the mouse picking sometimes enters in conflict with ImGuizmo and it doesn't work as expected.
+
 ## Credits
 Cronos Engine is developed by **LuchoSuaya** ([@lucho1](https://github.com/lucho1)) and **Roger Leon** ([@rleonborras](https://github.com/rleonborras)) for Videogames Engines subject of UPC's Degree in Videogames Design and Development, taught by **Marc Garrigo Garcia** ([@markitus18](https://github.com/markitus18)).
 
