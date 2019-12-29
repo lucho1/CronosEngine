@@ -18,7 +18,8 @@
 Download it now [here](https://github.com/lucho1/CronosEngine/releases/download/CronosEngine_v0.3/CronosEngine_v0_3.zip)! You can also check the [latest release](https://github.com/lucho1/CronosEngine/releases/tag/CronosEngine_v0.3) or [other releases](https://github.com/lucho1/CronosEngine/releases)
 
 ## Shader System
-**TODO: ADD GIFS**
+<img src="https://media.giphy.com/media/ViCtQz0ml6ARP80CGL/giphy.gif" width="1280" height="720" />
+
 For this version, you can modify and use shaders. There are 4 shaders at the beginning (a water one, a default one, a basic one which Cronos Engine uses to render all and a modifiable one). All of them but the modifiable one, are not modifiable, you can test modifications in the modifiable shader and compile it, but the others won't allow any modification.
 However, you can create new shaders, they will be a copy of the default one, which provides the minimal implementation for the shader to compile. From there, is all yours! Enjoy it! You'll see a "Modify" button, which will allow you to modify/stop modifying the shader file. To modify the modifiable or a created shader, just pick on it twice in the asset editor and open the inspector, at the right side of the UI (by the way: you can create a new one with right click --> new shader, the same for materials).
 
@@ -31,7 +32,6 @@ And talking about materials, remember that you can modify them! You can change t
 Note that the basic shader has an assertion system which is very useful!
 
 ### Water Simulation
-**TODO: ADD GIFS**
 We were required, along with the shaders implementation, to test them with a Simple Water simulation. If you open the window tab, you will be able to activate it. At the beginning you will see that the movement seems a bit strange, but is made on purpose, because you will see that a pannel will also be opened with many different values. You can modify them all to make the water as you want. You will also be able to change the color.
 Our council first, when you find this water, is to lower a bit the multiplicator value at the bottom part of the pannel and try to lower velocities and amplitudes/lengths. From there, the water is your sandbox!!
 
