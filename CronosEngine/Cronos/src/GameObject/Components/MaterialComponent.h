@@ -32,7 +32,7 @@ namespace Cronos
 		inline const std::unordered_map<TextureType, Texture*>GetTextures()	const { return m_Material->GetTextures(); }
 		inline const glm::vec4 GetColor()									const { return m_Material->GetMaterialColor(); }
 		inline const float GetShininess()									const { return m_Material->GetMaterialShininess(); }
-		inline const Material* GetMaterial()								const { return m_Material; }
+		inline Material* GetMaterial()								const { return m_Material; }
 
 
 		//Temporary index to find own material. TODO: Change this, materials should be serialized

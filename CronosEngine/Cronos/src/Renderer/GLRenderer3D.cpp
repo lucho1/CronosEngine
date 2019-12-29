@@ -10,9 +10,24 @@
 #include "Modules/EngineCamera.h"
 #include "GameObject/GameObject.h"
 
+#include "Modules/Input.h"
+
 #include <glad/glad.h>
 
-namespace Cronos {
+namespace Cronos
+{
+	std::string UniformStrTextureType(TextureType textureType)
+	{
+		std::string ret = "";
+		switch (textureType)
+		{
+		case TextureType::DIFFUSE:		ret = "u_DiffuseTexture"; break;
+		case TextureType::SPECULAR:		ret = "u_SpecularTexture"; break;
+		}
+
+		CRONOS_ASSERT(ret != "", "Unexisting or Unsupported texture type");
+		return ret;
+	}
 
 	GLRenderer3D::GLRenderer3D(Application* app, bool start_enabled) : Module(app, "Module OpenGL Renderer 3D", start_enabled)
 	{
@@ -176,7 +191,15 @@ namespace Cronos {
 			SetWireframeDrawMode(true);
 		}
 
+		//Renderer Perf Timers ---------------------------------------------------------------
+		PerfTimer RenderTime, sortTime;
+		double SortTimeFloat;
+		sortTime.Start();
+		ObjectsSortByMaterial(m_RenderingList, 0, m_RenderingList.size() - 1);
+		SortTimeFloat = sortTime.ReadMs();
+
 		//Shader Generic Stuff & ZBuffer -----------------------------------------------------
+		RenderTime.Start();
 		m_BasicShader->Bind();
 		m_BasicShader->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
 		m_BasicShader->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
@@ -217,48 +240,137 @@ namespace Cronos {
 		for (uint i = 0; i < currentSPLights; ++i)
 			m_SpotLightsVec[i]->SendUniformsLightData(m_BasicShader, i);
 
-		m_BasicShader->Unbind();
+		//m_BasicShader->Unbind();
+		uint currentMaterialID = 0;
+		if(m_RenderingList.size() > 0)
+			BindMaterial(m_RenderingList.begin(), currentMaterialID);
+		
 
 		//Objects Rendering -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
 		{
-			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			std::vector<GameObject*>::iterator it = m_RenderingList.begin();
 			for (; it != m_RenderingList.end(); it++)
 				Render(it);
 		}
 		else
 		{
-			std::list<GameObject*>::iterator it = m_RenderingList.begin();
+			bool changeMat = false;
+			std::vector<GameObject*>::iterator it = m_RenderingList.begin();
 			for (; it != m_RenderingList.end(); it++)
 			{
+				if (m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) && m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
+					Render(it);
+
+				if (it != prev(m_RenderingList.end()) && currentMaterialID != (*next(it))->GetComponent<MaterialComponent>()->GetMaterial()->GetMaterialID())
+				{
+					UnbindMaterial(it);
+					BindMaterial(next(it), currentMaterialID);
+					changeMat = false;
+				}
+
+				/*if (it != prev(m_RenderingList.end()) && currentMaterialID != (*next(it))->GetComponent<MaterialComponent>()->GetMaterial()->GetMaterialID())
+						changeMat = true;
+
 				if (!m_CurrentCamera->GetFrustum()->Intersects((*it)->GetAABB()) &&
 					!m_CurrentCamera->GetFrustum()->Contains((*it)->GetAABB()))
+				{
+					if (changeMat)
+					{
+						UnbindMaterial(it);
+						BindMaterial(next(it), currentMaterialID);
+						changeMat = false;
+					}
+
 					continue;
-
+				}
+							   
 				Render(it);
+				if (changeMat)
+				{
+					UnbindMaterial(it);
+					BindMaterial(next(it), currentMaterialID);
+					changeMat = false;
+				}*/
 			}
-		}
+		}		
 
-		
+		if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN)
+			LOG("Objects Sort per Material took: %f ms for %i Objects -- Render Time: %f ms", SortTimeFloat, m_RenderingList.size(), RenderTime.ReadMs());
+
+		m_BasicShader->Unbind();
 		m_RenderingList.clear();
 		return UPDATE_CONTINUE;
 	}
 
-
-
-	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
+	void GLRenderer3D::BindMaterial(std::vector<GameObject*>::iterator item, uint& currentID)
 	{
-		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
-		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
+		Material* material = (*item)->GetComponent<MaterialComponent>()->GetMaterial();
+		std::unordered_map<TextureType, Texture*> TexturesUMap = material->GetTextures();
 
-		if (material != nullptr)
-			material->Bind();
+		if (material->GetTextures().size() > 0)
+		{
+			m_BasicShader->SetUniform1i("u_TextureEmpty", false);
+
+			std::unordered_map<TextureType, Texture*>::iterator it = TexturesUMap.begin();
+			for (; it != TexturesUMap.end() && (it->second) != nullptr; it++)
+			{
+				uint TextureID = (uint)(it->first);
+				m_BasicShader->SetUniform1i(UniformStrTextureType(it->first), TextureID);
+				(*it->second).Bind(TextureID);
+			}
+		}
+		else
+			m_BasicShader->SetUniform1i("u_TextureEmpty", true);
+		
+
+		m_BasicShader->SetUniformVec4f("u_AmbientColor", glm::vec4(material->GetMaterialColor()));
+		m_BasicShader->SetUniform1f("u_Shininess", material->GetMaterialShininess());
+		currentID = material->GetMaterialID();
+	}
+
+	void GLRenderer3D::UnbindMaterial(std::vector<GameObject*>::iterator item)
+	{
+		std::unordered_map<TextureType, Texture*> TexturesUMap = (*item)->GetComponent<MaterialComponent>()->GetMaterial()->GetTextures();
+		std::unordered_map<TextureType, Texture*>::iterator it = TexturesUMap.begin();
+		for (; it != TexturesUMap.end() && (it->second) != nullptr; it++)
+			(*it->second).Unbind();
+	}
+
+	void GLRenderer3D::ObjectsSortByMaterial(std::vector<GameObject*>& objVec, uint left, uint right)
+	{
+		if (left >= right || right >= objVec.size()) return;
+
+		uint pivot_id = objVec[right]->GetComponent<MaterialComponent>()->GetMaterial()->GetMaterialID();
+		uint cnt = left;
+
+		for (uint i = left; i <= right; ++i)
+		{
+			if (objVec[i]->GetComponent<MaterialComponent>()->GetMaterial()->GetMaterialID() == pivot_id)
+			{
+				std::swap(objVec[cnt], objVec[i]);
+				++cnt;
+			}
+		}
+
+		ObjectsSortByMaterial(objVec, left, cnt - 2);
+		ObjectsSortByMaterial(objVec, cnt, right);
+	}
+
+	void GLRenderer3D::Render(std::vector<GameObject*>::iterator it)
+	{
+		//MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
+		VertexArray* VAO = (*it)->GetComponent<MeshComponent>()->GetVAO();
+		m_BasicShader->SetUniformMat4f("u_Model", (*it)->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix());
+
+		//if (material != nullptr)
+		//	material->Bind();
 		VAO->Bind();
 
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
-		if (material != nullptr)
-			material->Unbind();
+		//if (material != nullptr)
+		//	material->Unbind();
 		VAO->UnBind();
 	}
 

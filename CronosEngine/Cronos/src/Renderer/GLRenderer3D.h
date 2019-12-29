@@ -143,7 +143,10 @@ namespace Cronos {
 
 	private:
 
-		void Render(std::list<GameObject*>::iterator it);
+		void Render(std::vector<GameObject*>::iterator it);
+		void ObjectsSortByMaterial(std::vector<GameObject*>& objVec, uint left, uint right);
+		void BindMaterial(std::vector<GameObject*>::iterator item, uint& currentID);
+		void UnbindMaterial(std::vector<GameObject*>::iterator item);
 
 	public:
 
@@ -166,11 +169,11 @@ namespace Cronos {
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
 		Timer m_BasicSh_RunTime;
+			
 
-		std::string CameraNameList;
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
-		std::list<GameObject*> m_RenderingList;
+		std::vector<GameObject*> m_RenderingList;
 		bool m_FrustumCulling = true;
 		bool m_OctreeAcceleratedFrustumCulling = false;
 		bool m_SeeOctree = false;
@@ -181,6 +184,7 @@ namespace Cronos {
 
 		//Current camera we're rendering with
 		Camera* m_CurrentCamera = nullptr;
+		std::string CameraNameList;
 
 		//Other stuff
 		glm::mat4 fPlane = glm::mat4(1.0f);
