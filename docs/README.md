@@ -5,8 +5,6 @@
 
 ![](res/Cronos_Engine_Logo.png?style=centerme)
 
-**[TODO]** Add trailer??
-
 ## Screenshots & Video
 **[TODO]** Add 1min video
 **[TODO]** Add screenshots
