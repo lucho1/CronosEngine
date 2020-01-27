@@ -101,18 +101,22 @@ namespace Cronos {
 	{
 	public:
 
-		UniformBuffer(const uint bindingPoint = 0);
+		UniformBuffer(uint size, const uint bindingPoint = 0);
 		~UniformBuffer();
 
 		void Bind() const;
 		void UnBind() const;
 
-		void PassData(Shader* shader, const std::string& uniformName);
+		inline const BufferLayout& GetLayout() const { return m_UBLayout; }
+		void SetLayout(const BufferLayout& bufferLayout) { m_UBLayout = bufferLayout; }
+
+		void PassData(const std::string& elementName, const void* data);
 
 	private:
 
 		uint m_ID;
 		const uint m_BindingPoint; //Where do we bind all the buffer data
+		BufferLayout m_UBLayout;
 	};
 	
 

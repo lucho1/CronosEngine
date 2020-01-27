@@ -1,5 +1,5 @@
 #type vertex
-#version 330 core
+#version 420 core
 
 //Layouts
 layout(location = 0) in vec3 a_Position;
@@ -7,8 +7,12 @@ layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoords;
 
 //Uniforms
-uniform mat4 u_View;
-uniform mat4 u_Proj;
+layout(std140, binding = 0) uniform u_CameraData
+{
+	mat4 u_View;
+	mat4 u_Proj;
+};
+
 uniform mat4 u_Model;
 
 uniform float u_Time = 0.0;
@@ -67,7 +71,7 @@ void main()
 
 
 #type fragment
-#version 330 core
+#version 420 core
 
 //Uniforms
 uniform sampler2D u_DiffuseTexture;

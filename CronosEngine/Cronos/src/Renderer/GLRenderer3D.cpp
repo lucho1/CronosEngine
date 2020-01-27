@@ -78,6 +78,9 @@ namespace Cronos {
 		return ret;
 	}
 
+
+	UniformBuffer* m_UBO;
+
 	//Called when renderer is available, at module start
 	bool GLRenderer3D::OnStart()
 	{
@@ -85,6 +88,14 @@ namespace Cronos {
 
 		m_BasicShader = new Shader("res/Shaders/basic.glsl");
 		m_ShaderList.push_back(m_BasicShader);
+
+		m_UBO = new UniformBuffer(2 * sizeof(glm::mat4), 0);
+		m_UBO->SetLayout({
+			{Cronos::VertexDataType::MAT4, "u_View"},
+			{Cronos::VertexDataType::MAT4, "u_Proj"},
+			{Cronos::VertexDataType::VEC3F, "u_CameraPosition"}
+			});
+
 		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
 		m_BasicSh_RunTime.Start();
 
@@ -98,6 +109,7 @@ namespace Cronos {
 		LightMat->SetName("Light Material");
 		LightMat->SetColor(glm::vec4(1.0f));
 		SetFaceCulling(false);
+
 		return true;
 	}
 
@@ -203,9 +215,16 @@ namespace Cronos {
 			//Shader Generic Stuff & ZBuffer -----------------------------------------------------
 			m_ShaderList[i]->Bind();
 			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
-			m_ShaderList[i]->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
-			m_ShaderList[i]->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
-			m_ShaderList[i]->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
+			//m_ShaderList[i]->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
+			//m_ShaderList[i]->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
+			//m_ShaderList[i]->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
+
+			m_UBO->Bind();
+			m_UBO->PassData("u_View", glm::value_ptr(m_CurrentCamera->GetViewMatrix()));
+			m_UBO->PassData("u_Proj", glm::value_ptr(m_CurrentCamera->GetProjectionMatrix()));
+			m_UBO->PassData("u_CameraPosition", glm::value_ptr(m_CurrentCamera->GetPosition()));
+			m_UBO->UnBind();
+
 
 			if (m_ChangeZBufferDrawing)
 			{

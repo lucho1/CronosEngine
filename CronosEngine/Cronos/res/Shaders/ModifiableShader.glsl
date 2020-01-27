@@ -1,5 +1,5 @@
 #type vertex
-#version 330 core
+#version 420 core
 
 //Layout variables
 layout(location = 0) in vec3 a_Position;
@@ -7,8 +7,12 @@ layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoords;
 
 //Uniform variables
-uniform mat4 u_View;
-uniform mat4 u_Proj;
+layout(std140, binding = 0) uniform u_CameraData
+{
+	mat4 u_View;
+	mat4 u_Proj;
+};
+
 uniform mat4 u_Model;
 
 //------------------------------------------------------------------------------------------------------------------
@@ -19,7 +23,7 @@ void main()
 
 
 #type fragment
-#version 330 core
+#version 420 core
 
 //------------------------------------------------------------------------------------------------------------------
 void main()
