@@ -1,13 +1,21 @@
 #type vertex
-#version 330 core
+#version 420 core
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoords;
 
+//layout(std140, binding = 0) uniform u_CameraData
+//{
+//	vec3 u_CameraPosition;
+//	mat4 u_View;
+//	mat4 u_Proj;
+//};
+
 uniform vec3 u_CameraPosition;
 uniform mat4 u_View;
 uniform mat4 u_Proj;
+
 uniform mat4 u_Model;
 
 out vec2 v_TexCoords;
@@ -27,7 +35,7 @@ void main()
 
 
 #type fragment
-#version 330 core
+#version 420 core
 
 float randomNum(float num) { return fract(sin(dot(vec2(num), vec2(12.9898,78.233))) * 43758.5453); }
 

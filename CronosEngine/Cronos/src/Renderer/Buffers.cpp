@@ -98,6 +98,37 @@ namespace Cronos {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	//-------------- UNIFORM BUFFER ----------------------------------------------
+	UniformBuffer::UniformBuffer(const uint bindingPoint) : m_BindingPoint(bindingPoint)
+	{
+		glCreateBuffers(1, &m_ID);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
+
+
+		glBufferData(GL_UNIFORM_BUFFER, 152, NULL, GL_STATIC_DRAW);
+
+		CRONOS_ASSERT(bindingPoint >= 0, "WARNING! UBO's Binding point is negative!");
+	}
+
+	UniformBuffer::~UniformBuffer()
+	{
+		glDeleteBuffers(1, &m_ID);
+	}
+
+	void UniformBuffer::Bind() const
+	{
+		glBindBufferBase(GL_UNIFORM_BUFFER, m_BindingPoint, m_ID);
+	}
+
+	void UniformBuffer::UnBind() const
+	{
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void UniformBuffer::PassData(Shader* shader, const std::string& uniformName)
+	{
+		
+	}
 
 	//-------------- FRAME BUFFER ------------------------------------------------
 	FrameBuffer::FrameBuffer()

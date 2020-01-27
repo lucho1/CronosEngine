@@ -2,15 +2,15 @@
 #define _BUFFERS_H_
 
 
+#include "Shaders.h"
+
 namespace Cronos {
 
 	struct CronosVertex;
-
 	enum class VertexDataType { NONE = 0, FLOAT, INT, VEC2I, VEC3I, VEC4I, VEC2F, VEC3F, VEC4F, MAT3, MAT4, BOOL };
-
-
-	struct BufferData {
-
+	
+	struct BufferData
+	{
 		std::string bd_Name;
 		bool bd_Normalized;
 		uint bd_Size;
@@ -27,8 +27,8 @@ namespace Cronos {
 	};
 
 
-	class BufferLayout {
-
+	class BufferLayout
+	{
 	public:
 
 		BufferLayout() {}
@@ -59,8 +59,9 @@ namespace Cronos {
 		uint m_BufferLayoutStride;
 	};
 
-	class VertexBuffer {
 
+	class VertexBuffer
+	{
 	public:
 
 		VertexBuffer(CronosVertex* vertices, uint size);
@@ -78,8 +79,8 @@ namespace Cronos {
 	};
 
 
-	class IndexBuffer {
-
+	class IndexBuffer
+	{
 	public:
 
 		IndexBuffer(uint* indices, uint count);
@@ -95,7 +96,28 @@ namespace Cronos {
 		uint m_ID;
 	};
 
+
+	class UniformBuffer
+	{
+	public:
+
+		UniformBuffer(const uint bindingPoint = 0);
+		~UniformBuffer();
+
+		void Bind() const;
+		void UnBind() const;
+
+		void PassData(Shader* shader, const std::string& uniformName);
+
+	private:
+
+		uint m_ID;
+		const uint m_BindingPoint; //Where do we bind all the buffer data
+	};
+	
+
 	class FrameBuffer {
+
 	public:
 		FrameBuffer();
 		~FrameBuffer();
@@ -113,7 +135,6 @@ namespace Cronos {
 		uint m_Text;
 
 	};
-
 }
 
 #endif
