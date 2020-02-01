@@ -79,8 +79,6 @@ namespace Cronos {
 	}
 
 
-	UniformBuffer* m_UBO;
-
 	//Called when renderer is available, at module start
 	bool GLRenderer3D::OnStart()
 	{
@@ -89,7 +87,7 @@ namespace Cronos {
 		m_BasicShader = new Shader("res/Shaders/basic.glsl");
 		m_ShaderList.push_back(m_BasicShader);
 
-		m_UBO = new UniformBuffer(2 * sizeof(glm::mat4), 0);
+		m_UBO = new UniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3), 0);
 		m_UBO->SetLayout({
 			{Cronos::VertexDataType::MAT4, "u_View"},
 			{Cronos::VertexDataType::MAT4, "u_Proj"},

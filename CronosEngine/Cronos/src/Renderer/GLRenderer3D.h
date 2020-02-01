@@ -171,6 +171,8 @@ namespace Cronos {
 
 	private:
 		
+		UniformBuffer* m_UBO;
+
 		std::vector<LightComponent*> m_LightsList;
 		std::vector<Shader*>m_ShaderList;
 		bool m_BlinnPhongLighting = true;
@@ -183,6 +185,7 @@ namespace Cronos {
 
 		std::string CameraNameList;
 		std::string ShaderNameList;
+
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
 		std::list<GameObject*> m_RenderingList;
