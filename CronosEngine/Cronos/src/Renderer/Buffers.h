@@ -120,6 +120,30 @@ namespace Cronos {
 	};
 	
 
+	class ShaderStorageBuffer
+	{
+	public:
+
+		ShaderStorageBuffer(uint size, const uint bindingPoint = 0);
+		~ShaderStorageBuffer();
+
+		void Bind() const;
+		void UnBind() const;
+
+		//inline const BufferLayout& GetLayout() const { return m_UBLayout; }
+		//void SetLayout(const BufferLayout& bufferLayout) { m_UBLayout = bufferLayout; }
+
+		void PassData(uint dataSize, const void* data);
+
+	private:
+
+		uint m_ID;
+		const uint m_BindingPoint; //Where do we bind all the buffer data
+		const uint m_BufferSize = 0;
+		//BufferLayout m_UBLayout;
+	};
+
+
 	class FrameBuffer {
 
 	public:

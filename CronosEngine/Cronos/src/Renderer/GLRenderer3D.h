@@ -172,6 +172,8 @@ namespace Cronos {
 	private:
 		
 		UniformBuffer* m_UBO;
+		ShaderStorageBuffer* m_SSBO;
+		void* lightsNum = operator new(sizeof(int) * 3);
 
 		std::vector<LightComponent*> m_LightsList;
 		std::vector<Shader*>m_ShaderList;

@@ -1,5 +1,5 @@
 #type vertex
-#version 420 core
+#version 430 core
 
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
@@ -31,12 +31,15 @@ void main()
 
 
 #type fragment
-#version 420 core
+#version 430 core
 
-float randomNum(float num) { return fract(sin(dot(vec2(num), vec2(12.9898,78.233))) * 43758.5453); }
+#define CNSH_ASSERT(condition) while(!condition) { ++m_AssertTimes; break; }
+#define COLOROUTPUT_EXIT() while(m_AssertTimes != 0) { color = AssertColorOutput(); break; }
 
 uniform float u_ShaderPlaybackTime;
 int m_AssertTimes = 0;
+
+float randomNum(float num) { return fract(sin(dot(vec2(num), vec2(12.9898,78.233))) * 43758.5453); }
 vec4 AssertColorOutput()
 {
 	//This is basically to set a blinking output color to denote an assertion on shader run time.
@@ -45,8 +48,6 @@ vec4 AssertColorOutput()
 	return (mod(u_ShaderPlaybackTime, 1.0) > 0.5) ? blinkColor : vec4(1.0);
 }
 
-#define CNSH_ASSERT(condition) while(!condition) { ++m_AssertTimes; break; }
-#define COLOROUTPUT_EXIT() while(m_AssertTimes != 0) { color = AssertColorOutput(); break; }
 
 #define MAX_POINTLIGHTS 20
 #define MAX_SPOTLIGHTS 20
@@ -70,9 +71,6 @@ struct DirLight
 	float LightIntensity;
 };
 
-uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
-uniform int u_CurrentDirLights = 0;
-
 struct PointLight
 {
 	vec3 LightPos;
@@ -85,13 +83,11 @@ struct PointLight
 	float LightAtt_Q;
 };
 
-uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
-uniform int u_CurrentPointLights = 0;
-
 struct SpotLight
 {
 	vec3 LightPos;
 	vec3 LightColor;
+	vec3 LightDir;
 
 	float LightIntensity;
 
@@ -99,14 +95,19 @@ struct SpotLight
 	float LightAtt_L;
 	float LightAtt_Q;
 
-	vec3 LightDir;
 	float cutoffAngleCos;
 	float outerCutoffAngleCos;
 };
 
+//Actual Lights
+layout(std430, binding = 0) buffer SSBOData
+{
+	int u_CurrentLightsNum[3];
+};
 
+uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
+uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
 uniform SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
-uniform int u_CurrentSPLights = 0;
 
 //Material Stuff
 uniform vec4 u_AmbientColor;
@@ -230,9 +231,9 @@ void main()
 	}
 	else
 	{
-		CNSH_ASSERT((u_CurrentPointLights <= MAX_POINTLIGHTS && u_CurrentPointLights >= 0));
-		CNSH_ASSERT((u_CurrentDirLights <= MAX_DIRLIGHTS && u_CurrentDirLights >= 0));
-		CNSH_ASSERT((u_CurrentSPLights <= MAX_SPOTLIGHTS && u_CurrentSPLights >= 0));
+		CNSH_ASSERT((u_CurrentLightsNum[0] <= MAX_DIRLIGHTS && u_CurrentLightsNum[0] >= 0));
+		CNSH_ASSERT((u_CurrentLightsNum[1] <= MAX_POINTLIGHTS && u_CurrentLightsNum[1] >= 0));
+		CNSH_ASSERT((u_CurrentLightsNum[2] <= MAX_SPOTLIGHTS && u_CurrentLightsNum[2] >= 0));
 
 		//Generic Light Calculations
 		vec3 normalVec = normalize(v_Normal);
@@ -241,13 +242,13 @@ void main()
 		//Color Output
 		vec3 colorOutput = vec3(0.0);
 
-		for(int i = 0; i < u_CurrentDirLights; ++i)
+		for(int i = 0; i < u_CurrentLightsNum[0]; ++i)
 			colorOutput += CalculateDirectionalLight(u_DirLightsArray[i], normalVec, viewDirection, !u_TextureEmpty);
 
-		for(int i = 0; i < u_CurrentPointLights; ++i)
+		for(int i = 0; i < u_CurrentLightsNum[1]; ++i)
 			colorOutput += CalculatePointLight(u_PointLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
-		for(int i = 0; i < u_CurrentSPLights; ++i)
+		for(int i = 0; i < u_CurrentLightsNum[2]; ++i)
 			colorOutput += CalculateSpotLight(u_SPLightsArray[i], normalVec, v_FragPos, viewDirection, !u_TextureEmpty);
 
 		if(!u_TextureEmpty)

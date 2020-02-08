@@ -1,5 +1,5 @@
 #type vertex
-#version 420 core
+#version 430 core
 
 //Layout variables
 layout(location = 0) in vec3 a_Position;
@@ -22,7 +22,7 @@ void main()
 
 
 #type fragment
-#version 420 core
+#version 430 core
 
 
 //------------------------------------------------------------------------------------------------------------------

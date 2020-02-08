@@ -133,8 +133,54 @@ namespace Cronos {
 
 			glBufferSubData(GL_UNIFORM_BUFFER, element.bd_Offset, element.bd_Size, data);
 		}
-
 	}
+
+	//-------------- SHADER STORAGE BUFFER ---------------------------------------
+	ShaderStorageBuffer::ShaderStorageBuffer(uint size, const uint bindingPoint) : m_BindingPoint(bindingPoint), m_BufferSize(size)
+	{
+		glCreateBuffers(1, &m_ID);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ID);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, NULL, GL_DYNAMIC_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, bindingPoint, m_ID);
+
+		CRONOS_ASSERT((bindingPoint >= 0 || size >= 0), "WARNING! UBO's Binding point is negative!");
+	}
+
+	ShaderStorageBuffer::~ShaderStorageBuffer()
+	{
+		glDeleteBuffers(1, &m_ID);
+	}
+
+	void ShaderStorageBuffer::Bind() const
+	{
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ID);
+	}
+
+	void ShaderStorageBuffer::UnBind() const
+	{
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	}
+
+	//This completely substitutes the current data in the buffer
+	void ShaderStorageBuffer::PassData(uint dataSize, const void* data)
+	{
+		//GLvoid* gpuMemPtr = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
+		//memcpy(gpuMemPtr, &data, sizeof(data));
+		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
+		glBufferData(GL_SHADER_STORAGE_BUFFER, dataSize, data, GL_STATIC_DRAW);
+		//glBufferSubData(GL_UNIFORM_BUFFER, 0, dataSize, data);
+
+		//for (auto& element : GetLayout().GetLayoutElements())
+		//{
+		//	if (element.bd_Name != elementName)
+		//		continue;
+		//
+		//	glBufferSubData(GL_UNIFORM_BUFFER, element.bd_Offset, element.bd_Size, data);
+		//	glBufferData(GL_SHADER_STORAGE_BUFFER, 100, &data, GL_STATIC_DRAW);
+		//}
+	}
+
 
 	//-------------- FRAME BUFFER ------------------------------------------------
 	FrameBuffer::FrameBuffer()
@@ -211,5 +257,4 @@ namespace Cronos {
 	{
 		glDeleteBuffers(1, &m_FB);
 	}
-
 }

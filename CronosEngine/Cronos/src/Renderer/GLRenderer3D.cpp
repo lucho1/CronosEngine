@@ -92,7 +92,14 @@ namespace Cronos {
 			{Cronos::VertexDataType::MAT4, "u_View"},
 			{Cronos::VertexDataType::MAT4, "u_Proj"},
 			{Cronos::VertexDataType::VEC3F, "u_CameraPosition"}
-			});
+		});
+
+		m_SSBO = new ShaderStorageBuffer(sizeof(int) * 3 + sizeof(glm::vec3) * 7 + sizeof(float) * 11, 0);
+		//m_SSBO->SetLayout({
+		//	{Cronos::VertexDataType::INT, "u_CurrentDirLights"},
+		//	{Cronos::VertexDataType::INT, "u_CurrentPointLights"},
+		//	{Cronos::VertexDataType::INT, "u_CurrentSPLights"}
+		//});
 
 		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
 		m_BasicSh_RunTime.Start();
@@ -133,6 +140,9 @@ namespace Cronos {
 		m_MaterialsList.clear();
 		m_LightsList.clear();
 
+		RELEASE(m_SSBO);
+		RELEASE(m_UBO);
+
 		SDL_GL_DeleteContext(context);
 		return true;
 	}
@@ -170,9 +180,7 @@ namespace Cronos {
 		for (auto&ShaderName : m_ShaderList) {
 			ShaderNameList += ShaderName->GetShaderName();
 			ShaderNameList += '\0';
-		}
-
-		
+		}		
 		
 		//for (uint i = 0; i < MAX_LIGHTS; ++i)
 		//	lights[i].Render();
@@ -180,6 +188,9 @@ namespace Cronos {
 		return UPDATE_CONTINUE;
 	}
 
+
+
+	
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
 	{
@@ -189,7 +200,7 @@ namespace Cronos {
 		if(m_SeeOctree && m_CurrentCamera == App->engineCamera->GetCamera())
 			m_RenderingOctree.Draw();
 
-		//Wireframe Mode (or not) ------------------------------------------------------------
+		//Wireframe Mode (or not) ----------------------------------------------------------------
 		if (App->EditorGUI->GetCurrentShading() == ShadingMode::Shaded)
 			SetWireframeDrawMode(false);
 		else if (App->EditorGUI->GetCurrentShading() == ShadingMode::Wireframe)
@@ -199,30 +210,31 @@ namespace Cronos {
 			SetWireframeDrawMode(true);
 		}
 
+		//Shaders Data ---------------------------------------------------------------------------
+		m_UBO->Bind();
+		m_UBO->PassData("u_View", glm::value_ptr(m_CurrentCamera->GetViewMatrix()));
+		m_UBO->PassData("u_Proj", glm::value_ptr(m_CurrentCamera->GetProjectionMatrix()));
+		m_UBO->PassData("u_CameraPosition", glm::value_ptr(m_CurrentCamera->GetPosition()));
+		m_UBO->UnBind();
+
+		//SHADERS LIGHT UNIFORMS -----------------------------------------------------------------
+		int currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
+		int currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
+		int currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
+
+		m_SSBO->Bind();
+
+		int arr[3] = { currentDLights, currentPLights, currentSPLights };		
+		memcpy(lightsNum, &arr, sizeof(arr));		
+
+		m_SSBO->PassData(sizeof(int) * 3, lightsNum);
+		m_SSBO->UnBind();
+
 		for (uint i = 0; i < m_ShaderList.size(); ++i)
 		{
-
-		//}
-
-		//std::vector<Shader*>::iterator ShIt = m_ShaderList.begin();
-		//for (; *ShIt != nullptr && ShIt != m_ShaderList.end(); ShIt = next(ShIt)) {
-
-			//if ((*ShIt)->GetShaderName() == "WaterShader.glsl")
-			//	continue;
-
 			//Shader Generic Stuff & ZBuffer -----------------------------------------------------
 			m_ShaderList[i]->Bind();
-			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
-			//m_ShaderList[i]->SetUniformMat4f("u_View", m_CurrentCamera->GetViewMatrix());
-			//m_ShaderList[i]->SetUniformMat4f("u_Proj", m_CurrentCamera->GetProjectionMatrix());
-			//m_ShaderList[i]->SetUniformVec3f("u_CameraPosition", glm::vec3(m_CurrentCamera->GetPosition()));
-
-			m_UBO->Bind();
-			m_UBO->PassData("u_View", glm::value_ptr(m_CurrentCamera->GetViewMatrix()));
-			m_UBO->PassData("u_Proj", glm::value_ptr(m_CurrentCamera->GetProjectionMatrix()));
-			m_UBO->PassData("u_CameraPosition", glm::value_ptr(m_CurrentCamera->GetPosition()));
-			m_UBO->UnBind();
-
+			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());			
 
 			if (m_ChangeZBufferDrawing)
 			{
@@ -243,24 +255,24 @@ namespace Cronos {
 				m_ShaderList[i]->SetUniform1i("u_UseBlinnPhong", m_BlinnPhongLighting);
 			}
 
-			uint currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
-			m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", (int)currentDLights);
+			
+			//SHADERS LIGHT UNIFORMS -------------------------------------------------------------
+			m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
 			for (uint i = 0; i < currentDLights; ++i)
 				m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
-			uint currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
-			m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", (int)currentPLights);
+			m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
 			for (uint i = 0; i < currentPLights; ++i)
 				m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
-			uint currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
-			m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", (int)currentSPLights);
+			m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
 			for (uint i = 0; i < currentSPLights; ++i)
 				m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
 			m_ShaderList[i]->Unbind();
-
 		}
+
+
 		//Objects Rendering -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
 		{
@@ -280,14 +292,12 @@ namespace Cronos {
 				Render(it);
 			}
 		}
-
 		
 		m_RenderingList.clear();
 		return UPDATE_CONTINUE;
 	}
-
-
-
+	
+	//Rendering Function
 	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
 	{
 		MaterialComponent* material = (*it)->GetComponent<MaterialComponent>();
@@ -304,6 +314,7 @@ namespace Cronos {
 		VAO->UnBind();
 	}
 
+	//Function to fill list of objects to render
 	void GLRenderer3D::RenderSubmit(GameObject* gameObject)
 	{
 		if (!gameObject->isActive())

@@ -1,5 +1,5 @@
 #type vertex
-#version 420 core
+#version 430 core
 
 //Layouts
 layout(location = 0) in vec3 a_Position;
@@ -71,7 +71,7 @@ void main()
 
 
 #type fragment
-#version 420 core
+#version 430 core
 
 //Uniforms
 uniform sampler2D u_DiffuseTexture;
