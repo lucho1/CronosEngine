@@ -9,6 +9,40 @@ namespace Cronos
 {
 	enum class LightType { NONE = -1, DIRECTIONAL, POINTLIGHT, SPOTLIGHT };
 
+	struct DirectionalLight
+	{
+		glm::vec3 m_LightDirection = glm::vec3(0.0f);
+		glm::vec3 m_LightColor = glm::vec3(0.0f);
+		float m_LightIntensity = 1.0f;
+	};
+
+	struct PointLight
+	{
+		glm::vec3 m_LightPosition = glm::vec3(0.0f);
+		glm::vec3 m_LightColor = glm::vec3(0.0f);
+
+		float m_LightIntensity = 1.0f;
+		float LightAttenuationFactor_K = 1.0f;
+		float LightAttenuationFactor_L = 0.0f;
+		float LightAttenuationFactor_Q = 0.0f;
+	};
+
+	struct SpotLight
+	{
+		glm::vec3 m_LightPosition = glm::vec3(0.0f);
+		glm::vec3 m_LightDirection = glm::vec3(0.0f);
+		glm::vec3 m_LightColor = glm::vec3(0.0f);
+
+		float m_LightIntensity = 1.0f;
+		float LightAttenuationFactor_K = 1.0f;
+		float LightAttenuationFactor_L = 0.0f;
+		float LightAttenuationFactor_Q = 0.0f;
+
+		float m_InnerCutoffAngle = 12.5f; //Cosinus value
+		float m_OuterCutoffAngle = 45.0f; //Cosinus value
+	};
+
+
 	class LightComponent : public Component
 	{
 	public:
