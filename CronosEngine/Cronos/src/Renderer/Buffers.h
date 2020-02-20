@@ -133,7 +133,7 @@ namespace Cronos {
 		//inline const BufferLayout& GetLayout() const { return m_UBLayout; }
 		//void SetLayout(const BufferLayout& bufferLayout) { m_UBLayout = bufferLayout; }
 
-		void PassData(uint dataSize, const void* data);
+		void PassData(uint dataSize, uint dataOffset, const void* data);
 
 	private:
 

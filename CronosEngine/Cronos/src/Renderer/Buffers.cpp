@@ -162,13 +162,16 @@ namespace Cronos {
 	}
 
 	//This completely substitutes the current data in the buffer
-	void ShaderStorageBuffer::PassData(uint dataSize, const void* data)
+	void ShaderStorageBuffer::PassData(uint dataSize, uint dataOffset, const void* data)
 	{
 		//GLvoid* gpuMemPtr = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
 		//memcpy(gpuMemPtr, &data, sizeof(data));
 		//glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-		glBufferData(GL_SHADER_STORAGE_BUFFER, dataSize, data, GL_STATIC_DRAW);
+	//	glBufferData(GL_SHADER_STORAGE_BUFFER, dataSize, data, GL_STATIC_DRAW);
+
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, dataOffset, dataSize, data);
+
 		//glBufferSubData(GL_UNIFORM_BUFFER, 0, dataSize, data);
 
 		//for (auto& element : GetLayout().GetLayoutElements())

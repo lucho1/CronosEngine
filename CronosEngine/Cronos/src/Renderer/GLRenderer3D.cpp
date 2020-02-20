@@ -225,9 +225,36 @@ namespace Cronos {
 		m_SSBO->Bind();
 
 		int arr[3] = { currentDLights, currentPLights, currentSPLights };		
-		memcpy(lightsNum, &arr, sizeof(arr));		
+		memcpy(lightsNum, &arr, sizeof(arr));
+		m_SSBO->PassData(0, sizeof(int) * 3, lightsNum);
 
-		m_SSBO->PassData(sizeof(int) * 3, lightsNum);
+		int offset = sizeof(int) * 3;
+		for (int i = 0; i < m_LightsList.size(); ++i)
+		{
+			//Pass here the struct type to a void*
+
+			if (m_LightsList[i]->GetLightType() == LightType::DIRECTIONAL)
+			{
+				offset += sizeof(DirectionalLight);
+				DirectionalLight* lightPtr = &m_LightsList[i]->m_DLightComp;
+				m_SSBO->PassData(offset, sizeof(DirectionalLight), (void*)lightPtr);
+			}
+
+			else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
+			{
+				offset += sizeof(PointLight);
+				PointLight* lightPtr = &m_LightsList[i]->m_PLightComp;
+				m_SSBO->PassData(offset, sizeof(PointLight), (void*)lightPtr);
+			}
+
+			else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
+			{
+				offset += sizeof(SpotLight);
+				SpotLight* lightPtr = &m_LightsList[i]->m_SLightComp;
+				m_SSBO->PassData(offset, sizeof(SpotLight), (void*)lightPtr);
+			}
+		}
+				
 		m_SSBO->UnBind();
 
 		for (uint i = 0; i < m_ShaderList.size(); ++i)
@@ -257,17 +284,17 @@ namespace Cronos {
 
 			
 			//SHADERS LIGHT UNIFORMS -------------------------------------------------------------
-			m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
-			for (uint i = 0; i < currentDLights; ++i)
-				m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
-
-			m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
-			for (uint i = 0; i < currentPLights; ++i)
-				m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
-
-			m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
-			for (uint i = 0; i < currentSPLights; ++i)
-				m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
+			//m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
+			//for (uint i = 0; i < currentDLights; ++i)
+			//	m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
+			//
+			//m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
+			//for (uint i = 0; i < currentPLights; ++i)
+			//	m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
+			//
+			//m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
+			//for (uint i = 0; i < currentSPLights; ++i)
+			//	m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
 			m_ShaderList[i]->Unbind();
 		}

@@ -169,6 +169,9 @@ namespace Cronos {
 		std::vector<LightComponent*> m_DirectionalLightsVec;
 		std::vector<LightComponent*> m_SpotLightsVec;
 
+
+		ShaderStorageBuffer& GetSSBO() const { return *m_SSBO; }
+
 	private:
 		
 		UniformBuffer* m_UBO;
@@ -176,6 +179,8 @@ namespace Cronos {
 		void* lightsNum = operator new(sizeof(int) * 3);
 
 		std::vector<LightComponent*> m_LightsList;
+
+
 		std::vector<Shader*>m_ShaderList;
 		bool m_BlinnPhongLighting = true;
 		bool m_ChangeLightSystem = false;

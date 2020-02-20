@@ -103,11 +103,15 @@ struct SpotLight
 layout(std430, binding = 0) buffer SSBOData
 {
 	int u_CurrentLightsNum[3];
+
+	DirLight u_DirLightsArray[MAX_DIRLIGHTS];
+	PointLight u_PointLightsArray[MAX_POINTLIGHTS];
+	SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
 };
 
-uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
-uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
-uniform SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
+//uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
+//uniform PointLight u_PointLightsArray[MAX_POINTLIGHTS] = PointLight[MAX_POINTLIGHTS](PointLight(vec3(0), vec3(1), 0.0, 1.0, 0.09, 0.032));
+//uniform SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
 
 //Material Stuff
 uniform vec4 u_AmbientColor;
