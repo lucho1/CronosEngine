@@ -30,14 +30,23 @@ namespace Cronos
 
 		m_LightType = LightType::POINTLIGHT;
 		App->renderer3D->m_PointLightsVec.push_back(this);
-
-		m_PLightComp = { glm::vec3(0.0f), glm::vec3(1.0f), 1.0f, 1.0f, 0.0f, 0.0f };
 	}
 
 	LightComponent::~LightComponent()
 	{
 		m_LightType = LightType::NONE;
 		RELEASE(m_LightMaterial);
+	}
+
+	void LightComponent::Update(float dt)
+	{
+		glm::vec3 pos;
+		glm::quat q;
+		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), q, pos, glm::vec3(), glm::vec4());
+		glm::vec3 vecOrientation = glm::vec3(2 * (q.x * q.z + q.w * q.y), 2 * (q.y * q.z - q.w * q.x), 1 - 2 * (q.x * q.x + q.y * q.y));
+		
+		m_PLightComp.m_LightPosition = m_SLightComp.m_LightPosition = pos;
+		m_SLightComp.m_LightDirection = -vecOrientation;
 	}
 
 	void LightComponent::SetLightType(LightType type)

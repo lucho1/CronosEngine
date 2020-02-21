@@ -142,6 +142,7 @@ namespace Cronos {
 
 		RELEASE(m_SSBO);
 		RELEASE(m_UBO);
+		RELEASE(lightsNum);
 
 		SDL_GL_DeleteContext(context);
 		return true;
@@ -249,11 +250,8 @@ namespace Cronos {
 		}
 		
 		if (PLightVec.size() > 0)
-		{
-			PointLight* pLArray = &PLightVec[0];
-			m_SSBO->PassData(PLightVec.size(), sizeof(int) * 3, pLArray);
-		}
-		
+			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3, &PLightVec[0]);
+
 		if (SLightVec.size() > 0)
 		{
 			SpotLight* sLArray = &SLightVec[0];

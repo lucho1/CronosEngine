@@ -25,8 +25,8 @@ namespace Cronos
 		float m_LightIntensity = 1.0f;
 
 		float m_LightAttK = 1.0f;
-		float m_LightAttL = 0.0f;
-		float m_LightAttQ = 0.0f;
+		float m_LightAttL = 0.09f;
+		float m_LightAttQ = 0.032f;
 	};
 
 	struct SpotLight
@@ -38,8 +38,8 @@ namespace Cronos
 		float m_LightIntensity = 1.0f;
 
 		float m_LightAttK = 1.0f;
-		float m_LightAttL = 0.0f;
-		float m_LightAttQ = 0.0f;
+		float m_LightAttL = 0.09f;
+		float m_LightAttQ = 0.032f;
 
 		float m_InnerCutoffAngle = 12.5f; //Cosinus value
 		float m_OuterCutoffAngle = 45.0f; //Cosinus value
@@ -54,6 +54,8 @@ namespace Cronos
 		~LightComponent();
 		
 		static ComponentType GetType() { return ComponentType::LIGHT; }
+
+		virtual void Update(float dt);
 		
 	public:
 
