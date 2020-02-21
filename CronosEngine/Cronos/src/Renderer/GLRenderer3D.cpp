@@ -228,7 +228,7 @@ namespace Cronos {
 		memcpy(lightsNum, &arr, sizeof(arr));
 		m_SSBO->PassData(0, sizeof(int) * 3, lightsNum);
 
-		int offset = sizeof(int) * 3;
+		int offset = sizeof(int) * 3; 
 		for (int i = 0; i < m_LightsList.size(); ++i)
 		{
 			//Pass here the struct type to a void*
@@ -237,25 +237,28 @@ namespace Cronos {
 			{
 				offset += sizeof(DirectionalLight);
 				DirectionalLight* lightPtr = &m_LightsList[i]->m_DLightComp;
-				m_SSBO->PassData(offset, sizeof(DirectionalLight), (void*)lightPtr);
+				m_SSBO->PassData(sizeof(DirectionalLight), offset, (void*)lightPtr);
 			}
 
 			else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
 			{
 				offset += sizeof(PointLight);
 				PointLight* lightPtr = &m_LightsList[i]->m_PLightComp;
-				m_SSBO->PassData(offset, sizeof(PointLight), (void*)lightPtr);
+				m_SSBO->PassData(sizeof(PointLight), offset, (void*)lightPtr);
 			}
 
 			else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
 			{
 				offset += sizeof(SpotLight);
 				SpotLight* lightPtr = &m_LightsList[i]->m_SLightComp;
-				m_SSBO->PassData(offset, sizeof(SpotLight), (void*)lightPtr);
+				m_SSBO->PassData(sizeof(SpotLight), offset, (void*)lightPtr);
 			}
 		}
 				
 		m_SSBO->UnBind();
+		//You are passing, for each light, its struct as data for buffer.
+		//However, the shader wants, in the buffer, the array of lights, not a single light.
+		//Try to setting up an array with all the lights and passing that
 
 		for (uint i = 0; i < m_ShaderList.size(); ++i)
 		{
