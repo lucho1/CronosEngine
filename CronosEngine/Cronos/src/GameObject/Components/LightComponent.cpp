@@ -30,6 +30,8 @@ namespace Cronos
 
 		m_LightType = LightType::POINTLIGHT;
 		App->renderer3D->m_PointLightsVec.push_back(this);
+
+		m_PLightComp = { glm::vec3(0.0f), glm::vec3(1.0f), 1.0f, 1.0f, 0.0f, 0.0f };
 	}
 
 	LightComponent::~LightComponent()
@@ -95,14 +97,14 @@ namespace Cronos
 
 		//App->renderer3D->GetSSBO().PassData(sizeof(DirectionalLight), );
 
-		/*if (!GetParent()->isActive())
+		if (!GetParent()->isActive())
 		{
-			SetLightToZero(shader, lightIndex, m_LightType);
+			//SetLightToZero(shader, lightIndex, m_LightType);
 			return;
 		}
 		if (m_ChangeLightType)
 		{
-			SetLightToZero(shader, lightIndex, m_LightType);
+			//SetLightToZero(shader, lightIndex, m_LightType);
 			m_ChangeLightType = false;
 		}
 
@@ -110,8 +112,8 @@ namespace Cronos
 		sprintf(indexedCharsArray, "[%i]", lightIndex);
 		std::string indexedStr_LArray = GetLightUniform(m_LightType) + indexedCharsArray;
 
-		shader->SetUniformVec3f(indexedStr_LArray + ".LightColor", m_LightColor);
-		shader->SetUniform1f(indexedStr_LArray + ".LightIntensity", m_LightIntensity);
+		shader->SetUniformVec3f(indexedStr_LArray + ".LightColor", glm::vec3(1.0f));
+		shader->SetUniform1f(indexedStr_LArray + ".LightIntensity", 1.0f);
 
 		switch (m_LightType)
 		{
@@ -121,14 +123,14 @@ namespace Cronos
 				glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), glm::quat(), pos, glm::vec3(), glm::vec4());
 				shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
 
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", 1.0f);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", 0.0f);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", 0.0f);
 				break;
 			}
 			case LightType::DIRECTIONAL:
 			{
-				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", m_LightDirection);
+				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", glm::vec3(0.0));
 				break;
 			}
 			case LightType::SPOTLIGHT:
@@ -137,24 +139,24 @@ namespace Cronos
 				glm::quat q;
 				glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), q, pos, glm::vec3(), glm::vec4());
 				shader->SetUniformVec3f(indexedStr_LArray + ".LightPos", pos);
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", m_LightAttK);
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", m_LightAttL);
-				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", m_LightAttQ);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_K", 1.0f);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_L", 0.0f);
+				shader->SetUniform1f(indexedStr_LArray + ".LightAtt_Q", 0.0f);
 
 
 				glm::vec3 vecOrientation = glm::vec3(2 * (q.x*q.z + q.w*q.y), 2 * (q.y*q.z - q.w*q.x), 1 - 2 * (q.x*q.x + q.y*q.y));
 				shader->SetUniformVec3f(indexedStr_LArray + ".LightDir", -vecOrientation);
-				shader->SetUniform1f(indexedStr_LArray + ".cutoffAngleCos", glm::cos(glm::radians(m_LightCutoffAngle)));
-				shader->SetUniform1f(indexedStr_LArray + ".outerCutoffAngleCos", glm::cos(glm::radians(m_LightOuterCutoffAngle)));
+				shader->SetUniform1f(indexedStr_LArray + ".cutoffAngleCos", glm::cos(glm::radians(12.5f)));
+				shader->SetUniform1f(indexedStr_LArray + ".outerCutoffAngleCos", glm::cos(glm::radians(60.0f)));
 
 				break;
 			}
 			default:
 			{
-				SetLightToZero(shader, lightIndex, m_LightType);
+				//SetLightToZero(shader, lightIndex, m_LightType);
 				break;
 			}
-		}*/
+		}
 	}
 
 

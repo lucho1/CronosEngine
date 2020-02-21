@@ -20,7 +20,7 @@ namespace Cronos
 	struct PointLight
 	{
 		glm::vec3 m_LightPosition = glm::vec3(0.0f);
-		glm::vec3 m_LightColor = glm::vec3(0.0f);
+		glm::vec3 m_LightColor = glm::vec3(1.0f);
 
 		float m_LightIntensity = 1.0f;
 
@@ -32,7 +32,7 @@ namespace Cronos
 	struct SpotLight
 	{
 		glm::vec3 m_LightPosition = glm::vec3(0.0f);
-		glm::vec3 m_LightColor = glm::vec3(0.0f);
+		glm::vec3 m_LightColor = glm::vec3(1.0f);
 		glm::vec3 m_LightDirection = glm::vec3(0.0f);
 
 		float m_LightIntensity = 1.0f;
@@ -100,7 +100,7 @@ namespace Cronos
 
 	private:
 
-		void SetLightToZero(Shader* shader, uint lightIndex, LightType lType);
+		//void SetLightToZero(Shader* shader, uint lightIndex, LightType lType);
 
 	private:
 

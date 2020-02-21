@@ -104,8 +104,8 @@ layout(std430, binding = 0) buffer SSBOData
 {
 	int u_CurrentLightsNum[3];
 
-	DirLight u_DirLightsArray[MAX_DIRLIGHTS];
 	PointLight u_PointLightsArray[MAX_POINTLIGHTS];
+	DirLight u_DirLightsArray[MAX_DIRLIGHTS];	
 	SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
 };
 

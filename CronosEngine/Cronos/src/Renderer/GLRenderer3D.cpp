@@ -222,38 +222,72 @@ namespace Cronos {
 		int currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
 		int currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
 
-		m_SSBO->Bind();
+		std::vector<DirectionalLight> DLightVec;
+		std::vector<PointLight> PLightVec;
+		std::vector<SpotLight> SLightVec;
 
-		int arr[3] = { currentDLights, currentPLights, currentSPLights };		
-		memcpy(lightsNum, &arr, sizeof(arr));
-		m_SSBO->PassData(0, sizeof(int) * 3, lightsNum);
-
-		int offset = sizeof(int) * 3; 
 		for (int i = 0; i < m_LightsList.size(); ++i)
 		{
-			//Pass here the struct type to a void*
-
 			if (m_LightsList[i]->GetLightType() == LightType::DIRECTIONAL)
-			{
-				offset += sizeof(DirectionalLight);
-				DirectionalLight* lightPtr = &m_LightsList[i]->m_DLightComp;
-				m_SSBO->PassData(sizeof(DirectionalLight), offset, (void*)lightPtr);
-			}
-
+				DLightVec.push_back(m_LightsList[i]->m_DLightComp);
 			else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
-			{
-				offset += sizeof(PointLight);
-				PointLight* lightPtr = &m_LightsList[i]->m_PLightComp;
-				m_SSBO->PassData(sizeof(PointLight), offset, (void*)lightPtr);
-			}
-
+				PLightVec.push_back(m_LightsList[i]->m_PLightComp);
 			else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
-			{
-				offset += sizeof(SpotLight);
-				SpotLight* lightPtr = &m_LightsList[i]->m_SLightComp;
-				m_SSBO->PassData(sizeof(SpotLight), offset, (void*)lightPtr);
-			}
+				SLightVec.push_back(m_LightsList[i]->m_SLightComp);
 		}
+
+		m_SSBO->Bind();
+
+		int arr[3] = { currentDLights, currentPLights, currentSPLights };
+		memcpy(lightsNum, &arr, sizeof(arr));
+		m_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
+
+		if (DLightVec.size() > 0)
+		{
+			DirectionalLight* dLArray = &DLightVec[0];
+			m_SSBO->PassData(sizeof(DirectionalLight) * MAX_DIRLIGHTS, sizeof(int) * 3, dLArray);
+		}
+		
+		if (PLightVec.size() > 0)
+		{
+			PointLight* pLArray = &PLightVec[0];
+			m_SSBO->PassData(PLightVec.size(), sizeof(int) * 3, pLArray);
+		}
+		
+		if (SLightVec.size() > 0)
+		{
+			SpotLight* sLArray = &SLightVec[0];
+			m_SSBO->PassData(sizeof(SpotLight) * MAX_SPOTLIGHTS, sizeof(int) * 3 + sizeof(DirectionalLight) * MAX_DIRLIGHTS + sizeof(PointLight) * MAX_DIRLIGHTS, sLArray);
+		}		
+
+	
+
+	//	int offset = sizeof(int) * 3; 
+	//	for (int i = 0; i < m_LightsList.size(); ++i)
+	//	{
+	//		//Pass here the struct type to a void*
+	//
+	//		if (m_LightsList[i]->GetLightType() == LightType::DIRECTIONAL)
+	//		{
+	//			offset += sizeof(DirectionalLight);
+	//			DirectionalLight* lightPtr = &m_LightsList[i]->m_DLightComp;
+	//			m_SSBO->PassData(sizeof(DirectionalLight), offset, (void*)lightPtr);
+	//		}
+	//
+	//		else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
+	//		{
+	//			offset += sizeof(PointLight);
+	//			PointLight* lightPtr = &m_LightsList[i]->m_PLightComp;
+	//			m_SSBO->PassData(sizeof(PointLight), offset, (void*)lightPtr);
+	//		}
+	//
+	//		else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
+	//		{
+	//			offset += sizeof(SpotLight);
+	//			SpotLight* lightPtr = &m_LightsList[i]->m_SLightComp;
+	//			m_SSBO->PassData(sizeof(SpotLight), offset, (void*)lightPtr);
+	//		}
+	//	}
 				
 		m_SSBO->UnBind();
 		//You are passing, for each light, its struct as data for buffer.
@@ -287,15 +321,15 @@ namespace Cronos {
 
 			
 			//SHADERS LIGHT UNIFORMS -------------------------------------------------------------
-			//m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
+			////m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
 			//for (uint i = 0; i < currentDLights; ++i)
 			//	m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 			//
-			//m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
+			////m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
 			//for (uint i = 0; i < currentPLights; ++i)
 			//	m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 			//
-			//m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
+			////m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
 			//for (uint i = 0; i < currentSPLights; ++i)
 			//	m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
 
