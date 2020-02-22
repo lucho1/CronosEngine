@@ -243,20 +243,20 @@ namespace Cronos {
 		memcpy(lightsNum, &arr, sizeof(arr));
 		m_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
 
-		if (DLightVec.size() > 0)
-		{
-			DirectionalLight* dLArray = &DLightVec[0];
-			m_SSBO->PassData(sizeof(DirectionalLight) * MAX_DIRLIGHTS, sizeof(int) * 3, dLArray);
-		}
+		//if (DLightVec.size() > 0)
+		//{
+		//	DirectionalLight* dLArray = &DLightVec[0];
+		//	m_SSBO->PassData(sizeof(DirectionalLight) * MAX_DIRLIGHTS, sizeof(int) * 3, dLArray);
+		//}
 		
 		if (PLightVec.size() > 0)
 			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3, &PLightVec[0]);
 
-		if (SLightVec.size() > 0)
-		{
-			SpotLight* sLArray = &SLightVec[0];
-			m_SSBO->PassData(sizeof(SpotLight) * MAX_SPOTLIGHTS, sizeof(int) * 3 + sizeof(DirectionalLight) * MAX_DIRLIGHTS + sizeof(PointLight) * MAX_DIRLIGHTS, sLArray);
-		}		
+		//if (SLightVec.size() > 0)
+		//{
+		//	SpotLight* sLArray = &SLightVec[0];
+		//	m_SSBO->PassData(sizeof(SpotLight) * MAX_SPOTLIGHTS, sizeof(int) * 3 + sizeof(DirectionalLight) * MAX_DIRLIGHTS + sizeof(PointLight) * MAX_DIRLIGHTS, sLArray);
+		//}		
 
 	
 
