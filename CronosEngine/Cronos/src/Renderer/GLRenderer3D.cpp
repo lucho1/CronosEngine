@@ -244,7 +244,13 @@ namespace Cronos {
 		m_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
 		
 		if (PLightVec.size() > 0)
-			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 4, PLightVec.data());	
+			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 4, PLightVec.data());
+
+		if (DLightVec.size() > 0)
+			m_SSBO->PassData(sizeof(DirectionalLight) * DLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + 1, DLightVec.data());
+
+		if (SLightVec.size() > 0)
+			m_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + sizeof(DirectionalLight) * DLightVec.size(), SLightVec.data());
 				
 		m_SSBO->UnBind();
 

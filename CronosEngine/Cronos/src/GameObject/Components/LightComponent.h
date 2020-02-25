@@ -11,16 +11,16 @@ namespace Cronos
 
 	struct DirectionalLight
 	{
-		glm::vec3 m_LightDirection = glm::vec3(0.0f);
-		glm::vec3 m_LightColor = glm::vec3(0.0f);
+		glm::vec4 m_LightDirection = glm::vec4(0.0f);
+		glm::vec4 m_LightColor = glm::vec4(0.0f);
 
 		float m_LightIntensity = 1.0f;
 	};
 
 	struct PointLight
 	{
-		glm::vec3 m_LightPosition = glm::vec3(0.0f);
-		glm::vec3 m_LightColor = glm::vec3(1.0f);
+		glm::vec4 m_LightPosition = glm::vec4(0.0f);
+		glm::vec4 m_LightColor = glm::vec4(1.0f);
 
 		float m_LightIntensity = 1.0f;
 
@@ -31,9 +31,9 @@ namespace Cronos
 
 	struct SpotLight
 	{
-		glm::vec3 m_LightPosition = glm::vec3(0.0f);
-		glm::vec3 m_LightColor = glm::vec3(1.0f);
-		glm::vec3 m_LightDirection = glm::vec3(0.0f);
+		glm::vec4 m_LightPosition = glm::vec4(0.0f);
+		glm::vec4 m_LightColor = glm::vec4(1.0f);
+		glm::vec4 m_LightDirection = glm::vec4(0.0f);
 
 		float m_LightIntensity = 1.0f;
 
@@ -61,7 +61,7 @@ namespace Cronos
 
 		//Setters
 		void SetLightType(LightType type);
-		void SetLightDirection(const glm::vec3& direction) { m_SLightComp.m_LightDirection = m_DLightComp.m_LightDirection = direction; }
+		void SetLightDirection(const glm::vec3& direction) { m_SLightComp.m_LightDirection = m_DLightComp.m_LightDirection = glm::vec4(direction, 0.0f); }
 		void SetLightColor(const glm::vec3& color);
 		void SetLightIntensity(const float& intensity);
 		void SetSpotlightInnerCutoff(const float& degreesAngle) { m_SLightComp.m_InnerCutoffAngle = degreesAngle; }

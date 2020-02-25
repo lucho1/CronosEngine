@@ -65,16 +65,16 @@ out vec4 color;
 //Lights Structures
 struct DirLight 
 {
-	vec3 LightDir;
-	vec3 LightColor;
+	vec4 LightDir;
+	vec4 LightColor;
 
 	float LightIntensity;
 };
 
 struct PointLight
 {
-	vec3 LightPos;
-	vec3 LightColor;
+	vec4 LightPos;
+	vec4 LightColor;
 
 	float LightIntensity;
 
@@ -85,9 +85,9 @@ struct PointLight
 
 struct SpotLight
 {
-	vec3 LightPos;
-	vec3 LightColor;
-	vec3 LightDir;
+	vec4 LightPos;
+	vec4 LightColor;
+	vec4 LightDir;
 
 	float LightIntensity;
 
@@ -157,7 +157,7 @@ vec3 CalculateDiffSpecLightResult(bool hasTextures, vec3 LColor, float diff, flo
 //Dir Light Calculation
 vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(dLight.LightDir);
+	vec3 lightDir = normalize(dLight.LightDir.xyz);
 	
 	//Diffuse Component
 	float diffImpact = max(dot(normal, lightDir), 0.0);
@@ -167,13 +167,13 @@ vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection,
 	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
 
 	//Result
-	return CalculateDiffSpecLightResult(hasTextures, dLight.LightColor, diffImpact, specImpact) * dLight.LightIntensity;
+	return CalculateDiffSpecLightResult(hasTextures, dLight.LightColor.xyz, diffImpact, specImpact) * dLight.LightIntensity;
 }
 
 //Point Light Calculation
 vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(pLight.LightPos - FragPos);
+	vec3 lightDir = normalize(pLight.LightPos.xyz - FragPos);
 
 	//Diffuse Component
 	float diffImpact = max(dot(normal, lightDir), 0.0);
@@ -192,17 +192,17 @@ vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	}
 
 	//Attenuation Calculation
-	float d = length(pLight.LightPos - FragPos);
+	float d = length(pLight.LightPos.xyz - FragPos);
 	float lightAttenuation = 1.0/ (pLight.LightAtt_K + pLight.LightAtt_L * d + pLight.LightAtt_Q *(d * d));
 
 	//Result
-	return CalculateDiffSpecLightResult(hasTextures, pLight.LightColor, diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
+	return CalculateDiffSpecLightResult(hasTextures, pLight.LightColor.xyz, diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
 }
 
 //Spot Light Calculation
 vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewDirection, bool hasTextures)
 {
-	vec3 lightDir = normalize(spLight.LightPos - FragPos);	
+	vec3 lightDir = normalize(spLight.LightPos.xyz - FragPos);	
 	
 	//Diffuse Component
 	float diffImpact = max(dot(normal, lightDir), 0.0);
@@ -212,16 +212,16 @@ vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 FragPos, vec3 viewD
 	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
 
 	//Spotlight Calcs for Soft Edges
-	float theta = dot(lightDir, normalize(-spLight.LightDir));
+	float theta = dot(lightDir, normalize(-spLight.LightDir.xyz));
 	float epsilon = spLight.cutoffAngleCos - spLight.outerCutoffAngleCos;
 	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
 
 	//Attenuation Calculation
-	float d = length(spLight.LightPos - FragPos);
+	float d = length(spLight.LightPos.xyz - FragPos);
 	float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
 
 	//Result
-	return CalculateDiffSpecLightResult(hasTextures, spLight.LightColor, diffImpact, specImpact) * lightIntensity * lightAttenuation;
+	return CalculateDiffSpecLightResult(hasTextures, spLight.LightColor.xyz, diffImpact, specImpact) * lightIntensity * lightAttenuation;
 }
 
 //------------------------------------------------------------------------------------------------------------------

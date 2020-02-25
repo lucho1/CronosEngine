@@ -7,3 +7,9 @@
 *.mesh
 *.scene
 *.material
+res/
+models/
+*.log
+*.json
+*.png
+*.mtl

@@ -45,8 +45,8 @@ namespace Cronos
 		glm::decompose(GetParent()->GetComponent<TransformComponent>()->GetGlobalTranformationMatrix(), glm::vec3(), q, pos, glm::vec3(), glm::vec4());
 		glm::vec3 vecOrientation = glm::vec3(2 * (q.x * q.z + q.w * q.y), 2 * (q.y * q.z - q.w * q.x), 1 - 2 * (q.x * q.x + q.y * q.y));
 		
-		m_PLightComp.m_LightPosition = m_SLightComp.m_LightPosition = pos;
-		m_SLightComp.m_LightDirection = -vecOrientation;
+		m_PLightComp.m_LightPosition = m_SLightComp.m_LightPosition = glm::vec4(pos, 0.0f);
+		m_SLightComp.m_LightDirection = glm::vec4(-vecOrientation, 0.0f);
 	}
 
 	void LightComponent::SetLightType(LightType type)
@@ -83,7 +83,7 @@ namespace Cronos
 
 	void LightComponent::SetLightColor(const glm::vec3& color)
 	{
-		m_PLightComp.m_LightColor = m_SLightComp.m_LightColor = m_DLightComp.m_LightColor = color;
+		m_PLightComp.m_LightColor = m_SLightComp.m_LightColor = m_DLightComp.m_LightColor = glm::vec4(color, 1.0f);
 		GetParent()->GetComponent<MaterialComponent>()->SetColor({ glm::vec3(color), 1.0f });
 	}
 
