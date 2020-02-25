@@ -242,55 +242,11 @@ namespace Cronos {
 		int arr[3] = { currentDLights, currentPLights, currentSPLights };
 		memcpy(lightsNum, &arr, sizeof(arr));
 		m_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
-
-		//if (DLightVec.size() > 0)
-		//{
-		//	DirectionalLight* dLArray = &DLightVec[0];
-		//	m_SSBO->PassData(sizeof(DirectionalLight) * MAX_DIRLIGHTS, sizeof(int) * 3, dLArray);
-		//}
 		
 		if (PLightVec.size() > 0)
-			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3, &PLightVec[0]);
-
-		//if (SLightVec.size() > 0)
-		//{
-		//	SpotLight* sLArray = &SLightVec[0];
-		//	m_SSBO->PassData(sizeof(SpotLight) * MAX_SPOTLIGHTS, sizeof(int) * 3 + sizeof(DirectionalLight) * MAX_DIRLIGHTS + sizeof(PointLight) * MAX_DIRLIGHTS, sLArray);
-		//}		
-
-	
-
-	//	int offset = sizeof(int) * 3; 
-	//	for (int i = 0; i < m_LightsList.size(); ++i)
-	//	{
-	//		//Pass here the struct type to a void*
-	//
-	//		if (m_LightsList[i]->GetLightType() == LightType::DIRECTIONAL)
-	//		{
-	//			offset += sizeof(DirectionalLight);
-	//			DirectionalLight* lightPtr = &m_LightsList[i]->m_DLightComp;
-	//			m_SSBO->PassData(sizeof(DirectionalLight), offset, (void*)lightPtr);
-	//		}
-	//
-	//		else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
-	//		{
-	//			offset += sizeof(PointLight);
-	//			PointLight* lightPtr = &m_LightsList[i]->m_PLightComp;
-	//			m_SSBO->PassData(sizeof(PointLight), offset, (void*)lightPtr);
-	//		}
-	//
-	//		else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
-	//		{
-	//			offset += sizeof(SpotLight);
-	//			SpotLight* lightPtr = &m_LightsList[i]->m_SLightComp;
-	//			m_SSBO->PassData(sizeof(SpotLight), offset, (void*)lightPtr);
-	//		}
-	//	}
+			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 4, PLightVec.data());	
 				
 		m_SSBO->UnBind();
-		//You are passing, for each light, its struct as data for buffer.
-		//However, the shader wants, in the buffer, the array of lights, not a single light.
-		//Try to setting up an array with all the lights and passing that
 
 		for (uint i = 0; i < m_ShaderList.size(); ++i)
 		{
