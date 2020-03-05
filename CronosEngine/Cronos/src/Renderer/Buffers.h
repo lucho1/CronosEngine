@@ -133,6 +133,7 @@ namespace Cronos {
 		//inline const BufferLayout& GetLayout() const { return m_UBLayout; }
 		//void SetLayout(const BufferLayout& bufferLayout) { m_UBLayout = bufferLayout; }
 
+		//Size of the data passed, the data offset (place in which it starts), and ptr to a data
 		void PassData(uint dataSize, uint dataOffset, const void* data);
 
 	private:

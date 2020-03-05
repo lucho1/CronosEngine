@@ -94,7 +94,7 @@ namespace Cronos {
 			{Cronos::VertexDataType::VEC3F, "u_CameraPosition"}
 		});
 
-		m_SSBO = new ShaderStorageBuffer(sizeof(int) * 3 + sizeof(glm::vec3) * 7 + sizeof(float) * 11, 0);
+		m_SSBO = new ShaderStorageBuffer(sizeof(DirectionalLight) * MAX_DIRLIGHTS + sizeof(PointLight) * MAX_POINTLIGHTS + sizeof(SpotLight) * MAX_SPOTLIGHTS, 0);
 		//m_SSBO->SetLayout({
 		//	{Cronos::VertexDataType::INT, "u_CurrentDirLights"},
 		//	{Cronos::VertexDataType::INT, "u_CurrentPointLights"},
@@ -242,15 +242,28 @@ namespace Cronos {
 		int arr[3] = { currentDLights, currentPLights, currentSPLights };
 		memcpy(lightsNum, &arr, sizeof(arr));
 		m_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
+
+		uint dataOffset = sizeof(int) * 3;
 		
 		if (PLightVec.size() > 0)
-			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 4, PLightVec.data());
+		{
+			m_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), dataOffset + sizeof(float), PLightVec.data());
+			//size of the data being passed (size of the PLight struct + quantity of PLights),
+			//size of int*3 due to the array preceding (arr[3]) + sizeof(float) since it starts (the PLight struct) in a vec4, which starts in a float,
+			//ptr to the PLights vector data
+
+			dataOffset += sizeof(PointLight) * PLightVec.size();
+		}
+		else
+			dataOffset += sizeof(PointLight);
+
+		
 
 		if (DLightVec.size() > 0)
-			m_SSBO->PassData(sizeof(DirectionalLight) * DLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + 1, DLightVec.data());
+			m_SSBO->PassData(sizeof(DirectionalLight) * DLightVec.size(), dataOffset + sizeof(float), DLightVec.data());
 
-		if (SLightVec.size() > 0)
-			m_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + sizeof(DirectionalLight) * DLightVec.size(), SLightVec.data());
+	//	if (SLightVec.size() > 0)
+	//		m_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + sizeof(DirectionalLight) * DLightVec.size(), SLightVec.data());
 				
 		m_SSBO->UnBind();
 
