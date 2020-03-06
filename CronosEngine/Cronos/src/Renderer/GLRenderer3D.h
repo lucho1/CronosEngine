@@ -170,12 +170,14 @@ namespace Cronos {
 		std::vector<LightComponent*> m_SpotLightsVec;
 
 
-		ShaderStorageBuffer& GetSSBO() const { return *m_SSBO; }
+		ShaderStorageBuffer& GetPointLightsSSBO() const { return *m_PointLights_SSBO; }
+		ShaderStorageBuffer& GetDirLightsSSBO() const { return *m_DirLights_SSBO; }
 
 	private:
 		
 		UniformBuffer* m_UBO;
-		ShaderStorageBuffer* m_SSBO;
+		ShaderStorageBuffer* m_PointLights_SSBO;
+		ShaderStorageBuffer* m_DirLights_SSBO;
 		void* lightsNum = operator new(sizeof(int) * 3);
 
 		std::vector<LightComponent*> m_LightsList;
