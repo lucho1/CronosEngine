@@ -96,11 +96,7 @@ namespace Cronos {
 
 		m_PointLights_SSBO = new ShaderStorageBuffer(sizeof(int) * 3 + sizeof(PointLight) * MAX_POINTLIGHTS, 0);
 		m_DirLights_SSBO = new ShaderStorageBuffer(sizeof(DirectionalLight) * MAX_DIRLIGHTS, 1);
-		//m_SSBO->SetLayout({
-		//	{Cronos::VertexDataType::INT, "u_CurrentDirLights"},
-		//	{Cronos::VertexDataType::INT, "u_CurrentPointLights"},
-		//	{Cronos::VertexDataType::INT, "u_CurrentSPLights"}
-		//});
+		m_SpotLights_SSBO = new ShaderStorageBuffer(sizeof(SpotLight) * MAX_SPOTLIGHTS, 2);
 
 		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
 		m_BasicSh_RunTime.Start();
@@ -143,6 +139,7 @@ namespace Cronos {
 
 		RELEASE(m_PointLights_SSBO);
 		RELEASE(m_DirLights_SSBO);
+		RELEASE(m_SpotLights_SSBO);
 		RELEASE(m_UBO);
 		RELEASE(lightsNum);
 
@@ -190,9 +187,6 @@ namespace Cronos {
 
 		return UPDATE_CONTINUE;
 	}
-
-
-
 	
 	// PostUpdate present buffer to screen
 	update_status GLRenderer3D::OnPostUpdate(float dt)
@@ -240,7 +234,6 @@ namespace Cronos {
 		}
 
 		m_PointLights_SSBO->Bind();
-
 		int arr[3] = { currentDLights, currentPLights, currentSPLights };
 		memcpy(lightsNum, &arr, sizeof(arr));
 		m_PointLights_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
@@ -250,15 +243,18 @@ namespace Cronos {
 			m_PointLights_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), dataOffset + sizeof(float), PLightVec.data());
 			//size of the data being passed (size of the PLight struct + quantity of PLights),
 			//size of int*3 due to the array preceding (arr[3]) + sizeof(float) since it starts (the PLight struct) in a vec4, which starts in a float,
-			//ptr to the PLights vector data		
-
+			//ptr to the PLights vector data	
 		m_PointLights_SSBO->UnBind();
-		m_DirLights_SSBO->Bind();
 
+		m_DirLights_SSBO->Bind();
 		if (DLightVec.size() > 0)
 			m_DirLights_SSBO->PassData(sizeof(DirectionalLight) * DLightVec.size(), 0, DLightVec.data());
-
 		m_DirLights_SSBO->UnBind();
+
+		m_SpotLights_SSBO->Bind();
+		if (SLightVec.size() > 0)
+			m_DirLights_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), 0, SLightVec.data());
+		m_SpotLights_SSBO->UnBind();
 
 	//	if (SLightVec.size() > 0)
 	//		m_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + sizeof(DirectionalLight) * DLightVec.size(), SLightVec.data());

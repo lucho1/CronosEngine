@@ -105,12 +105,16 @@ layout(std430, binding = 0) buffer SSBOData
 	int u_CurrentLightsNum[3];
 
 	PointLight u_PointLightsArray[MAX_POINTLIGHTS];
-	SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
 };
 
-layout(std430, binding = 1) buffer SSBODataDirL
+layout(std430, binding = 1) buffer SSBOData2
 {
 	DirLight u_DirLightsArray[MAX_DIRLIGHTS];
+};
+
+layout(std430, binding = 2) buffer SSBOData3
+{	
+	SpotLight u_SPLightsArray[MAX_SPOTLIGHTS];
 };
 
 //uniform DirLight u_DirLightsArray[MAX_DIRLIGHTS] = DirLight[MAX_DIRLIGHTS](DirLight(vec3(0), vec3(1), 0.0));
