@@ -117,11 +117,21 @@ layout(std430, binding = 2) buffer SSBOData3
 
 
 //Light Calculations Functions ---------------------------------------------------------------------------------------
-vec3 CalculateLightResult(vec3 LColor, float diff, float spec)
+vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 {
+	//Normalize light direction
+	vec3 lightDir = normalize(LDir);
+	
+	//Diffuse Component
+	float diffImpact = max(dot(normal, lightDir), 0.0);
+	
+	//Specular component
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
+
 	//Calculate light result
-	vec3 diffuse = LColor * diff;
-	vec3 specular = LColor * spec;
+	vec3 diffuse = LColor * diffImpact;
+	vec3 specular = LColor * specImpact;
 
 	//If we have textures, apply them
 	if(!u_TextureEmpty)
@@ -136,62 +146,41 @@ vec3 CalculateLightResult(vec3 LColor, float diff, float spec)
 //Dir Light Calculation
 vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection)
 {
-	vec3 lightDir = normalize(dLight.LightDir.xyz);
-	
-	//Diffuse Component
-	float diffImpact = max(dot(normal, lightDir), 0.0);
-	
-	//Specular component
-	vec3 halfwayDir = normalize(lightDir + viewDirection);
-	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
-
 	//Result
-	return CalculateLightResult(dLight.LightColor.xyz, diffImpact, specImpact) * dLight.LightIntensity;
+	return CalculateLightResult(dLight.LightColor.xyz, dLight.LightDir.xyz, normal, viewDirection) * dLight.LightIntensity;
 }
 
 //Point Light Calculation
 vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 viewDirection)
 {
-	vec3 lightDir = normalize(pLight.LightPos.xyz - v_FragPos);
-
-	//Diffuse Component
-	float diffImpact = max(dot(normal, lightDir), 0.0);
-
-	//Specular Component
-	vec3 halfwayDir = normalize(lightDir + viewDirection);
-	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
+	//Calculate light direction
+	vec3 direction = pLight.LightPos.xyz - v_FragPos;
 
 	//Attenuation Calculation
 	float d = length(pLight.LightPos.xyz - v_FragPos);
 	float lightAttenuation = 1.0/ (pLight.LightAtt_K + pLight.LightAtt_L * d + pLight.LightAtt_Q *(d * d));
 
 	//Result
-	return CalculateLightResult(pLight.LightColor.xyz, diffImpact, specImpact) * lightAttenuation * pLight.LightIntensity;
+	return CalculateLightResult(pLight.LightColor.xyz, direction, normal, viewDirection) * lightAttenuation * pLight.LightIntensity;
 }
 
 //Spot Light Calculation
 vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 viewDirection)
 {
-	vec3 lightDir = normalize(spLight.LightPos.xyz - v_FragPos);	
-	
-	//Diffuse Component
-	float diffImpact = max(dot(normal, lightDir), 0.0);
-
-	//Specular Component
-	vec3 halfwayDir = normalize(lightDir + viewDirection);
-	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
-
-	//Spotlight Calcs for Soft Edges
-	float theta = dot(lightDir, normalize(-spLight.LightDir.xyz));
-	float epsilon = spLight.innerCutoffAngleCos - spLight.outerCutoffAngleCos;
-	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
+	//Calculate light direction
+	vec3 direction = spLight.LightPos.xyz - v_FragPos;
 
 	//Attenuation Calculation
 	float d = length(spLight.LightPos.xyz - v_FragPos);
 	float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
 
+	//Spotlight Calcs for Soft Edges
+	float theta = dot(normalize(spLight.LightPos.xyz - v_FragPos), normalize(-spLight.LightDir.xyz)); //Light direction and light orientation
+	float epsilon = spLight.innerCutoffAngleCos - spLight.outerCutoffAngleCos;
+	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
+
 	//Result
-	return CalculateLightResult(spLight.LightColor.xyz, diffImpact, specImpact) * lightIntensity * lightAttenuation;
+	return CalculateLightResult(spLight.LightColor.xyz, direction, normal, viewDirection) * lightIntensity * lightAttenuation;
 }
 
 
