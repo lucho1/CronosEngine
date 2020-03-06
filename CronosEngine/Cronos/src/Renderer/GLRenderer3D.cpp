@@ -141,7 +141,6 @@ namespace Cronos {
 		RELEASE(m_DirLights_SSBO);
 		RELEASE(m_SpotLights_SSBO);
 		RELEASE(m_UBO);
-		RELEASE(lightsNum);
 
 		SDL_GL_DeleteContext(context);
 		return true;
@@ -213,8 +212,10 @@ namespace Cronos {
 		m_UBO->PassData("u_Proj", glm::value_ptr(m_CurrentCamera->GetProjectionMatrix()));
 		m_UBO->PassData("u_CameraPosition", glm::value_ptr(m_CurrentCamera->GetPosition()));
 		m_UBO->UnBind();
-
+		
 		//SHADERS LIGHT UNIFORMS -----------------------------------------------------------------
+		CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---");
+
 		int currentDLights = (m_DirectionalLightsVec.size() > MAX_DIRLIGHTS ? MAX_DIRLIGHTS : m_DirectionalLightsVec.size());
 		int currentPLights = (m_PointLightsVec.size() > MAX_POINTLIGHTS ? MAX_POINTLIGHTS : m_PointLightsVec.size());
 		int currentSPLights = (m_SpotLightsVec.size() > MAX_SPOTLIGHTS ? MAX_SPOTLIGHTS : m_SpotLightsVec.size());
@@ -234,11 +235,8 @@ namespace Cronos {
 		}
 
 		m_PointLights_SSBO->Bind();
-		int arr[3] = { currentDLights, currentPLights, currentSPLights };
-		memcpy(lightsNum, &arr, sizeof(arr));
-
 		std::vector<int> LightsNum = { currentDLights, currentPLights, currentSPLights };
-		m_PointLights_SSBO->PassData(sizeof(int) * 3, 0, lightsNum);
+		m_PointLights_SSBO->PassData(sizeof(int) * LightsNum.size(), 0, LightsNum.data());
 
 		if (PLightVec.size() > 0)
 			m_PointLights_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3 + sizeof(float), PLightVec.data());
@@ -257,9 +255,7 @@ namespace Cronos {
 			m_SpotLights_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), 0, SLightVec.data());
 		m_SpotLights_SSBO->UnBind();
 
-	//	if (SLightVec.size() > 0)
-	//		m_SSBO->PassData(sizeof(SpotLight) * SLightVec.size(), sizeof(PointLight) * PLightVec.size() + sizeof(int) * 4 + sizeof(DirectionalLight) * DLightVec.size(), SLightVec.data());
-		
+		//----------------------------------------------------------------------------------------
 
 		for (uint i = 0; i < m_ShaderList.size(); ++i)
 		{
@@ -276,35 +272,11 @@ namespace Cronos {
 			if (m_DrawZBuffer)
 				m_ShaderList[i]->SetUniformVec2f("u_CamPlanes", glm::vec2(m_CurrentCamera->GetNearPlane(), m_CurrentCamera->GetFarPlane()));
 
-			//Lighting --------------------------------------------------------------------------
-			CRONOS_WARN((m_DirectionalLightsVec.size() <= MAX_DIRLIGHTS || m_PointLightsVec.size() <= MAX_POINTLIGHTS || m_SpotLightsVec.size() <= MAX_SPOTLIGHTS), "--- Lights Quantity is bigger than allowed!! ---");
-
-			if (m_ChangeLightSystem) //To light with phong or blinn-phong
-			{
-				m_ChangeLightSystem = false;
-				m_BlinnPhongLighting = !m_BlinnPhongLighting;
-				m_ShaderList[i]->SetUniform1i("u_UseBlinnPhong", m_BlinnPhongLighting);
-			}
-
-			
-			//SHADERS LIGHT UNIFORMS -------------------------------------------------------------
-			////m_ShaderList[i]->SetUniform1i("u_CurrentDirLights", currentDLights);
-			//for (uint i = 0; i < currentDLights; ++i)
-			//	m_DirectionalLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
-			//
-			////m_ShaderList[i]->SetUniform1i("u_CurrentPointLights", currentPLights);
-			//for (uint i = 0; i < currentPLights; ++i)
-			//	m_PointLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
-			//
-			////m_ShaderList[i]->SetUniform1i("u_CurrentSPLights", currentSPLights);
-			//for (uint i = 0; i < currentSPLights; ++i)
-			//	m_SpotLightsVec[i]->SendUniformsLightData(m_ShaderList[i], i);
-
 			m_ShaderList[i]->Unbind();
 		}
 
 
-		//Objects Rendering -----------------------------------------------------------------
+		//OBJECTS RENDERING -----------------------------------------------------------------
 		if (!m_FrustumCulling || (m_FrustumCulling && m_OctreeAcceleratedFrustumCulling))
 		{
 			std::list<GameObject*>::iterator it = m_RenderingList.begin();
@@ -328,6 +300,7 @@ namespace Cronos {
 		return UPDATE_CONTINUE;
 	}
 	
+
 	//Rendering Function
 	void GLRenderer3D::Render(std::list<GameObject*>::iterator it)
 	{

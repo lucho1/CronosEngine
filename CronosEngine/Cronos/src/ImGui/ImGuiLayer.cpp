@@ -696,12 +696,6 @@ namespace Cronos {
 						App->renderer3D->SetZBuffer();
 					}
 
-					ImGui::Separator();
-					if (ImGui::MenuItem("Use Blinn-Phong", "", &BlinnPhongActive))
-					{
-						App->renderer3D->SetLightingSystem();
-					}
-
 					ImGui::EndMenu();
 				}
 

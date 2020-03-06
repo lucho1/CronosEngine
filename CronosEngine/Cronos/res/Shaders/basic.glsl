@@ -129,7 +129,6 @@ uniform sampler2D u_SpecularTexture;
 //uniform sampler2D u_NormalMap;
 
 uniform bool u_TextureEmpty = true;
-uniform bool u_UseBlinnPhong = true;
 
 //ZBuffer rendering -------------------------------------------------------------------------------------------------
 uniform vec2 u_CamPlanes; //x for near plane, y for far plane
@@ -186,17 +185,8 @@ vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 FragPos, vec3 view
 	float diffImpact = max(dot(normal, lightDir), 0.0);
 
 	//Specular Component
-	float specImpact = 1.0;
-	if(u_UseBlinnPhong)
-	{
-		vec3 halfwayDir = normalize(lightDir + viewDirection);
-		specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
-	}
-	else
-	{
-		vec3 reflectDirection = reflect(-lightDir, normal);
-		specImpact = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Shininess);
-	}
+	vec3 halfwayDir = normalize(lightDir + viewDirection);
+	float specImpact = pow(max(dot(normal, halfwayDir), 0.0), u_Shininess);
 
 	//Attenuation Calculation
 	float d = length(pLight.LightPos.xyz - FragPos);

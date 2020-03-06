@@ -145,8 +145,6 @@ namespace Cronos {
 		void SetZBuffer() { m_ChangeZBufferDrawing = !m_ChangeZBufferDrawing; }
 
 		//Change Lighting System
-		bool& SetLightSystem() { return m_ChangeLightSystem; }
-		void SetLightingSystem() { m_ChangeLightSystem = !m_ChangeLightSystem; }
 		std::string GetCameraListNames() const						{ return CameraNameList; }
 		std::string GetShaderListNames() const						{ return ShaderNameList; }
 
@@ -175,26 +173,26 @@ namespace Cronos {
 
 	private:
 		
+		//Shaders Buffers
 		UniformBuffer* m_UBO;
 		ShaderStorageBuffer* m_PointLights_SSBO;
 		ShaderStorageBuffer* m_DirLights_SSBO;
 		ShaderStorageBuffer* m_SpotLights_SSBO;
-		void* lightsNum = operator new(sizeof(int) * 3);
 
+		//Shaders, Materials & Lighting
 		std::vector<LightComponent*> m_LightsList;
-
-
 		std::vector<Shader*>m_ShaderList;
-		bool m_BlinnPhongLighting = true;
-		bool m_ChangeLightSystem = false;
 
 		std::vector<Material*> m_MaterialsList;
 		Shader* m_BasicShader = nullptr;
 		Shader* m_DefaultShader = nullptr;
 		Timer m_BasicSh_RunTime;
 
-		std::string CameraNameList;
 		std::string ShaderNameList;
+		
+		//Current camera we're rendering with
+		Camera* m_CurrentCamera = nullptr;
+		std::string CameraNameList;
 
 		//Octree Rendrering
 		std::vector<GameObject*> m_ObjectsInOctreeNode;
@@ -205,10 +203,7 @@ namespace Cronos {
 
 		//ZBuffer rendering
 		bool m_DrawZBuffer = false;
-		bool m_ChangeZBufferDrawing = false;
-
-		//Current camera we're rendering with
-		Camera* m_CurrentCamera = nullptr;
+		bool m_ChangeZBufferDrawing = false;		
 
 		//Other stuff
 		glm::mat4 fPlane = glm::mat4(1.0f);
