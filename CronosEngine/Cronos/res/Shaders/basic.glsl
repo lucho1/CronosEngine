@@ -1,10 +1,12 @@
 #type vertex
 #version 430 core
 
+//Vertex Layouts
 layout(location = 0) in vec3 a_Position;
 layout(location = 1) in vec3 a_Normal;
 layout(location = 2) in vec2 a_TexCoords;
 
+//Uniform Buffer Object for camera data
 layout(std140, binding = 0) uniform u_CameraData
 {
 	mat4 u_View;
@@ -12,19 +14,25 @@ layout(std140, binding = 0) uniform u_CameraData
 	vec3 u_CameraPosition;
 };
 
+//Uniforms
 uniform mat4 u_Model;
 
-out vec2 v_TexCoords;
-out vec3 v_Normal;
-out vec3 v_FragPos;
-out vec3 v_CamPos;
+//Core Varying for fragment shader
+out CoreVaryings
+{
+	vec2 TexCoords;
+	vec3 Normal;
+	vec3 FragPos;
+	vec3 CamPos;
+} v_VertexCoreVars;
+
 
 void main()
 {
-	v_TexCoords = a_TexCoords;
-	v_CamPos = u_CameraPosition;
-	v_FragPos = vec3(u_Model * vec4(a_Position, 1.0));
-	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
+	v_VertexCoreVars.TexCoords	= a_TexCoords;
+	v_VertexCoreVars.CamPos		= u_CameraPosition;
+	v_VertexCoreVars.FragPos	= vec3(u_Model * vec4(a_Position, 1.0));
+	v_VertexCoreVars.Normal		= mat3(transpose(inverse(u_Model))) * a_Normal;
 
 	gl_Position = u_Proj * u_View * u_Model * vec4(a_Position, 1.0);
 }
@@ -53,10 +61,13 @@ vec4 AssertColorOutput()
 
 // SHADER ITSELF --------------------------------------------------------------------------------------------------------------------------------
 //Input variables
-in vec2 v_TexCoords;
-in vec3 v_Normal;
-in vec3 v_FragPos;
-in vec3 v_CamPos;
+in CoreVaryings
+{
+	vec2 TexCoords;
+	vec3 Normal;
+	vec3 FragPos;
+	vec3 CamPos;
+} v_CoreVars;
 
 
 //Material Stuff
@@ -136,8 +147,8 @@ vec3 CalculateLightResult(vec3 LColor, vec3 LDir, vec3 normal, vec3 viewDir)
 	//If we have textures, apply them
 	if(!u_TextureEmpty)
 	{
-		diffuse *= texture(u_DiffuseTexture, v_TexCoords).rgb;
-		specular *= texture(u_SpecularTexture, v_TexCoords).rgb;
+		diffuse *= texture(u_DiffuseTexture, v_CoreVars.TexCoords).rgb;
+		specular *= texture(u_SpecularTexture, v_CoreVars.TexCoords).rgb;
 	}	
 
 	return (diffuse + specular);
@@ -154,10 +165,10 @@ vec3 CalculateDirectionalLight(DirLight dLight, vec3 normal, vec3 viewDirection)
 vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 viewDirection)
 {
 	//Calculate light direction
-	vec3 direction = pLight.LightPos.xyz - v_FragPos;
+	vec3 direction = pLight.LightPos.xyz - v_CoreVars.FragPos;
 
 	//Attenuation Calculation
-	float d = length(pLight.LightPos.xyz - v_FragPos);
+	float d = length(pLight.LightPos.xyz - v_CoreVars.FragPos);
 	float lightAttenuation = 1.0/ (pLight.LightAtt_K + pLight.LightAtt_L * d + pLight.LightAtt_Q *(d * d));
 
 	//Result
@@ -168,15 +179,16 @@ vec3 CalculatePointLight(PointLight pLight, vec3 normal, vec3 viewDirection)
 vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 viewDirection)
 {
 	//Calculate light direction
-	vec3 direction = spLight.LightPos.xyz - v_FragPos;
+	vec3 direction = spLight.LightPos.xyz - v_CoreVars.FragPos;
 
 	//Attenuation Calculation
-	float d = length(spLight.LightPos.xyz - v_FragPos);
+	float d = length(spLight.LightPos.xyz - v_CoreVars.FragPos);
 	float lightAttenuation = 1.0/ (spLight.LightAtt_K + spLight.LightAtt_L * d + spLight.LightAtt_Q *(d * d));
 
 	//Spotlight Calcs for Soft Edges
-	float theta = dot(normalize(spLight.LightPos.xyz - v_FragPos), normalize(-spLight.LightDir.xyz)); //Light direction and light orientation
+	float theta = dot(normalize(spLight.LightPos.xyz - v_CoreVars.FragPos), normalize(-spLight.LightDir.xyz)); //Light direction and light orientation
 	float epsilon = spLight.innerCutoffAngleCos - spLight.outerCutoffAngleCos;
+	
 	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
 
 	//Result
@@ -215,8 +227,8 @@ void main()
 		CNSH_ASSERT((u_CurrentLightsNum[2] >= 0));
 
 		//Generic Light Calculations
-		vec3 normalVec = normalize(v_Normal);
-		vec3 viewDirection = normalize(v_CamPos - v_FragPos);
+		vec3 normalVec = normalize(v_CoreVars.Normal);
+		vec3 viewDirection = normalize(v_CoreVars.CamPos - v_CoreVars.FragPos);
 
 		//Color Output
 		vec3 colorOutput = vec3(0.0);
@@ -233,7 +245,7 @@ void main()
 		
 		//Texturing Calculations & Final Fragment Color
 		if(!u_TextureEmpty)
-			color = vec4(colorOutput + u_AmbientColor.rgb * texture(u_DiffuseTexture, v_TexCoords).rgb, 1.0);
+			color = vec4(colorOutput + u_AmbientColor.rgb * texture(u_DiffuseTexture, v_CoreVars.TexCoords).rgb, 1.0);
 		else
 			color = vec4(colorOutput + u_AmbientColor.rgb, 1.0);
 
