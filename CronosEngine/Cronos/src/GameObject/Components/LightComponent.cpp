@@ -47,6 +47,9 @@ namespace Cronos
 		
 		m_PLightComp.m_LightPosition = m_SLightComp.m_LightPosition = glm::vec4(pos, 0.0f);
 		m_SLightComp.m_LightDirection = glm::vec4(-vecOrientation, 0.0f);
+
+		m_SLightComp.m_InnerCutoffAngleCos = glm::cos(glm::radians(m_InnerCutoffAngle));
+		m_SLightComp.m_OuterCutoffAngleCos = glm::cos(glm::radians(m_OuterCutoffAngle));
 	}
 
 	void LightComponent::SetLightType(LightType type)

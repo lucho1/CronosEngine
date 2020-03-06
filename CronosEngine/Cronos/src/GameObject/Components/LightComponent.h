@@ -41,8 +41,8 @@ namespace Cronos
 		float m_LightAttL = 0.09f;
 		float m_LightAttQ = 0.032f;
 
-		float m_InnerCutoffAngle = 12.5f; //Cosinus value
-		float m_OuterCutoffAngle = 45.0f; //Cosinus value
+		float m_InnerCutoffAngleCos = glm::cos(glm::radians(12.5f)); //Cosinus value
+		float m_OuterCutoffAngleCos = glm::cos(glm::radians(45.0f)); //Cosinus value
 	};
 
 
@@ -64,8 +64,8 @@ namespace Cronos
 		void SetLightDirection(const glm::vec3& direction) { m_SLightComp.m_LightDirection = m_DLightComp.m_LightDirection = glm::vec4(direction, 0.0f); }
 		void SetLightColor(const glm::vec3& color);
 		void SetLightIntensity(const float& intensity);
-		void SetSpotlightInnerCutoff(const float& degreesAngle) { m_SLightComp.m_InnerCutoffAngle = degreesAngle; }
-		void SetSpotlightOuterCutoff(const float& degreesAngle) { m_SLightComp.m_OuterCutoffAngle = degreesAngle; }
+		void SetSpotlightInnerCutoff(const float& degreesAngle) { m_InnerCutoffAngle = degreesAngle; }
+		void SetSpotlightOuterCutoff(const float& degreesAngle) { m_OuterCutoffAngle = degreesAngle; }
 
 		void SetAttenuationFactors(const glm::vec3& attenuationFactorsKLQ)
 		{
@@ -89,8 +89,8 @@ namespace Cronos
 		inline const glm::vec3 GetLightAttenuationFactors()	const { return (m_LightType == LightType::POINTLIGHT ? glm::vec3(m_PLightComp.m_LightAttK, m_PLightComp.m_LightAttL, m_PLightComp.m_LightAttQ) :
 																			(m_LightType == LightType::SPOTLIGHT ? glm::vec3(m_SLightComp.m_LightAttK, m_SLightComp.m_LightAttL, m_SLightComp.m_LightAttQ) : glm::vec3(0.0f))); }
 
-		inline const float GetSpotlightInnerCutoff()		const { return m_SLightComp.m_InnerCutoffAngle; }
-		inline const float GetSpotlightOuterCutoff()		const { return m_SLightComp.m_OuterCutoffAngle; }
+		inline const float GetSpotlightInnerCutoff()		const { return m_InnerCutoffAngle; }
+		inline const float GetSpotlightOuterCutoff()		const { return m_OuterCutoffAngle; }
 
 	public:
 
@@ -107,12 +107,13 @@ namespace Cronos
 	private:
 
 		LightType m_LightType = LightType::NONE;
-
 		Material* m_LightMaterial = nullptr;
 
-			
-
 		bool m_ChangeLightType = false;
+
+		//For spotlights
+		float m_InnerCutoffAngle = 12.5f;
+		float m_OuterCutoffAngle = 45.0f;
 	};
 }
 

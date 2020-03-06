@@ -103,7 +103,6 @@ struct SpotLight
 layout(std430, binding = 0) buffer SSBOData
 {
 	int u_CurrentLightsNum[3];
-
 	PointLight u_PointLightsArray[MAX_POINTLIGHTS];
 };
 
