@@ -180,7 +180,7 @@ vec3 CalculateSpotLight(SpotLight spLight, vec3 normal, vec3 viewDirection)
 	float lightIntensity = clamp((theta - spLight.outerCutoffAngleCos) / epsilon, 0.0, 1.0) * spLight.LightIntensity;
 
 	//Result
-	return CalculateLightResult(spLight.LightColor.xyz, direction, normal, viewDirection) * lightIntensity * lightAttenuation;
+	return CalculateLightResult(spLight.LightColor.xyz, direction, normal, viewDirection) * lightAttenuation * lightIntensity;
 }
 
 
