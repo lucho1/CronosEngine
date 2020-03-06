@@ -94,7 +94,7 @@ namespace Cronos
 
 	public:
 
-		void SendUniformsLightData(Shader* shader, uint lightIndex);
+		//void SendUniformsLightData(Shader* shader, uint lightIndex);
 
 		DirectionalLight m_DLightComp;
 		PointLight m_PLightComp;

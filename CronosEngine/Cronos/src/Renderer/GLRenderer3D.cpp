@@ -226,23 +226,23 @@ namespace Cronos {
 
 		for (int i = 0; i < m_LightsList.size(); ++i)
 		{
-			if (m_LightsList[i]->GetLightType() == LightType::DIRECTIONAL)
-				DLightVec.push_back(m_LightsList[i]->m_DLightComp);
-			else if (m_LightsList[i]->GetLightType() == LightType::POINTLIGHT)
-				PLightVec.push_back(m_LightsList[i]->m_PLightComp);
-			else if (m_LightsList[i]->GetLightType() == LightType::SPOTLIGHT)
-				SLightVec.push_back(m_LightsList[i]->m_SLightComp);
+			switch (m_LightsList[i]->GetLightType())
+			{
+				case LightType::DIRECTIONAL:	DLightVec.push_back(m_LightsList[i]->m_DLightComp); break;
+				case LightType::POINTLIGHT:		PLightVec.push_back(m_LightsList[i]->m_PLightComp); break;
+				case LightType::SPOTLIGHT:		SLightVec.push_back(m_LightsList[i]->m_SLightComp); break;
+				case LightType::NONE:			CRONOS_WARN(false, "Detected a non-typed Light! (GLRenderer3D.cpp)"); break;
+				default:						CRONOS_WARN(false, "Detected a non-typed Light! (GLRenderer3D.cpp)"); break;
+			}
 		}
 
 		m_PointLights_SSBO->Bind();
 		std::vector<int> LightsNum = { currentDLights, currentPLights, currentSPLights };
-		m_PointLights_SSBO->PassData(sizeof(int) * LightsNum.size(), 0, LightsNum.data());
-
+		m_PointLights_SSBO->PassData(sizeof(int) * LightsNum.size(), 0, LightsNum.data());	//size of the data being passed (size of the PLight struct + quantity of PLights),
+																							//size of int*3 due to the array preceding (arr[3]) + sizeof(float) since it starts (the PLight struct) in a vec4, which starts in a float,
+																							//ptr to the PLights vector data	
 		if (PLightVec.size() > 0)
-			m_PointLights_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3 + sizeof(float), PLightVec.data());
-			//size of the data being passed (size of the PLight struct + quantity of PLights),
-			//size of int*3 due to the array preceding (arr[3]) + sizeof(float) since it starts (the PLight struct) in a vec4, which starts in a float,
-			//ptr to the PLights vector data	
+			m_PointLights_SSBO->PassData(sizeof(PointLight) * PLightVec.size(), sizeof(int) * 3 + sizeof(float), PLightVec.data());			
 		m_PointLights_SSBO->UnBind();
 
 		m_DirLights_SSBO->Bind();
