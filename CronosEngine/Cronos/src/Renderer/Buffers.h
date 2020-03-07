@@ -145,23 +145,25 @@ namespace Cronos {
 	};
 
 
-	class FrameBuffer {
-
+	class FrameBuffer
+	{
 	public:
-		FrameBuffer();
+
+		FrameBuffer(uint textureWidth, uint textureHeight);
 		~FrameBuffer();
 
-		void Init(int Width, int Height);
-		void PreUpdate();
-		void PostUpdate();
-		void OnResize(int Width, int Height);
+		void Bind() const;
+		void UnBind() const;
 
-		uint GetWindowFrame() const { return m_Text; };
-		void CleanUp();
+		void Clear();
+		void ResizeFBO(uint width, uint height);
+
+		uint GetFBOTexture() const { return m_AttachedTexture; };
 
 	private:
-		uint m_FB;
-		uint m_Text;
+
+		uint m_ID;
+		uint m_AttachedTexture = 0;
 
 	};
 }

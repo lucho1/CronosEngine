@@ -227,8 +227,7 @@ namespace Cronos {
 		setDocking();
 
 		//Setting FrameBuffer for gameWindow;
-		m_SceneWindow = new FrameBuffer();
-		m_SceneWindow->Init(1280, 720);
+		m_SceneWindow = new FrameBuffer(1280, 720);
 
 		m_ShadingModesLabel[(int)ShadingMode::Shaded] = "Shaded";
 		m_ShadingModesLabel[(int)ShadingMode::ShadedWireframe] = "Shaded Wireframe";
@@ -459,9 +458,7 @@ namespace Cronos {
 	update_status ImGuiLayer::OnPreUpdate(float dt)
 	{
 		if (ShowDrawGameWindow)
-		{
-			m_SceneWindow->PreUpdate();
-		}
+			m_SceneWindow->Clear();
 
 		return current_status;
 	}
@@ -711,13 +708,13 @@ namespace Cronos {
 			{
 				//TODO: When doing this resize it actually does a window resize, and shouldn't be like that
 				//but resizing through renderer doesn't works
-				m_SceneWindow->OnResize(SizeGame.x, SizeGame.y);
+				m_SceneWindow->ResizeFBO(SizeGame.x, SizeGame.y);
 				//App->renderer3D->OnResize(SizeGame.x, SizeGame.y);
 				//App->window->OnResize(SizeGame.x, SizeGame.y, true);
 				LastSize = SizeGame;
 			}
 			
-			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::Image((void*)m_SceneWindow->GetFBOTexture(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->renderer3D->GetCurrentCamera() == App->engineCamera->GetCamera())
 				App->scene->DrawGuizmo(App->engineCamera->GetCamera(), App->EditorGUI->GetCurrentGameObject());
@@ -748,7 +745,7 @@ namespace Cronos {
 		else
 			HoverGameWin = false;
 
-		m_SceneWindow->PostUpdate();
+		m_SceneWindow->UnBind();
 
 		if (App->engineCamera->m_ScrollingSpeedChange) {
 			CurrentSpeedScrollLabel = MaxScrollSpeedLabel;
