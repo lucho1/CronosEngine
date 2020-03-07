@@ -201,29 +201,36 @@ namespace Cronos {
 	void FrameBuffer::Init(int Width, int Height)
 	{
 		uint renderBufferoutput;
+
 		//Gen And Bind frameBuffer
 		glGenFramebuffers(1,&m_FB);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FB);
+
 		//Gen and Bind Text
 		glGenTextures(1, &m_Text);
 		glBindTexture(GL_TEXTURE_2D, m_Text);
+
 		//Copy Textures
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		glBindTexture(GL_TEXTURE_2D, 0); //Unbind texture
+
 		//Texture to FrameBuffers
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Text, 0);
+
 		//Prepare RenderBuffers
 		glGenRenderbuffers(1, &renderBufferoutput);
 		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferoutput);
+
 		//Data to renderBuffer
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, Width, Height);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferoutput);
+
+		//Unbind
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	}
 
 	void FrameBuffer::OnResize(int Width, int Height) 
@@ -245,7 +252,6 @@ namespace Cronos {
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	}
 	
 	void FrameBuffer::PreUpdate()

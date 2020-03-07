@@ -261,7 +261,8 @@ namespace Cronos {
 		{
 			//Shader Generic Stuff & ZBuffer -----------------------------------------------------
 			m_ShaderList[i]->Bind();
-			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());			
+			m_ShaderList[i]->SetUniform1f("u_ShaderPlaybackTime", m_BasicSh_RunTime.ReadSec());
+			m_ShaderList[i]->SetUniform1f("u_GammaCorrectionValue", m_GammaCorrection);
 
 			if (m_ChangeZBufferDrawing)
 			{

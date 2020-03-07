@@ -144,6 +144,9 @@ namespace Cronos {
 		bool& SetZBufferRendering() { return m_ChangeZBufferDrawing; }
 		void SetZBuffer() { m_ChangeZBufferDrawing = !m_ChangeZBufferDrawing; }
 
+		//Gamma correction value
+		void SetGammaCorrection(float gamma) { m_GammaCorrection = gamma; }
+
 		//Change Lighting System
 		std::string GetCameraListNames() const						{ return CameraNameList; }
 		std::string GetShaderListNames() const						{ return ShaderNameList; }
@@ -202,7 +205,8 @@ namespace Cronos {
 
 		//ZBuffer rendering
 		bool m_DrawZBuffer = false;
-		bool m_ChangeZBufferDrawing = false;		
+		bool m_ChangeZBufferDrawing = false;
+		float m_GammaCorrection = 2.2f;
 
 		//Other stuff
 		glm::mat4 fPlane = glm::mat4(1.0f);

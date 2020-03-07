@@ -456,9 +456,12 @@ namespace Cronos {
 		nodeHirearchySelected = gameObject->GetGOID();
 	}
 
-	update_status ImGuiLayer::OnPreUpdate(float dt) {
+	update_status ImGuiLayer::OnPreUpdate(float dt)
+	{
 		if (ShowDrawGameWindow)
+		{
 			m_SceneWindow->PreUpdate();
+		}
 
 		return current_status;
 	}
@@ -677,7 +680,6 @@ namespace Cronos {
 
 		//ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 		static bool ZB_RenderingActive = false;
-		static bool BlinnPhongActive = true;
 		ImGui::Begin("Scene",nullptr,GameWindow_flags);
 		{
 			if (ImGui::BeginMenuBar())
@@ -714,9 +716,9 @@ namespace Cronos {
 				//App->window->OnResize(SizeGame.x, SizeGame.y, true);
 				LastSize = SizeGame;
 			}
-
-			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
 			
+			ImGui::Image((void*)m_SceneWindow->GetWindowFrame(), SizeGame, ImVec2(0, 1), ImVec2(1, 0));
+
 			if (App->EditorGUI->GetCurrentGameObject() != nullptr && App->renderer3D->GetCurrentCamera() == App->engineCamera->GetCamera())
 				App->scene->DrawGuizmo(App->engineCamera->GetCamera(), App->EditorGUI->GetCurrentGameObject());
 
@@ -2160,6 +2162,11 @@ namespace Cronos {
 				App->renderer3D->SetRenderingCamera(*App->renderer3D->m_CameraList[item_current-1]->GetComponent<CameraComponent>()->GetCamera());
 		}
 
+		static float gammaVar = 2.2f;
+		ImGui::Separator();
+		ImGui::Text("Gamma Correction"); //SetGammaCorrection
+		if (ImGui::DragFloat("###gamma", &gammaVar, 0.0001f, 1.0f, 10.0f))
+			App->renderer3D->SetGammaCorrection(gammaVar);
 
 		ImGui::Separator();
 		ImGui::Text("Debug Options");

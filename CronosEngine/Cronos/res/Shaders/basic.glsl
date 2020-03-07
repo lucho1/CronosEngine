@@ -80,6 +80,7 @@ uniform sampler2D u_SpecularTexture;
 
 uniform bool u_TextureEmpty = true;
 
+uniform float u_GammaCorrectionValue = 2.2;
 
 //Lights Structures
 struct DirLight 
@@ -248,6 +249,9 @@ void main()
 			color = vec4(colorOutput + u_AmbientColor.rgb * texture(u_DiffuseTexture, v_CoreVars.TexCoords).rgb, 1.0);
 		else
 			color = vec4(colorOutput + u_AmbientColor.rgb, 1.0);
+
+		//Gamma correction
+		color.rgb = pow(color.rgb, vec3(1.0/u_GammaCorrectionValue));
 
 		//Final Assertion Check
 		COLOROUTPUT_EXIT();

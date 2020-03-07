@@ -62,6 +62,7 @@ namespace Cronos {
 
 		m_StreetModel = m_CNAssimp_Importer.LoadModel(std::string("res/models/street/stre.FBX"));
 		m_GameObjects.push_back(m_StreetModel);
+		m_StreetModel->GetComponent<TransformComponent>()->SetOrientation({ -90.0f, 0.0f, 0.0f });
 
 		ToCopy = nullptr;
 		return ret;
