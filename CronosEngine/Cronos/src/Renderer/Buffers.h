@@ -8,6 +8,7 @@ namespace Cronos {
 
 	struct CronosVertex;
 	enum class VertexDataType { NONE = 0, FLOAT, INT, VEC2I, VEC3I, VEC4I, VEC2F, VEC3F, VEC4F, MAT3, MAT4, BOOL };
+	enum class FBOType { NONE = -1, DEPTH_FBO, COLOR_FBO };
 	
 	struct BufferData
 	{
@@ -144,12 +145,12 @@ namespace Cronos {
 		//BufferLayout m_UBLayout;
 	};
 
-
+		
 	class FrameBuffer
 	{
 	public:
 
-		FrameBuffer(uint textureWidth, uint textureHeight);
+		FrameBuffer(FBOType type, uint textureWidth, uint textureHeight);
 		~FrameBuffer();
 
 		void Bind() const;
@@ -162,6 +163,9 @@ namespace Cronos {
 
 	private:
 
+		void FillFBOData(GLint& dataFormat, GLenum& dataType, GLint& textureParameter, GLenum& textureAttachment);
+
+		FBOType m_FBOType = FBOType::NONE;
 		uint m_ID;
 		uint m_AttachedTexture = 0;
 

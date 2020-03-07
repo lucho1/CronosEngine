@@ -227,7 +227,7 @@ namespace Cronos {
 		setDocking();
 
 		//Setting FrameBuffer for gameWindow;
-		m_SceneWindow = new FrameBuffer(1280, 720);
+		m_SceneWindow = new FrameBuffer(FBOType::COLOR_FBO, 1280, 720);
 
 		m_ShadingModesLabel[(int)ShadingMode::Shaded] = "Shaded";
 		m_ShadingModesLabel[(int)ShadingMode::ShadedWireframe] = "Shaded Wireframe";

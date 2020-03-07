@@ -84,9 +84,14 @@ namespace Cronos {
 	{
 		ResetTree();
 
+		//Shader setup
 		m_BasicShader = new Shader("res/Shaders/basic.glsl");
 		m_ShaderList.push_back(m_BasicShader);
 
+		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
+		m_BasicSh_RunTime.Start();
+
+		//Shader UBO Setup
 		m_UBO = new UniformBuffer(2 * sizeof(glm::mat4) + sizeof(glm::vec3), 0);
 		m_UBO->SetLayout({
 			{Cronos::VertexDataType::MAT4, "u_View"},
@@ -94,24 +99,28 @@ namespace Cronos {
 			{Cronos::VertexDataType::VEC3F, "u_CameraPosition"}
 		});
 
+		//Shader SSBOs Setup (for lighting)
 		m_PointLights_SSBO = new ShaderStorageBuffer(sizeof(int) * 3 + sizeof(PointLight) * MAX_POINTLIGHTS, 0);
 		m_DirLights_SSBO = new ShaderStorageBuffer(sizeof(DirectionalLight) * MAX_DIRLIGHTS, 1);
 		m_SpotLights_SSBO = new ShaderStorageBuffer(sizeof(SpotLight) * MAX_SPOTLIGHTS, 2);
 
-		m_DefaultShader = new Shader("res/Shaders/DefaultShader.glsl");
-		m_BasicSh_RunTime.Start();
+		//Depth Map Setup (for Shadows)
+		m_DepthMap_Buffer = new FrameBuffer(FBOType::DEPTH_FBO, 1024, 1024);		
 
+		//Default Material Setup
 		Material* DefaultMat = new Material();
 		DefaultMat->SetName("Default Material");
 		DefaultMat->SetShader(*m_DefaultShader);
 		ResourceMaterial* ResDefaultMat = new ResourceMaterial(DefaultMat->GetMaterialID(), DefaultMat);
 		App->resourceManager->AddResource(ResDefaultMat);
 
+		//Lights Material Setup
 		Material* LightMat = new Material();
 		LightMat->SetName("Light Material");
 		LightMat->SetColor(glm::vec4(1.0f));
-		SetFaceCulling(false);
 
+
+		SetFaceCulling(false);
 		return true;
 	}
 
@@ -141,6 +150,7 @@ namespace Cronos {
 		RELEASE(m_DirLights_SSBO);
 		RELEASE(m_SpotLights_SSBO);
 		RELEASE(m_UBO);
+		RELEASE(m_DepthMap_Buffer);
 
 		SDL_GL_DeleteContext(context);
 		return true;

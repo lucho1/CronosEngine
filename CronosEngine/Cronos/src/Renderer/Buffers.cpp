@@ -176,8 +176,41 @@ namespace Cronos {
 
 
 	//-------------- FRAME BUFFER ------------------------------------------------
-	FrameBuffer::FrameBuffer(uint textureWidth, uint textureHeight)
+	void FrameBuffer::FillFBOData(GLint& dataFormat, GLenum& dataType, GLint& textureParameter, GLenum& textureAttachment)
 	{
+		switch (m_FBOType)
+		{
+			case FBOType::COLOR_FBO:
+				dataFormat			= GL_RGB;
+				textureParameter	= GL_LINEAR;
+				dataType			= GL_UNSIGNED_BYTE;
+				textureAttachment	= GL_COLOR_ATTACHMENT0;
+				break;
+
+			case FBOType::DEPTH_FBO:
+				dataFormat			= GL_DEPTH_COMPONENT;
+				textureParameter	= GL_NEAREST;
+				dataType			= GL_FLOAT;
+				textureAttachment	= GL_DEPTH_ATTACHMENT;
+				break;
+
+			case FBOType::NONE:
+				CRONOS_ASSERT(false, "Invalid Framebuffer Type!");
+				break;
+
+			default:
+				CRONOS_ASSERT(false, "Invalid Framebuffer Type!");
+				break;
+		}
+	}
+
+	FrameBuffer::FrameBuffer(FBOType type, uint textureWidth, uint textureHeight) : m_FBOType(type)
+	{
+		GLint dataFormat = 0, textureParam = 0;
+		GLenum dataType = 0, textureAttachment = 0;
+		FillFBOData(dataFormat, dataType, textureParam, textureAttachment);
+		CRONOS_ASSERT((dataFormat > 0 || textureParam > 0 || dataType > 0), "Invalid Framebuffer Data!");
+
 		//Create And Bind Framebuffer
 		glCreateFramebuffers(1, &m_ID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
@@ -187,27 +220,39 @@ namespace Cronos {
 		glBindTexture(GL_TEXTURE_2D, m_AttachedTexture);
 
 		//Set Texture attributes
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, dataFormat, textureWidth, textureHeight, 0, dataFormat, dataType, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, textureParam);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureParam);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		//Unbind texture
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//Send Texture to Framebuffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_AttachedTexture, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, textureAttachment, GL_TEXTURE_2D, m_AttachedTexture, 0);
 
-		//Create Renderbuffer
-		uint renderBufferoutput;
-		glCreateRenderbuffers(1, &renderBufferoutput);
-		glBindRenderbuffer(GL_RENDERBUFFER, renderBufferoutput);
+		if (type == FBOType::COLOR_FBO)
+		{
+			//Create Renderbuffer
+			uint renderBufferoutput;
+			glCreateRenderbuffers(1, &renderBufferoutput);
+			glBindRenderbuffer(GL_RENDERBUFFER, renderBufferoutput);
 
-		//Send Data to Renderbuffer
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, textureWidth, textureHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferoutput);
+			//Send Data to Renderbuffer
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, textureWidth, textureHeight);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderBufferoutput);
 
-		//Unbind
-		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			//Unbind
+			glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		}
+		else if (type == FBOType::DEPTH_FBO)
+		{
+			//No need for color/render buffer in depthFBO
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
@@ -229,7 +274,10 @@ namespace Cronos {
 	void FrameBuffer::Clear()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+
+		if(m_FBOType == FBOType::COLOR_FBO)
+			glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 

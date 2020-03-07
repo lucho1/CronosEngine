@@ -175,11 +175,14 @@ namespace Cronos {
 
 	private:
 		
+		//Shadows
+		FrameBuffer* m_DepthMap_Buffer = nullptr;
+
 		//Shaders Buffers
-		UniformBuffer* m_UBO;
-		ShaderStorageBuffer* m_PointLights_SSBO;
-		ShaderStorageBuffer* m_DirLights_SSBO;
-		ShaderStorageBuffer* m_SpotLights_SSBO;
+		UniformBuffer* m_UBO = nullptr;
+		ShaderStorageBuffer* m_PointLights_SSBO = nullptr;
+		ShaderStorageBuffer* m_DirLights_SSBO = nullptr;
+		ShaderStorageBuffer* m_SpotLights_SSBO = nullptr;
 
 		//Shaders, Materials & Lighting
 		std::vector<LightComponent*> m_LightsList;
