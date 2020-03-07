@@ -39,7 +39,12 @@ namespace Cronos {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 		
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, m_Data);
+				if(textype == TextureType::DIFFUSE)
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, m_Data);
+				else
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, m_Format, GL_UNSIGNED_BYTE, m_Data);
+
+
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 				//Erase textures
